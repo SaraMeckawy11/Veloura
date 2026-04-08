@@ -1,0 +1,113 @@
+.pricing-section {
+  background: var(--bg);
+}
+
+.pricing-wrapper {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.pricing-card {
+  background: var(--white);
+  border: 2px solid var(--gold-soft);
+  border-radius: var(--radius-xl);
+  padding: 48px 40px;
+  text-align: center;
+  position: relative;
+  box-shadow: var(--shadow-md);
+}
+
+.pricing-card::before {
+  content: 'EVERYTHING INCLUDED';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  background: var(--gold);
+  color: var(--white);
+  padding: 6px 20px;
+  border-radius: 50px;
+  white-space: nowrap;
+}
+
+.pricing-plan-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.pricing-amount {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.pricing-amount .old-price {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-light);
+  text-decoration: line-through;
+  margin-right: 8px;
+}
+
+.pricing-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+.pricing-features {
+  list-style: none;
+  text-align: left;
+  columns: 2;
+  column-gap: 24px;
+  margin-bottom: 32px;
+}
+
+.pricing-features li {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  padding: 6px 0 6px 28px;
+  position: relative;
+  break-inside: avoid;
+}
+
+.pricing-features li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 18px;
+  height: 18px;
+  background: var(--sage-soft);
+  border-radius: 50%;
+}
+
+.pricing-features li::after {
+  content: '\2713';
+  position: absolute;
+  left: 4px;
+  top: 12px;
+  font-size: 0.65rem;
+  color: var(--sage);
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.pricing-cta-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .pricing-card { padding: 36px 24px; }
+  .pricing-features { columns: 1; }
+}

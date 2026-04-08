@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.thedigitalyes.com)",
+      "Bash(npm create:*)",
+      "Bash(npx --yes create-vite@latest temp-project --template react)",
+      "Bash(cp -r temp-project/* .)",
+      "Bash(cp temp-project/.gitignore .)",
+      "Bash(rm -rf temp-project)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
