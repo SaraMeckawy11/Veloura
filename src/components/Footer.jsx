@@ -1,4 +1,4 @@
-import './Footer.css';
+import '../styles/Footer.css';
 
 const handleClick = (e, href) => {
   e.preventDefault();

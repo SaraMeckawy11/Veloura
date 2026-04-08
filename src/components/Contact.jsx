@@ -1,4 +1,4 @@
-import './Contact.css';
+import '../styles/Contact.css';
 import useReveal from '../hooks/useReveal';
 
 export default function Contact() {

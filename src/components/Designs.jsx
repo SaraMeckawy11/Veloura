@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './Designs.css';
+import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
 const designs = [

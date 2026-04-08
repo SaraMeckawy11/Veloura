@@ -1,4 +1,4 @@
-import './HowItWorks.css';
+import '../styles/HowItWorks.css';
 import useReveal from '../hooks/useReveal';
 
 const steps = [

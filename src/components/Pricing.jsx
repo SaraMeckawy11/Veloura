@@ -1,4 +1,4 @@
-import './Pricing.css';
+import '../styles/Pricing.css';
 import useReveal from '../hooks/useReveal';
 
 const features = [

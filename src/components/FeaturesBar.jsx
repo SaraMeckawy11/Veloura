@@ -1,4 +1,4 @@
-import './FeaturesBar.css';
+import '../styles/FeaturesBar.css';
 
 const features = [
   {

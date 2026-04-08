@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './FAQ.css';
+import '../styles/FAQ.css';
 import useReveal from '../hooks/useReveal';
 
 const faqs = [
