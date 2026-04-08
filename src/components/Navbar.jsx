@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Navbar.css';
 
 export default function Navbar() {
@@ -55,9 +56,9 @@ export default function Navbar() {
 
           <div className="nav-cta">
             <a href="#" className="btn-client">Client Portal</a>
-            <a href="#pricing" className="btn btn-gold btn-sm" onClick={e => handleNavClick(e, '#pricing')}>
+            <Link to="/order" className="btn btn-gold btn-sm">
               Create My Invitation
-            </a>
+            </Link>
           </div>
 
           <button
@@ -82,9 +83,9 @@ export default function Navbar() {
           <a href="#" className="btn btn-secondary btn-sm" onClick={e => { e.preventDefault(); setMenuOpen(false); document.body.style.overflow = ''; }}>
             Client Portal
           </a>
-          <a href="#pricing" className="btn btn-gold btn-sm" onClick={e => handleNavClick(e, '#pricing')}>
+          <Link to="/order" className="btn btn-gold btn-sm" onClick={() => { setMenuOpen(false); document.body.style.overflow = ''; }}>
             Create My Invitation
-          </a>
+          </Link>
         </div>
       </div>
     </>

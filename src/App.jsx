@@ -1,27 +1,20 @@
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import FeaturesBar from './components/FeaturesBar';
-import Designs from './components/Designs';
-import HowItWorks from './components/HowItWorks';
-import Pricing from './components/Pricing';
-import FAQ from './components/FAQ';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import OrderFlow from './pages/OrderFlow';
+import OrderSuccess from './pages/OrderSuccess';
+import Dashboard from './pages/Dashboard';
 
-function App() {
+export default function App() {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <FeaturesBar />
-      <Designs />
-      <HowItWorks />
-      <Pricing />
-      <FAQ />
-      <Contact />
-      <Footer />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/order" element={<OrderFlow />} />
+        <Route path="/order/success/:orderId" element={<OrderSuccess />} />
+        <Route path="/order/failed/:orderId?" element={<OrderSuccess />} />
+        <Route path="/dashboard/:editToken" element={<Dashboard />} />
+        <Route path="/edit/:editToken" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;

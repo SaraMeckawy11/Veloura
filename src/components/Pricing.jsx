@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import '../styles/Pricing.css';
 import useReveal from '../hooks/useReveal';
 
@@ -47,7 +48,7 @@ export default function Pricing() {
             </ul>
 
             <div className="pricing-cta">
-              <a href="#contact" className="btn btn-gold pricing-cta-btn">Get Started Now</a>
+              <Link to="/order" className="btn btn-gold pricing-cta-btn">Get Started Now</Link>
             </div>
           </div>
         </div>
