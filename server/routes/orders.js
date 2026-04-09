@@ -1,17 +1,16 @@
 import { Router } from 'express';
 import Order from '../models/Order.js';
 import Template from '../models/Template.js';
-import { getPaymobToken, createPaymobOrder, getPaymentKey } from '../config/paymob.js';
+import { createPayPalOrder } from '../config/paypal.js';
 import { sendMail } from '../config/email.js';
 import { editLimitWarningEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 
 const router = Router();
 
-const PRICE_EGP = Number(process.env.PRICE_EGP || 4900); // price in EGP (e.g. 4900 = 4900 EGP)
-const PRICE_PIASTERS = PRICE_EGP * 100; // Paymob uses piasters
+const PRICE_USD = process.env.PRICE_USD || '99.00';
 
-// POST /api/orders — create order + get Paymob payment iframe URL
+// POST /api/orders — create order + PayPal checkout
 router.post('/', validateOrderBody, async (req, res) => {
   try {
     const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl } = req.body;
@@ -33,35 +32,19 @@ router.post('/', validateOrderBody, async (req, res) => {
     });
     await order.save();
 
-    // Paymob flow: auth → create order → get payment key
-    const authToken = await getPaymobToken();
-
-    const paymobOrder = await createPaymobOrder(authToken, {
-      amountCents: PRICE_PIASTERS,
-      merchantOrderId: order._id.toString(),
+    // Create PayPal checkout order
+    const { paypalOrderId, approvalUrl } = await createPayPalOrder({
+      amountUSD: PRICE_USD,
+      description: `Eternally — ${template.name} Wedding Invitation`,
+      orderId: order._id.toString(),
     });
 
-    order.paymobOrderId = String(paymobOrder.id);
+    order.paypalOrderId = paypalOrderId;
     await order.save();
-
-    const nameParts = customerName.trim().split(' ');
-    const paymentKey = await getPaymentKey(authToken, {
-      orderId: paymobOrder.id,
-      amountCents: PRICE_PIASTERS,
-      customer: {
-        firstName: nameParts[0] || 'N/A',
-        lastName: nameParts.slice(1).join(' ') || 'N/A',
-        email: customerEmail,
-        phone: customerPhone || 'N/A',
-      },
-    });
-
-    // Build iframe URL
-    const iframeUrl = `https://accept.paymob.com/api/acceptance/iframes/${process.env.PAYMOB_IFRAME_ID}?payment_token=${paymentKey}`;
 
     res.status(201).json({
       orderId: order._id,
-      paymentUrl: iframeUrl,
+      paymentUrl: approvalUrl,
     });
   } catch (err) {
     console.error('Order creation error:', err);
@@ -153,7 +136,6 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     order.editHistory.push({ fieldsChanged });
     await order.save();
 
-    // Warn when edits are running low
     if (order.editsRemaining <= 2 && order.editsRemaining > 0) {
       const email = editLimitWarningEmail({
         customerName: order.customerName,
@@ -174,7 +156,7 @@ router.get('/invite/:publicSlug', async (req, res) => {
   try {
     const order = await Order.findOne({ publicSlug: req.params.publicSlug, status: 'active' })
       .populate('template')
-      .select('-editToken -paymobOrderId -paymobTransactionId -customerEmail -editHistory');
+      .select('-editToken -paypalOrderId -paypalCaptureId -customerEmail -editHistory');
 
     if (!order) return res.status(404).json({ error: 'Invitation not found' });
     res.json(order);
@@ -183,7 +165,7 @@ router.get('/invite/:publicSlug', async (req, res) => {
   }
 });
 
-// GET /api/orders/dashboard/:editToken — full dashboard data for the couple
+// GET /api/orders/dashboard/:editToken — full dashboard data
 router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
   try {
     const order = await Order.findOne({ editToken: req.params.editToken })

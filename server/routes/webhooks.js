@@ -1,135 +1,124 @@
 import { Router } from 'express';
-import crypto from 'crypto';
 import Order from '../models/Order.js';
+import { capturePayPalOrder, verifyWebhookSignature } from '../config/paypal.js';
 import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail } from '../utils/emailTemplates.js';
 
 const router = Router();
 
 /**
- * Verify Paymob HMAC signature
- * Paymob sends a callback with transaction data + hmac query param.
- * We must concatenate specific fields in order and hash with HMAC_SECRET.
+ * After customer approves on PayPal, they are redirected here.
+ * We capture the payment and redirect to the frontend success page.
  */
-function verifyHmac(obj, hmac) {
-  const keys = [
-    'amount_cents',
-    'created_at',
-    'currency',
-    'error_occured',
-    'has_parent_transaction',
-    'id',
-    'integration_id',
-    'is_3d_secure',
-    'is_auth',
-    'is_capture',
-    'is_refunded',
-    'is_standalone_payment',
-    'is_voided',
-    'order',
-    'owner',
-    'pending',
-    'source_data.pan',
-    'source_data.sub_type',
-    'source_data.type',
-    'success',
-  ];
+router.get('/paypal/success', async (req, res) => {
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
 
-  const getValue = (path) => {
-    const parts = path.split('.');
-    let val = obj;
-    for (const p of parts) {
-      val = val?.[p];
-    }
-    return val ?? '';
-  };
-
-  const concatenated = keys.map(k => String(getValue(k))).join('');
-
-  const hash = crypto
-    .createHmac('sha512', process.env.PAYMOB_HMAC_SECRET)
-    .update(concatenated)
-    .digest('hex');
-
-  return hash === hmac;
-}
-
-// POST /api/webhooks/paymob — Paymob transaction callback
-router.post('/paymob', async (req, res) => {
   try {
-    const { obj, hmac } = req.body;
+    const { token: paypalOrderId } = req.query; // PayPal sends ?token=PAYPAL_ORDER_ID
 
-    if (!obj || !hmac) {
-      // Paymob sometimes sends via query params on GET callback
-      return res.status(400).json({ error: 'Missing callback data' });
+    if (!paypalOrderId) {
+      return res.redirect(`${clientUrl}/order/failed`);
     }
 
-    // Verify HMAC
-    if (!verifyHmac(obj, hmac)) {
-      console.error('Paymob HMAC verification failed');
-      return res.status(403).json({ error: 'Invalid HMAC' });
-    }
-
-    const paymobOrderId = String(obj.order);
-    const order = await Order.findOne({ paymobOrderId });
-
+    // Find our order
+    const order = await Order.findOne({ paypalOrderId });
     if (!order) {
-      console.error('Order not found for Paymob order:', paymobOrderId);
-      return res.status(404).json({ error: 'Order not found' });
+      return res.redirect(`${clientUrl}/order/failed`);
     }
 
-    if (obj.success === true || obj.success === 'true') {
-      // Payment succeeded
-      if (order.paymentStatus !== 'paid') {
-        order.paymobTransactionId = String(obj.id);
-        order.amountPaid = obj.amount_cents;
-        await order.activate();
+    // Capture the payment
+    const capture = await capturePayPalOrder(paypalOrderId);
 
-        // Send confirmation email
-        if (!order.confirmationSent) {
-          const email = orderConfirmationEmail({
-            customerName: order.customerName,
-            publicSlug: order.publicSlug,
-            editToken: order.editToken,
-            weddingDetails: order.weddingDetails,
-          });
+    if (capture.status === 'COMPLETED') {
+      const captureData = capture.purchase_units?.[0]?.payments?.captures?.[0];
 
-          try {
-            await sendMail({ to: order.customerEmail, ...email });
-            order.confirmationSent = true;
-            await order.save();
-          } catch (emailErr) {
-            console.error('Failed to send confirmation email:', emailErr.message);
-          }
+      order.paypalCaptureId = captureData?.id || '';
+      order.amountPaid = captureData?.amount?.value || process.env.PRICE_USD;
+      order.currency = captureData?.amount?.currency_code || 'USD';
+      await order.activate(); // sets status=active, paymentStatus=paid, expiresAt=+1year
+
+      // Send confirmation email
+      if (!order.confirmationSent) {
+        const email = orderConfirmationEmail({
+          customerName: order.customerName,
+          publicSlug: order.publicSlug,
+          editToken: order.editToken,
+          weddingDetails: order.weddingDetails,
+        });
+
+        try {
+          await sendMail({ to: order.customerEmail, ...email });
+          order.confirmationSent = true;
+          await order.save();
+        } catch (emailErr) {
+          console.error('Failed to send confirmation email:', emailErr.message);
         }
       }
+
+      return res.redirect(`${clientUrl}/order/success/${order._id}`);
     } else {
-      // Payment failed
       order.paymentStatus = 'failed';
-      order.paymobTransactionId = String(obj.id);
       await order.save();
+      return res.redirect(`${clientUrl}/order/failed/${order._id}`);
+    }
+  } catch (err) {
+    console.error('PayPal capture error:', err);
+    return res.redirect(`${clientUrl}/order/failed`);
+  }
+});
+
+/**
+ * PayPal webhook for async events (refunds, disputes, etc.)
+ * Set this URL in PayPal Developer Dashboard → Webhooks
+ */
+router.post('/paypal', async (req, res) => {
+  try {
+    // Verify signature if webhook ID is configured
+    if (process.env.PAYPAL_WEBHOOK_ID) {
+      const isValid = await verifyWebhookSignature({
+        headers: req.headers,
+        body: req.body,
+        webhookId: process.env.PAYPAL_WEBHOOK_ID,
+      });
+      if (!isValid) {
+        console.error('PayPal webhook signature invalid');
+        return res.status(403).json({ error: 'Invalid signature' });
+      }
+    }
+
+    const event = req.body;
+
+    switch (event.event_type) {
+      case 'PAYMENT.CAPTURE.REFUNDED': {
+        const captureId = event.resource?.id;
+        const order = await Order.findOne({ paypalCaptureId: captureId });
+        if (order) {
+          order.paymentStatus = 'refunded';
+          order.status = 'cancelled';
+          await order.save();
+        }
+        break;
+      }
+
+      case 'PAYMENT.CAPTURE.REVERSED': {
+        const captureId = event.resource?.links?.find(l => l.rel === 'up')?.href?.split('/').pop();
+        const order = await Order.findOne({ paypalCaptureId: captureId });
+        if (order) {
+          order.paymentStatus = 'refunded';
+          order.status = 'cancelled';
+          await order.save();
+        }
+        break;
+      }
+
+      default:
+        break;
     }
 
     res.json({ received: true });
   } catch (err) {
-    console.error('Webhook error:', err);
+    console.error('PayPal webhook error:', err);
     res.status(500).json({ error: err.message });
-  }
-});
-
-// GET /api/webhooks/paymob/callback — Paymob redirect callback (browser redirect after payment)
-router.get('/paymob/callback', async (req, res) => {
-  const { success, order: paymobOrderId, hmac } = req.query;
-
-  const dbOrder = await Order.findOne({ paymobOrderId: String(paymobOrderId) });
-  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-
-  if (dbOrder && (success === 'true')) {
-    res.redirect(`${clientUrl}/order/success/${dbOrder._id}`);
-  } else if (dbOrder) {
-    res.redirect(`${clientUrl}/order/failed/${dbOrder._id}`);
-  } else {
-    res.redirect(`${clientUrl}/order/failed`);
   }
 });
 

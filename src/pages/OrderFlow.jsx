@@ -324,7 +324,7 @@ export default function OrderFlow() {
               <div className="form-submit">
                 <div className="price-summary">
                   <span className="price-label">Total</span>
-                  <span className="price-value">EGP 4,900</span>
+                  <span className="price-value">$99</span>
                 </div>
                 <button type="submit" className="btn btn-gold form-pay-btn" disabled={submitting}>
                   {submitting ? 'Processing...' : 'Proceed to Payment'}
