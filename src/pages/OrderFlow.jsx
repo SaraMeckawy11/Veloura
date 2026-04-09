@@ -1,15 +1,26 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 
+const PHOTO_CATEGORIES = [
+  { key: 'couple', label: 'Couple Photos', hint: 'Upload your best couple photos (max 3)', icon: 'heart', max: 3 },
+  { key: 'venue', label: 'Venue Photos', hint: 'Photos of your venue or ceremony location (max 2)', icon: 'location', max: 2 },
+  { key: 'story', label: 'Our Story Photos', hint: 'Photos from your journey together — first date, trips, proposal (max 4)', icon: 'book', max: 4 },
+  { key: 'gallery', label: 'Gallery Photos', hint: 'Additional photos for the gallery section (max 6)', icon: 'grid', max: 6 },
+];
+
 export default function OrderFlow() {
-  const [step, setStep] = useState(1); // 1: select template, 2: fill form, 3: redirecting to pay
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState('');
+  const [orderData, setOrderData] = useState(null);
 
   // Form state
   const [form, setForm] = useState({
@@ -29,8 +40,9 @@ export default function OrderFlow() {
   });
 
   const [disabledFields, setDisabledFields] = useState([]);
-  const [photos, setPhotos] = useState([]);
-  const [uploading, setUploading] = useState(false);
+  // Photos organized by category
+  const [photos, setPhotos] = useState({ couple: [], venue: [], story: [], gallery: [] });
+  const [uploading, setUploading] = useState({});
 
   useEffect(() => {
     fetch(`${API}/templates`)
@@ -49,26 +61,49 @@ export default function OrderFlow() {
     );
   };
 
-  const handlePhotoUpload = async (e) => {
+  const handlePhotoUpload = async (e, category) => {
     const files = e.target.files;
     if (!files.length) return;
-    setUploading(true);
+
+    const catConfig = PHOTO_CATEGORIES.find(c => c.key === category);
+    const currentCount = photos[category].length;
+    const remaining = catConfig.max - currentCount;
+    if (remaining <= 0) {
+      setError(`Maximum ${catConfig.max} photos for ${catConfig.label}`);
+      return;
+    }
+
+    setUploading(prev => ({ ...prev, [category]: true }));
     const formData = new FormData();
-    for (const f of files) formData.append('photos', f);
+    const filesToUpload = Array.from(files).slice(0, remaining);
+    for (const f of filesToUpload) formData.append('photos', f);
 
     try {
-      const res = await fetch(`${API}/upload`, { method: 'POST', body: formData });
+      const res = await fetch(`${API}/upload?category=${category}`, { method: 'POST', body: formData });
       const data = await res.json();
-      if (data.files) setPhotos(prev => [...prev, ...data.files]);
+      if (data.files) {
+        setPhotos(prev => ({
+          ...prev,
+          [category]: [...prev[category], ...data.files],
+        }));
+      }
     } catch {
       setError('Photo upload failed');
     }
-    setUploading(false);
+    setUploading(prev => ({ ...prev, [category]: false }));
   };
 
-  const removePhoto = (index) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
+  const removePhoto = (category, index) => {
+    setPhotos(prev => ({
+      ...prev,
+      [category]: prev[category].filter((_, i) => i !== index),
+    }));
   };
+
+  // Flatten all photos for submission
+  const allPhotos = Object.entries(photos).flatMap(([cat, items]) =>
+    items.map(p => ({ ...p, label: p.label || cat }))
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -97,19 +132,42 @@ export default function OrderFlow() {
             secondLanguage: form.secondLanguage || undefined,
           },
           disabledFields,
-          photos,
+          photos: allPhotos,
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Order failed');
 
-      // Redirect to Paymob payment iframe
+      setOrderData(data);
       setStep(3);
-      window.location.href = data.paymentUrl;
+      setSubmitting(false);
     } catch (err) {
       setError(err.message);
       setSubmitting(false);
+    }
+  };
+
+  const handleConfirmPayment = async () => {
+    setConfirming(true);
+    setError('');
+
+    try {
+      if (orderData.paymentUrl && !orderData.paymentUrl.includes('/order/success/')) {
+        window.location.href = orderData.paymentUrl;
+        return;
+      }
+
+      const res = await fetch(`${API}/orders/confirm/${orderData.orderId}`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Payment confirmation failed');
+
+      navigate(`/order/success/${orderData.orderId}`);
+    } catch (err) {
+      setError(err.message);
+      setConfirming(false);
     }
   };
 
@@ -167,7 +225,7 @@ export default function OrderFlow() {
             <p className="step-subtitle">Select the theme that matches your wedding vision</p>
 
             <div className="template-grid">
-              {templates.filter(t => t.category === 'launch').map(t => (
+              {templates.map(t => (
                 <button
                   key={t._id}
                   className={`template-option ${selectedTemplate?._id === t._id ? 'selected' : ''}`}
@@ -299,25 +357,39 @@ export default function OrderFlow() {
                 </div>
               </fieldset>
 
-              {/* Photos */}
+              {/* Photos — categorized */}
               <fieldset className="form-section">
                 <legend>Photos</legend>
-                <p className="form-hint">Upload a couple photo and/or venue photo (max 5 images, 10MB each)</p>
-                <div className="photo-upload-area">
-                  <label className="photo-upload-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
-                    {uploading ? 'Uploading...' : 'Add Photos'}
-                    <input type="file" multiple accept="image/*" onChange={handlePhotoUpload} disabled={uploading} hidden />
-                  </label>
-                  {photos.map((photo, i) => (
-                    <div key={i} className="photo-preview">
-                      <img src={photo.url} alt={`Upload ${i + 1}`} />
-                      <button type="button" className="photo-remove" onClick={() => removePhoto(i)}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                      </button>
+                <p className="form-hint">Upload photos for different sections of your invitation. Each category appears in its own section.</p>
+
+                {PHOTO_CATEGORIES.map(cat => (
+                  <div key={cat.key} className="photo-category">
+                    <div className="photo-category-header">
+                      <div>
+                        <h4 className="photo-category-title">{cat.label}</h4>
+                        <p className="photo-category-hint">{cat.hint}</p>
+                      </div>
+                      <span className="photo-category-count">{photos[cat.key].length}/{cat.max}</span>
                     </div>
-                  ))}
-                </div>
+                    <div className="photo-upload-area">
+                      {photos[cat.key].length < cat.max && (
+                        <label className="photo-upload-btn">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                          {uploading[cat.key] ? 'Uploading...' : 'Add'}
+                          <input type="file" multiple accept="image/*" onChange={e => handlePhotoUpload(e, cat.key)} disabled={uploading[cat.key]} hidden />
+                        </label>
+                      )}
+                      {photos[cat.key].map((photo, i) => (
+                        <div key={i} className="photo-preview">
+                          <img src={photo.url} alt={`${cat.label} ${i + 1}`} />
+                          <button type="button" className="photo-remove" onClick={() => removePhoto(cat.key, i)}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </fieldset>
 
               {/* Submit */}
@@ -335,12 +407,78 @@ export default function OrderFlow() {
           </div>
         )}
 
-        {/* Step 3: Redirecting */}
+        {/* Step 3: Review & Confirm Payment */}
         {step === 3 && (
-          <div className="step-content step-redirecting">
-            <div className="redirect-spinner" />
-            <h2>Redirecting to payment...</h2>
-            <p>You'll be taken to our secure payment page. Please don't close this window.</p>
+          <div className="step-content">
+            <button className="step-back-btn" onClick={() => setStep(2)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
+              Back to Details
+            </button>
+
+            <h1 className="step-title">Review & Confirm</h1>
+            <p className="step-subtitle">Please review your order details before confirming payment</p>
+
+            <div className="review-card">
+              <div className="review-section">
+                <h3 className="review-section-title">Selected Design</h3>
+                <div className="review-template">
+                  <img src={selectedTemplate.previewImage} alt={selectedTemplate.name} />
+                  <div>
+                    <strong>{selectedTemplate.name}</strong>
+                    <p>{selectedTemplate.description}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="review-section">
+                <h3 className="review-section-title">Contact Info</h3>
+                <div className="review-grid">
+                  <div className="review-item"><span className="review-label">Name</span><span>{form.customerName}</span></div>
+                  <div className="review-item"><span className="review-label">Email</span><span>{form.customerEmail}</span></div>
+                  {form.customerPhone && <div className="review-item"><span className="review-label">Phone</span><span>{form.customerPhone}</span></div>}
+                </div>
+              </div>
+
+              <div className="review-section">
+                <h3 className="review-section-title">Wedding Details</h3>
+                <div className="review-grid">
+                  <div className="review-item"><span className="review-label">Partner 1</span><span>{form.groomName}</span></div>
+                  <div className="review-item"><span className="review-label">Partner 2</span><span>{form.brideName}</span></div>
+                  {form.weddingDate && <div className="review-item"><span className="review-label">Date</span><span>{new Date(form.weddingDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span></div>}
+                  {form.weddingTime && !disabledFields.includes('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{form.weddingTime}</span></div>}
+                  <div className="review-item"><span className="review-label">Venue</span><span>{form.venue}</span></div>
+                  {form.venueAddress && !disabledFields.includes('venueAddress') && <div className="review-item"><span className="review-label">Address</span><span>{form.venueAddress}</span></div>}
+                </div>
+              </div>
+
+              {allPhotos.length > 0 && (
+                <div className="review-section">
+                  <h3 className="review-section-title">Photos ({allPhotos.length})</h3>
+                  <div className="review-photos">
+                    {allPhotos.map((p, i) => (
+                      <div key={i} className="review-photo-item">
+                        <img src={p.url} alt={`Photo ${i + 1}`} className="review-photo" />
+                        <span className="review-photo-label">{p.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="form-submit review-submit">
+              <div className="review-submit-info">
+                <div className="price-summary">
+                  <span className="price-label">Total</span>
+                  <span className="price-value">$99</span>
+                </div>
+                <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
+              </div>
+              <button className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
+                {confirming ? 'Processing Payment...' : 'Confirm & Pay $99'}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
+              </button>
+            </div>
           </div>
         )}
       </div>

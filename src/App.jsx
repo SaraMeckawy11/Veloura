@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import OrderFlow from './pages/OrderFlow';
 import OrderSuccess from './pages/OrderSuccess';
 import Dashboard from './pages/Dashboard';
+import Invitation from './pages/Invitation';
 
 export default function App() {
   return (
@@ -14,6 +15,8 @@ export default function App() {
         <Route path="/order/failed/:orderId?" element={<OrderSuccess />} />
         <Route path="/dashboard/:editToken" element={<Dashboard />} />
         <Route path="/edit/:editToken" element={<Dashboard />} />
+        <Route path="/demo/boarding-pass" element={<Invitation demo />} />
+        <Route path="/i/:publicSlug" element={<Invitation />} />
       </Routes>
     </BrowserRouter>
   );

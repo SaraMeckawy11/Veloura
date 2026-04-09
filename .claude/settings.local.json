@@ -9,7 +9,26 @@
       "Bash(rm -rf temp-project)",
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(node -e \":*)",
+      "Bash(nslookup _mongodb._tcp.cluster0.7qqj326.mongodb.net)",
+      "Bash(nslookup _mongodb._tcp.cluster0.7qqj326.mongodb.net 8.8.8.8)",
+      "Bash(nslookup cluster0-shard-00-00.7qqj326.mongodb.net 8.8.8.8)",
+      "Bash(timeout 15 node -e \":*)",
+      "Bash(timeout 20 node -e \":*)",
+      "Bash(powershell -Command \"Test-NetConnection -ComputerName ac-0nswdaq-shard-00-00.7qqj326.mongodb.net -Port 27017 -WarningAction SilentlyContinue | Select-Object TcpTestSucceeded\")",
+      "Bash(nslookup -type=TXT cluster0.7qqj326.mongodb.net 8.8.8.8)",
+      "Bash(timeout 30 node seed.js)",
+      "Bash(node server.js)",
+      "Bash(timeout 5 bash -c 'sleep 3 && curl -s http://localhost:4000/api/health')",
+      "Bash(curl -s http://localhost:4000/api/templates)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Bash(npx vite:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":5173\")",
+      "Bash(cp \"C:\\\\Sara\\\\wedding_Invitations\\\\boarding-pass-weddings-main\\\\src\\\\assets\\\\clouds-hero.jpg\" \"C:\\\\Sara\\\\wedding_Inv\\\\src\\\\assets\\\\clouds-hero.jpg\")",
+      "Bash(cp \"C:\\\\Sara\\\\wedding_Invitations\\\\boarding-pass-weddings-main\\\\src\\\\assets\\\\airplane-splash.png\" \"C:\\\\Sara\\\\wedding_Inv\\\\src\\\\assets\\\\airplane-splash.png\")"
     ]
   }
 }

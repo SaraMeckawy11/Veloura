@@ -49,6 +49,30 @@
   border-color: var(--border);
 }
 
+.design-card--demo {
+  cursor: pointer;
+}
+.design-card--demo:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+.design-demo-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 6px 14px;
+  border-radius: 50px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
 .design-card-preview {
   height: 220px;
   position: relative;

@@ -1,16 +1,17 @@
 import { Router } from 'express';
 import Order from '../models/Order.js';
 import Template from '../models/Template.js';
-import { createPayPalOrder } from '../config/paypal.js';
+import User from '../models/User.js';
 import { sendMail } from '../config/email.js';
-import { editLimitWarningEmail } from '../utils/emailTemplates.js';
+import { orderConfirmationEmail, editLimitWarningEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 
 const router = Router();
 
 const PRICE_USD = process.env.PRICE_USD || '99.00';
+const paypalConfigured = process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_ID !== 'replace_me';
 
-// POST /api/orders — create order + PayPal checkout
+// POST /api/orders — create order + PayPal checkout (or skip payment in dev)
 router.post('/', validateOrderBody, async (req, res) => {
   try {
     const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl } = req.body;
@@ -32,22 +33,87 @@ router.post('/', validateOrderBody, async (req, res) => {
     });
     await order.save();
 
-    // Create PayPal checkout order
-    const { paypalOrderId, approvalUrl } = await createPayPalOrder({
-      amountUSD: PRICE_USD,
-      description: `Eternally — ${template.name} Wedding Invitation`,
-      orderId: order._id.toString(),
-    });
+    // Find or create User
+    let user = await User.findOne({ email: customerEmail.toLowerCase() });
+    if (!user) {
+      user = new User({
+        name: customerName,
+        email: customerEmail,
+        phone: customerPhone || '',
+      });
+      await user.save();
+    }
+    if (!user.orders.includes(order._id)) {
+      user.orders.push(order._id);
+      await user.save();
+    }
 
-    order.paypalOrderId = paypalOrderId;
-    await order.save();
+    // If PayPal is configured, create a checkout session
+    if (paypalConfigured) {
+      const { createPayPalOrder } = await import('../config/paypal.js');
+      const { paypalOrderId, approvalUrl } = await createPayPalOrder({
+        amountUSD: PRICE_USD,
+        description: `Eternally — ${template.name} Wedding Invitation`,
+        orderId: order._id.toString(),
+      });
 
+      order.paypalOrderId = paypalOrderId;
+      await order.save();
+
+      return res.status(201).json({
+        orderId: order._id,
+        paymentUrl: approvalUrl,
+      });
+    }
+
+    // Dev mode (no PayPal): order stays as draft, let frontend handle confirmation
     res.status(201).json({
       orderId: order._id,
-      paymentUrl: approvalUrl,
     });
   } catch (err) {
     console.error('Order creation error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/orders/confirm/:orderId — confirm payment (dev mode)
+router.post('/confirm/:orderId', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.orderId);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    if (order.paymentStatus === 'paid') {
+      return res.json({ message: 'Already paid', orderId: order._id });
+    }
+
+    // Activate the order
+    order.amountPaid = paypalConfigured ? PRICE_USD : '0.00';
+    order.currency = 'USD';
+    await order.activate();
+
+    // Send confirmation email with live links
+    try {
+      const email = orderConfirmationEmail({
+        customerName: order.customerName,
+        publicSlug: order.publicSlug,
+        editToken: order.editToken,
+        weddingDetails: order.weddingDetails,
+        isPending: false,
+      });
+      await sendMail({ to: order.customerEmail, ...email });
+      order.confirmationSent = true;
+      await order.save();
+    } catch (emailErr) {
+      console.error('Confirmation email failed:', emailErr.message);
+    }
+
+    res.json({
+      message: 'Payment confirmed',
+      orderId: order._id,
+      publicSlug: order.publicSlug,
+      editToken: order.editToken,
+    });
+  } catch (err) {
+    console.error('Payment confirmation error:', err);
     res.status(500).json({ error: err.message });
   }
 });

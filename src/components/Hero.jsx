@@ -33,12 +33,12 @@ export default function Hero() {
             <Link to="/order" className="btn btn-primary">
               Create My Invitation
             </Link>
-            <a href="#designs" className="btn btn-secondary" onClick={e => handleClick(e, '#designs')}>
+            <Link to="/demo/boarding-pass" className="btn btn-secondary">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="5 3 19 12 5 21 5 3" />
               </svg>
               View Demo
-            </a>
+            </Link>
           </div>
 
           <div className="hero-features">

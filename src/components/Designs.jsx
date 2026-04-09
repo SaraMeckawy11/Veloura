@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
@@ -65,13 +66,14 @@ const designs = [
   },
   {
     name: 'Boarding Pass',
-    category: 'new',
+    category: 'launch',
     envelope: 'Airmail envelope with vintage stamps slides open',
     description: 'Travel-themed ticket with hometowns as departure/arrival. Fun, playful, and shareable.',
     image: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=600&h=400&fit=crop&q=80',
     overlay: 'linear-gradient(135deg, rgba(66,165,245,0.3), rgba(13,71,161,0.4))',
-    badge: 'Coming Soon',
-    badgeClass: 'badge-new',
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/boarding-pass',
   },
   {
     name: 'Midnight Garden',
@@ -135,6 +137,7 @@ const filters = [
 export default function Designs() {
   const [activeFilter, setActiveFilter] = useState('all');
   const revealRef = useReveal();
+  const navigate = useNavigate();
 
   const filtered = activeFilter === 'all'
     ? designs
@@ -165,7 +168,20 @@ export default function Designs() {
 
         <div className="designs-grid">
           {filtered.map(design => (
-            <div className="design-card" key={design.name}>
+            <div
+              className={`design-card${design.demoPath ? ' design-card--demo' : ''}`}
+              key={design.name}
+              role={design.demoPath ? 'button' : undefined}
+              tabIndex={design.demoPath ? 0 : undefined}
+              onClick={() => design.demoPath && navigate(design.demoPath)}
+              onKeyDown={(e) => {
+                if (!design.demoPath) return;
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(design.demoPath);
+                }
+              }}
+            >
               <div className="design-card-preview">
                 <div
                   className="design-card-image"
@@ -176,6 +192,9 @@ export default function Designs() {
                   <span className="design-preview-text">{design.name}</span>
                 </div>
                 <span className={`design-badge ${design.badgeClass}`}>{design.badge}</span>
+                {design.demoPath && (
+                  <span className="design-demo-hint" aria-hidden>View live demo</span>
+                )}
               </div>
               <div className="design-card-body">
                 <h3>{design.name}</h3>

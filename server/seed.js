@@ -76,7 +76,7 @@ const templates = [
   {
     name: 'Boarding Pass',
     slug: 'boarding-pass',
-    category: 'new',
+    category: 'launch',
     description: 'Travel-themed ticket with hometowns as departure/arrival. Fun, playful, and shareable.',
     envelope: 'Airmail envelope with vintage stamps slides open',
     previewImage: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=600&h=400&fit=crop&q=80',

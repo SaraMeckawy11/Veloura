@@ -23,19 +23,25 @@ function uploadToCloudinary(fileBuffer, options = {}) {
 }
 
 // POST /api/upload — upload one or more images
-router.post('/', upload.array('photos', 5), async (req, res) => {
+// Accepts optional query param ?category=couple|venue|story|gallery
+router.post('/', upload.array('photos', 10), async (req, res) => {
   try {
     if (!req.files?.length) {
       return res.status(400).json({ error: 'No files uploaded' });
     }
 
+    const category = req.query.category || req.body.category || 'gallery';
+
     const uploads = await Promise.all(
-      req.files.map(file => uploadToCloudinary(file.buffer))
+      req.files.map(file => uploadToCloudinary(file.buffer, {
+        folder: `eternally/uploads/${category}`,
+      }))
     );
 
     const files = uploads.map(result => ({
       url: result.secure_url,
       publicId: result.public_id,
+      label: category,
     }));
 
     res.json({ files });
