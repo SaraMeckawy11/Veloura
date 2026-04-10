@@ -1,13 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+    <linearGradient id="gold" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#d4af6a"/>
+      <stop offset="50%" stop-color="#f0d48a"/>
+      <stop offset="100%" stop-color="#b8924a"/>
+    </linearGradient>
+    <linearGradient id="gold2" x1="48" y1="0" x2="0" y2="48" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#b8924a"/>
+      <stop offset="50%" stop-color="#e8c86a"/>
       <stop offset="100%" stop-color="#d4af6a"/>
     </linearGradient>
+    <linearGradient id="diamond" x1="16" y1="4" x2="22" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f5edd6"/>
+      <stop offset="50%" stop-color="#d4af6a"/>
+      <stop offset="100%" stop-color="#a67c3d"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="0.8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <!-- Interlocking rings / infinity symbol representing eternal love -->
-  <path d="M14 24c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10z" stroke="url(#g)" stroke-width="2.5" fill="none"/>
-  <path d="M24 24c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10z" stroke="url(#g)" stroke-width="2.5" fill="none"/>
-  <!-- Elegant E letterform -->
-  <text x="24" y="30" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="400" font-style="italic" fill="url(#g)">E</text>
+
+  <!-- Man's plain band (right, behind) -->
+  <ellipse cx="29" cy="27" rx="10.5" ry="11" stroke="url(#gold2)" stroke-width="2.8" fill="none" opacity="0.92"/>
+  <!-- Inner shine on plain band -->
+  <ellipse cx="29" cy="27" rx="8.2" ry="8.6" stroke="url(#gold2)" stroke-width="0.4" fill="none" opacity="0.3"/>
+
+  <!-- Woman's diamond ring (tilted) -->
+  <g transform="rotate(-15, 19, 27)">
+    <!-- Diamond ring band -->
+    <ellipse cx="19" cy="27" rx="10.5" ry="11" stroke="url(#gold)" stroke-width="2.8" fill="none" filter="url(#glow)"/>
+    <!-- Inner shine on diamond band -->
+    <ellipse cx="19" cy="27" rx="8.2" ry="8.6" stroke="url(#gold)" stroke-width="0.4" fill="none" opacity="0.35"/>
+
+    <!-- Diamond gem (crown up, point down into band) -->
+    <polygon points="15,10 23,10 21,14.5 17,14.5" fill="url(#diamond)" stroke="url(#gold)" stroke-width="0.6" stroke-linejoin="round" filter="url(#glow)"/>
+    <polygon points="17,14.5 21,14.5 19,17" fill="url(#diamond)" stroke="url(#gold)" stroke-width="0.5" stroke-linejoin="round"/>
+    <!-- Crown facet line -->
+    <line x1="15" y1="10" x2="21" y2="14.5" stroke="url(#gold)" stroke-width="0.4" opacity="0.5"/>
+    <line x1="23" y1="10" x2="17" y2="14.5" stroke="url(#gold)" stroke-width="0.4" opacity="0.5"/>
+    <!-- Diamond sparkle -->
+    <circle cx="17.8" cy="11.5" r="0.6" fill="#fff" opacity="0.85"/>
+    <circle cx="20.2" cy="12.5" r="0.35" fill="#fff" opacity="0.6"/>
+  </g>
 </svg>
