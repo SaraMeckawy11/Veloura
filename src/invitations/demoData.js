@@ -1,16 +1,16 @@
 /**
  * Demo data for the Boarding Pass invitation template.
  */
-import gallery1 from '../../assets/gallery-1.jpg';
-import gallery2 from '../../assets/gallery-2.jpg';
-import gallery3 from '../../assets/gallery-3.jpg';
-import gallery4 from '../../assets/gallery-4.jpg';
-import gallery5 from '../../assets/gallery-5.jpg';
-import gallery6 from '../../assets/gallery-6.jpg';
-import story1 from '../../assets/story-1.jpg';
-import story2 from '../../assets/story-2.jpg';
-import story3 from '../../assets/story-3.jpg';
-import story4 from '../../assets/story-4.jpg';
+import gallery1 from '../assets/gallery-1.jpg';
+import gallery2 from '../assets/gallery-2.jpg';
+import gallery3 from '../assets/gallery-3.jpg';
+import gallery4 from '../assets/gallery-4.jpg';
+import gallery5 from '../assets/gallery-5.jpg';
+import gallery6 from '../assets/gallery-6.jpg';
+import story1 from '../assets/story-1.jpg';
+import story2 from '../assets/story-2.jpg';
+import story3 from '../assets/story-3.jpg';
+import story4 from '../assets/story-4.jpg';
 
 export const BOARDING_PASS_DEMO_ORDER = {
   referenceLayout: true,

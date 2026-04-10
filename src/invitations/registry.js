@@ -14,7 +14,7 @@ import { lazy } from 'react';
 const registry = {
   'boarding-pass': {
     component: lazy(() => import('./boarding-pass/BoardingPassInvitation')),
-    demoData: () => import('./boarding-pass/demoData').then(m => m.BOARDING_PASS_DEMO_ORDER),
+    demoData: () => import('./demoData').then(m => m.BOARDING_PASS_DEMO_ORDER),
   },
   // Future templates:
   // 'velvet-rose': {
