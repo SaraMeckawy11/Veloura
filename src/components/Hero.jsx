@@ -33,12 +33,19 @@ export default function Hero() {
             <Link to="/order" className="btn btn-primary">
               Create My Invitation
             </Link>
-            <Link to="/demo/boarding-pass" className="btn btn-secondary">
+            <a href="#designs" className="btn btn-secondary" onClick={e => {
+              e.preventDefault();
+              const el = document.querySelector('#designs');
+              if (el) {
+                const y = el.getBoundingClientRect().top + window.pageYOffset - 80;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+              }
+            }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="5 3 19 12 5 21 5 3" />
               </svg>
-              View Demo
-            </Link>
+              View Designs
+            </a>
           </div>
 
           <div className="hero-features">
