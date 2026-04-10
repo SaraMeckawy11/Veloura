@@ -10,6 +10,18 @@ const PHOTO_CATEGORIES = [
   { key: 'gallery', label: 'Gallery Photos', hint: 'Additional photos for the gallery section (max 6)', icon: 'grid', max: 6 },
 ];
 
+// Local fallback images keyed by slug — used when API images fail to load
+const TEMPLATE_PREVIEW_IMAGES = {
+  'velvet-rose': 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop&q=80',
+  'golden-hour': 'https://images.unsplash.com/photo-1478146059778-26028b07395a?w=600&h=400&fit=crop&q=80',
+  'sakura-spring': 'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?w=600&h=400&fit=crop&q=80',
+  'dark-romance': 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=600&h=400&fit=crop&q=80',
+  'pharaonic': 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop&q=80',
+  'coastal-breeze': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
+  'boarding-pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
+  'midnight-garden': 'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=600&h=400&fit=crop&q=80',
+};
+
 const LANGUAGE_OPTIONS = [
   { value: '', label: 'None' },
   { value: 'ar', label: 'Arabic' },
@@ -68,11 +80,42 @@ export default function OrderFlow() {
     { date: '', title: '', description: '' },
   ]);
 
+  // Local template definitions used as fallback when API is unavailable
+  const localTemplates = [
+    { _id: 'velvet-rose', name: 'Velvet Rose', slug: 'velvet-rose', envelope: 'Burgundy wax seal breaks open, rose petals scatter', colorScheme: { primary: '#8b2942', secondary: '#f5d5dc', background: '#3d0f1a' } },
+    { _id: 'golden-hour', name: 'Golden Hour', slug: 'golden-hour', envelope: 'Gold foil envelope unfolds with a warm light burst', colorScheme: { primary: '#daa520', secondary: '#fff8e7', background: '#8b6914' } },
+    { _id: 'sakura-spring', name: 'Sakura Spring', slug: 'sakura-spring', envelope: 'Pale pink envelope opens, cherry blossoms cascade down', colorScheme: { primary: '#f48fb1', secondary: '#880e4f', background: '#fce4ec' } },
+    { _id: 'dark-romance', name: 'Dark Romance', slug: 'dark-romance', envelope: 'Dark velvet envelope with blood-red wax seal cracks open', colorScheme: { primary: '#c62828', secondary: '#ffcdd2', background: '#1a1a1a' } },
+    { _id: 'pharaonic', name: 'Pharaonic', slug: 'pharaonic', envelope: 'Gold sarcophagus-style envelope with hieroglyphic border unseals', colorScheme: { primary: '#ffd54f', secondary: '#1a237e', background: '#2e1a00' } },
+    { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', envelope: 'Sand-textured envelope washes away like a wave', colorScheme: { primary: '#26a69a', secondary: '#004d40', background: '#e0f2f1' } },
+    { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
+    { _id: 'midnight-garden', name: 'Midnight Garden', slug: 'midnight-garden', envelope: 'Dark envelope opens, fireflies emerge into the night', colorScheme: { primary: '#b0bec5', secondary: '#cfd8dc', background: '#0d1b2a' } },
+  ];
+
   useEffect(() => {
     fetch(`${API}/templates`)
-      .then(r => r.json())
-      .then(data => { setTemplates(data); setLoading(false); })
-      .catch(() => { setError('Failed to load templates'); setLoading(false); });
+      .then(r => {
+        if (!r.ok) throw new Error('API error');
+        return r.json();
+      })
+      .then(data => {
+        // Merge API data with local fallback images
+        const merged = data.map(t => ({
+          ...t,
+          previewImage: t.previewImage || TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
+        }));
+        setTemplates(merged);
+        setLoading(false);
+      })
+      .catch(() => {
+        // Fall back to local template data with local images
+        const fallback = localTemplates.map(t => ({
+          ...t,
+          previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
+        }));
+        setTemplates(fallback);
+        setLoading(false);
+      });
   }, []);
 
   const handleInput = (key, value) => {
@@ -262,7 +305,25 @@ export default function OrderFlow() {
                   onClick={() => setSelectedTemplate(t)}
                 >
                   <div className="template-option-image">
-                    <img src={t.previewImage} alt={t.name} />
+                    {t.previewImage ? (
+                      <img
+                        src={t.previewImage}
+                        alt={t.name}
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.parentElement.style.background =
+                            `linear-gradient(135deg, ${t.colorScheme?.primary || '#b8924a'}, ${t.colorScheme?.background || '#2d2a26'})`;
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className="template-option-fallback"
+                        style={{ background: `linear-gradient(135deg, ${t.colorScheme?.primary || '#b8924a'}, ${t.colorScheme?.background || '#2d2a26'})` }}
+                      >
+                        <span>{t.name}</span>
+                      </div>
+                    )}
                     {selectedTemplate?._id === t._id && (
                       <div className="template-selected-badge">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>

@@ -25,7 +25,7 @@ const templates = [
     category: 'launch',
     description: 'Deep burgundy & ivory. Rose petals drift as couple names appear in calligraphy. Romantic, warm, timeless.',
     envelope: 'Burgundy wax seal breaks open, rose petals scatter outward',
-    previewImage: 'https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=600&h=400&fit=crop&q=80',
+    previewImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop&q=80',
     colorScheme: { primary: '#8b2942', secondary: '#f5d5dc', background: '#3d0f1a' },
   },
   {
@@ -61,7 +61,7 @@ const templates = [
     category: 'launch',
     description: 'Gold leaf, lapis blue, sandstone. Temple columns frame couple names. A design no competitor offers.',
     envelope: 'Gold sarcophagus-style envelope with hieroglyphic border unseals',
-    previewImage: 'https://images.unsplash.com/photo-1553913861-c0a802e386bd?w=600&h=400&fit=crop&q=80',
+    previewImage: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop&q=80',
     colorScheme: { primary: '#ffd54f', secondary: '#1a237e', background: '#2e1a00' },
   },
   {
@@ -79,7 +79,7 @@ const templates = [
     category: 'launch',
     description: 'Travel-themed ticket with hometowns as departure/arrival. Fun, playful, and shareable.',
     envelope: 'Airmail envelope with vintage stamps slides open',
-    previewImage: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=600&h=400&fit=crop&q=80',
+    previewImage: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
     colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' },
   },
   {
