@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#b8924a"/>
+      <stop offset="100%" stop-color="#d4af6a"/>
+    </linearGradient>
+  </defs>
+  <!-- Interlocking rings / infinity symbol representing eternal love -->
+  <path d="M14 24c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10z" stroke="url(#g)" stroke-width="2.5" fill="none"/>
+  <path d="M24 24c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10-10-4.5-10-10z" stroke="url(#g)" stroke-width="2.5" fill="none"/>
+  <!-- Elegant E letterform -->
+  <text x="24" y="30" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="400" font-style="italic" fill="url(#g)">E</text>
+</svg>
