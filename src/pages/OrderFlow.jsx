@@ -66,7 +66,7 @@ export default function OrderFlow() {
     venue: '',
     venueAddress: '',
     venueMapUrl: '',
-    message: 'Request the pleasure of your company at our wedding celebration',
+    message: 'This text appears as the tagline under your names in the invitation ',
     language: 'en',
     secondLanguage: '',
   });
