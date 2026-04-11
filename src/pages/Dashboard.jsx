@@ -73,6 +73,30 @@ export default function Dashboard() {
     setSaveMsg('');
   };
 
+  // Compute whether names are editable (within 48h grace period + has remaining edits)
+  const nameEditable = (() => {
+    if (!order || order.status !== 'active') return false;
+    if ((order.nameEditsRemaining ?? 0) <= 0) return false;
+    if (!order.activatedAt) return false;
+    const graceMs = (order.nameGraceHours || 48) * 60 * 60 * 1000;
+    return (Date.now() - new Date(order.activatedAt).getTime()) < graceMs;
+  })();
+
+  // Compute human-readable time remaining for grace period
+  const nameGraceRemaining = (() => {
+    if (!order?.activatedAt) return null;
+    const graceMs = (order.nameGraceHours || 48) * 60 * 60 * 1000;
+    const remaining = graceMs - (Date.now() - new Date(order.activatedAt).getTime());
+    if (remaining <= 0) return null;
+    const hours = Math.floor(remaining / (60 * 60 * 1000));
+    const mins = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+    if (hours > 0) return `${hours}h ${mins}m`;
+    return `${mins}m`;
+  })();
+
+  // Whether wedding date is editable
+  const dateEditable = order && (order.dateEditsRemaining ?? 2) > 0;
+
   const handleEditInput = (key, value) => {
     setEditForm(prev => ({ ...prev, [key]: value }));
   };
@@ -118,19 +142,25 @@ export default function Dashboard() {
     setSaving(true);
     setSaveMsg('');
     try {
+      const weddingDetailsPayload = {
+        weddingDate: editForm.weddingDate || undefined,
+        weddingTime: editForm.weddingTime || undefined,
+        venue: editForm.venue,
+        venueAddress: editForm.venueAddress || undefined,
+        venueMapUrl: editForm.venueMapUrl || undefined,
+        message: editForm.message || undefined,
+        secondLanguage: editForm.secondLanguage || undefined,
+      };
+      // Include name fields if they were editable (grace period)
+      if (nameEditable) {
+        weddingDetailsPayload.groomName = editForm.groomName;
+        weddingDetailsPayload.brideName = editForm.brideName;
+      }
       const res = await fetch(`${API}/orders/edit/${editToken}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          weddingDetails: {
-            weddingDate: editForm.weddingDate || undefined,
-            weddingTime: editForm.weddingTime || undefined,
-            venue: editForm.venue,
-            venueAddress: editForm.venueAddress || undefined,
-            venueMapUrl: editForm.venueMapUrl || undefined,
-            message: editForm.message || undefined,
-            secondLanguage: editForm.secondLanguage || undefined,
-          },
+          weddingDetails: weddingDetailsPayload,
           photos: flattenEditPhotos(),
         }),
       });
@@ -141,7 +171,14 @@ export default function Dashboard() {
       const updated = await fetch(`${API}/orders/dashboard/${editToken}`).then(r => r.json());
       setOrder(updated);
       setEditing(false);
-      setSaveMsg(`Saved! ${data.editsRemaining} edits remaining.`);
+      const parts = [`Saved! ${data.editsRemaining} edits remaining.`];
+      if (data.nameEditsRemaining !== undefined && data.nameEditsRemaining <= 0) {
+        parts.push('Couple names are now locked.');
+      }
+      if (data.dateEditsRemaining !== undefined && data.dateEditsRemaining <= 0) {
+        parts.push('Wedding date is now locked.');
+      }
+      setSaveMsg(parts.join(' '));
     } catch (err) {
       setSaveMsg(err.message);
     }
@@ -204,7 +241,7 @@ export default function Dashboard() {
           </a>
           <button className="dash-action-btn" onClick={startEditing} disabled={order.editsRemaining <= 0 || editing}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
-            {editing ? 'Editing...' : `Edit Invitation (${order.editsRemaining} left)`}
+            {editing ? 'Editing...' : `Edit (${order.editsRemaining} left)`}
           </button>
           <button className="dash-action-btn" onClick={() => {
             const text = `You're invited to ${wd.groomName && wd.brideName ? `${wd.groomName} & ${wd.brideName}'s` : 'our'} wedding! View the invitation here: ${inviteUrl}`;
@@ -227,24 +264,65 @@ export default function Dashboard() {
             <h2 className="dash-section-title">Edit Wedding Details</h2>
             <div className="edit-form">
               <div className="form-grid">
-                <div className="form-field field-locked">
+                {nameEditable ? (
+                  <>
+                    <div className="form-field">
+                      <label>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
+                        Partner 1 Name
+                      </label>
+                      <input type="text" value={editForm.groomName} onChange={e => handleEditInput('groomName', e.target.value)} />
+                    </div>
+                    <div className="form-field">
+                      <label>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
+                        Partner 2 Name
+                      </label>
+                      <input type="text" value={editForm.brideName} onChange={e => handleEditInput('brideName', e.target.value)} />
+                    </div>
+                    <div className="field-grace-notice full-width">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                      You have <strong>1 name correction</strong> available.
+                      {nameGraceRemaining && <> Window closes in <strong>{nameGraceRemaining}</strong>.</>}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="form-field field-locked">
+                      <label>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+                        Partner 1 Name
+                      </label>
+                      <div className="field-locked-value">{editForm.groomName}</div>
+                    </div>
+                    <div className="form-field field-locked">
+                      <label>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+                        Partner 2 Name
+                      </label>
+                      <div className="field-locked-value">{editForm.brideName}</div>
+                    </div>
+                    <p className="field-locked-notice full-width">
+                      {order.nameEditsRemaining <= 0
+                        ? 'Name correction has been used. Couple names are now permanently locked.'
+                        : 'The 48-hour name correction window has expired. Couple names are now locked.'}
+                    </p>
+                  </>
+                )}
+                <div className={`form-field ${dateEditable ? '' : 'field-locked'}`}>
                   <label>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
-                    Partner 1 Name
+                    {dateEditable ? '' : (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+                    )}
+                    Wedding Date {dateEditable && order.dateEditsRemaining !== undefined && (
+                      <span className="field-edit-count">({order.dateEditsRemaining} change{order.dateEditsRemaining === 1 ? '' : 's'} left)</span>
+                    )}
                   </label>
-                  <div className="field-locked-value">{editForm.groomName}</div>
-                </div>
-                <div className="form-field field-locked">
-                  <label>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
-                    Partner 2 Name
-                  </label>
-                  <div className="field-locked-value">{editForm.brideName}</div>
-                </div>
-                <p className="field-locked-notice full-width">Couple names are permanently locked after payment and cannot be changed.</p>
-                <div className="form-field">
-                  <label>Wedding Date</label>
-                  <input type="date" value={editForm.weddingDate} onChange={e => handleEditInput('weddingDate', e.target.value)} />
+                  {dateEditable ? (
+                    <input type="date" value={editForm.weddingDate} onChange={e => handleEditInput('weddingDate', e.target.value)} />
+                  ) : (
+                    <div className="field-locked-value">{editForm.weddingDate ? new Date(editForm.weddingDate + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}</div>
+                  )}
                 </div>
                 <div className="form-field">
                   <label>Wedding Time</label>

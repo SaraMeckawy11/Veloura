@@ -424,6 +424,32 @@
   grid-column: 1 / -1;
 }
 
+.field-grace-notice {
+  font-size: 0.8rem;
+  color: #8B7030;
+  background: #FFF8E8;
+  border: 1px solid #F0DDA8;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.5;
+}
+.field-grace-notice.full-width {
+  grid-column: 1 / -1;
+}
+.field-grace-notice strong {
+  color: #6B5520;
+}
+
+.field-edit-count {
+  font-size: 0.75rem;
+  color: var(--text-muted, #888);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
 .edit-actions {
   display: flex;
   gap: 12px;

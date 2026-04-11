@@ -570,6 +570,7 @@
   max-width: 340px;
   padding: 16px 32px;
   font-size: 1rem;
+  justify-content: center;
 }
 
 /* Redirecting */
@@ -641,6 +642,29 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(184,146,74,0.3);
+}
+.story-milestone-remove {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted, #999);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: var(--transition);
+  z-index: 2;
+}
+.story-milestone-remove:hover {
+  background: #fee;
+  border-color: #e88;
+  color: #c44;
 }
 .story-add-btn {
   display: flex;

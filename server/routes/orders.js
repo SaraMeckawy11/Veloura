@@ -3,7 +3,7 @@ import Order from '../models/Order.js';
 import Template from '../models/Template.js';
 import User from '../models/User.js';
 import { sendMail } from '../config/email.js';
-import { orderConfirmationEmail, editLimitWarningEmail } from '../utils/emailTemplates.js';
+import { orderConfirmationEmail, editLimitWarningEmail, sensitiveFieldChangeEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 
 const router = Router();
@@ -163,6 +163,10 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       musicEnabled: order.musicEnabled,
       publicSlug: order.publicSlug,
       editsRemaining: order.editsRemaining,
+      nameEditsRemaining: order.nameEditsRemaining,
+      dateEditsRemaining: order.dateEditsRemaining,
+      activatedAt: order.activatedAt,
+      nameGraceHours: Order.NAME_EDIT_GRACE_HOURS,
       expiresAt: order.expiresAt,
       lockedFields: order.status === 'active' ? Order.LOCKED_FIELDS : [],
     });
@@ -186,16 +190,34 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
 
     const { weddingDetails, customizations, disabledFields, colorOverrides, photos, storyMilestones, musicUrl, musicEnabled } = req.body;
 
-    // Prevent reuse: reject changes to locked identity fields (couple names)
-    if (weddingDetails) {
+    // --- Name change validation ---
+    const nameChanges = weddingDetails ? order.getNameFieldChanges(weddingDetails) : [];
+    if (nameChanges.length > 0) {
+      // Check locked field violations (handles grace period + counter check)
       const violations = order.getLockedFieldViolations(weddingDetails);
       if (violations.length > 0) {
-        const labels = violations.map(f => f === 'groomName' ? 'Partner 1 name' : 'Partner 2 name');
+        const inGrace = order.isInNameGracePeriod();
+        if (!inGrace) {
+          return res.status(403).json({
+            error: 'The 48-hour window for name corrections has expired. Couple names are now permanently locked.',
+            lockedFields: violations,
+          });
+        }
+        // In grace period but no edits left
         return res.status(403).json({
-          error: `Cannot change ${labels.join(' and ')} after payment. Each invitation is tied to the original couple.`,
+          error: 'You have already used your name correction. Couple names are now locked.',
           lockedFields: violations,
         });
       }
+    }
+
+    // --- Wedding date change validation ---
+    const dateChanged = weddingDetails ? order.hasDateChanged(weddingDetails) : false;
+    if (dateChanged && order.dateEditsRemaining <= 0) {
+      return res.status(403).json({
+        error: 'You have used both wedding date changes. The date is now locked. Contact support if you need further changes.',
+        lockedFields: ['weddingDate'],
+      });
     }
 
     const fieldsChanged = [];
@@ -216,10 +238,20 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     if (musicUrl !== undefined) { order.musicUrl = musicUrl; fieldsChanged.push('musicUrl'); }
     if (musicEnabled !== undefined) { order.musicEnabled = musicEnabled; fieldsChanged.push('musicEnabled'); }
 
+    // Decrement appropriate counters
     order.editsRemaining -= 1;
+    if (nameChanges.length > 0) {
+      order.nameEditsRemaining -= 1;
+      fieldsChanged.push('coupleNames');
+    }
+    if (dateChanged) {
+      order.dateEditsRemaining -= 1;
+      fieldsChanged.push('weddingDate');
+    }
     order.editHistory.push({ fieldsChanged });
     await order.save();
 
+    // Email notifications
     if (order.editsRemaining <= 2 && order.editsRemaining > 0) {
       const email = editLimitWarningEmail({
         customerName: order.customerName,
@@ -229,7 +261,27 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
       sendMail({ to: order.customerEmail, ...email }).catch(console.error);
     }
 
-    res.json({ message: 'Invitation updated', editsRemaining: order.editsRemaining });
+    // Notify on sensitive field changes (names or date)
+    if (nameChanges.length > 0 || dateChanged) {
+      const email = sensitiveFieldChangeEmail({
+        customerName: order.customerName,
+        changedFields: [
+          ...nameChanges.map(f => f === 'groomName' ? 'Partner 1 name' : 'Partner 2 name'),
+          ...(dateChanged ? ['Wedding date'] : []),
+        ],
+        nameEditsRemaining: order.nameEditsRemaining,
+        dateEditsRemaining: order.dateEditsRemaining,
+        editToken: order.editToken,
+      });
+      sendMail({ to: order.customerEmail, ...email }).catch(console.error);
+    }
+
+    res.json({
+      message: 'Invitation updated',
+      editsRemaining: order.editsRemaining,
+      nameEditsRemaining: order.nameEditsRemaining,
+      dateEditsRemaining: order.dateEditsRemaining,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -295,6 +347,10 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       musicEnabled: order.musicEnabled,
       publicSlug: order.publicSlug,
       editsRemaining: order.editsRemaining,
+      nameEditsRemaining: order.nameEditsRemaining,
+      dateEditsRemaining: order.dateEditsRemaining,
+      activatedAt: order.activatedAt,
+      nameGraceHours: Order.NAME_EDIT_GRACE_HOURS,
       editHistory: order.editHistory,
       expiresAt: order.expiresAt,
       createdAt: order.createdAt,

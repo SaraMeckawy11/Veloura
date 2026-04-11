@@ -49,10 +49,8 @@ export default function OrderFlow() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState('');
-  const [orderData, setOrderData] = useState(null);
 
   // Form state
   const [form, setForm] = useState({
@@ -176,12 +174,20 @@ export default function OrderFlow() {
     items.map(p => ({ ...p, label: p.label || cat }))
   );
 
-  const handleSubmit = async (e) => {
+  // Step 2 → Step 3: just validate and move to review (no order created yet)
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitting(true);
+    setError('');
+    setStep(3);
+  };
+
+  // Step 3: create order + handle payment in one action
+  const handleConfirmPayment = async () => {
+    setConfirming(true);
     setError('');
 
     try {
+      // Create the order now
       const res = await fetch(`${API}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -211,32 +217,20 @@ export default function OrderFlow() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Order failed');
 
-      setOrderData(data);
-      setStep(3);
-      setSubmitting(false);
-    } catch (err) {
-      setError(err.message);
-      setSubmitting(false);
-    }
-  };
-
-  const handleConfirmPayment = async () => {
-    setConfirming(true);
-    setError('');
-
-    try {
-      if (orderData.paymentUrl && !orderData.paymentUrl.includes('/order/success/')) {
-        window.location.href = orderData.paymentUrl;
+      // If PayPal is configured, redirect to payment
+      if (data.paymentUrl && !data.paymentUrl.includes('/order/success/')) {
+        window.location.href = data.paymentUrl;
         return;
       }
 
-      const res = await fetch(`${API}/orders/confirm/${orderData.orderId}`, {
+      // Dev mode: confirm payment directly
+      const confirmRes = await fetch(`${API}/orders/confirm/${data.orderId}`, {
         method: 'POST',
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Payment confirmation failed');
+      const confirmData = await confirmRes.json();
+      if (!confirmRes.ok) throw new Error(confirmData.error || 'Payment confirmation failed');
 
-      navigate(`/order/success/${orderData.orderId}`);
+      navigate(`/order/success/${data.orderId}`);
     } catch (err) {
       setError(err.message);
       setConfirming(false);
@@ -249,7 +243,7 @@ export default function OrderFlow() {
     { key: 'venueMapUrl', label: 'Google Maps Link' },
     { key: 'message', label: 'Personal Message' },
     { key: 'rsvp', label: 'RSVP Section' },
-    { key: 'secondLanguage', label: 'Second Language' },
+    // Removed secondLanguage option
   ];
 
   if (loading) {
@@ -439,15 +433,6 @@ export default function OrderFlow() {
                       {!disabledFields.includes(field.key) && (
                         field.key === 'rsvp' ? (
                           <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
-                        ) : field.key === 'secondLanguage' ? (
-                          <div className="language-select-wrapper">
-                            <svg className="language-select-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
-                            <select className="language-select" value={form.secondLanguage} onChange={e => handleInput('secondLanguage', e.target.value)}>
-                              {LANGUAGE_OPTIONS.map(lang => (
-                                <option key={lang.value} value={lang.value}>{lang.label}</option>
-                              ))}
-                            </select>
-                          </div>
                         ) : field.key === 'message' ? (
                           <textarea value={form[field.key]} onChange={e => handleInput(field.key, e.target.value)} rows={3} placeholder={field.label} />
                         ) : (
@@ -485,11 +470,27 @@ export default function OrderFlow() {
               {/* Our Story — each milestone has its own text fields + optional photo */}
               <fieldset className="form-section">
                 <legend>Our Story</legend>
-                <p className="form-hint">Add milestones from your journey together. Each milestone appears on your invitation timeline with an optional photo.</p>
+                <p className="form-hint">Add milestones from your journey together — first date, proposal, and more. Each one appears on your invitation timeline.</p>
                 <div className="story-milestones">
                   {storyMilestones.map((milestone, i) => (
                     <div key={i} className="story-milestone-item">
                       <div className="story-milestone-number">{i + 1}</div>
+                      {storyMilestones.length > 1 && (
+                        <button
+                          type="button"
+                          className="story-milestone-remove"
+                          onClick={() => {
+                            setStoryMilestones(prev => prev.filter((_, idx) => idx !== i));
+                            setPhotos(prev => ({
+                              ...prev,
+                              story: prev.story.filter((_, idx) => idx !== i),
+                            }));
+                          }}
+                          title="Remove milestone"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                        </button>
+                      )}
                       <div className="story-milestone-photo">
                         {photos.story[i] ? (
                           <>
@@ -527,7 +528,7 @@ export default function OrderFlow() {
                       <div className="story-milestone-fields">
                         <input type="text" placeholder="Year or date (e.g. 2019)" value={milestone.date} onChange={e => handleStoryMilestone(i, 'date', e.target.value)} />
                         <input type="text" placeholder="Title (e.g. First Meeting)" value={milestone.title} onChange={e => handleStoryMilestone(i, 'title', e.target.value)} />
-                        <textarea rows={2} placeholder="Short description" value={milestone.description} onChange={e => handleStoryMilestone(i, 'description', e.target.value)} />
+                        <textarea rows={2} placeholder="A short description of this moment..." value={milestone.description} onChange={e => handleStoryMilestone(i, 'description', e.target.value)} />
                       </div>
                     </div>
                   ))}
@@ -538,7 +539,7 @@ export default function OrderFlow() {
                       onClick={() => setStoryMilestones(prev => [...prev, { date: '', title: '', description: '' }])}
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                      Add another milestone ({storyMilestones.length}/4)
+                      Add milestone ({storyMilestones.length}/4)
                     </button>
                   )}
                 </div>
@@ -573,9 +574,9 @@ export default function OrderFlow() {
                   <span className="price-label">Total</span>
                   <span className="price-value">$99</span>
                 </div>
-                <button type="submit" className="btn btn-gold form-pay-btn" disabled={submitting}>
-                  {submitting ? 'Processing...' : 'Proceed to Payment'}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>
+                <button type="submit" className="btn btn-gold form-pay-btn">
+                  Review & Pay
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
               </div>
             </form>

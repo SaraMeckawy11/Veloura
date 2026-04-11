@@ -147,6 +147,57 @@ export function rsvpNotificationEmail({ customerName, guestName, attending, gues
   };
 }
 
+export function sensitiveFieldChangeEmail({ customerName, changedFields, nameEditsRemaining, dateEditsRemaining, editToken }) {
+  const editUrl = `${CLIENT_URL}/edit/${editToken}`;
+  const fieldList = changedFields.join(', ');
+  const warnings = [];
+  if (nameEditsRemaining !== undefined && nameEditsRemaining <= 0) {
+    warnings.push('Couple names are now permanently locked and cannot be changed again.');
+  }
+  if (dateEditsRemaining !== undefined) {
+    warnings.push(`You have ${dateEditsRemaining} wedding date change${dateEditsRemaining === 1 ? '' : 's'} remaining.`);
+  }
+
+  return {
+    subject: `Eternally: Important changes made to your invitation`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { margin: 0; padding: 0; background: #F7F5F2; font-family: 'Helvetica Neue', Arial, sans-serif; color: #2D2A26; }
+    .container { max-width: 560px; margin: 0 auto; padding: 40px 24px; }
+    .card { background: #fff; border-radius: 16px; padding: 32px; border: 1px solid #E8E4DF; }
+    .logo { font-family: Georgia, serif; font-size: 20px; color: #2D2A26; margin-bottom: 24px; }
+    .logo span { color: #B8924A; }
+    h2 { font-family: Georgia, serif; font-size: 18px; font-weight: 400; margin: 0 0 16px; }
+    p { color: #6B6560; font-size: 14px; line-height: 1.7; }
+    .changed { background: #FFF8E8; border: 1px solid #F0DDA8; border-radius: 10px; padding: 14px 18px; margin: 16px 0; font-size: 14px; color: #8B7030; }
+    .warning { background: #FFF3F0; border: 1px solid #F5D0C8; border-radius: 10px; padding: 14px 18px; margin: 12px 0; font-size: 13px; color: #A0503A; }
+    .btn { display: inline-block; padding: 12px 32px; background: #B8924A; color: #fff; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 14px; margin-top: 16px; }
+    .note { font-size: 12px; color: #A09A93; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="logo">Eternal<span>ly</span></div>
+      <h2>Changes detected on your invitation</h2>
+      <p>Hi ${customerName},</p>
+      <p>The following sensitive fields were just updated on your wedding invitation:</p>
+      <div class="changed"><strong>Changed:</strong> ${fieldList}</div>
+      ${warnings.map(w => `<div class="warning">${w}</div>`).join('')}
+      <p>If you did not make these changes, please review your invitation immediately.</p>
+      <a href="${editUrl}" class="btn">Review Invitation</a>
+      <p class="note">This notification was sent because important details on your invitation were changed. If you made these changes, no action is needed.</p>
+    </div>
+  </div>
+</body>
+</html>`,
+  };
+}
+
 export function editLimitWarningEmail({ customerName, editsRemaining, editToken }) {
   const editUrl = `${CLIENT_URL}/edit/${editToken}`;
 

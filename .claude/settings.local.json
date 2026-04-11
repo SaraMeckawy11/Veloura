@@ -35,7 +35,9 @@
       "Bash(npx tsc:*)",
       "Bash(npx -p typescript tsc --noEmit)",
       "Bash(grep -r \"invitations\" /d/App_Development/Eternally/*.js /d/App_Development/Eternally/*.json /d/App_Development/Eternally/.gitignore)",
-      "Bash(find invitations/boarding-pass-weddings-main -type f ! -path \"*/node_modules/*\" -exec wc -c {} +)"
+      "Bash(find invitations/boarding-pass-weddings-main -type f ! -path \"*/node_modules/*\" -exec wc -c {} +)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(findstr :5173)"
     ]
   }
 }

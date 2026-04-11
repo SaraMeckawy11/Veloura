@@ -67,6 +67,9 @@ const orderSchema = new mongoose.Schema({
 
   // Edit tracking
   editsRemaining:   { type: Number, default: 5 },
+  nameEditsRemaining: { type: Number, default: 1 },   // 1 name correction allowed within grace period
+  dateEditsRemaining: { type: Number, default: 2 },   // 2 date changes allowed total
+  activatedAt:      { type: Date },                    // when payment was confirmed — starts grace period
   editHistory: [{
     editedAt:    { type: Date, default: Date.now },
     fieldsChanged: [String],
@@ -97,31 +100,73 @@ orderSchema.pre('save', function (next) {
   next();
 });
 
-// Fields that become immutable once the order is activated (paid).
-// These define the identity of the invitation and prevent reuse for different events.
+// Grace period (in hours) after activation during which couple names can be corrected
+orderSchema.statics.NAME_EDIT_GRACE_HOURS = 48;
+
+// Fields that become immutable once the grace period expires.
+// During the grace period, they can be edited if nameEditsRemaining > 0.
 orderSchema.statics.LOCKED_FIELDS = ['groomName', 'brideName'];
 
 // Set status to active when payment completes (no expiry — lives forever)
 orderSchema.methods.activate = function () {
   this.status = 'active';
   this.paymentStatus = 'paid';
+  this.activatedAt = new Date();
   return this.save();
+};
+
+// Check if we are within the name-edit grace period
+orderSchema.methods.isInNameGracePeriod = function () {
+  if (!this.activatedAt) return false;
+  const graceMs = this.constructor.NAME_EDIT_GRACE_HOURS * 60 * 60 * 1000;
+  return (Date.now() - this.activatedAt.getTime()) < graceMs;
 };
 
 // Check which locked fields a weddingDetails update is trying to change
 orderSchema.methods.getLockedFieldViolations = function (newDetails) {
   if (this.status !== 'active') return [];
   const locked = this.constructor.LOCKED_FIELDS;
-  const violations = [];
+  const changes = [];
   for (const field of locked) {
     const original = (this.weddingDetails?.[field] || '').trim().toLowerCase();
     const incoming = (newDetails?.[field] || '').trim().toLowerCase();
-    // Only flag if the incoming value is present AND different from the original
     if (newDetails?.[field] !== undefined && incoming !== original) {
-      violations.push(field);
+      changes.push(field);
     }
   }
-  return violations;
+  if (changes.length === 0) return [];
+
+  // During grace period, allow if nameEditsRemaining > 0
+  if (this.isInNameGracePeriod() && this.nameEditsRemaining > 0) {
+    return []; // allowed — caller must decrement nameEditsRemaining
+  }
+
+  // Outside grace period or no name edits left: locked
+  return changes;
+};
+
+// Detect which locked fields actually changed (for decrementing counter)
+orderSchema.methods.getNameFieldChanges = function (newDetails) {
+  const locked = this.constructor.LOCKED_FIELDS;
+  const changes = [];
+  for (const field of locked) {
+    const original = (this.weddingDetails?.[field] || '').trim().toLowerCase();
+    const incoming = (newDetails?.[field] || '').trim().toLowerCase();
+    if (newDetails?.[field] !== undefined && incoming !== original) {
+      changes.push(field);
+    }
+  }
+  return changes;
+};
+
+// Detect if wedding date changed
+orderSchema.methods.hasDateChanged = function (newDetails) {
+  if (!newDetails?.weddingDate) return false;
+  const original = this.weddingDetails?.weddingDate
+    ? new Date(this.weddingDetails.weddingDate).toISOString().slice(0, 10)
+    : '';
+  const incoming = new Date(newDetails.weddingDate).toISOString().slice(0, 10);
+  return incoming !== original;
 };
 
 // Check if edits are allowed
