@@ -16,10 +16,6 @@ const faqs = [
     a: 'Your guests can RSVP directly from the invitation link. You get a real-time dashboard to track responses, plus-one confirmations, and total guest count.',
   },
   {
-    q: 'Do you support multiple languages?',
-    a: 'Yes! Every invitation supports bilingual content. Whether your guests speak English, Arabic, French, Spanish, or any other language — we\'ve got you covered with elegant multilingual layouts.',
-  },
-  {
     q: 'Is the invitation mobile-friendly?',
     a: '100%. Every invitation is designed mobile-first and looks stunning on any device — phones, tablets, or desktops. Since most guests will open it via a shared link or social media, we optimize for the mobile experience first.',
   },
