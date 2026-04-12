@@ -37,7 +37,9 @@
       "Bash(grep -r \"invitations\" /d/App_Development/Eternally/*.js /d/App_Development/Eternally/*.json /d/App_Development/Eternally/.gitignore)",
       "Bash(find invitations/boarding-pass-weddings-main -type f ! -path \"*/node_modules/*\" -exec wc -c {} +)",
       "mcp__Claude_Preview__preview_start",
-      "Bash(findstr :5173)"
+      "Bash(findstr :5173)",
+      "Bash(node -e \"try { require\\(''fs''\\).readFileSync\\(''src/pages/OrderFlow.jsx'',''utf8''\\); console.log\\(''OK - no syntax issues in read''\\); } catch\\(e\\) { console.log\\(e.message\\); }\")",
+      "Bash(npx -y acorn --ecma2020 --module --allow-import-export-everywhere src/pages/OrderFlow.jsx)"
     ]
   }
 }

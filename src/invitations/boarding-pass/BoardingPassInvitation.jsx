@@ -4,7 +4,7 @@ import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
 import './boarding-pass.css';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API = import.meta.env.VITE_API_URL || '/api';
 
 export default function BoardingPassInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);

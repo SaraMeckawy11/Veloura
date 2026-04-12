@@ -2,7 +2,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import registry from '../invitations/registry';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API = import.meta.env.VITE_API_URL || '/api';
 
 /**
  * Invitation router — fetches the order, determines the template slug,

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import '../styles/Dashboard.css';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API = import.meta.env.VITE_API_URL || '/api';
 const PHOTO_CATEGORIES = {
   venue: { label: 'Venue Photos', max: 2 },
   story: { label: 'Our Story Photos', max: 4 },

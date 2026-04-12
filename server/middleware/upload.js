@@ -5,13 +5,13 @@ const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25 MB — mobile photos can be large
   fileFilter(req, file, cb) {
-    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
-    if (allowed.includes(file.mimetype)) {
+    // Accept any image type — Cloudinary handles conversion/optimization
+    if (file.mimetype && file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
-      cb(new Error('Only JPG, PNG, and WebP images are allowed'));
+      cb(new Error('Only image files are allowed'));
     }
   },
 });

@@ -1,8 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/OrderFlow.css';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+const API = import.meta.env.VITE_API_URL || '/api';
+const STORAGE_KEY = 'eternally_order_draft';
+
+// --- localStorage helpers ---
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+function saveDraft(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+}
+function clearDraft() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch {}
+}
 
 const PHOTO_CATEGORIES = [
   { key: 'venue', label: 'Venue Photos', hint: 'Photos of your venue or ceremony location (max 2)', icon: 'location', max: 2 },
@@ -45,15 +60,17 @@ const LANGUAGE_OPTIONS = [
 
 export default function OrderFlow() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  const draft = useRef(loadDraft()).current;
+
+  const [step, setStep] = useState(draft?.step || 1);
   const [templates, setTemplates] = useState([]);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(draft?.selectedTemplate || null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState('');
 
-  // Form state
-  const [form, setForm] = useState({
+  // Form state — restore from draft
+  const defaultForm = {
     customerName: '',
     customerEmail: '',
     customerPhone: '',
@@ -67,16 +84,58 @@ export default function OrderFlow() {
     message: 'This text appears as the tagline under your names in the invitation ',
     language: 'en',
     secondLanguage: '',
-  });
+  };
+  const [form, setForm] = useState(draft?.form || defaultForm);
 
-  const [disabledFields, setDisabledFields] = useState([]);
-  // Photos organized by category
-  const [photos, setPhotos] = useState({ venue: [], story: [], gallery: [] });
+  const [disabledFields, setDisabledFields] = useState(draft?.disabledFields || []);
+  // Photos organized by category — restore uploaded photos from draft
+  // Mark any _pendingUpload photos as failed (upload was lost on reload, user must re-add)
+  const initPhotos = (() => {
+    const raw = draft?.photos || { venue: [], story: [], gallery: [] };
+    const result = {};
+    for (const cat of Object.keys(raw)) {
+      result[cat] = (raw[cat] || []).map(p =>
+        p._pendingUpload ? { ...p, _failed: true, _pendingUpload: false } : p
+      );
+    }
+    return result;
+  })();
+  const [photos, setPhotos] = useState(initPhotos);
   const [uploading, setUploading] = useState({});
+  const [uploadError, setUploadError] = useState('');
   // Story milestones — text/date for each story photo
-  const [storyMilestones, setStoryMilestones] = useState([
-    { date: '', title: '', description: '' },
-  ]);
+  const [storyMilestones, setStoryMilestones] = useState(
+    draft?.storyMilestones || [{ date: '', title: '', description: '' }]
+  );
+
+  // --- Auto-save to localStorage on every state change ---
+  useEffect(() => {
+    const persistablePhotos = {};
+    for (const cat of Object.keys(photos)) {
+      persistablePhotos[cat] = photos[cat]
+        .map(p => {
+          // Uploaded to Cloudinary — save the real URL
+          if (p.publicId && !p._uploading) {
+            return { url: p.url, publicId: p.publicId, label: p.label };
+          }
+          // Still uploading or failed — save the thumbnail for reload survival
+          if (p._thumbUrl) {
+            return { url: p._thumbUrl, publicId: '', label: p.label, _pendingUpload: true };
+          }
+          // No thumbnail available (e.g. HEIC couldn't render) — skip
+          return null;
+        })
+        .filter(Boolean);
+    }
+    saveDraft({
+      step,
+      selectedTemplate,
+      form,
+      disabledFields,
+      photos: persistablePhotos,
+      storyMilestones,
+    });
+  }, [step, selectedTemplate, form, disabledFields, photos, storyMilestones]);
 
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
@@ -126,36 +185,109 @@ export default function OrderFlow() {
     );
   };
 
+  // Fallback for images the browser can't render natively (e.g. HEIC)
+  const handleImgError = (e) => {
+    const img = e.target;
+    if (img.dataset.fallback) return;
+    img.dataset.fallback = '1';
+    img.style.display = 'none';
+    const placeholder = document.createElement('div');
+    placeholder.className = 'photo-preview-fallback';
+    placeholder.textContent = 'Preview unavailable';
+    img.parentElement.appendChild(placeholder);
+  };
+
+  // Create a small thumbnail data URL from a File (fits in localStorage without blowing the 5MB limit)
+  const fileToThumbUrl = (file) => new Promise((resolve) => {
+    const img = new Image();
+    const blobUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      const MAX = 200; // thumbnail size — small enough for localStorage
+      let w = img.width, h = img.height;
+      if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+      else { w = Math.round(w * MAX / h); h = MAX; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(blobUrl);
+      resolve(canvas.toDataURL('image/jpeg', 0.6));
+    };
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(null); };
+    img.src = blobUrl;
+  });
+
+  // Upload a single file to Cloudinary in the background and update photos state
+  const uploadFileInBackground = useCallback((file, category, localId) => {
+    const fd = new FormData();
+    fd.append('photos', file);
+    fetch(`${API}/upload?category=${category}`, { method: 'POST', body: fd })
+      .then(r => r.json().then(data => ({ ok: r.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok || !data.files?.[0]) throw new Error(data.error || 'Upload failed');
+        // Swap the local preview with the Cloudinary URL
+        setPhotos(prev => ({
+          ...prev,
+          [category]: prev[category].map(p =>
+            p._localId === localId
+              ? { url: data.files[0].url, publicId: data.files[0].publicId, label: category }
+              : p
+          ),
+        }));
+      })
+      .catch(() => {
+        // Keep the local preview visible but mark as failed — user can retry or remove
+        setPhotos(prev => ({
+          ...prev,
+          [category]: prev[category].map(p =>
+            p._localId === localId ? { ...p, _uploading: false, _failed: true } : p
+          ),
+        }));
+        setUploadError('One or more photos failed to upload. You can remove and re-add them.');
+      });
+  }, []);
+
   const handlePhotoUpload = async (e, category) => {
     const files = e.target.files;
     if (!files.length) return;
+    setUploadError('');
 
     const catConfig = PHOTO_CATEGORIES.find(c => c.key === category);
     const currentCount = photos[category].length;
     const remaining = catConfig.max - currentCount;
     if (remaining <= 0) {
-      setError(`Maximum ${catConfig.max} photos for ${catConfig.label}`);
+      setUploadError(`Maximum ${catConfig.max} photos for ${catConfig.label}`);
       return;
     }
 
-    setUploading(prev => ({ ...prev, [category]: true }));
-    const formData = new FormData();
     const filesToUpload = Array.from(files).slice(0, remaining);
-    for (const f of filesToUpload) formData.append('photos', f);
+    // Reset input immediately so same file can be re-selected
+    e.target.value = '';
 
-    try {
-      const res = await fetch(`${API}/upload?category=${category}`, { method: 'POST', body: formData });
-      const data = await res.json();
-      if (data.files) {
-        setPhotos(prev => ({
-          ...prev,
-          [category]: [...prev[category], ...data.files],
-        }));
-      }
-    } catch {
-      setError('Photo upload failed');
+    // Create entries with blob URL (fast display) + thumbnail (localStorage persistence)
+    const entries = await Promise.all(filesToUpload.map(async (f) => {
+      const localId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const thumbUrl = await fileToThumbUrl(f);
+      return { file: f, localId, preview: {
+        url: URL.createObjectURL(f),
+        publicId: '',
+        label: category,
+        _uploading: true,
+        _localId: localId,
+        _thumbUrl: thumbUrl, // small data URL saved to localStorage
+      }};
+    }));
+
+    // Show previews instantly
+    setPhotos(prev => ({
+      ...prev,
+      [category]: [...prev[category], ...entries.map(p => p.preview)],
+    }));
+
+    // Fire-and-forget background uploads for each file
+    for (const { file, localId } of entries) {
+      uploadFileInBackground(file, category, localId);
     }
-    setUploading(prev => ({ ...prev, [category]: false }));
   };
 
   const handleStoryMilestone = (index, key, value) => {
@@ -169,9 +301,11 @@ export default function OrderFlow() {
     }));
   };
 
-  // Flatten all photos for submission
+  // Flatten all photos for submission & review (exclude failed/uploading)
   const allPhotos = Object.entries(photos).flatMap(([cat, items]) =>
-    items.map(p => ({ ...p, label: p.label || cat }))
+    items
+      .filter(p => !p._uploading && !p._failed && !p._pendingUpload)
+      .map(p => ({ ...p, label: p.label || cat }))
   );
 
   // Step 2 → Step 3: just validate and move to review (no order created yet)
@@ -209,7 +343,7 @@ export default function OrderFlow() {
             secondLanguage: form.secondLanguage || undefined,
           },
           disabledFields,
-          photos: allPhotos,
+          photos: allPhotos.filter(p => !p._uploading && !p._failed),
           storyMilestones: storyMilestones.filter(m => m.title || m.date || m.description),
         }),
       });
@@ -230,6 +364,7 @@ export default function OrderFlow() {
       const confirmData = await confirmRes.json();
       if (!confirmRes.ok) throw new Error(confirmData.error || 'Payment confirmation failed');
 
+      clearDraft();
       navigate(`/order/success/${data.orderId}`);
     } catch (err) {
       setError(err.message);
@@ -404,7 +539,9 @@ export default function OrderFlow() {
                 <legend>Wedding Details</legend>
                 <div className="form-grid">
                   <div className="form-field">
-                    <label>Wedding Date *</label>
+                    <div className="field-header">
+                      <label>Wedding Date *</label>
+                    </div>
                     <input type="date" required value={form.weddingDate} onChange={e => handleInput('weddingDate', e.target.value)} />
                   </div>
                   <div className={`form-field ${disabledFields.includes('weddingTime') ? 'field-disabled' : ''}`}>
@@ -448,17 +585,20 @@ export default function OrderFlow() {
               <fieldset className="form-section">
                 <legend>Venue Photos</legend>
                 <p className="form-hint">Photos of your venue or ceremony location (max 2)</p>
+                {uploadError && <p className="photo-error">{uploadError}</p>}
                 <div className="photo-upload-area">
                   {photos.venue.length < 2 && (
                     <label className="photo-upload-btn">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                      {uploading.venue ? 'Uploading...' : 'Add'}
-                      <input type="file" multiple accept="image/*" onChange={e => handlePhotoUpload(e, 'venue')} disabled={uploading.venue} hidden />
+                      Add
+                      <input type="file" multiple accept="image/*,.heic,.heif" onChange={e => handlePhotoUpload(e, 'venue')} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                     </label>
                   )}
                   {photos.venue.map((photo, i) => (
-                    <div key={i} className="photo-preview">
-                      <img src={photo.url} alt={`Venue ${i + 1}`} />
+                    <div key={photo._localId || i} className={`photo-preview ${photo._failed ? 'photo-failed' : ''}`}>
+                      <img src={photo.url} alt={`Venue ${i + 1}`} onError={handleImgError} />
+                      {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
+                      {photo._failed && <div className="photo-failed-badge" title="Upload failed — remove and re-add">!</div>}
                       <button type="button" className="photo-remove" onClick={() => removePhoto('venue', i)}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                       </button>
@@ -494,7 +634,9 @@ export default function OrderFlow() {
                       <div className="story-milestone-photo">
                         {photos.story[i] ? (
                           <>
-                            <img src={photos.story[i].url} alt={`Story ${i + 1}`} />
+                            <img src={photos.story[i].url} alt={`Story ${i + 1}`} onError={handleImgError} />
+                            {photos.story[i]._uploading && <div className="photo-upload-badge" title="Uploading…" />}
+                            {photos.story[i]._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
                             <button type="button" className="photo-remove" onClick={() => removePhoto('story', i)}>
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                             </button>
@@ -502,26 +644,23 @@ export default function OrderFlow() {
                         ) : (
                           <label className="photo-upload-btn photo-upload-btn--square">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                            {uploading[`story-${i}`] ? '...' : 'Photo'}
-                            <input type="file" accept="image/*" onChange={async (e) => {
+                            Photo
+                            <input type="file" accept="image/*,.heic,.heif" onChange={async (e) => {
                               const files = e.target.files;
                               if (!files.length) return;
-                              setUploading(prev => ({ ...prev, [`story-${i}`]: true }));
-                              const fd = new FormData();
-                              fd.append('photos', files[0]);
-                              try {
-                                const res = await fetch(`${API}/upload?category=story`, { method: 'POST', body: fd });
-                                const data = await res.json();
-                                if (data.files?.[0]) {
-                                  setPhotos(prev => {
-                                    const updated = [...prev.story];
-                                    updated[i] = data.files[0];
-                                    return { ...prev, story: updated };
-                                  });
-                                }
-                              } catch { setError('Photo upload failed'); }
-                              setUploading(prev => ({ ...prev, [`story-${i}`]: false }));
-                            }} hidden />
+                              setUploadError('');
+                              const file = files[0];
+                              e.target.value = '';
+                              const localId = `story-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+                              const thumbUrl = await fileToThumbUrl(file);
+                              setPhotos(prev => {
+                                const updated = [...prev.story];
+                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', _uploading: true, _localId: localId, _thumbUrl: thumbUrl };
+                                return { ...prev, story: updated };
+                              });
+                              // Background upload
+                              uploadFileInBackground(file, 'story', localId);
+                            }} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                           </label>
                         )}
                       </div>
@@ -553,13 +692,15 @@ export default function OrderFlow() {
                   {photos.gallery.length < 6 && (
                     <label className="photo-upload-btn">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                      {uploading.gallery ? 'Uploading...' : 'Add'}
-                      <input type="file" multiple accept="image/*" onChange={e => handlePhotoUpload(e, 'gallery')} disabled={uploading.gallery} hidden />
+                      Add
+                      <input type="file" multiple accept="image/*,.heic,.heif" onChange={e => handlePhotoUpload(e, 'gallery')} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                     </label>
                   )}
                   {photos.gallery.map((photo, i) => (
-                    <div key={i} className="photo-preview">
-                      <img src={photo.url} alt={`Gallery ${i + 1}`} />
+                    <div key={photo._localId || i} className={`photo-preview ${photo._failed ? 'photo-failed' : ''}`}>
+                      <img src={photo.url} alt={`Gallery ${i + 1}`} onError={handleImgError} />
+                      {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
+                      {photo._failed && <div className="photo-failed-badge" title="Upload failed — remove and re-add">!</div>}
                       <button type="button" className="photo-remove" onClick={() => removePhoto('gallery', i)}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                       </button>
