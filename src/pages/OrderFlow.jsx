@@ -369,9 +369,14 @@ export default function OrderFlow() {
             locale: 'en',
             successUrl: data.paddle.successUrl,
           },
-          transactionId: data.paddle.transactionId,
+          items: [{ priceId: data.paddle.priceId, quantity: 1 }],
           customer: {
             email: form.customerEmail,
+          },
+          customData: {
+            orderId: data.orderId,
+            templateId: selectedTemplate._id,
+            platform: 'veloura',
           },
         });
 

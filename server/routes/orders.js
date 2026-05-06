@@ -12,7 +12,7 @@ const router = Router();
 const PRICE_USD = process.env.PRICE_USD || '89.00';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const isConfigured = value => value && !value.startsWith('replace_me') && !value.startsWith('your_');
-const paddleConfigured = isConfigured(process.env.PADDLE_API_KEY) && isConfigured(process.env.PADDLE_CLIENT_TOKEN) && isConfigured(process.env.PADDLE_PRICE_ID);
+const paddleConfigured = isConfigured(process.env.PADDLE_CLIENT_TOKEN) && isConfigured(process.env.PADDLE_PRICE_ID);
 
 // POST /api/orders - create order + Paddle checkout (or local dev activation fallback)
 router.post('/', validateOrderBody, async (req, res) => {
@@ -69,16 +69,7 @@ router.post('/', validateOrderBody, async (req, res) => {
     }
 
     if (paddleConfigured) {
-      const { createPaddleTransaction } = await import('../config/paddle.js');
-      const transaction = await createPaddleTransaction({
-        orderId: order._id.toString(),
-        priceId: process.env.PADDLE_PRICE_ID,
-        customerEmail: order.customerEmail,
-        templateId: template._id.toString(),
-      });
-
       order.paymentProvider = 'paddle';
-      order.paddleTransactionId = transaction.id;
       order.amountPaid = PRICE_USD;
       order.currency = 'USD';
       await order.save();
@@ -88,7 +79,7 @@ router.post('/', validateOrderBody, async (req, res) => {
         paddle: {
           clientToken: process.env.PADDLE_CLIENT_TOKEN,
           environment: process.env.PADDLE_ENVIRONMENT === 'sandbox' ? 'sandbox' : 'production',
-          transactionId: transaction.id,
+          priceId: process.env.PADDLE_PRICE_ID,
           successUrl: `${CLIENT_URL}/order/success/${order._id}`,
         },
       });
