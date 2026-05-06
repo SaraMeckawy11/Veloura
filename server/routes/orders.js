@@ -42,7 +42,7 @@ router.post('/', validateOrderBody, async (req, res) => {
     const order = new Order({
       customerName,
       customerEmail,
-      template: templateId,
+      template: template._id,
       weddingDetails,
       customizations: customizations || {},
       disabledFields: disabledFields || [],
