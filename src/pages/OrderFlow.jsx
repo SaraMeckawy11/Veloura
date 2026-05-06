@@ -69,6 +69,7 @@ export default function OrderFlow() {
   const [selectedTemplate, setSelectedTemplate] = useState(draft?.selectedTemplate || null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
+  const [paddleOpen, setPaddleOpen] = useState(false);
   const [error, setError] = useState('');
 
   // Form state — restore from draft
@@ -374,10 +375,17 @@ export default function OrderFlow() {
           onCheckoutCompleted: () => clearDraft(),
         });
 
+        // Show the inline checkout container before opening so the iframe target exists
+        setPaddleOpen(true);
+        // Wait one tick for React to render the target div
+        await new Promise((r) => setTimeout(r, 0));
+
         Paddle.Checkout.open({
           settings: {
-            displayMode: 'overlay',
-            variant: 'one-page',
+            displayMode: 'inline',
+            frameTarget: 'paddle-checkout-frame',
+            frameInitialHeight: 450,
+            frameStyle: 'width: 100%; min-width: 312px; background-color: transparent; border: none;',
             theme: 'light',
             locale: 'en',
             successUrl: data.paddle.successUrl,
@@ -823,19 +831,35 @@ export default function OrderFlow() {
               )}
             </div>
 
-            <div className="form-submit review-submit">
-              <div className="review-submit-info">
-                <div className="price-summary">
-                  <span className="price-label">Total</span>
-                  <span className="price-value">{DISPLAY_PRICE}</span>
+            {!paddleOpen && (
+              <div className="form-submit review-submit">
+                <div className="review-submit-info">
+                  <div className="price-summary">
+                    <span className="price-label">Total</span>
+                    <span className="price-value">{DISPLAY_PRICE}</span>
+                  </div>
+                  <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
                 </div>
-                <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
+                <button className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
+                  {confirming ? 'Processing Payment...' : `Continue to Payment — ${DISPLAY_PRICE}`}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
+                </button>
               </div>
-              <button className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
-                {confirming ? 'Processing Payment...' : `Confirm & Pay ${DISPLAY_PRICE}`}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
-              </button>
-            </div>
+            )}
+
+            {paddleOpen && (
+              <div className="payment-section">
+                <div className="payment-section-header">
+                  <h3 className="review-section-title">Payment Details</h3>
+                  <div className="price-summary">
+                    <span className="price-label">Total</span>
+                    <span className="price-value">{DISPLAY_PRICE}</span>
+                  </div>
+                </div>
+                <p className="payment-note">Enter your card details below to complete payment. A confirmation email with your invitation link will be sent after payment.</p>
+                <div className="paddle-checkout-frame" />
+              </div>
+            )}
           </div>
         )}
       </div>

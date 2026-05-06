@@ -672,6 +672,36 @@
   justify-content: center;
 }
 
+/* Inline Paddle payment */
+.payment-section {
+  margin-top: 28px;
+  padding: 24px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e1d8);
+  border-radius: 14px;
+}
+.payment-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.payment-section-header .price-summary {
+  flex-direction: row;
+  gap: 8px;
+  align-items: baseline;
+}
+.payment-section .payment-note {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #666);
+}
+.paddle-checkout-frame {
+  min-height: 450px;
+  width: 100%;
+}
+
 /* Redirecting */
 .step-redirecting {
   text-align: center;
