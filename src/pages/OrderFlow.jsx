@@ -319,6 +319,19 @@ export default function OrderFlow() {
     setStep(3);
   };
 
+  // Parse JSON safely — server may return empty body on 502/504/cold-start
+  const parseJsonOrThrow = async (res, label) => {
+    const text = await res.text();
+    if (!text) {
+      throw new Error(`${label}: server returned empty response (status ${res.status}). The server may be waking up — please try again in a few seconds.`);
+    }
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error(`${label}: server returned invalid response (status ${res.status}): ${text.slice(0, 200)}`);
+    }
+  };
+
   // Step 3: create order + handle payment in one action
   const handleConfirmPayment = async () => {
     setConfirming(true);
@@ -352,7 +365,7 @@ export default function OrderFlow() {
         }),
       });
 
-      const data = await res.json();
+      const data = await parseJsonOrThrow(res, 'Order creation');
       if (!res.ok) throw new Error(data.error || 'Order failed');
 
       if (data.paymentProvider === 'paddle' && data.paddle) {
@@ -388,7 +401,7 @@ export default function OrderFlow() {
       const confirmRes = await fetch(`${API}/orders/confirm/${data.orderId}`, {
         method: 'POST',
       });
-      const confirmData = await confirmRes.json();
+      const confirmData = await parseJsonOrThrow(confirmRes, 'Payment confirmation');
       if (!confirmRes.ok) throw new Error(confirmData.error || 'Payment confirmation failed');
 
       clearDraft();
