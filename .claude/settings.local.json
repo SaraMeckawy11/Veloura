@@ -39,7 +39,10 @@
       "mcp__Claude_Preview__preview_start",
       "Bash(findstr :5173)",
       "Bash(node -e \"try { require\\(''fs''\\).readFileSync\\(''src/pages/OrderFlow.jsx'',''utf8''\\); console.log\\(''OK - no syntax issues in read''\\); } catch\\(e\\) { console.log\\(e.message\\); }\")",
-      "Bash(npx -y acorn --ecma2020 --module --allow-import-export-everywhere src/pages/OrderFlow.jsx)"
+      "Bash(npx -y acorn --ecma2020 --module --allow-import-export-everywhere src/pages/OrderFlow.jsx)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }

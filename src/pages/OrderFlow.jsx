@@ -69,8 +69,10 @@ export default function OrderFlow() {
   const [selectedTemplate, setSelectedTemplate] = useState(draft?.selectedTemplate || null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
-  const [paddleOpen, setPaddleOpen] = useState(false);
+  const [paddleOrderData, setPaddleOrderData] = useState(null);
+  const [paddleLoading, setPaddleLoading] = useState(false);
   const [error, setError] = useState('');
+  const paddleFrameRef = useRef(null);
 
   // Form state — restore from draft
   const defaultForm = {
@@ -320,6 +322,55 @@ export default function OrderFlow() {
     setStep(3);
   };
 
+  // Open Paddle inline checkout once the target div is mounted
+  useEffect(() => {
+    if (!paddleOrderData) return;
+    if (!paddleFrameRef.current) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const Paddle = await getPaddle({
+          ...paddleOrderData.paddle,
+          onCheckoutCompleted: () => clearDraft(),
+        });
+        if (cancelled) return;
+
+        Paddle.Checkout.open({
+          settings: {
+            displayMode: 'inline',
+            frameTarget: 'paddle-checkout-frame',
+            frameInitialHeight: 500,
+            frameStyle: 'width: 100%; min-width: 312px; background-color: transparent; border: none;',
+            theme: 'light',
+            locale: 'en',
+            successUrl: paddleOrderData.paddle.successUrl,
+          },
+          items: [{ priceId: paddleOrderData.paddle.priceId, quantity: 1 }],
+          customer: {
+            email: form.customerEmail,
+          },
+          customData: {
+            orderId: paddleOrderData.orderId,
+            templateId: selectedTemplate?._id,
+            platform: 'veloura',
+          },
+        });
+
+        // Hide the loading state once Paddle has had a chance to inject the iframe
+        setTimeout(() => { if (!cancelled) setPaddleLoading(false); }, 1200);
+      } catch (err) {
+        if (!cancelled) {
+          setError(err.message || 'Could not load payment form');
+          setPaddleLoading(false);
+        }
+      }
+    })();
+
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paddleOrderData]);
+
   // Parse JSON safely — server may return empty body on 502/504/cold-start
   const parseJsonOrThrow = async (res, label) => {
     const text = await res.text();
@@ -370,37 +421,10 @@ export default function OrderFlow() {
       if (!res.ok) throw new Error(data.error || 'Order failed');
 
       if (data.paymentProvider === 'paddle' && data.paddle) {
-        const Paddle = await getPaddle({
-          ...data.paddle,
-          onCheckoutCompleted: () => clearDraft(),
-        });
-
-        // Show the inline checkout container before opening so the iframe target exists
-        setPaddleOpen(true);
-        // Wait one tick for React to render the target div
-        await new Promise((r) => setTimeout(r, 0));
-
-        Paddle.Checkout.open({
-          settings: {
-            displayMode: 'inline',
-            frameTarget: 'paddle-checkout-frame',
-            frameInitialHeight: 450,
-            frameStyle: 'width: 100%; min-width: 312px; background-color: transparent; border: none;',
-            theme: 'light',
-            locale: 'en',
-            successUrl: data.paddle.successUrl,
-          },
-          items: [{ priceId: data.paddle.priceId, quantity: 1 }],
-          customer: {
-            email: form.customerEmail,
-          },
-          customData: {
-            orderId: data.orderId,
-            templateId: selectedTemplate._id,
-            platform: 'veloura',
-          },
-        });
-
+        // Trigger inline payment render. The actual Paddle.Checkout.open call
+        // happens in a useEffect once the target frame is mounted.
+        setPaddleOrderData({ orderId: data.orderId, paddle: data.paddle });
+        setPaddleLoading(true);
         setConfirming(false);
         return;
       }
@@ -831,7 +855,7 @@ export default function OrderFlow() {
               )}
             </div>
 
-            {!paddleOpen && (
+            {!paddleOrderData && (
               <div className="form-submit review-submit">
                 <div className="review-submit-info">
                   <div className="price-summary">
@@ -841,23 +865,54 @@ export default function OrderFlow() {
                   <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
                 </div>
                 <button className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
-                  {confirming ? 'Processing Payment...' : `Continue to Payment — ${DISPLAY_PRICE}`}
+                  {confirming ? 'Preparing Payment…' : `Continue to Payment — ${DISPLAY_PRICE}`}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
               </div>
             )}
 
-            {paddleOpen && (
+            {paddleOrderData && (
               <div className="payment-section">
                 <div className="payment-section-header">
-                  <h3 className="review-section-title">Payment Details</h3>
-                  <div className="price-summary">
-                    <span className="price-label">Total</span>
-                    <span className="price-value">{DISPLAY_PRICE}</span>
+                  <div className="payment-section-title">
+                    <span className="payment-lock-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                    </span>
+                    <h3>Secure Payment</h3>
+                  </div>
+                  <div className="payment-total">
+                    <span className="payment-total-label">Total</span>
+                    <span className="payment-total-value">{DISPLAY_PRICE}</span>
                   </div>
                 </div>
-                <p className="payment-note">Enter your card details below to complete payment. A confirmation email with your invitation link will be sent after payment.</p>
-                <div className="paddle-checkout-frame" />
+
+                <p className="payment-section-note">Enter your card details below. Your payment is processed securely by Paddle — your card information never touches our servers.</p>
+
+                <div className="paddle-checkout-wrap">
+                  {paddleLoading && (
+                    <div className="paddle-checkout-loading">
+                      <div className="redirect-spinner" />
+                      <p>Loading secure payment…</p>
+                    </div>
+                  )}
+                  <div ref={paddleFrameRef} className="paddle-checkout-frame" />
+                </div>
+
+                <div className="payment-trust-row">
+                  <span className="payment-trust-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    256-bit SSL encrypted
+                  </span>
+                  <span className="payment-trust-divider">•</span>
+                  <span className="payment-trust-item">Powered by Paddle</span>
+                  <span className="payment-trust-divider">•</span>
+                  <span className="payment-trust-item">PCI-DSS compliant</span>
+                </div>
               </div>
             )}
           </div>
