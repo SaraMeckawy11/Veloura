@@ -10,7 +10,11 @@ import { getFallbackTemplate } from '../data/templateFallbacks.js';
 const router = Router();
 
 const PRICE_USD = process.env.PRICE_USD || '89.00';
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const RAW_CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+// Ensure absolute URL with scheme — Paddle rejects relative or scheme-less URLs.
+const CLIENT_URL = /^https?:\/\//i.test(RAW_CLIENT_URL)
+  ? RAW_CLIENT_URL.replace(/\/$/, '')
+  : `https://${RAW_CLIENT_URL.replace(/\/$/, '')}`;
 const isConfigured = value => value && !value.startsWith('replace_me') && !value.startsWith('your_');
 const paddleConfigured = isConfigured(process.env.PADDLE_CLIENT_TOKEN) && isConfigured(process.env.PADDLE_PRICE_ID);
 
