@@ -8,6 +8,7 @@ import orderRoutes from './routes/orders.js';
 import rsvpRoutes from './routes/rsvps.js';
 import uploadRoutes from './routes/upload.js';
 import webhookRoutes from './routes/webhooks.js';
+import cronJob from './cron.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -45,4 +46,5 @@ app.use((err, req, res, _next) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  cronJob.start();
 });
