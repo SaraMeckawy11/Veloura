@@ -113,7 +113,7 @@ export default function MyInvitation() {
 
           <div className="portal-hint">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
-            <span>Your invitation code was sent to your email when you placed your order. Check your inbox for an email from Eternally.</span>
+            <span>Your invitation code was sent to your email when you placed your order. Check your inbox for an email from Veloura.</span>
           </div>
         </div>
       </div>

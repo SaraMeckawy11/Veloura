@@ -13,7 +13,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
     : '';
 
   const subject = isPending
-    ? 'Eternally — Your invitation is ready!'
+    ? 'Veloura — Your invitation is ready!'
     : `${name1} & ${name2} — Invitation Live!`;
 
   const title = isPending ? 'Your invitation is ready!' : 'Your invitation is live!';
@@ -65,7 +65,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
   <div class="wrapper">
     <div class="card">
       <div class="card-body">
-        <div class="logo">Eternal<span>ly</span></div>
+        <div class="logo">Velou<span>ra</span></div>
 
         <h1>${title}</h1>
         <p class="subtitle">${subtitle}</p>
@@ -94,13 +94,13 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
         <p class="note">
           ${isPending
             ? 'Complete your payment to activate your invitation and share it with guests.'
-            : `You have <strong>5 free edits</strong> available. Simply click the edit link above to make changes.<br><br>You can also access your dashboard anytime at <a href="${CLIENT_URL}/my-invitation" style="color: #D4AF5A; text-decoration: none; font-weight: 600;">Eternally &rarr; My Invitation</a> using your invitation code above.`
+            : `You have <strong>5 free edits</strong> available. Simply click the edit link above to make changes.<br><br>You can also access your dashboard anytime at <a href="${CLIENT_URL}/my-invitation" style="color: #D4AF5A; text-decoration: none; font-weight: 600;">Veloura &rarr; My Invitation</a> using your invitation code above.`
           }
         </p>
       </div>
     </div>
     <div class="footer">
-      &copy; ${new Date().getFullYear()} <a href="${CLIENT_URL}">Eternally</a> &middot; Beautiful wedding invitations
+      &copy; ${new Date().getFullYear()} <a href="${CLIENT_URL}">Veloura</a> &middot; Beautiful wedding invitations
     </div>
   </div>
 </body>
@@ -108,7 +108,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
   };
 }
 
-export function rsvpNotificationEmail({ customerName, guestName, attending, guestCount, message }) {
+export function rsvpNotificationEmail({ guestName, attending, guestCount, message }) {
   return {
     subject: `New RSVP: ${guestName} ${attending === 'yes' ? 'is attending' : attending === 'no' ? 'can\'t make it' : 'replied maybe'}`,
     html: `
@@ -133,7 +133,7 @@ export function rsvpNotificationEmail({ customerName, guestName, attending, gues
 <body>
   <div class="container">
     <div class="card">
-      <div class="logo">Eternal<span>ly</span></div>
+      <div class="logo">Velou<span>ra</span></div>
       <h2>New RSVP from ${guestName}</h2>
       <span class="status status-${attending}">${attending === 'yes' ? 'Attending' : attending === 'no' ? 'Not Attending' : 'Maybe'}</span>
       <div class="detail">
@@ -159,7 +159,7 @@ export function sensitiveFieldChangeEmail({ customerName, changedFields, nameEdi
   }
 
   return {
-    subject: `Eternally: Important changes made to your invitation`,
+    subject: `Veloura: Important changes made to your invitation`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -182,7 +182,7 @@ export function sensitiveFieldChangeEmail({ customerName, changedFields, nameEdi
 <body>
   <div class="container">
     <div class="card">
-      <div class="logo">Eternal<span>ly</span></div>
+      <div class="logo">Velou<span>ra</span></div>
       <h2>Changes detected on your invitation</h2>
       <p>Hi ${customerName},</p>
       <p>The following sensitive fields were just updated on your wedding invitation:</p>
@@ -202,7 +202,7 @@ export function editLimitWarningEmail({ customerName, editsRemaining, editToken 
   const editUrl = `${CLIENT_URL}/edit/${editToken}`;
 
   return {
-    subject: `Eternally: You have ${editsRemaining} edit${editsRemaining === 1 ? '' : 's'} remaining`,
+    subject: `Veloura: You have ${editsRemaining} edit${editsRemaining === 1 ? '' : 's'} remaining`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -222,7 +222,7 @@ export function editLimitWarningEmail({ customerName, editsRemaining, editToken 
 <body>
   <div class="container">
     <div class="card">
-      <div class="logo">Eternal<span>ly</span></div>
+      <div class="logo">Velou<span>ra</span></div>
       <p>Hi ${customerName},</p>
       <div class="count">${editsRemaining}</div>
       <p>edit${editsRemaining === 1 ? '' : 's'} remaining on your invitation. Make them count!</p>

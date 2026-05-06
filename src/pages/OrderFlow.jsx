@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getPaddle } from '../lib/paddle';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
-const STORAGE_KEY = 'eternally_order_draft';
+const STORAGE_KEY = 'veloura_order_draft';
+const DISPLAY_PRICE = '$89';
 
 // --- localStorage helpers ---
 function loadDraft() {
@@ -13,10 +15,10 @@ function loadDraft() {
   } catch { return null; }
 }
 function saveDraft(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch { return undefined; }
 }
 function clearDraft() {
-  try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  try { localStorage.removeItem(STORAGE_KEY); } catch { return undefined; }
 }
 
 const PHOTO_CATEGORIES = [
@@ -101,7 +103,6 @@ export default function OrderFlow() {
     return result;
   })();
   const [photos, setPhotos] = useState(initPhotos);
-  const [uploading, setUploading] = useState({});
   const [uploadError, setUploadError] = useState('');
   // Story milestones — text/date for each story photo
   const [storyMilestones, setStoryMilestones] = useState(
@@ -351,9 +352,27 @@ export default function OrderFlow() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Order failed');
 
-      // If PayPal is configured, redirect to payment
-      if (data.paymentUrl && !data.paymentUrl.includes('/order/success/')) {
-        window.location.href = data.paymentUrl;
+      if (data.paymentProvider === 'paddle' && data.paddle) {
+        const Paddle = await getPaddle({
+          ...data.paddle,
+          onCheckoutCompleted: () => clearDraft(),
+        });
+
+        Paddle.Checkout.open({
+          settings: {
+            displayMode: 'overlay',
+            variant: 'one-page',
+            theme: 'light',
+            locale: 'en',
+            successUrl: data.paddle.successUrl,
+          },
+          transactionId: data.paddle.transactionId,
+          customer: {
+            email: form.customerEmail,
+          },
+        });
+
+        setConfirming(false);
         return;
       }
 
@@ -713,7 +732,7 @@ export default function OrderFlow() {
               <div className="form-submit">
                 <div className="price-summary">
                   <span className="price-label">Total</span>
-                  <span className="price-value">$99</span>
+                  <span className="price-value">{DISPLAY_PRICE}</span>
                 </div>
                 <button type="submit" className="btn btn-gold form-pay-btn">
                   Review & Pay
@@ -787,12 +806,12 @@ export default function OrderFlow() {
               <div className="review-submit-info">
                 <div className="price-summary">
                   <span className="price-label">Total</span>
-                  <span className="price-value">$99</span>
+                  <span className="price-value">{DISPLAY_PRICE}</span>
                 </div>
                 <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
               </div>
               <button className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
-                {confirming ? 'Processing Payment...' : 'Confirm & Pay $99'}
+                {confirming ? 'Processing Payment...' : `Confirm & Pay ${DISPLAY_PRICE}`}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
               </button>
             </div>

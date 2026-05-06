@@ -10,7 +10,7 @@ function uploadToCloudinary(fileBuffer, options = {}) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        folder: 'eternally/uploads',
+        folder: 'veloura/uploads',
         resource_type: 'image',
         transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
         ...options,
@@ -50,7 +50,7 @@ router.post('/', (req, res, next) => {
 
     const uploads = await Promise.all(
       req.files.map(file => uploadToCloudinary(file.buffer, {
-        folder: `eternally/uploads/${category}`,
+        folder: `veloura/uploads/${category}`,
       }))
     );
 
@@ -77,4 +77,3 @@ router.delete('/:publicId(*)', async (req, res) => {
 });
 
 export default router;
-

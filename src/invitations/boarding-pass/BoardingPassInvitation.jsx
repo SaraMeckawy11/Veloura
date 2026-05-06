@@ -531,7 +531,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         <div className="inv-footer-bar">
           <span className="inv-footer-bar-text">Made with love</span>
           <span className="inv-footer-bar-dot" />
-          <span className="inv-footer-bar-text">Eternally</span>
+          <span className="inv-footer-bar-text">Veloura</span>
         </div>
       </section>
     </div>

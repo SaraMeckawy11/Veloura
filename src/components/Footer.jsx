@@ -24,7 +24,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="footer-logo">
-              Eternal<span>ly</span>
+              Velou<span>ra</span>
             </div>
             <p>
               Premium digital wedding invitations crafted with love.
@@ -52,7 +52,7 @@ export default function Footer() {
             <ul>
               <li><a href="#designs" onClick={e => handleClick(e, '#designs')}>Designs</a></li>
               <li><a href="#how-it-works" onClick={e => handleClick(e, '#how-it-works')}>How It Works</a></li>
-              <li><a href="#pricing" onClick={e => handleClick(e, '#pricing')}>Pricing</a></li>
+              <li><Link to="/pricing">Pricing</Link></li>
               <li><a href="#faq" onClick={e => handleClick(e, '#faq')}>FAQ</a></li>
             </ul>
           </div>
@@ -62,8 +62,9 @@ export default function Footer() {
             <ul>
               <li><a href="#contact" onClick={e => handleClick(e, '#contact')}>Contact Us</a></li>
               <li><Link to="/my-invitation">Client Portal</Link></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms of Service</a></li>
+              <li><Link to="/terms">Terms of Service</Link></li>
+              <li><Link to="/privacy">Privacy Policy</Link></li>
+              <li><Link to="/refund-policy">Refund Policy</Link></li>
             </ul>
           </div>
 
@@ -82,7 +83,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <span>&copy; 2026 Eternally. All rights reserved.</span>
+          <span>&copy; 2026 Veloura. All rights reserved.</span>
           <button className="footer-back-top" onClick={scrollToTop} aria-label="Back to top">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 15l-6-6-6 6" />

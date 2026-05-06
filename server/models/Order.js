@@ -54,10 +54,10 @@ const orderSchema = new mongoose.Schema({
     background: { type: String },
   },
 
-  // Payment (PayPal)
-  paypalOrderId:    { type: String, index: true },        // PayPal checkout order ID
-  paypalCaptureId:  { type: String },                     // PayPal capture/transaction ID
-  amountPaid:       { type: String },                     // e.g. "99.00"
+  // Payment
+  paymentProvider:  { type: String, enum: ['paddle', 'manual'], default: 'paddle' },
+  paddleTransactionId: { type: String, index: true },
+  amountPaid:       { type: String },                     // e.g. "89.00"
   currency:         { type: String, default: 'USD' },
   paymentStatus:    { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending', index: true },
 

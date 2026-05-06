@@ -39,7 +39,7 @@ export default function Contact() {
                 </div>
                 <div className="contact-method-text">
                   <div className="label">Email</div>
-                  <div className="value">hello@eternally.co</div>
+                  <div className="value">veloura.invitations@gmail.com</div>
                 </div>
               </div>
 
@@ -63,7 +63,7 @@ export default function Contact() {
                 </div>
                 <div className="contact-method-text">
                   <div className="label">Instagram</div>
-                  <div className="value">@eternally.invites</div>
+                  <div className="value">@veloura.invites</div>
                 </div>
               </div>
             </div>

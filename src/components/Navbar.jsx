@@ -43,7 +43,7 @@ export default function Navbar() {
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
         <div className="nav-inner">
           <a href="#" className="nav-logo" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-            Eternal<span>ly</span>
+            Velou<span>ra</span>
           </a>
 
           <ul className="nav-links">

@@ -8,10 +8,12 @@ import { validateOrderBody, validateEditToken } from '../middleware/validateOrde
 
 const router = Router();
 
-const PRICE_USD = process.env.PRICE_USD || '99.00';
-const paypalConfigured = process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_ID !== 'replace_me';
+const PRICE_USD = process.env.PRICE_USD || '89.00';
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const isConfigured = value => value && !value.startsWith('replace_me') && !value.startsWith('your_');
+const paddleConfigured = isConfigured(process.env.PADDLE_API_KEY) && isConfigured(process.env.PADDLE_CLIENT_TOKEN) && isConfigured(process.env.PADDLE_PRICE_ID);
 
-// POST /api/orders — create order + PayPal checkout (or skip payment in dev)
+// POST /api/orders - create order + Paddle checkout (or local dev activation fallback)
 router.post('/', validateOrderBody, async (req, res) => {
   try {
     const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl, storyMilestones } = req.body;
@@ -49,27 +51,36 @@ router.post('/', validateOrderBody, async (req, res) => {
       await user.save();
     }
 
-    // If PayPal is configured, create a checkout session
-    if (paypalConfigured) {
-      const { createPayPalOrder } = await import('../config/paypal.js');
-      const { paypalOrderId, approvalUrl } = await createPayPalOrder({
-        amountUSD: PRICE_USD,
-        description: `Eternally — ${template.name} Wedding Invitation`,
+    if (paddleConfigured) {
+      const { createPaddleTransaction } = await import('../config/paddle.js');
+      const transaction = await createPaddleTransaction({
         orderId: order._id.toString(),
+        priceId: process.env.PADDLE_PRICE_ID,
+        customerEmail: order.customerEmail,
+        templateId: template._id.toString(),
       });
 
-      order.paypalOrderId = paypalOrderId;
+      order.paymentProvider = 'paddle';
+      order.paddleTransactionId = transaction.id;
+      order.amountPaid = PRICE_USD;
+      order.currency = 'USD';
       await order.save();
-
       return res.status(201).json({
         orderId: order._id,
-        paymentUrl: approvalUrl,
+        paymentProvider: 'paddle',
+        paddle: {
+          clientToken: process.env.PADDLE_CLIENT_TOKEN,
+          environment: process.env.PADDLE_ENVIRONMENT === 'sandbox' ? 'sandbox' : 'production',
+          transactionId: transaction.id,
+          successUrl: `${CLIENT_URL}/order/success/${order._id}`,
+        },
       });
     }
 
-    // Dev mode (no PayPal): order stays as draft, let frontend handle confirmation
+    // Dev mode: no Paddle configured, let frontend confirm locally.
     res.status(201).json({
       orderId: order._id,
+      paymentProvider: 'manual',
     });
   } catch (err) {
     console.error('Order creation error:', err);
@@ -77,9 +88,13 @@ router.post('/', validateOrderBody, async (req, res) => {
   }
 });
 
-// POST /api/orders/confirm/:orderId — confirm payment (dev mode)
+// POST /api/orders/confirm/:orderId - confirm payment in local development only
 router.post('/confirm/:orderId', async (req, res) => {
   try {
+    if (paddleConfigured && process.env.NODE_ENV === 'production') {
+      return res.status(400).json({ error: 'Payment must be confirmed by Paddle.' });
+    }
+
     const order = await Order.findById(req.params.orderId);
     if (!order) return res.status(404).json({ error: 'Order not found' });
     if (order.paymentStatus === 'paid') {
@@ -87,7 +102,8 @@ router.post('/confirm/:orderId', async (req, res) => {
     }
 
     // Activate the order
-    order.amountPaid = paypalConfigured ? PRICE_USD : '0.00';
+    order.paymentProvider = 'manual';
+    order.amountPaid = PRICE_USD;
     order.currency = 'USD';
     await order.activate();
 
@@ -313,7 +329,7 @@ router.get('/invite/:publicSlug', async (req, res) => {
   try {
     const order = await Order.findOne({ publicSlug: req.params.publicSlug, status: 'active' })
       .populate('template')
-      .select('-editToken -paypalOrderId -paypalCaptureId -customerEmail -editHistory');
+      .select('-editToken -paddleTransactionId -customerEmail -editHistory');
 
     if (!order) return res.status(404).json({ error: 'Invitation not found' });
     res.json(order);

@@ -5,6 +5,8 @@ import OrderSuccess from './pages/OrderSuccess';
 import Dashboard from './pages/Dashboard';
 import Invitation from './pages/Invitation';
 import MyInvitation from './pages/MyInvitation';
+import PricingPage from './pages/PricingPage';
+import LegalPage from './pages/LegalPage';
 
 function DemoInvitation() {
   const { templateSlug } = useParams();
@@ -16,6 +18,10 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/terms" element={<LegalPage type="terms" />} />
+        <Route path="/privacy" element={<LegalPage type="privacy" />} />
+        <Route path="/refund-policy" element={<LegalPage type="refund" />} />
         <Route path="/order" element={<OrderFlow />} />
         <Route path="/order/success/:orderId" element={<OrderSuccess />} />
         <Route path="/order/failed/:orderId?" element={<OrderSuccess />} />

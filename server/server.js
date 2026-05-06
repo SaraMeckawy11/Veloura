@@ -17,6 +17,7 @@ await connectDB();
 
 // Global middleware
 app.use(cors());
+app.use('/api/webhooks/paddle', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '10mb' }));
 
 // API routes
@@ -37,7 +38,7 @@ app.use((req, res) => {
 });
 
 // Global error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });

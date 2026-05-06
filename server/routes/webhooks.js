@@ -1,110 +1,104 @@
 import { Router } from 'express';
+import { createHmac, timingSafeEqual } from 'crypto';
 import Order from '../models/Order.js';
-import { capturePayPalOrder, verifyWebhookSignature } from '../config/paypal.js';
 import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail } from '../utils/emailTemplates.js';
 
 const router = Router();
 
-/**
- * After customer approves on PayPal, they are redirected here.
- * We capture the payment and redirect to the frontend success page.
- */
-router.get('/paypal/success', async (req, res) => {
-  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+function verifyPaddleSignature(rawBody, signatureHeader, secret) {
+  if (!secret || secret === 'replace_me') return process.env.NODE_ENV !== 'production';
+  if (!signatureHeader || !Buffer.isBuffer(rawBody)) return false;
+
+  const parts = signatureHeader.split(';').map(part => part.split('='));
+  const timestamp = parts.find(([key]) => key === 'ts')?.[1];
+  const signatures = parts.filter(([key]) => key === 'h1').map(([, value]) => value);
+  if (!timestamp || signatures.length === 0) return false;
+
+  const signedPayload = `${timestamp}:${rawBody.toString('utf8')}`;
+  const expected = createHmac('sha256', secret).update(signedPayload).digest('hex');
+  const expectedBuffer = Buffer.from(expected, 'hex');
+
+  return signatures.some(signature => {
+    const signatureBuffer = Buffer.from(signature, 'hex');
+    return signatureBuffer.length === expectedBuffer.length && timingSafeEqual(signatureBuffer, expectedBuffer);
+  });
+}
+
+async function sendConfirmation(order) {
+  if (order.confirmationSent) return;
+
+  const email = orderConfirmationEmail({
+    customerName: order.customerName,
+    publicSlug: order.publicSlug,
+    editToken: order.editToken,
+    weddingDetails: order.weddingDetails,
+    invitationCode: order.publicSlug,
+  });
 
   try {
-    const { token: paypalOrderId } = req.query; // PayPal sends ?token=PAYPAL_ORDER_ID
-
-    if (!paypalOrderId) {
-      return res.redirect(`${clientUrl}/order/failed`);
-    }
-
-    // Find our order
-    const order = await Order.findOne({ paypalOrderId });
-    if (!order) {
-      return res.redirect(`${clientUrl}/order/failed`);
-    }
-
-    // Capture the payment
-    const capture = await capturePayPalOrder(paypalOrderId);
-
-    if (capture.status === 'COMPLETED') {
-      const captureData = capture.purchase_units?.[0]?.payments?.captures?.[0];
-
-      order.paypalCaptureId = captureData?.id || '';
-      order.amountPaid = captureData?.amount?.value || process.env.PRICE_USD;
-      order.currency = captureData?.amount?.currency_code || 'USD';
-      await order.activate(); // sets status=active, paymentStatus=paid, expiresAt=+1year
-
-      // Send confirmation email
-      if (!order.confirmationSent) {
-        const email = orderConfirmationEmail({
-          customerName: order.customerName,
-          publicSlug: order.publicSlug,
-          editToken: order.editToken,
-          weddingDetails: order.weddingDetails,
-          invitationCode: order.publicSlug,
-        });
-
-        try {
-          await sendMail({ to: order.customerEmail, ...email });
-          order.confirmationSent = true;
-          await order.save();
-        } catch (emailErr) {
-          console.error('Failed to send confirmation email:', emailErr.message);
-        }
-      }
-
-      return res.redirect(`${clientUrl}/order/success/${order._id}`);
-    } else {
-      order.paymentStatus = 'failed';
-      await order.save();
-      return res.redirect(`${clientUrl}/order/failed/${order._id}`);
-    }
-  } catch (err) {
-    console.error('PayPal capture error:', err);
-    return res.redirect(`${clientUrl}/order/failed`);
+    await sendMail({ to: order.customerEmail, ...email });
+    order.confirmationSent = true;
+    await order.save();
+  } catch (emailErr) {
+    console.error('Failed to send confirmation email:', emailErr.message);
   }
-});
+}
 
-/**
- * PayPal webhook for async events (refunds, disputes, etc.)
- * Set this URL in PayPal Developer Dashboard → Webhooks
- */
-router.post('/paypal', async (req, res) => {
+router.post('/paddle', async (req, res) => {
   try {
-    // Verify signature if webhook ID is configured
-    if (process.env.PAYPAL_WEBHOOK_ID) {
-      const isValid = await verifyWebhookSignature({
-        headers: req.headers,
-        body: req.body,
-        webhookId: process.env.PAYPAL_WEBHOOK_ID,
-      });
-      if (!isValid) {
-        console.error('PayPal webhook signature invalid');
-        return res.status(403).json({ error: 'Invalid signature' });
-      }
+    const rawBody = req.body;
+    const isValid = verifyPaddleSignature(
+      rawBody,
+      req.headers['paddle-signature'],
+      process.env.PADDLE_WEBHOOK_SECRET
+    );
+
+    if (!isValid) {
+      console.error('Paddle webhook signature invalid');
+      return res.status(403).json({ error: 'Invalid signature' });
     }
 
-    const event = req.body;
+    const event = JSON.parse(rawBody.toString('utf8'));
+    const payload = event.data || {};
+    const orderId = payload.custom_data?.orderId || payload.custom_data?.order_id;
 
     switch (event.event_type) {
-      case 'PAYMENT.CAPTURE.REFUNDED': {
-        const captureId = event.resource?.id;
-        const order = await Order.findOne({ paypalCaptureId: captureId });
+      case 'transaction.completed':
+      case 'transaction.paid': {
+        if (!orderId) break;
+        const order = await Order.findById(orderId);
         if (order) {
-          order.paymentStatus = 'refunded';
-          order.status = 'cancelled';
+          order.paymentProvider = 'paddle';
+          order.paddleTransactionId = payload.id;
+          order.amountPaid = process.env.PRICE_USD || order.amountPaid || '89.00';
+          order.currency = payload.currency_code || order.currency || 'USD';
+          if (order.paymentStatus !== 'paid') {
+            await order.activate();
+          }
+          await sendConfirmation(order);
+        }
+        break;
+      }
+
+      case 'transaction.payment_failed':
+      case 'transaction.canceled': {
+        if (!orderId) break;
+        const order = await Order.findById(orderId);
+        if (order && order.paymentStatus !== 'paid') {
+          order.paymentProvider = 'paddle';
+          order.paddleTransactionId = payload.id;
+          order.paymentStatus = 'failed';
           await order.save();
         }
         break;
       }
 
-      case 'PAYMENT.CAPTURE.REVERSED': {
-        const captureId = event.resource?.links?.find(l => l.rel === 'up')?.href?.split('/').pop();
-        const order = await Order.findOne({ paypalCaptureId: captureId });
-        if (order) {
+      case 'adjustment.created':
+      case 'adjustment.updated': {
+        const transactionId = payload.transaction_id;
+        const order = transactionId ? await Order.findOne({ paddleTransactionId: transactionId }) : null;
+        if (order && payload.action === 'refund' && ['approved', 'completed'].includes(payload.status)) {
           order.paymentStatus = 'refunded';
           order.status = 'cancelled';
           await order.save();
@@ -118,7 +112,7 @@ router.post('/paypal', async (req, res) => {
 
     res.json({ received: true });
   } catch (err) {
-    console.error('PayPal webhook error:', err);
+    console.error('Paddle webhook error:', err);
     res.status(500).json({ error: err.message });
   }
 });
