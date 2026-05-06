@@ -157,6 +157,9 @@ export default function OrderFlow() {
         return r.json();
       })
       .then(data => {
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error('No templates returned');
+        }
         // Merge API data with local fallback images
         const merged = data.map(t => ({
           ...t,

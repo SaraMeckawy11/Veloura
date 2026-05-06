@@ -5,6 +5,7 @@ import User from '../models/User.js';
 import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail, editLimitWarningEmail, sensitiveFieldChangeEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
+import { getFallbackTemplate } from '../data/templateFallbacks.js';
 
 const router = Router();
 
@@ -18,7 +19,23 @@ router.post('/', validateOrderBody, async (req, res) => {
   try {
     const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl, storyMilestones } = req.body;
 
-    const template = await Template.findById(templateId);
+    let template = null;
+    if (templateId?.match?.(/^[a-f\d]{24}$/i)) {
+      template = await Template.findById(templateId);
+    }
+    if (!template) {
+      template = await Template.findOne({ slug: templateId, active: true });
+    }
+    if (!template) {
+      const fallback = getFallbackTemplate(templateId);
+      if (fallback) {
+        template = await Template.findOneAndUpdate(
+          { slug: fallback.slug },
+          { $setOnInsert: fallback },
+          { new: true, upsert: true }
+        );
+      }
+    }
     if (!template) return res.status(404).json({ error: 'Template not found' });
 
     // Create order in draft state

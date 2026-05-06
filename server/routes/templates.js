@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Template from '../models/Template.js';
+import { fallbackTemplates, getFallbackTemplate } from '../data/templateFallbacks.js';
 
 const router = Router();
 
@@ -14,6 +15,13 @@ router.get('/', async (req, res) => {
       .select('name slug category description envelope previewImage thumbnailImage colorScheme placeholders')
       .sort({ category: 1, name: 1 });
 
+    if (templates.length === 0) {
+      const fallback = category && category !== 'all'
+        ? fallbackTemplates.filter(template => template.category === category)
+        : fallbackTemplates;
+      return res.json(fallback.map(template => ({ ...template, _id: template.slug })));
+    }
+
     res.json(templates);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -24,7 +32,11 @@ router.get('/', async (req, res) => {
 router.get('/:slug', async (req, res) => {
   try {
     const template = await Template.findOne({ slug: req.params.slug, active: true });
-    if (!template) return res.status(404).json({ error: 'Template not found' });
+    if (!template) {
+      const fallback = getFallbackTemplate(req.params.slug);
+      if (!fallback) return res.status(404).json({ error: 'Template not found' });
+      return res.json({ ...fallback, _id: fallback.slug });
+    }
     res.json(template);
   } catch (err) {
     res.status(500).json({ error: err.message });
