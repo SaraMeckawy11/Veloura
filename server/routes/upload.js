@@ -4,6 +4,7 @@ import upload from '../middleware/upload.js';
 import cloudinary from '../config/cloudinary.js';
 
 const router = Router();
+const ALLOWED_DIRECT_UPLOAD_CATEGORIES = new Set(['music']);
 
 // Helper: upload buffer to Cloudinary
 function uploadToCloudinary(fileBuffer, options = {}) {
@@ -24,6 +25,39 @@ function uploadToCloudinary(fileBuffer, options = {}) {
 
 // POST /api/upload — upload one or more images
 // Accepts optional query param ?category=couple|venue|story|gallery
+// Sign direct browser uploads for larger assets.
+router.get('/signature', (req, res) => {
+  try {
+    const category = req.query.category || 'music';
+    if (!ALLOWED_DIRECT_UPLOAD_CATEGORIES.has(category)) {
+      return res.status(400).json({ error: 'Direct upload is not enabled for this category' });
+    }
+
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    if (!cloudName || !apiKey || !apiSecret) {
+      return res.status(500).json({ error: 'Cloudinary is not configured' });
+    }
+
+    const timestamp = Math.round(Date.now() / 1000);
+    const folder = `veloura/uploads/${category}`;
+    const signature = cloudinary.utils.api_sign_request({ timestamp, folder }, apiSecret);
+
+    res.json({
+      cloudName,
+      apiKey,
+      timestamp,
+      folder,
+      signature,
+      resourceType: category === 'music' ? 'video' : 'image',
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Server-side upload fallback.
 router.post('/', (req, res, next) => {
   // Wrap multer to catch file filter / size errors and return proper JSON
   upload.array('photos', 10)(req, res, (err) => {

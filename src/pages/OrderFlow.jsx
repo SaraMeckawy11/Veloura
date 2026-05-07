@@ -401,25 +401,52 @@ export default function OrderFlow() {
       failed: false,
     });
 
-    const fd = new FormData();
-    fd.append('photos', file);
-
     try {
-      const res = await fetch(`${API}/upload?category=music`, { method: 'POST', body: fd });
-      const data = await res.json();
-      if (!res.ok || !data.files?.[0]) throw new Error(data.error || 'Music upload failed');
+      const signatureRes = await fetch(`${API}/upload/signature?category=music`);
+      const signatureData = await signatureRes.json();
+      if (!signatureRes.ok) throw new Error(signatureData.error || 'Could not prepare direct upload');
+
+      const cloudinaryForm = new FormData();
+      cloudinaryForm.append('file', file);
+      cloudinaryForm.append('api_key', signatureData.apiKey);
+      cloudinaryForm.append('timestamp', signatureData.timestamp);
+      cloudinaryForm.append('folder', signatureData.folder);
+      cloudinaryForm.append('signature', signatureData.signature);
+
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/${signatureData.resourceType}/upload`;
+      const uploadRes = await fetch(uploadUrl, { method: 'POST', body: cloudinaryForm });
+      const uploadData = await uploadRes.json();
+      if (!uploadRes.ok) throw new Error(uploadData.error?.message || 'Music upload failed');
+
       URL.revokeObjectURL(localPreviewUrl);
       setMusic({
-        url: data.files[0].url,
-        publicId: data.files[0].publicId,
+        url: uploadData.secure_url,
+        publicId: uploadData.public_id,
         name: file.name,
         enabled: true,
         uploading: false,
         failed: false,
       });
-    } catch (err) {
-      setMusic(prev => ({ ...prev, uploading: false, failed: true }));
-      setMusicError(err.message || 'Music upload failed. Please try another file.');
+    } catch {
+      try {
+        const fd = new FormData();
+        fd.append('photos', file);
+        const res = await fetch(`${API}/upload?category=music`, { method: 'POST', body: fd });
+        const data = await res.json();
+        if (!res.ok || !data.files?.[0]) throw new Error(data.error || 'Music upload failed');
+        URL.revokeObjectURL(localPreviewUrl);
+        setMusic({
+          url: data.files[0].url,
+          publicId: data.files[0].publicId,
+          name: file.name,
+          enabled: true,
+          uploading: false,
+          failed: false,
+        });
+      } catch (err) {
+        setMusic(prev => ({ ...prev, uploading: false, failed: true }));
+        setMusicError(err.message || 'Music upload failed. Please try another file.');
+      }
     }
   };
 
@@ -821,7 +848,7 @@ export default function OrderFlow() {
                       {music.name || 'Choose background music'}
                     </span>
                     <span className="music-upload-subtitle">
-                      {music.uploading ? 'Uploading...' : music.url ? 'Music will play on loop in the invitation.' : 'MP3, WAV, or M4A recommended.'}
+                      {music.uploading ? 'Uploading directly to Cloudinary...' : music.url ? 'Music will play on loop in the invitation.' : 'MP3, WAV, or M4A recommended.'}
                     </span>
                     {music.url && !music.uploading && !music.failed && (
                       <audio className="music-preview" src={music.url} controls preload="metadata" />
