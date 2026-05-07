@@ -536,10 +536,10 @@
   }
 
   .inv-countdown-grid {
-    width: min(100%, 340px);
+    width: min(100%, 390px);
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px 14px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
     margin: 32px auto 0;
   }
 
@@ -549,10 +549,24 @@
 
   .inv-countdown-grid .inv-flap {
     min-width: 0;
+    gap: 7px;
   }
 
   .inv-countdown-grid .inv-flap-digits {
     justify-content: center;
+    gap: 3px;
+  }
+
+  .inv-countdown-grid .flap-digit {
+    width: clamp(27px, 8vw, 34px);
+    height: clamp(42px, 11vw, 50px);
+    border-radius: 5px;
+    font-size: clamp(1.12rem, 5vw, 1.45rem);
+  }
+
+  .inv-countdown-grid .inv-flap-label {
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
   }
 }
 .inv-flap {
