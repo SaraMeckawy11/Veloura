@@ -529,6 +529,32 @@
 @media (min-width: 768px) {
   .inv-countdown-grid { gap: 32px; }
 }
+@media (max-width: 640px) {
+  .inv-section-dark {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .inv-countdown-grid {
+    width: min(100%, 340px);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 14px;
+    margin: 32px auto 0;
+  }
+
+  .inv-countdown-grid .inv-colon {
+    display: none;
+  }
+
+  .inv-countdown-grid .inv-flap {
+    min-width: 0;
+  }
+
+  .inv-countdown-grid .inv-flap-digits {
+    justify-content: center;
+  }
+}
 .inv-flap {
   display: flex;
   flex-direction: column;
@@ -557,7 +583,8 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px hsla(38, 55%, 58%, 0.1);
 }
 @media (min-width: 768px) {
-  .inv-flap-digit {
+  .inv-flap-digit,
+  .flap-digit {
     width: 60px;
     height: 84px;
     font-size: 2.5rem;
