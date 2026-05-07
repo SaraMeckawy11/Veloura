@@ -30,7 +30,8 @@
 
 .designs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 380px));
+  justify-content: center;
   gap: 20px;
 }
 
@@ -41,6 +42,7 @@
   overflow: hidden;
   transition: var(--transition);
   position: relative;
+  width: 100%;
 }
 
 .design-card:hover {
@@ -161,5 +163,5 @@
 }
 
 @media (max-width: 768px) {
-  .designs-grid { grid-template-columns: 1fr; }
+  .designs-grid { grid-template-columns: minmax(0, 1fr); }
 }

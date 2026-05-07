@@ -47,6 +47,7 @@ export default function Navbar() {
     { label: 'FAQ', href: '#faq' },
     { label: 'Get in Touch', href: '#contact' },
   ];
+  const showMobileStickyCta = location.pathname === '/' && scrolled && !menuOpen;
 
   return (
     <>
@@ -98,6 +99,15 @@ export default function Navbar() {
           </Link>
         </div>
       </div>
+
+      {location.pathname === '/' && (
+        <Link
+          to="/order"
+          className={`mobile-sticky-cta${showMobileStickyCta ? ' visible' : ''}`}
+        >
+          Create My Invitation
+        </Link>
+      )}
     </>
   );
 }

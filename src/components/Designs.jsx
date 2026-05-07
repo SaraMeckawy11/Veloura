@@ -137,6 +137,9 @@ export default function Designs() {
   const [activeFilter, setActiveFilter] = useState('all');
   const revealRef = useReveal();
   const navigate = useNavigate();
+  const availableFilters = filters.filter(f => (
+    f.value === 'all' || designs.some(design => design.category === f.value)
+  ));
 
   const filtered = activeFilter === 'all'
     ? designs
@@ -153,17 +156,19 @@ export default function Designs() {
           </p>
         </div>
 
-        <div className="designs-filter">
-          {filters.map(f => (
-            <button
-              key={f.value}
-              className={`filter-btn${activeFilter === f.value ? ' active' : ''}`}
-              onClick={() => setActiveFilter(f.value)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+        {availableFilters.length > 1 && (
+          <div className="designs-filter">
+            {availableFilters.map(f => (
+              <button
+                key={f.value}
+                className={`filter-btn${activeFilter === f.value ? ' active' : ''}`}
+                onClick={() => setActiveFilter(f.value)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="designs-grid">
           {filtered.map(design => (
