@@ -1,4 +1,6 @@
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+import { getClientUrl } from '../config/urls.js';
+
+const CLIENT_URL = getClientUrl();
 
 export function orderConfirmationEmail({ customerName, publicSlug, editToken, weddingDetails, isPending = false, invitationCode }) {
   const dashboardUrl = `${CLIENT_URL}/dashboard/${editToken}`;
