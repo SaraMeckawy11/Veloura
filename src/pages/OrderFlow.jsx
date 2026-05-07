@@ -799,14 +799,17 @@ export default function OrderFlow() {
         {/* Step 3: Review & Confirm Payment */}
         {step === 3 && (
           <div className="step-content">
-            <button className="step-back-btn" onClick={() => setStep(2)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
-              Back to Details
-            </button>
+            {!paddleOrderData && (
+              <button className="step-back-btn" onClick={() => setStep(2)}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
+                Back to Details
+              </button>
+            )}
 
-            <h1 className="step-title">Review & Confirm</h1>
-            <p className="step-subtitle">Please review your order details before confirming payment</p>
+            <h1 className="step-title">{paddleOrderData ? 'Complete Your Order' : 'Review & Confirm'}</h1>
+            <p className="step-subtitle">{paddleOrderData ? 'You\'re one step away from your invitation.' : 'Please review your order details before confirming payment'}</p>
 
+            {!paddleOrderData && (
             <div className="review-card">
               <div className="review-section">
                 <h3 className="review-section-title">Selected Design</h3>
@@ -854,6 +857,7 @@ export default function OrderFlow() {
                 </div>
               )}
             </div>
+            )}
 
             {!paddleOrderData && (
               <div className="form-submit review-submit">
@@ -872,48 +876,96 @@ export default function OrderFlow() {
             )}
 
             {paddleOrderData && (
-              <div className="payment-section">
-                <div className="payment-section-header">
-                  <div className="payment-section-title">
-                    <span className="payment-lock-icon" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                      </svg>
-                    </span>
-                    <div>
-                      <h3>Complete your payment</h3>
-                      <p className="payment-section-subtitle">Encrypted &amp; secure</p>
-                    </div>
+              <div className="payment-layout">
+                <aside className="payment-summary-card">
+                  <div className="payment-summary-header">
+                    <span className="payment-summary-eyebrow">Order Summary</span>
+                    <h3>{selectedTemplate.name}</h3>
+                    <p className="payment-summary-subtitle">Veloura Digital Wedding Invitation</p>
                   </div>
-                  <div className="payment-total">
-                    <span className="payment-total-label">Total</span>
-                    <span className="payment-total-value">{DISPLAY_PRICE}</span>
-                  </div>
-                </div>
-
-                <div className="paddle-checkout-wrap">
-                  {paddleLoading && (
-                    <div className="paddle-checkout-loading">
-                      <div className="redirect-spinner" />
-                      <p>Preparing secure checkout…</p>
+                  {selectedTemplate.previewImage && (
+                    <div className="payment-summary-image">
+                      <img src={selectedTemplate.previewImage} alt={selectedTemplate.name} />
                     </div>
                   )}
-                  <div ref={paddleFrameRef} className="paddle-checkout-frame" />
-                </div>
+                  <dl className="payment-summary-list">
+                    <div className="payment-summary-row">
+                      <dt>Couple</dt>
+                      <dd>{form.groomName} &amp; {form.brideName}</dd>
+                    </div>
+                    {form.weddingDate && (
+                      <div className="payment-summary-row">
+                        <dt>Date</dt>
+                        <dd>{new Date(form.weddingDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</dd>
+                      </div>
+                    )}
+                    {form.venue && (
+                      <div className="payment-summary-row">
+                        <dt>Venue</dt>
+                        <dd>{form.venue}</dd>
+                      </div>
+                    )}
+                    <div className="payment-summary-row">
+                      <dt>Email</dt>
+                      <dd>{form.customerEmail}</dd>
+                    </div>
+                  </dl>
+                  <div className="payment-summary-divider" />
+                  <div className="payment-summary-totals">
+                    <div className="payment-summary-row">
+                      <dt>Subtotal</dt>
+                      <dd>{DISPLAY_PRICE}</dd>
+                    </div>
+                    <div className="payment-summary-row payment-summary-grand">
+                      <dt>Total due today</dt>
+                      <dd>{DISPLAY_PRICE}</dd>
+                    </div>
+                  </div>
+                  <button type="button" className="payment-summary-edit" onClick={() => { setPaddleOrderData(null); setPaddleLoading(false); }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+                    Edit order
+                  </button>
+                </aside>
 
-                <div className="payment-trust-row">
-                  <span className="payment-trust-item">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    </svg>
-                    256-bit encryption
-                  </span>
-                  <span className="payment-trust-divider">•</span>
-                  <span className="payment-trust-item">PCI-DSS compliant</span>
-                  <span className="payment-trust-divider">•</span>
-                  <span className="payment-trust-item">Confirmation email after payment</span>
-                </div>
+                <section className="payment-section">
+                  <div className="payment-section-header">
+                    <div className="payment-section-title">
+                      <span className="payment-lock-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                      </span>
+                      <div>
+                        <h3>Payment</h3>
+                        <p className="payment-section-subtitle">Encrypted &amp; secure</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="paddle-checkout-wrap">
+                    {paddleLoading && (
+                      <div className="paddle-checkout-loading">
+                        <div className="redirect-spinner" />
+                        <p>Preparing secure checkout…</p>
+                      </div>
+                    )}
+                    <div ref={paddleFrameRef} className="paddle-checkout-frame" />
+                  </div>
+
+                  <div className="payment-trust-row">
+                    <span className="payment-trust-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      </svg>
+                      256-bit encryption
+                    </span>
+                    <span className="payment-trust-divider">•</span>
+                    <span className="payment-trust-item">PCI-DSS compliant</span>
+                    <span className="payment-trust-divider">•</span>
+                    <span className="payment-trust-item">Confirmation email after payment</span>
+                  </div>
+                </section>
               </div>
             )}
           </div>

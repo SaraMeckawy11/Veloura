@@ -106,8 +106,9 @@ export default function LegalPage({ type }) {
     <>
       <Navbar />
       <main className="legal-page">
-        <div className="container legal-container">
-          <header className="legal-header">
+        <div className="legal-hero">
+          <div className="legal-hero-glow" aria-hidden="true" />
+          <div className="container legal-container">
             <Link className="legal-back" to="/">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M15 18l-6-6 6-6" />
@@ -116,16 +117,50 @@ export default function LegalPage({ type }) {
             </Link>
             <p className="section-label">{page.label}</p>
             <h1>{page.title}</h1>
-            <p className="legal-updated">Last updated: {page.updated}</p>
-          </header>
+            <p className="legal-updated">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              Last updated {page.updated}
+            </p>
+          </div>
+        </div>
 
-          <div className="legal-content">
-            {page.sections.map(section => (
-              <section key={section.title} className="legal-section">
-                <h2>{section.title}</h2>
-                <p>{section.body}</p>
-              </section>
-            ))}
+        <div className="container legal-container">
+          <div className="legal-layout">
+            <aside className="legal-toc" aria-label="On this page">
+              <span className="legal-toc-title">On this page</span>
+              <ol>
+                {page.sections.map((section, i) => (
+                  <li key={section.title}>
+                    <a href={`#section-${i}`}>
+                      <span className="legal-toc-num">{String(i + 1).padStart(2, '0')}</span>
+                      {section.title}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </aside>
+
+            <div className="legal-content">
+              {page.sections.map((section, i) => (
+                <section key={section.title} id={`section-${i}`} className="legal-section">
+                  <span className="legal-section-num">{String(i + 1).padStart(2, '0')}</span>
+                  <h2>{section.title}</h2>
+                  <p>{section.body}</p>
+                </section>
+              ))}
+
+              <div className="legal-contact-card">
+                <h3>Need a hand?</h3>
+                <p>For anything not covered here, reach out to our team and we'll be happy to help.</p>
+                <a href="mailto:veloura.invitations@gmail.com" className="legal-contact-link">
+                  veloura.invitations@gmail.com
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </main>
