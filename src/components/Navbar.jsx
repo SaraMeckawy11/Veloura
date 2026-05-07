@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../styles/Navbar.css';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -16,6 +18,14 @@ export default function Navbar() {
     e.preventDefault();
     setMenuOpen(false);
     document.body.style.overflow = '';
+
+    // If we're not on the home page, navigate there with the hash so the
+    // global ScrollToTop handler scrolls to the section after mount.
+    if (location.pathname !== '/') {
+      navigate('/' + href);
+      return;
+    }
+
     const target = document.querySelector(href);
     if (target) {
       const y = target.getBoundingClientRect().top + window.pageYOffset - 80;

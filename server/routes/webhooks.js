@@ -7,7 +7,10 @@ import { orderConfirmationEmail } from '../utils/emailTemplates.js';
 const router = Router();
 
 function verifyPaddleSignature(rawBody, signatureHeader, secret) {
-  if (!secret || secret === 'replace_me') return process.env.NODE_ENV !== 'production';
+  // Trim whitespace pasted into Render's env var UI so a trailing space
+  // doesn't silently fail every webhook.
+  const cleanSecret = secret?.trim();
+  if (!cleanSecret || cleanSecret === 'replace_me') return process.env.NODE_ENV !== 'production';
   if (!signatureHeader || !Buffer.isBuffer(rawBody)) return false;
 
   const parts = signatureHeader.split(';').map(part => part.split('='));
@@ -16,7 +19,7 @@ function verifyPaddleSignature(rawBody, signatureHeader, secret) {
   if (!timestamp || signatures.length === 0) return false;
 
   const signedPayload = `${timestamp}:${rawBody.toString('utf8')}`;
-  const expected = createHmac('sha256', secret).update(signedPayload).digest('hex');
+  const expected = createHmac('sha256', cleanSecret).update(signedPayload).digest('hex');
   const expectedBuffer = Buffer.from(expected, 'hex');
 
   return signatures.some(signature => {
@@ -55,7 +58,8 @@ router.post('/paddle', async (req, res) => {
     );
 
     if (!isValid) {
-      console.error('Paddle webhook signature invalid');
+      const hasSecret = !!process.env.PADDLE_WEBHOOK_SECRET?.trim();
+      console.error(`Paddle webhook signature invalid (secret configured: ${hasSecret}) — copy the exact "Endpoint Secret Key" from Paddle Notifications into PADDLE_WEBHOOK_SECRET.`);
       return res.status(403).json({ error: 'Invalid signature' });
     }
 

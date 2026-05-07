@@ -14,9 +14,9 @@ function sanitizeFrom(raw) {
   return v;
 }
 
-const SMTP_HOST = process.env.SMTP_HOST;
-const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
-const SMTP_USER = process.env.SMTP_USER;
+const SMTP_HOST = process.env.SMTP_HOST?.trim();
+const SMTP_PORT = Number(process.env.SMTP_PORT) || 465;
+const SMTP_USER = process.env.SMTP_USER?.trim();
 const SMTP_PASS = process.env.SMTP_PASS;
 const EMAIL_FROM = sanitizeFrom(process.env.EMAIL_FROM) || SMTP_USER;
 
@@ -30,8 +30,13 @@ const transporter = emailEnabled
   ? nodemailer.createTransport({
       host: SMTP_HOST,
       port: SMTP_PORT,
-      secure: SMTP_PORT === 465,
+      secure: SMTP_PORT === 465, // SSL on 465, STARTTLS on 587
       auth: { user: SMTP_USER, pass: SMTP_PASS },
+      // Render free tier blocks outbound port 587 — use 465 there.
+      // These timeouts surface connection issues quickly instead of hanging.
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000,
     })
   : null;
 
