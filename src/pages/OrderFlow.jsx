@@ -881,7 +881,10 @@ export default function OrderFlow() {
                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                       </svg>
                     </span>
-                    <h3>Secure Payment</h3>
+                    <div>
+                      <h3>Complete your payment</h3>
+                      <p className="payment-section-subtitle">Encrypted &amp; secure</p>
+                    </div>
                   </div>
                   <div className="payment-total">
                     <span className="payment-total-label">Total</span>
@@ -889,13 +892,11 @@ export default function OrderFlow() {
                   </div>
                 </div>
 
-                <p className="payment-section-note">Enter your card details below. Your payment is processed securely by Paddle — your card information never touches our servers.</p>
-
                 <div className="paddle-checkout-wrap">
                   {paddleLoading && (
                     <div className="paddle-checkout-loading">
                       <div className="redirect-spinner" />
-                      <p>Loading secure payment…</p>
+                      <p>Preparing secure checkout…</p>
                     </div>
                   )}
                   <div ref={paddleFrameRef} className="paddle-checkout-frame" />
@@ -906,12 +907,12 @@ export default function OrderFlow() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                     </svg>
-                    256-bit SSL encrypted
+                    256-bit encryption
                   </span>
                   <span className="payment-trust-divider">•</span>
-                  <span className="payment-trust-item">Powered by Paddle</span>
-                  <span className="payment-trust-divider">•</span>
                   <span className="payment-trust-item">PCI-DSS compliant</span>
+                  <span className="payment-trust-divider">•</span>
+                  <span className="payment-trust-item">Confirmation email after payment</span>
                 </div>
               </div>
             )}

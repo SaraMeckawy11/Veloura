@@ -3,18 +3,53 @@ import { useParams, Link } from 'react-router-dom';
 import '../styles/OrderSuccess.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
+// Poll every 3s for up to ~2min while we wait for the Paddle webhook to mark the order paid.
+const POLL_INTERVAL_MS = 3000;
+const POLL_MAX_ATTEMPTS = 40;
 
 export default function OrderSuccess() {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [pollingTimedOut, setPollingTimedOut] = useState(false);
 
   useEffect(() => {
     if (!orderId) { setLoading(false); return; }
-    fetch(`${API}/orders/status/${orderId}`)
-      .then(r => r.json())
-      .then(data => { setOrder(data); setLoading(false); })
-      .catch(() => setLoading(false));
+
+    let cancelled = false;
+    let attempts = 0;
+    let timer;
+
+    const fetchStatus = async () => {
+      try {
+        const r = await fetch(`${API}/orders/status/${orderId}`);
+        const data = await r.json();
+        if (cancelled) return;
+        setOrder(data);
+        setLoading(false);
+
+        if (data.paymentStatus === 'paid') return; // done
+
+        attempts += 1;
+        if (attempts >= POLL_MAX_ATTEMPTS) {
+          setPollingTimedOut(true);
+          return;
+        }
+        timer = setTimeout(fetchStatus, POLL_INTERVAL_MS);
+      } catch {
+        if (cancelled) return;
+        setLoading(false);
+        attempts += 1;
+        if (attempts < POLL_MAX_ATTEMPTS) {
+          timer = setTimeout(fetchStatus, POLL_INTERVAL_MS);
+        } else {
+          setPollingTimedOut(true);
+        }
+      }
+    };
+
+    fetchStatus();
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [orderId]);
 
   if (loading) {
@@ -44,8 +79,10 @@ export default function OrderSuccess() {
           <h1>{isPaid ? 'Your Invitation is Live!' : 'Payment Processing'}</h1>
           <p className="success-subtitle">
             {isPaid
-              ? "Congratulations! Check your email for the invitation link and your private edit link."
-              : "Your payment is being processed. You'll receive an email once it's confirmed."
+              ? "Congratulations! A confirmation email with your invitation link and private edit link is on its way."
+              : pollingTimedOut
+                ? "Your payment is taking longer than usual to confirm. You'll get an email as soon as it lands — feel free to close this page."
+                : "Your payment is being confirmed — this usually takes a few seconds."
             }
           </p>
 

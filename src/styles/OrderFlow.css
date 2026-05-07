@@ -695,7 +695,7 @@
 .payment-section-title {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 .payment-section-title h3 {
   font-family: var(--font-display);
@@ -704,6 +704,14 @@
   margin: 0;
   color: var(--text);
   letter-spacing: 0.2px;
+  line-height: 1.1;
+}
+.payment-section-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: var(--text-light);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 .payment-lock-icon {
   display: inline-flex;
@@ -734,13 +742,6 @@
   font-size: 1.6rem;
   font-weight: 600;
   color: var(--gold);
-}
-
-.payment-section-note {
-  margin: 0 0 20px;
-  font-size: 0.9rem;
-  line-height: 1.55;
-  color: var(--text-secondary);
 }
 
 .paddle-checkout-wrap {
