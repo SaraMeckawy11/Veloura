@@ -165,18 +165,18 @@ export default function OrderFlow() {
 
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
-    { _id: 'velvet-rose', name: 'Velvet Rose', slug: 'velvet-rose', envelope: 'Burgundy wax seal breaks open, rose petals scatter', colorScheme: { primary: '#8b2942', secondary: '#f5d5dc', background: '#3d0f1a' } },
-    { _id: 'golden-hour', name: 'Golden Hour', slug: 'golden-hour', envelope: 'Gold foil envelope unfolds with a warm light burst', colorScheme: { primary: '#daa520', secondary: '#fff8e7', background: '#8b6914' } },
-    { _id: 'sakura-spring', name: 'Sakura Spring', slug: 'sakura-spring', envelope: 'Pale pink envelope opens, cherry blossoms cascade down', colorScheme: { primary: '#f48fb1', secondary: '#880e4f', background: '#fce4ec' } },
-    { _id: 'dark-romance', name: 'Dark Romance', slug: 'dark-romance', envelope: 'Dark velvet envelope with blood-red wax seal cracks open', colorScheme: { primary: '#c62828', secondary: '#ffcdd2', background: '#1a1a1a' } },
-    { _id: 'pharaonic', name: 'Pharaonic', slug: 'pharaonic', envelope: 'Gold sarcophagus-style envelope with hieroglyphic border unseals', colorScheme: { primary: '#ffd54f', secondary: '#1a237e', background: '#2e1a00' } },
-    { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', envelope: 'Sand-textured envelope washes away like a wave', colorScheme: { primary: '#26a69a', secondary: '#004d40', background: '#e0f2f1' } },
-    { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
-    { _id: 'midnight-garden', name: 'Midnight Garden', slug: 'midnight-garden', envelope: 'Dark envelope opens, fireflies emerge into the night', colorScheme: { primary: '#b0bec5', secondary: '#cfd8dc', background: '#0d1b2a' } },
-    { _id: 'f1-race', name: 'F1 Race', slug: 'f1-race', envelope: 'Racing helmet visor lifts open', colorScheme: { primary: '#b71c1c', secondary: '#f5f5f5', background: '#1a1a1a' } },
-    { _id: 'art-deco-noir', name: 'Art Deco Noir', slug: 'art-deco-noir', envelope: 'Black and gold geometric envelope fans open', colorScheme: { primary: '#d4af37', secondary: '#f8f1d4', background: '#111111' } },
-    { _id: 'celestial', name: 'Celestial', slug: 'celestial', envelope: 'Star-map envelope dissolves into constellation', colorScheme: { primary: '#90caf9', secondary: '#e3f2fd', background: '#0d1b3e' } },
-    { _id: 'cinema', name: 'Cinema', slug: 'cinema', envelope: 'Film strip unrolls from a vintage envelope', colorScheme: { primary: '#ffc857', secondary: '#fff4d6', background: '#1b1b1b' } },
+    { _id: 'velvet-rose', name: 'Velvet Rose', slug: 'velvet-rose', category: 'new', envelope: 'Burgundy wax seal breaks open, rose petals scatter', colorScheme: { primary: '#8b2942', secondary: '#f5d5dc', background: '#3d0f1a' } },
+    { _id: 'golden-hour', name: 'Golden Hour', slug: 'golden-hour', category: 'new', envelope: 'Gold foil envelope unfolds with a warm light burst', colorScheme: { primary: '#daa520', secondary: '#fff8e7', background: '#8b6914' } },
+    { _id: 'sakura-spring', name: 'Sakura Spring', slug: 'sakura-spring', category: 'new', envelope: 'Pale pink envelope opens, cherry blossoms cascade down', colorScheme: { primary: '#f48fb1', secondary: '#880e4f', background: '#fce4ec' } },
+    { _id: 'dark-romance', name: 'Dark Romance', slug: 'dark-romance', category: 'new', envelope: 'Dark velvet envelope with blood-red wax seal cracks open', colorScheme: { primary: '#c62828', secondary: '#ffcdd2', background: '#1a1a1a' } },
+    { _id: 'pharaonic', name: 'Pharaonic', slug: 'pharaonic', category: 'new', envelope: 'Gold sarcophagus-style envelope with hieroglyphic border unseals', colorScheme: { primary: '#ffd54f', secondary: '#1a237e', background: '#2e1a00' } },
+    { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', category: 'new', envelope: 'Sand-textured envelope washes away like a wave', colorScheme: { primary: '#26a69a', secondary: '#004d40', background: '#e0f2f1' } },
+    { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', category: 'launch', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
+    { _id: 'midnight-garden', name: 'Midnight Garden', slug: 'midnight-garden', category: 'new', envelope: 'Dark envelope opens, fireflies emerge into the night', colorScheme: { primary: '#b0bec5', secondary: '#cfd8dc', background: '#0d1b2a' } },
+    { _id: 'f1-race', name: 'F1 Race', slug: 'f1-race', category: 'new', envelope: 'Racing helmet visor lifts open', colorScheme: { primary: '#b71c1c', secondary: '#f5f5f5', background: '#1a1a1a' } },
+    { _id: 'art-deco-noir', name: 'Art Deco Noir', slug: 'art-deco-noir', category: 'new', envelope: 'Black and gold geometric envelope fans open', colorScheme: { primary: '#d4af37', secondary: '#f8f1d4', background: '#111111' } },
+    { _id: 'celestial', name: 'Celestial', slug: 'celestial', category: 'new', envelope: 'Star-map envelope dissolves into constellation', colorScheme: { primary: '#90caf9', secondary: '#e3f2fd', background: '#0d1b3e' } },
+    { _id: 'cinema', name: 'Cinema', slug: 'cinema', category: 'new', envelope: 'Film strip unrolls from a vintage envelope', colorScheme: { primary: '#ffc857', secondary: '#fff4d6', background: '#1b1b1b' } },
   ];
 
   const goToSuccessPage = useCallback((orderId) => {
@@ -222,19 +222,26 @@ export default function OrderFlow() {
             ...template,
           });
         }
-        const merged = Array.from(bySlug.values()).map(t => ({
-          ...t,
-          previewImage: t.previewImage || TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
-        }));
+        const merged = Array.from(bySlug.values())
+          .filter(t => t.category === 'launch')
+          .map(t => ({
+            ...t,
+            previewImage: t.previewImage || TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
+          }));
         setTemplates(merged);
+        if (selectedTemplate && !merged.some(t => t.slug === selectedTemplate.slug)) {
+          setSelectedTemplate(null);
+        }
         setLoading(false);
       })
       .catch(() => {
         // Fall back to local template data with local images
-        const fallback = localTemplates.map(t => ({
-          ...t,
-          previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
-        }));
+        const fallback = localTemplates
+          .filter(t => t.category === 'launch')
+          .map(t => ({
+            ...t,
+            previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
+          }));
         setTemplates(fallback);
         setLoading(false);
       });

@@ -17,7 +17,7 @@ export const fallbackTemplates = [
   {
     name: 'Velvet Rose',
     slug: 'velvet-rose',
-    category: 'launch',
+    category: 'new',
     description: 'Deep burgundy and ivory. Rose petals drift as couple names appear in calligraphy.',
     envelope: 'Burgundy wax seal breaks open, rose petals scatter outward',
     previewImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop&q=80',
@@ -28,7 +28,7 @@ export const fallbackTemplates = [
   {
     name: 'Golden Hour',
     slug: 'golden-hour',
-    category: 'launch',
+    category: 'new',
     description: 'Warm gold on cream. Golden hour light washes over names with soft lens flares.',
     envelope: 'Gold foil envelope unfolds with a warm light burst',
     previewImage: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?w=600&h=400&fit=crop&q=80',
@@ -39,7 +39,7 @@ export const fallbackTemplates = [
   {
     name: 'Sakura Spring',
     slug: 'sakura-spring',
-    category: 'launch',
+    category: 'new',
     description: 'Soft pinks, blush whites, delicate branches. Cherry blossoms rain as names fade in.',
     envelope: 'Pale pink envelope opens, cherry blossoms cascade down',
     previewImage: 'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?w=600&h=400&fit=crop&q=80',
@@ -50,7 +50,7 @@ export const fallbackTemplates = [
   {
     name: 'Dark Romance',
     slug: 'dark-romance',
-    category: 'launch',
+    category: 'new',
     description: 'Deep blacks, burgundy, crimson. Typography fades through smoke and roses emerge.',
     envelope: 'Dark velvet envelope with blood-red wax seal cracks open',
     previewImage: 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=600&h=400&fit=crop&q=80',
@@ -61,7 +61,7 @@ export const fallbackTemplates = [
   {
     name: 'Pharaonic',
     slug: 'pharaonic',
-    category: 'launch',
+    category: 'new',
     description: 'Gold leaf, lapis blue, and sandstone. Temple columns frame couple names.',
     envelope: 'Gold sarcophagus-style envelope with hieroglyphic border unseals',
     previewImage: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop&q=80',

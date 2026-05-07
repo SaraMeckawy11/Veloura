@@ -27,6 +27,8 @@
 }
 
 .step-number {
+  position: relative;
+  z-index: 2;
   width: 80px;
   height: 80px;
   margin: 0 auto 24px;
@@ -41,6 +43,7 @@
   font-weight: 600;
   color: var(--gold);
   transition: var(--transition);
+  box-shadow: 0 0 0 12px var(--bg-alt);
 }
 
 .step-card:hover .step-number {
