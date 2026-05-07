@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
@@ -12,6 +12,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
+  const audioRef = useRef(null);
 
   // Countdown
   useEffect(() => {
@@ -63,6 +64,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const venue = wd.venue || '';
   const venueAddress = wd.venueAddress || '';
   const message = wd.message || 'Two Souls, One Destination.';
+  const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const flightNo = wd.flightNo || `WD-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const pad = (n) => n.toString().padStart(2, '0');
   const initials = `${name1[0]}${name2[0]}`;
@@ -78,14 +80,32 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const uncategorized = allPhotos.filter(p => !p.label || !['couple', 'story', 'gallery', 'venue'].includes(p.label));
   const allGallery = [...galleryPhotos, ...uncategorized];
 
-  // ===================== SPLASH SCREEN =====================
-  if (showSplash) {
-    return <BoardingPassSplash onDismiss={() => setShowSplash(false)} />;
-  }
+  useEffect(() => {
+    if (showSplash || !shouldPlayMusic || !audioRef.current) return;
+    const audio = audioRef.current;
+    audio.volume = 0.55;
+    audio.play().catch(() => {
+      // Browsers may still block autoplay; guests can continue without sound.
+    });
+  }, [showSplash, shouldPlayMusic, order.musicUrl]);
+
+  const handleSplashDismiss = () => {
+    if (shouldPlayMusic && audioRef.current) {
+      audioRef.current.volume = 0.55;
+      audioRef.current.play().catch(() => {
+        // Browser can still block sound; the invitation remains usable.
+      });
+    }
+    setShowSplash(false);
+  };
 
   // ===================== MAIN PAGE =====================
   return (
     <div className="inv-page boarding-pass-theme">
+      {shouldPlayMusic && (
+        <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
+      )}
+      {showSplash && <BoardingPassSplash onDismiss={handleSplashDismiss} />}
       {/* ========== HERO ========== */}
       <section className="inv-hero">
         {/* Cloud background with parallax scroll */}

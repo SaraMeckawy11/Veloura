@@ -19,7 +19,7 @@ const paddleConfigured = isConfigured(process.env.PADDLE_CLIENT_TOKEN) && isConf
 // POST /api/orders - create order + Paddle checkout (or local dev activation fallback)
 router.post('/', validateOrderBody, async (req, res) => {
   try {
-    const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl, storyMilestones } = req.body;
+    const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones } = req.body;
 
     let template = null;
     if (templateId?.match?.(/^[a-f\d]{24}$/i)) {
@@ -51,6 +51,8 @@ router.post('/', validateOrderBody, async (req, res) => {
       colorOverrides: colorOverrides || {},
       photos: photos || [],
       musicUrl,
+      musicPublicId,
+      musicEnabled: musicEnabled !== undefined ? musicEnabled : Boolean(musicUrl),
       storyMilestones: storyMilestones || [],
     });
     await order.save();
@@ -226,6 +228,7 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       photos: order.photos,
       storyMilestones: order.storyMilestones,
       musicUrl: order.musicUrl,
+      musicPublicId: order.musicPublicId,
       musicEnabled: order.musicEnabled,
       publicSlug: order.publicSlug,
       editsRemaining: order.editsRemaining,
@@ -254,7 +257,7 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
       });
     }
 
-    const { weddingDetails, customizations, disabledFields, colorOverrides, photos, storyMilestones, musicUrl, musicEnabled } = req.body;
+    const { weddingDetails, customizations, disabledFields, colorOverrides, photos, storyMilestones, musicUrl, musicPublicId, musicEnabled } = req.body;
 
     // --- Name change validation ---
     const nameChanges = weddingDetails ? order.getNameFieldChanges(weddingDetails) : [];
@@ -302,6 +305,7 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     if (photos) { order.photos = photos; fieldsChanged.push('photos'); }
     if (storyMilestones) { order.storyMilestones = storyMilestones; fieldsChanged.push('storyMilestones'); }
     if (musicUrl !== undefined) { order.musicUrl = musicUrl; fieldsChanged.push('musicUrl'); }
+    if (musicPublicId !== undefined) { order.musicPublicId = musicPublicId; fieldsChanged.push('musicPublicId'); }
     if (musicEnabled !== undefined) { order.musicEnabled = musicEnabled; fieldsChanged.push('musicEnabled'); }
 
     // Decrement appropriate counters
@@ -410,6 +414,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       photos: order.photos,
       storyMilestones: order.storyMilestones,
       musicUrl: order.musicUrl,
+      musicPublicId: order.musicPublicId,
       musicEnabled: order.musicEnabled,
       publicSlug: order.publicSlug,
       editsRemaining: order.editsRemaining,

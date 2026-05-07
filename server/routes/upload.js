@@ -11,8 +11,6 @@ function uploadToCloudinary(fileBuffer, options = {}) {
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: 'veloura/uploads',
-        resource_type: 'image',
-        transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
         ...options,
       },
       (error, result) => {
@@ -47,10 +45,15 @@ router.post('/', (req, res, next) => {
     }
 
     const category = req.query.category || req.body.category || 'gallery';
+    const isMusic = category === 'music';
 
     const uploads = await Promise.all(
       req.files.map(file => uploadToCloudinary(file.buffer, {
         folder: `veloura/uploads/${category}`,
+        resource_type: isMusic ? 'video' : 'image',
+        ...(isMusic ? {} : {
+          transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
+        }),
       }))
     );
 

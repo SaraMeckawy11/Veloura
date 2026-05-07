@@ -7,6 +7,8 @@ const API = import.meta.env.VITE_API_URL || '/api';
 const STORAGE_KEY = 'veloura_order_draft';
 const PENDING_ORDER_KEY = 'veloura_pending_order_id';
 const DISPLAY_PRICE = '$89';
+const DEFAULT_INVITATION_MESSAGE = 'Two Souls, One Destination.';
+const OLD_MESSAGE_HELP_TEXT = 'This text appears as the tagline under your names in the invitation ';
 
 // --- localStorage helpers ---
 function loadDraft() {
@@ -108,11 +110,17 @@ export default function OrderFlow() {
     venue: '',
     venueAddress: '',
     venueMapUrl: '',
-    message: 'This text appears as the tagline under your names in the invitation ',
+    message: '',
     language: 'en',
     secondLanguage: '',
   };
-  const [form, setForm] = useState(draft?.form || defaultForm);
+  const [form, setForm] = useState(() => {
+    const restored = draft?.form || defaultForm;
+    return {
+      ...restored,
+      message: restored.message === OLD_MESSAGE_HELP_TEXT ? '' : (restored.message || ''),
+    };
+  });
 
   const [disabledFields, setDisabledFields] = useState(draft?.disabledFields || []);
   // Photos organized by category — restore uploaded photos from draft
@@ -129,6 +137,15 @@ export default function OrderFlow() {
   })();
   const [photos, setPhotos] = useState(initPhotos);
   const [uploadError, setUploadError] = useState('');
+  const [music, setMusic] = useState(draft?.music || {
+    url: '',
+    publicId: '',
+    name: '',
+    enabled: true,
+    uploading: false,
+    failed: false,
+  });
+  const [musicError, setMusicError] = useState('');
   // Story milestones — text/date for each story photo
   const [storyMilestones, setStoryMilestones] = useState(
     draft?.storyMilestones || [{ date: '', title: '', description: '' }]
@@ -160,8 +177,9 @@ export default function OrderFlow() {
       disabledFields,
       photos: persistablePhotos,
       storyMilestones,
+      music,
     });
-  }, [step, selectedTemplate, form, disabledFields, photos, storyMilestones]);
+  }, [step, selectedTemplate, form, disabledFields, photos, storyMilestones, music]);
 
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
@@ -362,6 +380,54 @@ export default function OrderFlow() {
     }
   };
 
+  const handleMusicUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    setMusicError('');
+
+    if (!file.type.startsWith('audio/')) {
+      setMusicError('Please upload an audio file such as MP3, WAV, or M4A.');
+      return;
+    }
+
+    const localPreviewUrl = URL.createObjectURL(file);
+    setMusic({
+      url: localPreviewUrl,
+      publicId: '',
+      name: file.name,
+      enabled: true,
+      uploading: true,
+      failed: false,
+    });
+
+    const fd = new FormData();
+    fd.append('photos', file);
+
+    try {
+      const res = await fetch(`${API}/upload?category=music`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok || !data.files?.[0]) throw new Error(data.error || 'Music upload failed');
+      URL.revokeObjectURL(localPreviewUrl);
+      setMusic({
+        url: data.files[0].url,
+        publicId: data.files[0].publicId,
+        name: file.name,
+        enabled: true,
+        uploading: false,
+        failed: false,
+      });
+    } catch (err) {
+      setMusic(prev => ({ ...prev, uploading: false, failed: true }));
+      setMusicError(err.message || 'Music upload failed. Please try another file.');
+    }
+  };
+
+  const removeMusic = () => {
+    setMusic({ url: '', publicId: '', name: '', enabled: true, uploading: false, failed: false });
+    setMusicError('');
+  };
+
   const handleStoryMilestone = (index, key, value) => {
     setStoryMilestones(prev => prev.map((m, i) => i === index ? { ...m, [key]: value } : m));
   };
@@ -384,6 +450,10 @@ export default function OrderFlow() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+    if (music.uploading) {
+      setError('Your music is still uploading. Please wait a moment before reviewing your order.');
+      return;
+    }
     setStep(3);
   };
 
@@ -472,12 +542,15 @@ export default function OrderFlow() {
             venue: form.venue,
             venueAddress: form.venueAddress || undefined,
             venueMapUrl: form.venueMapUrl || undefined,
-            message: form.message || undefined,
+            message: form.message.trim() || undefined,
             language: form.language,
             secondLanguage: form.secondLanguage || undefined,
           },
           disabledFields,
           photos: allPhotos.filter(p => !p._uploading && !p._failed),
+          musicUrl: music.enabled && music.url && !music.uploading && !music.failed ? music.url : undefined,
+          musicPublicId: music.enabled && music.publicId && !music.uploading && !music.failed ? music.publicId : undefined,
+          musicEnabled: Boolean(music.enabled && music.url && !music.uploading && !music.failed),
           storyMilestones: storyMilestones.filter(m => m.title || m.date || m.description),
         }),
       });
@@ -698,7 +771,7 @@ export default function OrderFlow() {
                     <input type="text" required value={form.venue} onChange={e => handleInput('venue', e.target.value)} placeholder="e.g. The Grand Pavilion" />
                   </div>
                   {optionalFields.filter(f => f.key !== 'weddingTime').map(field => (
-                    <div key={field.key} className={`form-field ${disabledFields.includes(field.key) ? 'field-disabled' : ''}`}>
+                    <div key={field.key} className={`form-field ${['message', 'rsvp'].includes(field.key) ? 'form-field--wide' : ''} ${disabledFields.includes(field.key) ? 'field-disabled' : ''}`}>
                       <div className="field-header">
                         <label>{field.label}</label>
                         <button type="button" className="field-toggle" onClick={() => toggleField(field.key)}>
@@ -709,13 +782,79 @@ export default function OrderFlow() {
                         field.key === 'rsvp' ? (
                           <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
                         ) : field.key === 'message' ? (
-                          <textarea value={form[field.key]} onChange={e => handleInput(field.key, e.target.value)} rows={3} placeholder={field.label} />
+                          <>
+                            <textarea
+                              className="message-textarea"
+                              value={form[field.key]}
+                              onChange={e => handleInput(field.key, e.target.value)}
+                              rows={3}
+                              placeholder={DEFAULT_INVITATION_MESSAGE}
+                            />
+                            <p className="form-hint message-hint">
+                              Leave blank to use the template message shown in the demo.
+                            </p>
+                          </>
                         ) : (
                           <input type="text" value={form[field.key]} onChange={e => handleInput(field.key, e.target.value)} placeholder={field.label} />
                         )
                       )}
                     </div>
                   ))}
+                </div>
+              </fieldset>
+
+              {/* Background Music */}
+              <fieldset className="form-section form-section--music">
+                <legend>Background Music</legend>
+                <p className="form-hint">Add one audio track. It will loop softly while guests view the invitation.</p>
+                {musicError && <p className="photo-error">{musicError}</p>}
+                <div className={`music-upload-card${music.failed ? ' music-upload-card--failed' : ''}`}>
+                  <div className="music-upload-icon" aria-hidden="true">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18V5l12-2v13" />
+                      <circle cx="6" cy="18" r="3" />
+                      <circle cx="18" cy="16" r="3" />
+                    </svg>
+                  </div>
+                  <div className="music-upload-copy">
+                    <span className="music-upload-title">
+                      {music.name || 'Choose background music'}
+                    </span>
+                    <span className="music-upload-subtitle">
+                      {music.uploading ? 'Uploading...' : music.url ? 'Music will play on loop in the invitation.' : 'MP3, WAV, or M4A recommended.'}
+                    </span>
+                    {music.url && !music.uploading && !music.failed && (
+                      <audio className="music-preview" src={music.url} controls preload="metadata" />
+                    )}
+                  </div>
+                  <div className="music-upload-actions">
+                    {music.url && (
+                      <label className="music-toggle">
+                        <input
+                          type="checkbox"
+                          checked={music.enabled}
+                          onChange={e => setMusic(prev => ({ ...prev, enabled: e.target.checked }))}
+                        />
+                        <span>Use music</span>
+                      </label>
+                    )}
+                    {music.url ? (
+                      <button type="button" className="music-remove-btn" onClick={removeMusic}>
+                        Remove
+                      </button>
+                    ) : (
+                      <label className="music-select-btn">
+                        Upload Music
+                        <input type="file" accept="audio/*,.mp3,.wav,.m4a" onChange={handleMusicUpload} />
+                      </label>
+                    )}
+                    {music.url && (
+                      <label className="music-select-btn music-select-btn--secondary">
+                        Replace
+                        <input type="file" accept="audio/*,.mp3,.wav,.m4a" onChange={handleMusicUpload} />
+                      </label>
+                    )}
+                  </div>
                 </div>
               </fieldset>
 
@@ -919,6 +1058,16 @@ export default function OrderFlow() {
                         <span className="review-photo-label">{p.label}</span>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {music.url && !music.uploading && !music.failed && music.enabled && (
+                <div className="review-section">
+                  <h3 className="review-section-title">Background Music</h3>
+                  <div className="review-music">
+                    <span>{music.name || 'Uploaded music'}</span>
+                    <audio src={music.url} controls preload="metadata" />
                   </div>
                 </div>
               )}

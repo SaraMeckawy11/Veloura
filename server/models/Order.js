@@ -42,6 +42,7 @@ const orderSchema = new mongoose.Schema({
 
   // Music
   musicUrl:      { type: String },                        // Cloudinary or external URL
+  musicPublicId: { type: String },                        // Cloudinary public_id for cleanup/reuse
   musicEnabled:  { type: Boolean, default: true },
 
   // Disabled placeholders — user chose to hide these fields
