@@ -12,6 +12,7 @@ export default function OrderSuccess() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pollingTimedOut, setPollingTimedOut] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!orderId) { setLoading(false); return; }
@@ -23,9 +24,12 @@ export default function OrderSuccess() {
     const fetchStatus = async () => {
       try {
         const r = await fetch(`${API}/orders/status/${orderId}`);
-        const data = await r.json();
+        const text = await r.text();
+        const data = text ? JSON.parse(text) : {};
         if (cancelled) return;
+        if (!r.ok) throw new Error(data.error || 'Could not verify this payment yet.');
         setOrder(data);
+        setError('');
         setLoading(false);
 
         if (data.paymentStatus === 'paid') return; // done
@@ -36,9 +40,10 @@ export default function OrderSuccess() {
           return;
         }
         timer = setTimeout(fetchStatus, POLL_INTERVAL_MS);
-      } catch {
+      } catch (err) {
         if (cancelled) return;
         setLoading(false);
+        setError(err.message || 'Could not verify this payment yet.');
         attempts += 1;
         if (attempts < POLL_MAX_ATTEMPTS) {
           timer = setTimeout(fetchStatus, POLL_INTERVAL_MS);
@@ -76,11 +81,13 @@ export default function OrderSuccess() {
             )}
           </div>
 
-          <h1>{isPaid ? 'Your Invitation is Live!' : 'Payment Processing'}</h1>
+          <h1>{isPaid ? 'Payment Verified' : 'Payment Processing'}</h1>
           <p className="success-subtitle">
             {isPaid
               ? "Congratulations! A confirmation email with your invitation link and private edit link is on its way."
-              : pollingTimedOut
+              : error
+                ? `${error} We're still checking for the payment confirmation.`
+                : pollingTimedOut
                 ? "Your payment is taking longer than usual to confirm. You'll get an email as soon as it lands — feel free to close this page."
                 : "Your payment is being confirmed — this usually takes a few seconds."
             }
@@ -102,6 +109,11 @@ export default function OrderSuccess() {
           )}
 
           <div className="success-actions">
+            {isPaid && order.publicSlug && (
+              <Link to={`/i/${order.publicSlug}`} className="btn btn-gold">
+                View Invitation
+              </Link>
+            )}
             {isPaid && order.editToken && (
               <Link to={`/dashboard/${order.editToken}`} className="btn btn-gold">
                 Go to Dashboard

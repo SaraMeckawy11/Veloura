@@ -5,6 +5,7 @@ import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 const STORAGE_KEY = 'veloura_order_draft';
+const PENDING_ORDER_KEY = 'veloura_pending_order_id';
 const DISPLAY_PRICE = '$89';
 
 // --- localStorage helpers ---
@@ -19,6 +20,23 @@ function saveDraft(data) {
 }
 function clearDraft() {
   try { localStorage.removeItem(STORAGE_KEY); } catch { return undefined; }
+}
+function savePendingOrder(orderId) {
+  try {
+    sessionStorage.setItem(PENDING_ORDER_KEY, orderId);
+    localStorage.setItem(PENDING_ORDER_KEY, orderId);
+  } catch { return undefined; }
+}
+function clearPendingOrder() {
+  try {
+    sessionStorage.removeItem(PENDING_ORDER_KEY);
+    localStorage.removeItem(PENDING_ORDER_KEY);
+  } catch { return undefined; }
+}
+function loadPendingOrder() {
+  try {
+    return sessionStorage.getItem(PENDING_ORDER_KEY) || localStorage.getItem(PENDING_ORDER_KEY);
+  } catch { return null; }
 }
 
 const PHOTO_CATEGORIES = [
@@ -37,6 +55,10 @@ const TEMPLATE_PREVIEW_IMAGES = {
   'coastal-breeze': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
   'boarding-pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
   'midnight-garden': 'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=600&h=400&fit=crop&q=80',
+  'f1-race': 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=400&fit=crop&q=80',
+  'art-deco-noir': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=400&fit=crop&q=80',
+  celestial: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&h=400&fit=crop&q=80',
+  cinema: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&h=400&fit=crop&q=80',
 };
 
 const LANGUAGE_OPTIONS = [
@@ -151,7 +173,37 @@ export default function OrderFlow() {
     { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', envelope: 'Sand-textured envelope washes away like a wave', colorScheme: { primary: '#26a69a', secondary: '#004d40', background: '#e0f2f1' } },
     { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
     { _id: 'midnight-garden', name: 'Midnight Garden', slug: 'midnight-garden', envelope: 'Dark envelope opens, fireflies emerge into the night', colorScheme: { primary: '#b0bec5', secondary: '#cfd8dc', background: '#0d1b2a' } },
+    { _id: 'f1-race', name: 'F1 Race', slug: 'f1-race', envelope: 'Racing helmet visor lifts open', colorScheme: { primary: '#b71c1c', secondary: '#f5f5f5', background: '#1a1a1a' } },
+    { _id: 'art-deco-noir', name: 'Art Deco Noir', slug: 'art-deco-noir', envelope: 'Black and gold geometric envelope fans open', colorScheme: { primary: '#d4af37', secondary: '#f8f1d4', background: '#111111' } },
+    { _id: 'celestial', name: 'Celestial', slug: 'celestial', envelope: 'Star-map envelope dissolves into constellation', colorScheme: { primary: '#90caf9', secondary: '#e3f2fd', background: '#0d1b3e' } },
+    { _id: 'cinema', name: 'Cinema', slug: 'cinema', envelope: 'Film strip unrolls from a vintage envelope', colorScheme: { primary: '#ffc857', secondary: '#fff4d6', background: '#1b1b1b' } },
   ];
+
+  const goToSuccessPage = useCallback((orderId) => {
+    if (!orderId) return;
+    clearDraft();
+    clearPendingOrder();
+    window.location.assign(`/order/success/${orderId}`);
+  }, []);
+
+  useEffect(() => {
+    const recoverPaddleHashRedirect = () => {
+      if (window.location.hash !== '#!') return;
+
+      const pendingOrderId = loadPendingOrder();
+      if (pendingOrderId) {
+        goToSuccessPage(pendingOrderId);
+        return;
+      }
+
+      window.history.replaceState(null, '', '/order');
+      setError('Payment finished, but the order id was not available in this browser. Check your email or use My Invitation.');
+    };
+
+    recoverPaddleHashRedirect();
+    window.addEventListener('hashchange', recoverPaddleHashRedirect);
+    return () => window.removeEventListener('hashchange', recoverPaddleHashRedirect);
+  }, [goToSuccessPage]);
 
   useEffect(() => {
     fetch(`${API}/templates`)
@@ -163,8 +215,14 @@ export default function OrderFlow() {
         if (!Array.isArray(data) || data.length === 0) {
           throw new Error('No templates returned');
         }
-        // Merge API data with local fallback images
-        const merged = data.map(t => ({
+        const bySlug = new Map(localTemplates.map(template => [template.slug, template]));
+        for (const template of data) {
+          bySlug.set(template.slug, {
+            ...bySlug.get(template.slug),
+            ...template,
+          });
+        }
+        const merged = Array.from(bySlug.values()).map(t => ({
           ...t,
           previewImage: t.previewImage || TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
         }));
@@ -332,7 +390,7 @@ export default function OrderFlow() {
       try {
         const Paddle = await getPaddle({
           ...paddleOrderData.paddle,
-          onCheckoutCompleted: () => clearDraft(),
+          onCheckoutCompleted: () => goToSuccessPage(paddleOrderData.orderId),
         });
         if (cancelled) return;
 
@@ -344,7 +402,7 @@ export default function OrderFlow() {
             frameStyle: 'width: 100%; min-width: 312px; background-color: transparent; border: none;',
             theme: 'light',
             locale: 'en',
-            successUrl: paddleOrderData.paddle.successUrl,
+            successUrl: `${window.location.origin}/order/success/${paddleOrderData.orderId}`,
           },
           items: [{ priceId: paddleOrderData.paddle.priceId, quantity: 1 }],
           customer: {
@@ -369,7 +427,7 @@ export default function OrderFlow() {
 
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paddleOrderData]);
+  }, [paddleOrderData, goToSuccessPage]);
 
   // Parse JSON safely — server may return empty body on 502/504/cold-start
   const parseJsonOrThrow = async (res, label) => {
@@ -423,6 +481,7 @@ export default function OrderFlow() {
       if (data.paymentProvider === 'paddle' && data.paddle) {
         // Trigger inline payment render. The actual Paddle.Checkout.open call
         // happens in a useEffect once the target frame is mounted.
+        savePendingOrder(data.orderId);
         setPaddleOrderData({ orderId: data.orderId, paddle: data.paddle });
         setPaddleLoading(true);
         setConfirming(false);

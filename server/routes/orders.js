@@ -11,7 +11,7 @@ import { findPaddleTransactionForOrder, paddleApiConfigured } from '../config/pa
 const router = Router();
 
 const PRICE_USD = process.env.PRICE_USD || '89.00';
-const RAW_CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const RAW_CLIENT_URL = process.env.FRONTEND_URL || process.env.CLIENT_URL || 'http://localhost:5173';
 // Ensure absolute URL with scheme — Paddle rejects relative or scheme-less URLs.
 const CLIENT_URL = /^https?:\/\//i.test(RAW_CLIENT_URL)
   ? RAW_CLIENT_URL.replace(/\/$/, '')

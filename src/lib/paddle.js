@@ -38,7 +38,11 @@ export async function getPaddle({ clientToken, environment, onCheckoutCompleted 
     Paddle.Initialize({
       token: clientToken,
       eventCallback(event) {
-        if (event?.name === 'checkout.completed') {
+        const completedByName = event?.name === 'checkout.completed';
+        const completedByStatus = event?.name === 'checkout.updated'
+          && ['completed', 'billed', 'paid'].includes(event?.data?.status);
+
+        if (completedByName || completedByStatus) {
           window.__velouraPaddleCheckoutCompleted?.(event);
         }
       },

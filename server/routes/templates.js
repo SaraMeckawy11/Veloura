@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import Template from '../models/Template.js';
 import { fallbackTemplates, getFallbackTemplate } from '../data/templateFallbacks.js';
+import { syncDefaultTemplates } from '../services/templateSync.js';
 
 const router = Router();
 
 // GET /api/templates — list all active templates
 router.get('/', async (req, res) => {
   try {
+    await syncDefaultTemplates();
+
     const { category } = req.query;
     const filter = { active: true };
     if (category && category !== 'all') filter.category = category;
@@ -31,6 +34,8 @@ router.get('/', async (req, res) => {
 // GET /api/templates/:slug — get a single template with full details
 router.get('/:slug', async (req, res) => {
   try {
+    await syncDefaultTemplates();
+
     const template = await Template.findOne({ slug: req.params.slug, active: true });
     if (!template) {
       const fallback = getFallbackTemplate(req.params.slug);

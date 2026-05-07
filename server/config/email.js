@@ -72,9 +72,15 @@ async function parseBrevoResponse(response) {
 }
 
 export async function sendMail({ to, subject, html }) {
-  const apiKey = process.env.BREVO_API_KEY?.trim();
-  if (!apiKey) {
-    throw new Error('Missing BREVO_API_KEY. Add your Brevo transactional email API key.');
+  const apiKey = trimWrappingQuotes(process.env.BREVO_API_KEY);
+  if (!apiKey || apiKey === 'your-brevo-api-key' || apiKey.startsWith('replace_me')) {
+    throw new Error('Missing BREVO_API_KEY. Add a valid Brevo transactional email API key.');
+  }
+  if (apiKey.startsWith('xsmtpsib-')) {
+    throw new Error('BREVO_API_KEY is an SMTP key. Use an API key from Brevo SMTP & API > API keys & MCP, or rename this value to BREVO_SMTP_KEY and switch the app to SMTP delivery.');
+  }
+  if (!apiKey.startsWith('xkeysib-')) {
+    throw new Error('BREVO_API_KEY should start with xkeysib-. The key currently configured does not look like a Brevo API key.');
   }
 
   const recipients = normalizeRecipients(to);
@@ -102,6 +108,12 @@ export async function sendMail({ to, subject, html }) {
   if (!response.ok) {
     const message = body.message || body.error || `Brevo API error ${response.status}`;
     console.error('[email] Brevo response:', JSON.stringify(body));
+    if (/unrecognised IP address/i.test(message)) {
+      throw new Error(`Brevo API error: Brevo IP allowlist blocked this server. Add the reported server IP in Brevo Security > Authorised IPs, or disable Brevo authorised-IP restrictions for this API key/account. Original message: ${message}`);
+    }
+    if (response.status === 401 || body.code === 'unauthorized') {
+      throw new Error('Brevo API error: invalid BREVO_API_KEY. Use a Brevo API key from SMTP & API > API Settings, not the SMTP login or SMTP password, then redeploy.');
+    }
     throw new Error(`Brevo API error: ${message}`);
   }
 
