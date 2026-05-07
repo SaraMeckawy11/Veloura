@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import OrderFlow from './pages/OrderFlow';
 import OrderSuccess from './pages/OrderSuccess';
@@ -16,6 +17,7 @@ function DemoInvitation() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/pricing" element={<PricingPage />} />
