@@ -30,7 +30,7 @@ export default function Hero() {
           </p>
 
           <div className="hero-buttons">
-            <Link to="/order" className="btn btn-primary">
+            <Link to="/order" className="btn btn-primary" data-primary-create-cta>
               Create My Invitation
             </Link>
             <a href="#designs" className="btn btn-secondary" onClick={e => {

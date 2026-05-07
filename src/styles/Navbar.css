@@ -188,29 +188,27 @@
 
   .mobile-sticky-cta {
     position: fixed;
-    left: 16px;
-    right: 16px;
-    max-width: 360px;
-    margin: 0 auto;
-    bottom: calc(16px + env(safe-area-inset-bottom));
+    left: 50%;
+    bottom: calc(18px + env(safe-area-inset-bottom));
     z-index: 950;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    min-height: 52px;
-    padding: 14px 22px;
+    gap: 8px;
+    min-height: 44px;
+    padding: 11px 18px;
     border-radius: 50px;
-    background: linear-gradient(135deg, var(--text), var(--navy));
+    background: var(--gold);
     color: var(--white);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    font-size: 0.92rem;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    font-size: 0.84rem;
     font-weight: 600;
     letter-spacing: 0.01em;
-    box-shadow: 0 14px 32px rgba(45, 42, 38, 0.2);
+    white-space: nowrap;
+    box-shadow: 0 10px 28px rgba(184, 146, 74, 0.28);
     opacity: 0;
     pointer-events: none;
-    transform: translateY(130%);
+    transform: translate(-50%, 130%);
     transition: opacity 0.25s ease, transform 0.25s ease;
   }
 
@@ -226,6 +224,6 @@
   .mobile-sticky-cta.visible {
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(0);
+    transform: translate(-50%, 0);
   }
 }

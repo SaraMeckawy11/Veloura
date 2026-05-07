@@ -5,6 +5,7 @@ import '../styles/Navbar.css';
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [primaryCreateVisible, setPrimaryCreateVisible] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -13,6 +14,27 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setPrimaryCreateVisible(false);
+      return undefined;
+    }
+
+    const primaryCreateCta = document.querySelector('[data-primary-create-cta]');
+    if (!primaryCreateCta) {
+      setPrimaryCreateVisible(false);
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setPrimaryCreateVisible(entry.isIntersecting),
+      { threshold: 0.35 }
+    );
+
+    observer.observe(primaryCreateCta);
+    return () => observer.disconnect();
+  }, [location.pathname]);
 
   const handleNavClick = (e, href) => {
     e.preventDefault();
@@ -47,7 +69,7 @@ export default function Navbar() {
     { label: 'FAQ', href: '#faq' },
     { label: 'Get in Touch', href: '#contact' },
   ];
-  const showMobileStickyCta = location.pathname === '/' && scrolled && !menuOpen;
+  const showMobileStickyCta = location.pathname === '/' && scrolled && !menuOpen && !primaryCreateVisible;
 
   return (
     <>
