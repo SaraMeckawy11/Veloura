@@ -6,6 +6,7 @@ import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail, editLimitWarningEmail, sensitiveFieldChangeEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 import { getFallbackTemplate } from '../data/templateFallbacks.js';
+import { findPaddleTransactionForOrder, paddleApiConfigured } from '../config/paddle.js';
 
 const router = Router();
 
@@ -148,11 +149,51 @@ router.post('/confirm/:orderId', async (req, res) => {
   }
 });
 
-// GET /api/orders/status/:orderId — check payment status after redirect
+// GET /api/orders/status/:orderId — check payment status after redirect.
+// Falls back to verifying directly with Paddle's API if the webhook hasn't
+// arrived yet, so the success screen activates the order without depending
+// on the webhook delivery delay.
 router.get('/status/:orderId', async (req, res) => {
   try {
     const order = await Order.findById(req.params.orderId).populate('template', 'name slug previewImage');
     if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    // If the order is still pending and we can call Paddle's API, see if a paid
+    // transaction exists for this order on Paddle's side. If so, activate it
+    // and send the confirmation email — webhook may follow later (idempotent).
+    if (order.paymentStatus !== 'paid' && order.paymentProvider === 'paddle' && paddleApiConfigured()) {
+      try {
+        const tx = await findPaddleTransactionForOrder(req.params.orderId);
+        if (tx && (tx.status === 'completed' || tx.status === 'paid')) {
+          order.paddleTransactionId = tx.id || order.paddleTransactionId;
+          order.amountPaid = tx?.details?.totals?.total || PRICE_USD;
+          order.currency = tx.currency_code || order.currency || 'USD';
+          await order.activate();
+
+          if (!order.confirmationSent) {
+            try {
+              const email = orderConfirmationEmail({
+                customerName: order.customerName,
+                publicSlug: order.publicSlug,
+                editToken: order.editToken,
+                weddingDetails: order.weddingDetails,
+                isPending: false,
+                invitationCode: order.publicSlug,
+              });
+              await sendMail({ to: order.customerEmail, ...email });
+              order.confirmationSent = true;
+              await order.save();
+            } catch (emailErr) {
+              console.error('Confirmation email failed (status fallback):', emailErr.message);
+            }
+          }
+        }
+      } catch (paddleErr) {
+        // Don't fail the status endpoint just because Paddle lookup failed —
+        // webhook is still primary. Just log and return current state.
+        console.warn('Paddle status fallback lookup failed:', paddleErr.message);
+      }
+    }
 
     res.json({
       paymentStatus: order.paymentStatus,

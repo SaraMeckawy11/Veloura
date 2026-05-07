@@ -42,7 +42,9 @@
       "Bash(npx -y acorn --ecma2020 --module --allow-import-export-everywhere src/pages/OrderFlow.jsx)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(node --check routes/orders.js)",
+      "Bash(node --check config/paddle.js)"
     ]
   }
 }
