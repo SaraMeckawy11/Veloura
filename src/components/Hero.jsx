@@ -74,13 +74,14 @@ export default function Hero() {
                 <div className="phone-ornament">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(212,175,110,0.6)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
                 </div>
+                <div className="invite-kicker">Together with their families</div>
                 <div className="couple-names">Layla</div>
                 <div className="ampersand">&amp;</div>
                 <div className="couple-names">Omar</div>
-                <div className="invite-text">Request the pleasure of your company</div>
-                <div className="invite-date">June 28, 2026</div>
-                <div className="invite-venue">The Grand Pavilion, Dubai</div>
-                <div className="phone-rsvp-btn">RSVP Now</div>
+                <div className="invite-text">Invite you to celebrate their wedding</div>
+                <div className="invite-date">Saturday, June 28, 2026</div>
+                <div className="invite-venue">The Grand Pavilion</div>
+                <div className="phone-rsvp-btn">Open RSVP</div>
               </div>
             </div>
           </div>
