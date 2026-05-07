@@ -1,159 +1,112 @@
-import nodemailer from 'nodemailer';
+const BREVO_API_URL = 'https://api.brevo.com/v3/smtp/email';
 
-// Strip wrapping quotes that users sometimes paste into env vars (e.g. `"Veloura" <addr>`).
-function sanitizeFrom(raw) {
-  if (!raw) return undefined;
-  let v = raw.trim();
-  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
-    v = v.slice(1, -1);
+function trimWrappingQuotes(value) {
+  if (!value) return value;
+  const trimmed = value.trim();
+
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1).trim();
   }
-  v = v.replace(/^"([^"]*)"\s*</, '$1 <').replace(/^'([^']*)'\s*</, '$1 <');
-  return v;
+
+  return trimmed;
 }
 
-// Parse "Display Name <addr@example.com>" into { name, email }.
-function parseFromAddress(raw) {
-  if (!raw) return null;
-  const v = sanitizeFrom(raw);
-  const match = v.match(/^(.+?)\s*<([^>]+)>$/);
-  if (match) return { name: match[1].trim(), email: match[2].trim() };
-  return { name: undefined, email: v.trim() };
+function parseEmailAddress(value) {
+  const cleaned = trimWrappingQuotes(value);
+  if (!cleaned) return null;
+
+  const match = cleaned.match(/^(?:"?([^"<]*)"?\s*)?<([^<>@\s]+@[^<>@\s]+)>$/);
+  if (match) {
+    return {
+      name: trimWrappingQuotes(match[1]) || undefined,
+      email: match[2].trim(),
+    };
+  }
+
+  return { email: cleaned };
 }
 
-const BREVO_API_KEY = process.env.BREVO_API_KEY?.trim();
-const RESEND_API_KEY = process.env.RESEND_API_KEY?.trim();
-const SMTP_HOST = process.env.SMTP_HOST?.trim();
-const SMTP_PORT = Number(process.env.SMTP_PORT) || 465;
-const SMTP_USER = process.env.SMTP_USER?.trim();
-const SMTP_PASS = process.env.SMTP_PASS;
-const EMAIL_FROM = sanitizeFrom(process.env.EMAIL_FROM) || SMTP_USER;
-const FROM_PARSED = parseFromAddress(EMAIL_FROM);
+function getSender() {
+  const senderEmail = trimWrappingQuotes(process.env.BREVO_SENDER_EMAIL || process.env.EMAIL_FROM_ADDRESS);
+  const senderName = trimWrappingQuotes(process.env.BREVO_SENDER_NAME || process.env.EMAIL_FROM_NAME) || 'Veloura';
 
-// Provider selection (first match wins):
-//   1. BREVO_API_KEY  → Brevo HTTPS API
-//   2. RESEND_API_KEY → Resend HTTPS API
-//   3. SMTP_*         → nodemailer SMTP (local dev; blocked on Render free tier)
-const provider = BREVO_API_KEY ? 'brevo'
-  : RESEND_API_KEY ? 'resend'
-  : (SMTP_HOST && SMTP_USER && SMTP_PASS) ? 'smtp'
-  : null;
+  if (senderEmail) {
+    return { name: senderName, email: senderEmail };
+  }
 
-let transporter = null;
+  const legacySender = parseEmailAddress(process.env.EMAIL_FROM);
+  if (legacySender?.email) {
+    return { name: legacySender.name || senderName, email: legacySender.email };
+  }
 
-if (provider === 'brevo') {
-  console.log(`[email] Provider: Brevo (HTTPS) — from: ${EMAIL_FROM}`);
-} else if (provider === 'resend') {
-  console.log(`[email] Provider: Resend (HTTPS) — from: ${EMAIL_FROM}`);
-} else if (provider === 'smtp') {
-  transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure: SMTP_PORT === 465,
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
-  });
-  transporter.verify((err) => {
-    if (err) {
-      console.error('[email] SMTP verify FAILED:', err.message);
-      console.error('[email] If hosting on Render free/starter tier, SMTP is blocked. Use BREVO_API_KEY or RESEND_API_KEY.');
-    } else {
-      console.log(`[email] SMTP ready as ${SMTP_USER} (from: ${EMAIL_FROM}, host: ${SMTP_HOST}:${SMTP_PORT})`);
+  throw new Error('Missing Brevo sender email. Set BREVO_SENDER_EMAIL to a verified Brevo sender.');
+}
+
+function normalizeRecipients(to) {
+  const recipients = Array.isArray(to) ? to : [to];
+
+  return recipients.map(recipient => {
+    if (typeof recipient === 'string') return parseEmailAddress(recipient);
+    if (recipient?.email) {
+      return {
+        email: trimWrappingQuotes(recipient.email),
+        name: trimWrappingQuotes(recipient.name) || undefined,
+      };
     }
-  });
-} else {
-  console.warn('[email] No email provider configured — emails will NOT be sent. Set BREVO_API_KEY or RESEND_API_KEY (recommended) or SMTP_HOST/USER/PASS.');
+    return null;
+  }).filter(recipient => recipient?.email);
 }
 
-async function sendViaBrevo({ to, subject, html }) {
-  if (!FROM_PARSED?.email) {
-    throw new Error('EMAIL_FROM must be set to a valid address (e.g. "Veloura <veloura.invitations@gmail.com>") for Brevo.');
+async function parseBrevoResponse(response) {
+  const text = await response.text();
+  if (!text) return {};
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { message: text };
   }
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+}
+
+export async function sendMail({ to, subject, html }) {
+  const apiKey = process.env.BREVO_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error('Missing BREVO_API_KEY. Add your Brevo transactional email API key.');
+  }
+
+  const recipients = normalizeRecipients(to);
+  if (recipients.length === 0) {
+    throw new Error('Email requires at least one recipient.');
+  }
+
+  const response = await fetch(BREVO_API_URL, {
     method: 'POST',
     headers: {
-      'api-key': BREVO_API_KEY,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
+      accept: 'application/json',
+      'api-key': apiKey,
+      'content-type': 'application/json',
     },
     body: JSON.stringify({
-      sender: { name: FROM_PARSED.name || 'Veloura', email: FROM_PARSED.email },
-      to: [{ email: to }],
+      sender: getSender(),
+      to: recipients,
       subject,
       htmlContent: html,
     }),
   });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const message = data?.message || data?.error || `HTTP ${res.status}`;
-    const err = new Error(`Brevo API error: ${message}`);
-    err.status = res.status;
-    err.body = data;
-    throw err;
+
+  const body = await parseBrevoResponse(response);
+
+  if (!response.ok) {
+    const message = body.message || body.error || `Brevo API error ${response.status}`;
+    console.error('[email] Brevo response:', JSON.stringify(body));
+    throw new Error(`Brevo API error: ${message}`);
   }
-  return data;
+
+  console.log(`[email] sent via Brevo to ${recipients.map(recipient => recipient.email).join(', ')}`);
+  return body;
 }
 
-async function sendViaResend({ to, subject, html }) {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ from: EMAIL_FROM, to, subject, html }),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const message = data?.message || data?.error || `HTTP ${res.status}`;
-    const err = new Error(`Resend API error: ${message}`);
-    err.status = res.status;
-    err.body = data;
-    throw err;
-  }
-  return data;
-}
-
-export async function sendMail({ to, subject, html }) {
-  if (provider === 'brevo') {
-    try {
-      const info = await sendViaBrevo({ to, subject, html });
-      console.log(`[email] sent via Brevo to ${to} — id: ${info.messageId || 'ok'}`);
-      return info;
-    } catch (err) {
-      console.error(`[email] FAILED via Brevo to ${to}:`, err.message);
-      if (err.body) console.error('[email] Brevo response:', JSON.stringify(err.body));
-      throw err;
-    }
-  }
-
-  if (provider === 'resend') {
-    try {
-      const info = await sendViaResend({ to, subject, html });
-      console.log(`[email] sent via Resend to ${to} — id: ${info.id}`);
-      return info;
-    } catch (err) {
-      console.error(`[email] FAILED via Resend to ${to}:`, err.message);
-      if (err.body) console.error('[email] Resend response:', JSON.stringify(err.body));
-      throw err;
-    }
-  }
-
-  if (provider === 'smtp' && transporter) {
-    try {
-      const info = await transporter.sendMail({ from: EMAIL_FROM, to, subject, html });
-      console.log(`[email] sent via SMTP to ${to} — messageId: ${info.messageId}`);
-      return info;
-    } catch (err) {
-      console.error(`[email] FAILED via SMTP to ${to}:`, err.message);
-      if (err.responseCode) console.error(`[email] SMTP response code: ${err.responseCode}`);
-      if (err.response) console.error(`[email] SMTP response: ${err.response}`);
-      throw err;
-    }
-  }
-
-  throw new Error('Email not configured (set BREVO_API_KEY for production, or SMTP_* for local dev)');
-}
-
-export default transporter;
+export default { sendMail };
