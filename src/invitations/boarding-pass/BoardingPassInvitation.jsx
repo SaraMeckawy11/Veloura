@@ -6,6 +6,29 @@ import './boarding-pass.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
+function buildMapEmbedUrl(rawUrl, fallbackQuery) {
+  const url = (rawUrl || '').trim();
+  if (url) {
+    if (url.includes('/maps/embed')) return url;
+    const coordMatch = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+    if (coordMatch) {
+      return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&z=15&output=embed`;
+    }
+    const placeMatch = url.match(/\/maps\/place\/([^/@?]+)/);
+    if (placeMatch) {
+      return `https://maps.google.com/maps?q=${placeMatch[1]}&output=embed`;
+    }
+    const queryMatch = url.match(/[?&]q=([^&]+)/);
+    if (queryMatch) {
+      return `https://maps.google.com/maps?q=${queryMatch[1]}&output=embed`;
+    }
+  }
+  if (fallbackQuery && fallbackQuery.trim()) {
+    return `https://maps.google.com/maps?q=${encodeURIComponent(fallbackQuery.trim())}&output=embed`;
+  }
+  return null;
+}
+
 export default function BoardingPassInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -344,14 +367,22 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
               )}
             </div>
 
-            {wd.venueMapUrl && (
-              <div className="inv-map-container">
-                <p className="data-label">LOCATION MAP</p>
-                <div className="airplane-window inv-map-window">
-                  <iframe src={wd.venueMapUrl} title="Venue location" allowFullScreen loading="lazy" />
+            {(() => {
+              const embedSrc = buildMapEmbedUrl(wd.venueMapUrl, [venue, venueAddress].filter(Boolean).join(', '));
+              if (!embedSrc) return null;
+              const openHref = wd.venueMapUrl
+                ? wd.venueMapUrl
+                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
+              return (
+                <div className="inv-map-container">
+                  <p className="data-label">LOCATION MAP</p>
+                  <div className="airplane-window inv-map-window">
+                    <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                  </div>
+                  <a className="inv-map-open-link" href={openHref} target="_blank" rel="noopener noreferrer">Open in Google Maps</a>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {!isReferenceDemo && venuePhotos.length > 0 && (
               <div className="inv-venue-photos-wrap">

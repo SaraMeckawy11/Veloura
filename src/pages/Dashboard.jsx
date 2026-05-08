@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [editPhotos, setEditPhotos] = useState({ venue: [], story: [], gallery: [] });
+  const [editStoryMilestones, setEditStoryMilestones] = useState([]);
   const [photoUploading, setPhotoUploading] = useState({});
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
@@ -69,8 +70,24 @@ export default function Dashboard() {
       categorized[cat].push(p);
     });
     setEditPhotos(categorized);
+    const existingMilestones = Array.isArray(order.storyMilestones) ? order.storyMilestones : [];
+    setEditStoryMilestones(
+      existingMilestones.length > 0
+        ? existingMilestones.map(m => ({ date: m.date || '', title: m.title || '', description: m.description || '' }))
+        : [{ date: '', title: '', description: '' }]
+    );
     setEditing(true);
     setSaveMsg('');
+  };
+
+  const handleStoryMilestoneChange = (index, key, value) => {
+    setEditStoryMilestones(prev => prev.map((m, i) => (i === index ? { ...m, [key]: value } : m)));
+  };
+  const addStoryMilestone = () => {
+    setEditStoryMilestones(prev => (prev.length >= 4 ? prev : [...prev, { date: '', title: '', description: '' }]));
+  };
+  const removeStoryMilestone = (index) => {
+    setEditStoryMilestones(prev => prev.filter((_, i) => i !== index));
   };
 
   // Compute whether names are editable (within 48h grace period + has remaining edits)
@@ -156,12 +173,20 @@ export default function Dashboard() {
         weddingDetailsPayload.groomName = editForm.groomName;
         weddingDetailsPayload.brideName = editForm.brideName;
       }
+      const cleanedMilestones = editStoryMilestones
+        .map(m => ({
+          date: (m.date || '').trim(),
+          title: (m.title || '').trim(),
+          description: (m.description || '').trim(),
+        }))
+        .filter(m => m.date || m.title || m.description);
       const res = await fetch(`${API}/orders/edit/${editToken}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           weddingDetails: weddingDetailsPayload,
           photos: flattenEditPhotos(),
+          storyMilestones: cleanedMilestones,
         }),
       });
       const data = await res.json();
@@ -244,11 +269,11 @@ export default function Dashboard() {
             {editing ? 'Editing...' : `Edit (${order.editsRemaining} left)`}
           </button>
           <button className="dash-action-btn" onClick={() => {
-            const text = `You're invited to ${wd.groomName && wd.brideName ? `${wd.groomName} & ${wd.brideName}'s` : 'our'} wedding! View the invitation here: ${inviteUrl}`;
+            const intro = `You're invited to ${wd.groomName && wd.brideName ? `${wd.groomName} & ${wd.brideName}'s` : 'our'} wedding! View the invitation here:`;
             if (navigator.share) {
-              navigator.share({ title: 'Wedding Invitation', text, url: inviteUrl });
+              navigator.share({ title: 'Wedding Invitation', text: intro, url: inviteUrl });
             } else {
-              copyLink(inviteUrl, 'share');
+              copyLink(`${intro} ${inviteUrl}`, 'share');
             }
           }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
@@ -347,6 +372,34 @@ export default function Dashboard() {
                 <div className="form-field full-width">
                   <label>Second Language Text</label>
                   <textarea rows={3} value={editForm.secondLanguage} onChange={e => handleEditInput('secondLanguage', e.target.value)} />
+                </div>
+              </div>
+
+              <div className="edit-story-section">
+                <label className="edit-photos-label">Our Story</label>
+                <p className="form-hint">Add or edit the milestones from your journey together. Leave blank to skip this section on the invitation.</p>
+                <div className="edit-story-list">
+                  {editStoryMilestones.map((m, i) => (
+                    <div key={i} className="edit-story-item">
+                      <div className="edit-story-item-header">
+                        <span className="edit-story-number">{i + 1}</span>
+                        {editStoryMilestones.length > 1 && (
+                          <button type="button" className="edit-story-remove" onClick={() => removeStoryMilestone(i)} title="Remove milestone">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                          </button>
+                        )}
+                      </div>
+                      <input type="text" placeholder="Year or date (e.g. 2019)" value={m.date} onChange={e => handleStoryMilestoneChange(i, 'date', e.target.value)} />
+                      <input type="text" placeholder="Title (e.g. First Meeting)" value={m.title} onChange={e => handleStoryMilestoneChange(i, 'title', e.target.value)} />
+                      <textarea rows={2} placeholder="A short description of this moment..." value={m.description} onChange={e => handleStoryMilestoneChange(i, 'description', e.target.value)} />
+                    </div>
+                  ))}
+                  {editStoryMilestones.length < 4 && (
+                    <button type="button" className="edit-story-add" onClick={addStoryMilestone}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                      Add milestone ({editStoryMilestones.length}/4)
+                    </button>
+                  )}
                 </div>
               </div>
 
