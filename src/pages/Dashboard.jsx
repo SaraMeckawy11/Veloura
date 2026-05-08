@@ -8,6 +8,10 @@ const PHOTO_CATEGORIES = {
   story: { label: 'Our Story Photos', max: 4 },
   gallery: { label: 'Gallery Photos', max: 6 },
 };
+const NON_STORY_CATEGORIES = [
+  { key: 'venue', label: 'Venue Photos', max: 2 },
+  { key: 'gallery', label: 'Gallery Photos', max: 6 },
+];
 
 export default function Dashboard() {
   const { editToken } = useParams();
@@ -88,6 +92,39 @@ export default function Dashboard() {
   };
   const removeStoryMilestone = (index) => {
     setEditStoryMilestones(prev => prev.filter((_, i) => i !== index));
+    // Keep story photos aligned with milestones — drop the photo at the removed index.
+    setEditPhotos(prev => ({ ...prev, story: prev.story.filter((_, i) => i !== index) }));
+  };
+
+  const handleStoryPhotoUpload = async (e, index) => {
+    const files = e.target.files;
+    if (!files.length) return;
+    setPhotoUploading(prev => ({ ...prev, [`story-${index}`]: true }));
+    const formData = new FormData();
+    formData.append('photos', files[0]);
+    try {
+      const res = await fetch(`${API}/upload?category=story`, { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.files && data.files[0]) {
+        setEditPhotos(prev => {
+          const updated = [...prev.story];
+          updated[index] = data.files[0];
+          return { ...prev, story: updated };
+        });
+      }
+    } catch {
+      setSaveMsg('Photo upload failed');
+    }
+    e.target.value = '';
+    setPhotoUploading(prev => ({ ...prev, [`story-${index}`]: false }));
+  };
+
+  const removeStoryPhoto = (index) => {
+    setEditPhotos(prev => {
+      const updated = [...prev.story];
+      updated[index] = undefined;
+      return { ...prev, story: updated };
+    });
   };
 
   // Compute whether names are editable (within 48h grace period + has remaining edits)
@@ -151,7 +188,7 @@ export default function Dashboard() {
 
   const flattenEditPhotos = () => {
     return Object.entries(editPhotos).flatMap(([cat, items]) =>
-      items.map(p => ({ ...p, label: p.label || cat }))
+      items.filter(Boolean).map(p => ({ ...p, label: p.label || cat }))
     );
   };
 
@@ -286,7 +323,7 @@ export default function Dashboard() {
             }
           }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
-            {copied === 'share' ? 'Copied!' : 'Share'}
+            {copied === 'share' ? 'Copied!' : 'Share Invitation'}
           </button>
         </div>
 
@@ -386,23 +423,53 @@ export default function Dashboard() {
 
               <div className="edit-story-section">
                 <label className="edit-photos-label">Our Story</label>
-                <p className="form-hint">Add or edit the milestones from your journey together. Leave blank to skip this section on the invitation.</p>
+                <p className="form-hint">Add or edit the milestones from your journey together. Each milestone has its own photo. Leave blank to skip this section on the invitation.</p>
                 <div className="edit-story-list">
-                  {editStoryMilestones.map((m, i) => (
-                    <div key={i} className="edit-story-item">
-                      <div className="edit-story-item-header">
-                        <span className="edit-story-number">{i + 1}</span>
-                        {editStoryMilestones.length > 1 && (
-                          <button type="button" className="edit-story-remove" onClick={() => removeStoryMilestone(i)} title="Remove milestone">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                          </button>
-                        )}
+                  {editStoryMilestones.map((m, i) => {
+                    const photo = editPhotos.story[i];
+                    const uploading = photoUploading[`story-${i}`];
+                    return (
+                      <div key={i} className="edit-story-item edit-story-item--with-photo">
+                        <div className="edit-story-item-header">
+                          <span className="edit-story-number">{i + 1}</span>
+                          {editStoryMilestones.length > 1 && (
+                            <button type="button" className="edit-story-remove" onClick={() => removeStoryMilestone(i)} title="Remove milestone">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            </button>
+                          )}
+                        </div>
+                        <div className="edit-story-body">
+                          <div className="edit-story-photo">
+                            {photo ? (
+                              <>
+                                <img src={photo.url} alt={`Story ${i + 1}`} />
+                                <button type="button" className="photo-remove" onClick={() => removeStoryPhoto(i)} title="Remove photo">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                </button>
+                              </>
+                            ) : (
+                              <label className="edit-story-photo-upload">
+                                {uploading ? (
+                                  <span className="edit-story-photo-uploading">Uploading…</span>
+                                ) : (
+                                  <>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                    <span>Photo</span>
+                                  </>
+                                )}
+                                <input type="file" accept="image/*" hidden disabled={uploading} onChange={e => handleStoryPhotoUpload(e, i)} />
+                              </label>
+                            )}
+                          </div>
+                          <div className="edit-story-fields">
+                            <input type="text" placeholder="Year or date (e.g. 2019)" value={m.date} onChange={e => handleStoryMilestoneChange(i, 'date', e.target.value)} />
+                            <input type="text" placeholder="Title (e.g. First Meeting)" value={m.title} onChange={e => handleStoryMilestoneChange(i, 'title', e.target.value)} />
+                            <textarea rows={2} placeholder="A short description of this moment..." value={m.description} onChange={e => handleStoryMilestoneChange(i, 'description', e.target.value)} />
+                          </div>
+                        </div>
                       </div>
-                      <input type="text" placeholder="Year or date (e.g. 2019)" value={m.date} onChange={e => handleStoryMilestoneChange(i, 'date', e.target.value)} />
-                      <input type="text" placeholder="Title (e.g. First Meeting)" value={m.title} onChange={e => handleStoryMilestoneChange(i, 'title', e.target.value)} />
-                      <textarea rows={2} placeholder="A short description of this moment..." value={m.description} onChange={e => handleStoryMilestoneChange(i, 'description', e.target.value)} />
-                    </div>
-                  ))}
+                    );
+                  })}
                   {editStoryMilestones.length < 4 && (
                     <button type="button" className="edit-story-add" onClick={addStoryMilestone}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
@@ -415,11 +482,7 @@ export default function Dashboard() {
               <div className="edit-photos-section">
                 <label className="edit-photos-label">Photos</label>
                 <p className="form-hint">Manage photos by category. Each category appears in its own section of the invitation.</p>
-                {[
-                  { key: 'venue', label: 'Venue Photos', max: 2 },
-                  { key: 'story', label: 'Our Story Photos', max: 4 },
-                  { key: 'gallery', label: 'Gallery Photos', max: 6 },
-                ].map(cat => (
+                {NON_STORY_CATEGORIES.map(cat => (
                   <div key={cat.key} className="photo-category">
                     <div className="photo-category-header">
                       <h4 className="photo-category-title">{cat.label}</h4>
