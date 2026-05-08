@@ -576,7 +576,8 @@ function GallerySection({ images }) {
   const galleryImageKey = uniqueImages.join('|');
   const galleryRowRef = useRef(null);
   const galleryUnitRef = useRef(null);
-  const unitRepeatCount = uniqueImages.length ? Math.max(1, Math.ceil(6 / uniqueImages.length)) : 0;
+  // Repeat images enough times to fill at least 2x the viewport for seamless looping
+  const unitRepeatCount = uniqueImages.length ? Math.max(3, Math.ceil(12 / uniqueImages.length)) : 0;
   const unitImages = uniqueImages.length
     ? Array.from({ length: unitRepeatCount }, () => uniqueImages).flat()
     : [];
@@ -592,11 +593,12 @@ function GallerySection({ images }) {
     let offset = 0;
     let previousTime = 0;
     // Slower speed for smoother effect and iOS compatibility
-    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
+    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 68 : 88;
 
     // Use scrollWidth for more accurate seamlessness on iOS
     const updateDistance = () => {
-      distance = unit.scrollWidth || unit.getBoundingClientRect().width;
+      // Always use scrollWidth for seamlessness
+      distance = unit.scrollWidth;
       offset = distance ? offset % distance : 0;
       row.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
