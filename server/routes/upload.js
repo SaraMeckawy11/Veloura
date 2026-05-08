@@ -87,6 +87,11 @@ router.post('/', (req, res, next) => {
         resource_type: isMusic ? 'video' : 'image',
         ...(isMusic ? {} : {
           transformation: [{ width: 1600, height: 1600, crop: 'limit', quality: 'auto', fetch_format: 'auto' }],
+          eager: [
+            { width: 360, height: 485, crop: 'fill', gravity: 'auto', quality: 'auto:eco', fetch_format: 'auto' },
+            { width: 520, height: 700, crop: 'fill', gravity: 'auto', quality: 'auto:eco', fetch_format: 'auto' },
+            { width: 700, height: 940, crop: 'fill', gravity: 'auto', quality: 'auto:good', fetch_format: 'auto' },
+          ],
         }),
       }))
     );

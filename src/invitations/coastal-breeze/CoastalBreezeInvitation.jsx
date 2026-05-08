@@ -47,6 +47,34 @@ const BlueShellMark = ({ className = '' }) => (
   <img className={className} src={blueShellAsset} alt="" aria-hidden="true" />
 );
 
+const CLOUDINARY_UPLOAD_SEGMENT = '/image/upload/';
+
+function buildOptimizedImageUrl(src, transform) {
+  if (!src || src.startsWith('data:') || src.startsWith('blob:') || !src.includes(CLOUDINARY_UPLOAD_SEGMENT)) {
+    return src;
+  }
+
+  const [prefix, rest] = src.split(CLOUDINARY_UPLOAD_SEGMENT);
+  if (!prefix || !rest || rest.startsWith(`${transform}/`)) return src;
+
+  return `${prefix}${CLOUDINARY_UPLOAD_SEGMENT}${transform}/${rest}`;
+}
+
+function buildGalleryImageSources(src) {
+  const mobile = buildOptimizedImageUrl(src, 'f_auto,q_auto:eco,c_fill,g_auto,w_520,h_700');
+  const small = buildOptimizedImageUrl(src, 'f_auto,q_auto:eco,c_fill,g_auto,w_360,h_485');
+  const large = buildOptimizedImageUrl(src, 'f_auto,q_auto:good,c_fill,g_auto,w_700,h_940');
+
+  if (mobile === src) {
+    return { src, srcSet: undefined };
+  }
+
+  return {
+    src: mobile,
+    srcSet: `${small} 360w, ${mobile} 520w, ${large} 700w`,
+  };
+}
+
 export default function CoastalBreezeInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -118,15 +146,36 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         .filter(photo => photo.label === 'gallery' || !photo.label || !['couple', 'story', 'venue'].includes(photo.label))
         .map(photo => photo.url);
 
-    memorySources
-      .filter(Boolean)
-      .slice(0, 12)
-      .forEach((src) => {
+    const preloads = [...new Set(memorySources.filter(Boolean))]
+      .slice(0, 6)
+      .map((src) => buildGalleryImageSources(src));
+
+    const links = preloads.map(({ src, srcSet }) => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = src;
+      link.fetchPriority = 'high';
+      if (srcSet) {
+        link.imageSrcset = srcSet;
+        link.imageSizes = '(max-width: 680px) 220px, 300px';
+      }
+      document.head.appendChild(link);
+      return link;
+    });
+
+    preloads.forEach(({ src, srcSet }) => {
         const image = new Image();
         image.decoding = 'async';
         image.fetchPriority = 'high';
+        if (srcSet) {
+          image.srcset = srcSet;
+          image.sizes = '(max-width: 680px) 220px, 300px';
+        }
         image.src = src;
       });
+
+    return () => links.forEach(link => link.remove());
   }, [isReferenceDemo, order]);
 
   const handleSplashDismiss = () => {
@@ -523,7 +572,8 @@ function StorySection({ milestones, images }) {
 }
 
 function GallerySection({ images }) {
-  const loopImages = images.length ? [...images, ...images] : images;
+  const uniqueImages = [...new Set(images.filter(Boolean))];
+  const loopImages = uniqueImages.length ? [...uniqueImages, ...uniqueImages] : [];
 
   return (
     <section className="coastal-gallery-section">
@@ -531,18 +581,23 @@ function GallerySection({ images }) {
         <h2>Memories</h2>
       </div>
       <div className="coastal-gallery-viewport">
-        <div className={`coastal-gallery-row${images.length ? ' coastal-gallery-row-loop' : ''}`}>
-          {loopImages.map((src, index) => (
+        <div className={`coastal-gallery-row${uniqueImages.length ? ' coastal-gallery-row-loop' : ''}`}>
+          {loopImages.map((src, index) => {
+            const optimized = buildGalleryImageSources(src);
+            return (
             <figure key={`${src}-${index}`} className="coastal-gallery-card">
               <img
-                src={src}
-                alt={`Memory ${(index % images.length) + 1}`}
+                src={optimized.src}
+                srcSet={optimized.srcSet}
+                sizes="(max-width: 680px) 220px, 300px"
+                alt={`Memory ${(index % uniqueImages.length) + 1}`}
                 loading="eager"
                 decoding="async"
-                fetchPriority={index < images.length ? 'high' : 'auto'}
+                fetchPriority={index < uniqueImages.length ? 'high' : 'auto'}
               />
             </figure>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
