@@ -1686,7 +1686,7 @@
 }
 
 .coastal-gallery-row-loop {
-  animation: coastal-gallery-marquee 42s linear infinite;
+  animation: coastal-gallery-marquee var(--coastal-gallery-duration, 28s) linear infinite;
 }
 
 .coastal-gallery-card {
@@ -1724,7 +1724,7 @@
 
 @keyframes coastal-gallery-marquee {
   from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(calc(var(--coastal-gallery-distance, 0px) * -1), 0, 0); }
 }
 
 /* ============================================================
@@ -1956,10 +1956,6 @@
 
   .coastal-gallery-row {
     --coastal-gallery-gap: 14px;
-  }
-
-  .coastal-gallery-row-loop {
-    animation-duration: 30s;
   }
 
   .coastal-gallery-card {

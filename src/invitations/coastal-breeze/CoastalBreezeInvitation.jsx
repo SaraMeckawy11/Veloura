@@ -573,9 +573,39 @@ function StorySection({ milestones, images }) {
 
 function GallerySection({ images }) {
   const uniqueImages = [...new Set(images.filter(Boolean))];
-  const loopImages = uniqueImages.length ? [...uniqueImages, ...uniqueImages] : [];
+  const galleryImageKey = uniqueImages.join('|');
+  const galleryUnitRef = useRef(null);
+  const [galleryLoopDistance, setGalleryLoopDistance] = useState(0);
+  const unitRepeatCount = uniqueImages.length ? Math.max(1, Math.ceil(6 / uniqueImages.length)) : 0;
+  const unitImages = uniqueImages.length
+    ? Array.from({ length: unitRepeatCount }, () => uniqueImages).flat()
+    : [];
+  const loopDurationSeconds = Math.min(32, Math.max(24, unitImages.length * 4));
 
-  const renderGalleryGroup = (groupIndex) => loopImages.map((src, index) => {
+  useEffect(() => {
+    const unit = galleryUnitRef.current;
+    if (!unit) return undefined;
+
+    const updateDistance = () => {
+      setGalleryLoopDistance(unit.getBoundingClientRect().width);
+    };
+
+    updateDistance();
+
+    const resizeObserver = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(updateDistance)
+      : null;
+
+    resizeObserver?.observe(unit);
+    window.addEventListener('resize', updateDistance);
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener('resize', updateDistance);
+    };
+  }, [unitImages.length, galleryImageKey]);
+
+  const renderGalleryGroup = (groupIndex) => unitImages.map((src, index) => {
     const optimized = buildGalleryImageSources(src);
     const imageNumber = (index % uniqueImages.length) + 1;
 
@@ -600,13 +630,23 @@ function GallerySection({ images }) {
         <h2>Memories</h2>
       </div>
       <div className="coastal-gallery-viewport">
-        <div className={`coastal-gallery-row${uniqueImages.length ? ' coastal-gallery-row-loop' : ''}`}>
-          <div className="coastal-gallery-group">
-            {renderGalleryGroup(0)}
-          </div>
-          <div className="coastal-gallery-group" aria-hidden="true">
-            {renderGalleryGroup(1)}
-          </div>
+        <div
+          className={`coastal-gallery-row${unitImages.length ? ' coastal-gallery-row-loop' : ''}`}
+          style={{
+            '--coastal-gallery-distance': `${galleryLoopDistance}px`,
+            '--coastal-gallery-duration': `${loopDurationSeconds}s`,
+          }}
+        >
+          {[0, 1, 2].map((groupIndex) => (
+            <div
+              key={groupIndex}
+              ref={groupIndex === 0 ? galleryUnitRef : null}
+              className="coastal-gallery-group"
+              aria-hidden={groupIndex > 0 ? 'true' : undefined}
+            >
+              {renderGalleryGroup(groupIndex)}
+            </div>
+          ))}
         </div>
       </div>
     </section>
