@@ -12,12 +12,14 @@ const BIRDS = [
 
 export default function CoastalSplash({ onDismiss }) {
   const [opening, setOpening] = useState(false);
+  const [fading, setFading] = useState(false);
 
   const handleOpen = () => {
     if (opening) return;
     setOpening(true);
-    // Total: 3.6s door swing + 0.9s scene settle + 0.6s fade out
-    setTimeout(onDismiss, 4800);
+    // Let the opened door settle, then dissolve over the invitation below.
+    setTimeout(() => setFading(true), 4050);
+    setTimeout(onDismiss, 5000);
   };
 
   const swingDuration = 3.6;
@@ -38,6 +40,8 @@ export default function CoastalSplash({ onDismiss }) {
             handleOpen();
           }
         }}
+        animate={fading ? { opacity: 0 } : { opacity: 1 }}
+        transition={fading ? { duration: 0.9, ease: 'easeInOut' } : { duration: 0.2 }}
         exit={{ opacity: 0, transition: { duration: 0.7, ease: 'easeOut' } }}
       >
         <div className="coastal-splash-stage" aria-hidden>

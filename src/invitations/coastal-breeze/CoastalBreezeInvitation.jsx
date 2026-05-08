@@ -478,14 +478,20 @@ function StorySection({ milestones, images }) {
           <motion.article
             key={index}
             className="coastal-story-item"
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55, delay: index * 0.08 }}
           >
-            <figure className="coastal-photo-frame">
+            <motion.figure
+              className="coastal-photo-frame"
+              initial={{ opacity: 0, x: index % 2 === 0 ? -42 : 42 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.62, delay: index * 0.08 + 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
               <img src={item.src} alt={item.title || `Story ${index + 1}`} />
-            </figure>
+            </motion.figure>
             <div>
               {item.date && <span>{item.date}</span>}
               <h3>{item.title || `Chapter ${index + 1}`}</h3>
@@ -499,7 +505,7 @@ function StorySection({ milestones, images }) {
 }
 
 function GallerySection({ images }) {
-  const loopImages = images.length > 1 ? [...images, ...images] : images;
+  const loopImages = images.length ? [...images, ...images] : images;
 
   return (
     <section className="coastal-gallery-section">
@@ -507,10 +513,10 @@ function GallerySection({ images }) {
         <h2>Memories</h2>
       </div>
       <div className="coastal-gallery-viewport">
-        <div className={`coastal-gallery-row${images.length > 1 ? ' coastal-gallery-row-loop' : ''}`}>
+        <div className={`coastal-gallery-row${images.length ? ' coastal-gallery-row-loop' : ''}`}>
           {loopImages.map((src, index) => (
             <figure key={`${src}-${index}`} className="coastal-gallery-card">
-              <img src={src} alt={`Memory ${(index % images.length) + 1}`} loading="lazy" />
+              <img src={src} alt={`Memory ${(index % images.length) + 1}`} loading="eager" decoding="async" />
             </figure>
           ))}
         </div>

@@ -1112,10 +1112,11 @@
   position: relative;
   padding: clamp(86px, 11vw, 140px) 22px;
   background:
-    linear-gradient(180deg, rgba(255, 253, 247, 0.88) 0%, rgba(255, 253, 247, 0.34) 28%, transparent 64%),
-    radial-gradient(ellipse at 18% 4%, rgba(255, 255, 255, 0.95), transparent 23rem),
-    radial-gradient(ellipse at 80% 86%, rgba(214, 138, 115, 0.16), transparent 24rem),
-    linear-gradient(180deg, #cfe7f1 0%, #edf7f7 45%, #fbf2df 100%);
+    linear-gradient(180deg, rgba(255, 253, 247, 0.92) 0%, rgba(255, 253, 247, 0.42) 28%, transparent 64%),
+    radial-gradient(ellipse at 18% 4%, rgba(255, 255, 255, 0.98), transparent 23rem),
+    radial-gradient(ellipse at 84% 78%, rgba(214, 138, 115, 0.18), transparent 24rem),
+    radial-gradient(ellipse at 20% 92%, rgba(130, 192, 191, 0.18), transparent 26rem),
+    linear-gradient(180deg, #c9e3ee 0%, #edf8f7 45%, #fbf1dd 100%);
   overflow: hidden;
 }
 
@@ -1294,10 +1295,12 @@
   padding: clamp(28px, 4.5vw, 48px);
   border-radius: 8px;
   background:
-    linear-gradient(180deg, rgba(255, 253, 247, 0.96), rgba(250, 244, 232, 0.88));
-  border: 1px solid rgba(176, 125, 77, 0.22);
+    radial-gradient(ellipse at 100% 0%, rgba(143, 185, 207, 0.2), transparent 18rem),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.98), rgba(250, 244, 232, 0.91));
+  border: 1px solid rgba(176, 125, 77, 0.28);
   box-shadow:
-    0 34px 90px rgba(20, 53, 83, 0.16),
+    0 34px 90px rgba(20, 53, 83, 0.18),
+    0 10px 26px rgba(176, 125, 77, 0.08),
     0 1px 0 rgba(255, 255, 255, 0.9) inset;
   backdrop-filter: blur(6px);
   overflow: hidden;
@@ -1375,13 +1378,13 @@
 .coastal-rsvp-card input,
 .coastal-rsvp-card textarea {
   width: 100%;
-  padding: 14px 16px;
+  padding: 15px 16px;
   color: var(--coast-ink);
   font: inherit;
   font-size: 0.98rem;
-  border: 1.5px solid rgba(20, 53, 83, 0.12);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(20, 53, 83, 0.14);
+  border-radius: 6px;
+  background: rgba(255, 253, 247, 0.72);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
@@ -1395,7 +1398,9 @@
 .coastal-rsvp-card textarea:focus {
   border-color: var(--coast-denim);
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(41, 99, 143, 0.14);
+  box-shadow:
+    0 0 0 4px rgba(41, 99, 143, 0.12),
+    0 10px 22px rgba(20, 53, 83, 0.08);
 }
 
 .coastal-rsvp-card textarea {
@@ -1404,26 +1409,28 @@
 }
 
 .coastal-rsvp-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 12px;
 }
 
 .coastal-rsvp-toggle button {
   position: relative;
   appearance: none;
-  min-height: 72px;
-  padding: 18px 18px 18px 22px;
-  border: 1px solid rgba(41, 99, 143, 0.22);
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 54px;
+  padding: 13px 14px;
+  border: 1px solid rgba(41, 99, 143, 0.24);
   border-radius: 6px;
   background:
-    linear-gradient(180deg, rgba(255, 253, 247, 0.92), rgba(241, 249, 250, 0.78));
+    linear-gradient(180deg, rgba(255, 253, 247, 0.95), rgba(240, 248, 249, 0.86));
   color: var(--coast-denim-dark);
   font: inherit;
-  font-family: var(--font-display);
-  font-size: 1.08rem;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
   text-align: center;
   cursor: pointer;
   overflow: hidden;
@@ -1433,9 +1440,9 @@
 .coastal-rsvp-toggle button::before {
   content: '';
   position: absolute;
-  left: 16px;
-  right: 16px;
-  top: 11px;
+  left: 12px;
+  right: 12px;
+  top: 8px;
   height: 1px;
   border-radius: 999px;
   background: linear-gradient(90deg, transparent, rgba(176, 125, 77, 0.54), transparent);
@@ -1444,17 +1451,15 @@
 }
 
 .coastal-rsvp-toggle button::after {
-  content: 'SELECT';
+  content: '';
   position: absolute;
   left: 50%;
-  bottom: 9px;
-  color: rgba(20, 53, 83, 0.42);
-  font-family: var(--font-body);
-  font-size: 0.5rem;
-  font-weight: 700;
-  letter-spacing: 0.28em;
-  transform: translateX(-50%);
-  transition: color 0.25s ease, opacity 0.25s ease;
+  bottom: 8px;
+  width: 22px;
+  height: 1px;
+  background: rgba(176, 125, 77, 0.52);
+  transform: translateX(-50%) scaleX(0);
+  transition: transform 0.25s ease, background 0.25s ease;
 }
 
 .coastal-rsvp-toggle button:hover {
@@ -1482,8 +1487,8 @@
 }
 
 .coastal-rsvp-toggle button.active::after {
-  content: 'SELECTED';
-  color: rgba(255, 253, 247, 0.72);
+  background: rgba(255, 247, 224, 0.82);
+  transform: translateX(-50%) scaleX(1);
 }
 
 .coastal-submit {
@@ -1671,11 +1676,7 @@
 }
 
 .coastal-gallery-row-loop {
-  animation: coastal-gallery-marquee 42s linear infinite;
-}
-
-.coastal-gallery-viewport:hover .coastal-gallery-row {
-  animation-play-state: paused;
+  animation: coastal-gallery-marquee 24s linear infinite;
 }
 
 .coastal-gallery-card {
@@ -1970,8 +1971,19 @@
   }
 
   .coastal-rsvp-grid,
-  .coastal-rsvp-toggle {
+  .coastal-rsvp-grid {
     grid-template-columns: 1fr;
+  }
+
+  .coastal-rsvp-toggle {
+    gap: 8px;
+  }
+
+  .coastal-rsvp-toggle button {
+    min-height: 50px;
+    padding: 12px 8px;
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
   }
 
   .coastal-rsvp-card {
