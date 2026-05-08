@@ -573,6 +573,29 @@ function StorySection({ milestones, images }) {
 
 function GallerySection({ images }) {
   const uniqueImages = [...new Set(images.filter(Boolean))];
+  const [useMobileLoop, setUseMobileLoop] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 680px)').matches
+  ));
+  const mobileCycleSeconds = Math.min(24, Math.max(20, uniqueImages.length * 4));
+  const mobileStepSeconds = uniqueImages.length ? mobileCycleSeconds / uniqueImages.length : 0;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const media = window.matchMedia('(max-width: 680px)');
+    const handleChange = () => setUseMobileLoop(media.matches);
+
+    handleChange();
+
+    if (media.addEventListener) {
+      media.addEventListener('change', handleChange);
+      return () => media.removeEventListener('change', handleChange);
+    }
+
+    media.addListener(handleChange);
+    return () => media.removeListener(handleChange);
+  }, []);
+
   const renderGalleryGroup = (groupIndex) => uniqueImages.map((src, index) => {
     const optimized = buildGalleryImageSources(src);
 
@@ -591,20 +614,51 @@ function GallerySection({ images }) {
     );
   });
 
+  const renderMobileGallery = () => uniqueImages.map((src, index) => {
+    const optimized = buildGalleryImageSources(src);
+
+    return (
+      <figure
+        key={`mobile-${src}-${index}`}
+        className="coastal-gallery-card coastal-gallery-mobile-card"
+        style={{
+          '--coastal-mobile-cycle': `${mobileCycleSeconds}s`,
+          '--coastal-mobile-delay': `-${index * mobileStepSeconds}s`,
+        }}
+      >
+        <img
+          src={optimized.src}
+          srcSet={optimized.srcSet}
+          sizes="(max-width: 680px) 220px, 300px"
+          alt={`Memory ${index + 1}`}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+        />
+      </figure>
+    );
+  });
+
   return (
     <section className="coastal-gallery-section">
       <div className="coastal-gallery-header">
         <h2>Memories</h2>
       </div>
       <div className="coastal-gallery-viewport">
-        <div className={`coastal-gallery-row${uniqueImages.length ? ' coastal-gallery-row-loop' : ''}`}>
-          <div className="coastal-gallery-group">
-            {renderGalleryGroup(0)}
+        {useMobileLoop ? (
+          <div className="coastal-gallery-mobile-loop">
+            {renderMobileGallery()}
           </div>
-          <div className="coastal-gallery-group" aria-hidden="true">
-            {renderGalleryGroup(1)}
+        ) : (
+          <div className={`coastal-gallery-row${uniqueImages.length ? ' coastal-gallery-row-loop' : ''}`}>
+            <div className="coastal-gallery-group">
+              {renderGalleryGroup(0)}
+            </div>
+            <div className="coastal-gallery-group" aria-hidden="true">
+              {renderGalleryGroup(1)}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
