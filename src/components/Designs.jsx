@@ -4,7 +4,7 @@ import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
 const designs = [
-    {
+  {
     name: 'Boarding Pass',
     category: 'launch',
     envelope: 'Airmail envelope with vintage stamps slides open',
@@ -14,6 +14,17 @@ const designs = [
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/boarding-pass',
+  },
+  {
+    name: 'Coastal Breeze',
+    category: 'launch',
+    envelope: 'Blue envelope opens to a bride and groom walking toward the sea',
+    description: 'Denim blues, watercolor shells, flowers, birds, and sailboats. Elegant, colorful, and perfect for coastal weddings.',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
+    overlay: 'linear-gradient(135deg, rgba(31,95,143,0.26), rgba(236,134,111,0.22))',
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/coastal-breeze',
   },
   // {
   //   name: 'Velvet Rose',
@@ -62,16 +73,6 @@ const designs = [
   //   description: 'Gold leaf, lapis blue, sandstone. Temple columns frame couple names. A design no competitor offers.',
   //   image: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop&q=80',
   //   overlay: 'linear-gradient(135deg, rgba(26,35,126,0.4), rgba(184,134,11,0.4))',
-  //   badge: 'Coming Soon',
-  //   badgeClass: 'badge-new',
-  // },
-  // {
-  //   name: 'Coastal Breeze',
-  //   category: 'new',
-  //   envelope: 'Sand-textured envelope washes away like a wave',
-  //   description: 'Soft blues, sandy neutrals, watercolor. Tide reveals handwritten names. Perfect for beach weddings.',
-  //   image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
-  //   overlay: 'linear-gradient(135deg, rgba(38,166,154,0.3), rgba(0,77,64,0.4))',
   //   badge: 'Coming Soon',
   //   badgeClass: 'badge-new',
   // },
