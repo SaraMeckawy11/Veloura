@@ -17,9 +17,9 @@ export default function CoastalSplash({ onDismiss }) {
   const handleOpen = () => {
     if (opening) return;
     setOpening(true);
-    // Let the opened door settle, then dissolve over the invitation below.
-    setTimeout(() => setFading(true), 4050);
-    setTimeout(onDismiss, 5000);
+    // Let the opened door land, then dissolve promptly over the invitation below.
+    setTimeout(() => setFading(true), 3700);
+    setTimeout(onDismiss, 4300);
   };
 
   const swingDuration = 3.6;
@@ -41,7 +41,7 @@ export default function CoastalSplash({ onDismiss }) {
           }
         }}
         animate={fading ? { opacity: 0 } : { opacity: 1 }}
-        transition={fading ? { duration: 0.9, ease: 'easeInOut' } : { duration: 0.2 }}
+        transition={fading ? { duration: 0.55, ease: 'easeInOut' } : { duration: 0.2 }}
         exit={{ opacity: 0, transition: { duration: 0.7, ease: 'easeOut' } }}
       >
         <div className="coastal-splash-stage" aria-hidden>

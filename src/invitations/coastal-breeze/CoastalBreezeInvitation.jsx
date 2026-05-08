@@ -111,6 +111,24 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     audio.play().catch(() => undefined);
   }, [showSplash, shouldPlayMusic, order.musicUrl]);
 
+  useEffect(() => {
+    const memorySources = isReferenceDemo && order.galleryImages?.length
+      ? order.galleryImages
+      : (order.photos || [])
+        .filter(photo => photo.label === 'gallery' || !photo.label || !['couple', 'story', 'venue'].includes(photo.label))
+        .map(photo => photo.url);
+
+    memorySources
+      .filter(Boolean)
+      .slice(0, 12)
+      .forEach((src) => {
+        const image = new Image();
+        image.decoding = 'async';
+        image.fetchPriority = 'high';
+        image.src = src;
+      });
+  }, [isReferenceDemo, order]);
+
   const handleSplashDismiss = () => {
     if (shouldPlayMusic && audioRef.current) {
       audioRef.current.volume = 0.52;
@@ -516,7 +534,13 @@ function GallerySection({ images }) {
         <div className={`coastal-gallery-row${images.length ? ' coastal-gallery-row-loop' : ''}`}>
           {loopImages.map((src, index) => (
             <figure key={`${src}-${index}`} className="coastal-gallery-card">
-              <img src={src} alt={`Memory ${(index % images.length) + 1}`} loading="eager" decoding="async" />
+              <img
+                src={src}
+                alt={`Memory ${(index % images.length) + 1}`}
+                loading="eager"
+                decoding="async"
+                fetchPriority={index < images.length ? 'high' : 'auto'}
+              />
             </figure>
           ))}
         </div>
