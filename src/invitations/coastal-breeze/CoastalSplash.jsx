@@ -117,8 +117,8 @@ export default function CoastalSplash({ onDismiss }) {
           animate={opening ? { opacity: 0, y: -16 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
         >
-          <span className="coastal-splash-eyebrow">You are cordially invited</span>
-          <p className="coastal-splash-script">to the wedding</p>
+          <span className="coastal-splash-eyebrow">You are invited to</span>
+          <p className="coastal-splash-script">the wedding</p>
           <span className="coastal-splash-hint">Tap to open the doors</span>
         </motion.div>
       </motion.div>

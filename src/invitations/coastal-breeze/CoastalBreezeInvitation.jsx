@@ -488,7 +488,7 @@ function StorySection({ milestones, images }) {
               initial={{ opacity: 0, x: index % 2 === 0 ? -42 : 42 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.62, delay: index * 0.08 + 0.08, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.9, delay: index * 0.1 + 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
               <img src={item.src} alt={item.title || `Story ${index + 1}`} />
             </motion.figure>
