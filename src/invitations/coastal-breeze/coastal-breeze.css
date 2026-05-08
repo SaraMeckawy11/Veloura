@@ -306,44 +306,27 @@
 
 .coastal-splash-copy {
   position: absolute;
-  left: 50%;
-  top: clamp(118px, 18vh, 178px);
-  width: min(520px, calc(100% - 40px));
+  left: 24px;
+  right: 24px;
+  bottom: clamp(36px, 8vh, 76px);
   z-index: 10;
-  padding: clamp(20px, 3vw, 30px) clamp(18px, 4vw, 34px);
   text-align: center;
   color: #ffffff;
-  transform: translateX(-50%);
   text-shadow:
-    0 2px 10px rgba(4, 19, 34, 0.9),
-    0 10px 34px rgba(4, 19, 34, 0.72);
+    0 1px 2px rgba(0, 0, 0, 0.95),
+    0 4px 18px rgba(4, 19, 34, 0.98),
+    0 12px 34px rgba(4, 19, 34, 0.82);
   pointer-events: none;
-}
-
-.coastal-splash-copy::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border: 1px solid rgba(255, 253, 247, 0.24);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(8, 32, 54, 0.58), rgba(8, 32, 54, 0.34)),
-    radial-gradient(ellipse at 50% 0%, rgba(255, 253, 247, 0.2), transparent 70%);
-  box-shadow:
-    0 26px 70px rgba(4, 19, 34, 0.34),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(6px);
 }
 
 .coastal-splash-eyebrow {
   display: block;
   margin-bottom: 6px;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.34em;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: rgba(255, 253, 247, 0.98);
+  color: rgba(255, 255, 255, 0.98);
 }
 
 .coastal-splash-script {
@@ -353,25 +336,18 @@
   font-weight: 400;
   line-height: 0.92;
   letter-spacing: 0.005em;
-  color: #fff8ed;
+  color: #ffffff;
+  -webkit-text-stroke: 0.25px rgba(4, 19, 34, 0.5);
 }
 
 .coastal-splash-hint {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 34px;
+  display: block;
   margin-top: 18px;
-  padding: 0 18px;
-  border: 1px solid rgba(255, 253, 247, 0.32);
-  border-radius: 999px;
-  background: rgba(255, 253, 247, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
-  font-size: 0.62rem;
+  font-size: 0.64rem;
   font-weight: 700;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: rgba(255, 253, 247, 0.96);
+  color: rgba(255, 255, 255, 0.96);
 }
 
 /* ============================================================
@@ -1898,8 +1874,7 @@
 
 @media (max-width: 680px) {
   .coastal-splash-copy {
-    top: 92px;
-    width: calc(100% - 28px);
+    bottom: 36px;
   }
 
   .coastal-hero {
