@@ -40,10 +40,11 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
     .logo span { color: #D4AF5A; }
     h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 24px; font-weight: 400; text-align: center; margin: 0 0 12px; color: #2D2A26; }
     .subtitle { text-align: center; color: #7A756F; font-size: 14px; line-height: 1.7; margin: 0 0 28px; }
-    .details-card { background: #FAFAF8; border: 1px solid #F0EDE8; border-radius: 14px; padding: 20px 24px; margin-bottom: 28px; }
-    .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #F0EDE8; font-size: 14px; }
-    .detail-row:last-child { border-bottom: none; }
-    .detail-label { color: #A09A93; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; min-width: 80px; }
+    .details-card { background: #FAFAF8; border: 1px solid #F0EDE8; border-radius: 14px; padding: 8px 24px; margin-bottom: 28px; }
+    .details-table { width: 100%; border-collapse: collapse; }
+    .details-table td { padding: 14px 0; border-bottom: 1px solid #F0EDE8; font-size: 14px; vertical-align: middle; }
+    .details-table tr:last-child td { border-bottom: none; }
+    .detail-label { color: #A09A93; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; white-space: nowrap; padding-right: 16px !important; }
     .detail-value { color: #2D2A26; font-weight: 500; text-align: right; }
     .invite-code-box { background: #F7F5F2; border: 1.5px dashed #D4AF5A; border-radius: 10px; padding: 16px 20px; text-align: center; margin-bottom: 28px; }
     .invite-code-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #A09A93; font-weight: 600; margin-bottom: 6px; }
@@ -53,7 +54,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
     .btn-primary { background: linear-gradient(135deg, #D4AF5A 0%, #C49B3A 100%); color: #fff; }
     .btn-secondary { background: #fff; border: 1.5px solid #E8E4DF; color: #2D2A26; }
     .divider { height: 1px; background: #F0EDE8; margin: 24px 0; }
-    .note { font-size: 13px; color: #A09A93; text-align: center; line-height: 1.7; }
+    .note { font-size: 12px; color: #A09A93; text-align: center; line-height: 1.65; }
     .note strong { color: #D4AF5A; }
     .footer { text-align: center; padding: 24px 16px; font-size: 11px; color: #B5B0AA; }
     .footer a { color: #D4AF5A; text-decoration: none; }
@@ -73,9 +74,13 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
         <p class="subtitle">${subtitle}</p>
 
         <div class="details-card">
-          ${name1 && name2 ? `<div class="detail-row"><span class="detail-label">Couple</span><span class="detail-value">${name1} & ${name2}</span></div>` : ''}
-          ${dateStr ? `<div class="detail-row"><span class="detail-label">Date</span><span class="detail-value">${dateStr}</span></div>` : ''}
-          ${venue ? `<div class="detail-row"><span class="detail-label">Venue</span><span class="detail-value">${venue}</span></div>` : ''}
+          <table class="details-table" role="presentation" cellpadding="0" cellspacing="0">
+            <tbody>
+              ${name1 && name2 ? `<tr><td class="detail-label">Couple</td><td class="detail-value">${name1} &amp; ${name2}</td></tr>` : ''}
+              ${dateStr ? `<tr><td class="detail-label">Date</td><td class="detail-value">${dateStr}</td></tr>` : ''}
+              ${venue ? `<tr><td class="detail-label">Venue</td><td class="detail-value">${venue}</td></tr>` : ''}
+            </tbody>
+          </table>
         </div>
 
         ${invitationCode ? `
@@ -95,8 +100,8 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
 
         <p class="note">
           ${isPending
-            ? 'Complete your payment to activate your invitation and share it with guests.'
-            : `You have <strong>5 free edits</strong> available. Simply click the edit link above to make changes.<br><br>You can also access your dashboard anytime at <a href="${CLIENT_URL}/my-invitation" style="color: #D4AF5A; text-decoration: none; font-weight: 600;">Veloura &rarr; My Invitation</a> using your invitation code above. <strong>Never share this code or the Dashboard link</strong> — they give full access to your invitation. The "View Your Invitation" link is the safe one to share with guests.`
+            ? 'Complete your payment to activate your invitation.'
+            : `You have <strong>5 free edits</strong> — just tap the edit link above whenever you'd like to update something.<br><br>Lost the link later? Come back to <a href="${CLIENT_URL}/my-invitation" style="color: #D4AF5A; text-decoration: none; font-weight: 600;">My Invitation</a> and enter your invitation code above. Keep this code private.`
           }
         </p>
       </div>

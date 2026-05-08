@@ -1,15 +1,6 @@
 import { Link } from 'react-router-dom';
 import '../styles/Footer.css';
 
-const handleClick = (e, href) => {
-  e.preventDefault();
-  const target = document.querySelector(href);
-  if (target) {
-    const y = target.getBoundingClientRect().top + window.pageYOffset - 80;
-    window.scrollTo({ top: y, behavior: 'smooth' });
-  }
-};
-
 const scrollToTop = (e) => {
   e.preventDefault();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -48,37 +39,12 @@ export default function Footer() {
           </div>
 
           <div className="footer-col">
-            <h4>Explore</h4>
+            <h4>Legal</h4>
             <ul>
-              <li><a href="#designs" onClick={e => handleClick(e, '#designs')}>Designs</a></li>
-              <li><a href="#how-it-works" onClick={e => handleClick(e, '#how-it-works')}>How It Works</a></li>
-              <li><Link to="/pricing">Pricing</Link></li>
-              <li><a href="#faq" onClick={e => handleClick(e, '#faq')}>FAQ</a></li>
-            </ul>
-          </div>
-
-          <div className="footer-col">
-            <h4>Company</h4>
-            <ul>
-              <li><a href="#contact" onClick={e => handleClick(e, '#contact')}>Contact Us</a></li>
-              <li><Link to="/my-invitation">Client Portal</Link></li>
               <li><Link to="/terms">Terms of Service</Link></li>
               <li><Link to="/privacy">Privacy Policy</Link></li>
               <li><Link to="/refund-policy">Refund Policy</Link></li>
             </ul>
-          </div>
-
-          <div className="footer-col">
-            <h4>Get Started</h4>
-            <p className="footer-cta-text">
-              Ready to create your dream invitation?
-            </p>
-            <Link to="/order" className="footer-cta-btn">
-              Create Invitation
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </Link>
           </div>
         </div>
 

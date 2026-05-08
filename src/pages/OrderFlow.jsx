@@ -848,7 +848,7 @@ export default function OrderFlow() {
                       {music.name || 'Choose background music'}
                     </span>
                     <span className="music-upload-subtitle">
-                      {music.uploading ? 'Uploading directly to Cloudinary...' : music.url ? 'Music will play on loop in the invitation.' : 'MP3, WAV, or M4A recommended.'}
+                      {music.uploading ? 'Uploading...' : music.url ? 'Music will play on loop in the invitation.' : 'MP3, WAV, or M4A recommended.'}
                     </span>
                     {music.url && !music.uploading && !music.failed && (
                       <audio className="music-preview" src={music.url} controls preload="metadata" />

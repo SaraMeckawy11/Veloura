@@ -40,7 +40,7 @@
 /* ── Grid ── */
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.8fr 1fr 1fr 1.2fr;
+  grid-template-columns: 2.4fr 1fr;
   gap: 48px;
   padding: 60px 0 52px;
   position: relative;
