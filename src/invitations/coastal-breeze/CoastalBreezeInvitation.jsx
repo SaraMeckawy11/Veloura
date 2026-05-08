@@ -573,7 +573,23 @@ function StorySection({ milestones, images }) {
 
 function GallerySection({ images }) {
   const uniqueImages = [...new Set(images.filter(Boolean))];
-  const loopImages = uniqueImages.length ? [...uniqueImages, ...uniqueImages] : [];
+  const renderGalleryGroup = (groupIndex) => uniqueImages.map((src, index) => {
+    const optimized = buildGalleryImageSources(src);
+
+    return (
+      <figure key={`${groupIndex}-${src}-${index}`} className="coastal-gallery-card">
+        <img
+          src={optimized.src}
+          srcSet={optimized.srcSet}
+          sizes="(max-width: 680px) 220px, 300px"
+          alt={`Memory ${index + 1}`}
+          loading="eager"
+          decoding="async"
+          fetchPriority={groupIndex === 0 ? 'high' : 'auto'}
+        />
+      </figure>
+    );
+  });
 
   return (
     <section className="coastal-gallery-section">
@@ -582,22 +598,12 @@ function GallerySection({ images }) {
       </div>
       <div className="coastal-gallery-viewport">
         <div className={`coastal-gallery-row${uniqueImages.length ? ' coastal-gallery-row-loop' : ''}`}>
-          {loopImages.map((src, index) => {
-            const optimized = buildGalleryImageSources(src);
-            return (
-            <figure key={`${src}-${index}`} className="coastal-gallery-card">
-              <img
-                src={optimized.src}
-                srcSet={optimized.srcSet}
-                sizes="(max-width: 680px) 220px, 300px"
-                alt={`Memory ${(index % uniqueImages.length) + 1}`}
-                loading="eager"
-                decoding="async"
-                fetchPriority={index < uniqueImages.length ? 'high' : 'auto'}
-              />
-            </figure>
-            );
-          })}
+          <div className="coastal-gallery-group">
+            {renderGalleryGroup(0)}
+          </div>
+          <div className="coastal-gallery-group" aria-hidden="true">
+            {renderGalleryGroup(1)}
+          </div>
         </div>
       </div>
     </section>
