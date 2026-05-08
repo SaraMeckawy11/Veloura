@@ -157,7 +157,7 @@ export default function Designs() {
           </p>
         </div>
 
-        {availableFilters.length > 1 && (
+        {/* {availableFilters.length > 1 && (
           <div className="designs-filter">
             {availableFilters.map(f => (
               <button
@@ -169,7 +169,7 @@ export default function Designs() {
               </button>
             ))}
           </div>
-        )}
+        )} */}
 
         <div className="designs-grid">
           {filtered.map(design => (
