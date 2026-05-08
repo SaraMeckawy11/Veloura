@@ -591,25 +591,30 @@ function GallerySection({ images }) {
     let distance = 0;
     let offset = 0;
     let previousTime = 0;
-    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 46 : 54;
+    // Slower speed for smoother effect and iOS compatibility
+    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
 
+    // Use scrollWidth for more accurate seamlessness on iOS
     const updateDistance = () => {
-      distance = unit.getBoundingClientRect().width;
+      distance = unit.scrollWidth || unit.getBoundingClientRect().width;
       offset = distance ? offset % distance : 0;
       row.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
 
     const updateSpeed = () => {
-      pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 46 : 54;
+      pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
     };
 
     const animate = (time) => {
       if (!previousTime) previousTime = time;
-      const elapsedSeconds = Math.min((time - previousTime) / 1000, 0.08);
+      // Clamp to 0.04s for more consistent timing (esp. on iOS)
+      const elapsedSeconds = Math.min((time - previousTime) / 1000, 0.04);
       previousTime = time;
 
       if (distance > 0) {
-        offset = (offset + pixelsPerSecond * elapsedSeconds) % distance;
+        offset += pixelsPerSecond * elapsedSeconds;
+        // Snap to 0 when reaching the end for seamless loop
+        if (offset >= distance - 1) offset = 0;
         row.style.transform = `translate3d(${-offset}px, 0, 0)`;
       }
 
