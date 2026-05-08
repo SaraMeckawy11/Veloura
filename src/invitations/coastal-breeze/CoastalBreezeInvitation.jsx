@@ -574,34 +574,85 @@ function StorySection({ milestones, images }) {
 function GallerySection({ images }) {
   const uniqueImages = [...new Set(images.filter(Boolean))];
   const galleryImageKey = uniqueImages.join('|');
+  const galleryRowRef = useRef(null);
   const galleryUnitRef = useRef(null);
-  const [galleryLoopDistance, setGalleryLoopDistance] = useState(0);
   const unitRepeatCount = uniqueImages.length ? Math.max(1, Math.ceil(6 / uniqueImages.length)) : 0;
   const unitImages = uniqueImages.length
     ? Array.from({ length: unitRepeatCount }, () => uniqueImages).flat()
     : [];
-  const loopDurationSeconds = Math.min(32, Math.max(24, unitImages.length * 4));
 
   useEffect(() => {
+    const row = galleryRowRef.current;
     const unit = galleryUnitRef.current;
-    if (!unit) return undefined;
+    if (!row || !unit || !unitImages.length || typeof window === 'undefined') return undefined;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let animationFrame = 0;
+    let distance = 0;
+    let offset = 0;
+    let previousTime = 0;
+    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 46 : 54;
 
     const updateDistance = () => {
-      setGalleryLoopDistance(unit.getBoundingClientRect().width);
+      distance = unit.getBoundingClientRect().width;
+      offset = distance ? offset % distance : 0;
+      row.style.transform = `translate3d(${-offset}px, 0, 0)`;
+    };
+
+    const updateSpeed = () => {
+      pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 46 : 54;
+    };
+
+    const animate = (time) => {
+      if (!previousTime) previousTime = time;
+      const elapsedSeconds = Math.min((time - previousTime) / 1000, 0.08);
+      previousTime = time;
+
+      if (distance > 0) {
+        offset = (offset + pixelsPerSecond * elapsedSeconds) % distance;
+        row.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      }
+
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    const startAnimation = () => {
+      window.cancelAnimationFrame(animationFrame);
+      previousTime = 0;
+      if (reducedMotion.matches) {
+        row.style.transform = 'translate3d(0, 0, 0)';
+        return;
+      }
+      animationFrame = window.requestAnimationFrame(animate);
     };
 
     updateDistance();
+    updateSpeed();
+    startAnimation();
 
     const resizeObserver = typeof ResizeObserver !== 'undefined'
       ? new ResizeObserver(updateDistance)
       : null;
 
     resizeObserver?.observe(unit);
+    if (reducedMotion.addEventListener) {
+      reducedMotion.addEventListener('change', startAnimation);
+    } else {
+      reducedMotion.addListener(startAnimation);
+    }
     window.addEventListener('resize', updateDistance);
+    window.addEventListener('resize', updateSpeed);
 
     return () => {
+      window.cancelAnimationFrame(animationFrame);
       resizeObserver?.disconnect();
+      if (reducedMotion.removeEventListener) {
+        reducedMotion.removeEventListener('change', startAnimation);
+      } else {
+        reducedMotion.removeListener(startAnimation);
+      }
       window.removeEventListener('resize', updateDistance);
+      window.removeEventListener('resize', updateSpeed);
     };
   }, [unitImages.length, galleryImageKey]);
 
@@ -632,12 +683,9 @@ function GallerySection({ images }) {
       <div className="coastal-gallery-viewport">
         <div
           className={`coastal-gallery-row${unitImages.length ? ' coastal-gallery-row-loop' : ''}`}
-          style={{
-            '--coastal-gallery-distance': `${galleryLoopDistance}px`,
-            '--coastal-gallery-duration': `${loopDurationSeconds}s`,
-          }}
+          ref={galleryRowRef}
         >
-          {[0, 1, 2].map((groupIndex) => (
+          {[0, 1, 2, 3].map((groupIndex) => (
             <div
               key={groupIndex}
               ref={groupIndex === 0 ? galleryUnitRef : null}
