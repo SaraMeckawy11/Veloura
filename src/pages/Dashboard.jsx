@@ -75,10 +75,19 @@ export default function Dashboard() {
     });
     setEditPhotos(categorized);
     const existingMilestones = Array.isArray(order.storyMilestones) ? order.storyMilestones : [];
+    const visibleStoryCount = Math.min(
+      PHOTO_CATEGORIES.story.max,
+      Math.max(existingMilestones.length, categorized.story.length, 1)
+    );
     setEditStoryMilestones(
-      existingMilestones.length > 0
-        ? existingMilestones.map(m => ({ date: m.date || '', title: m.title || '', description: m.description || '' }))
-        : [{ date: '', title: '', description: '' }]
+      Array.from({ length: visibleStoryCount }, (_, i) => {
+        const milestone = existingMilestones[i] || {};
+        return {
+          date: milestone.date || '',
+          title: milestone.title || '',
+          description: milestone.description || '',
+        };
+      })
     );
     setEditing(true);
     setSaveMsg('');
