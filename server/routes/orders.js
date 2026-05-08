@@ -127,6 +127,7 @@ router.post('/confirm/:orderId', async (req, res) => {
         editToken: order.editToken,
         weddingDetails: order.weddingDetails,
         isPending: false,
+        invitationCode: order.invitationCode,
       });
       await sendMail({ to: order.customerEmail, ...email });
       order.confirmationSent = true;
@@ -176,7 +177,8 @@ router.get('/status/:orderId', async (req, res) => {
                 editToken: order.editToken,
                 weddingDetails: order.weddingDetails,
                 isPending: false,
-                      });
+                invitationCode: order.invitationCode,
+              });
               await sendMail({ to: order.customerEmail, ...email });
               order.confirmationSent = true;
               await order.save();
@@ -355,6 +357,30 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
   }
 });
 
+// POST /api/orders/lookup — exchange the private invitationCode (sent via email)
+// for the editToken needed to access the dashboard. The publicSlug from the
+// share URL is intentionally NOT accepted here.
+router.post('/lookup', async (req, res) => {
+  try {
+    const raw = (req.body?.code || '').trim().toLowerCase();
+    if (!raw || !/^[a-f0-9]{8,32}$/.test(raw)) {
+      return res.status(400).json({ error: 'Invalid invitation code.' });
+    }
+
+    const order = await Order.findOne({ invitationCode: raw });
+    if (!order) return res.status(404).json({ error: 'Invitation not found. Please check your code and try again.' });
+    if (order.status !== 'active') return res.status(403).json({ error: 'This invitation is no longer active.' });
+
+    res.json({
+      editToken: order.editToken,
+      coupleName: [order.weddingDetails?.groomName, order.weddingDetails?.brideName].filter(Boolean).join(' & '),
+      weddingDate: order.weddingDetails?.weddingDate,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/orders/invite/:publicSlug — public invitation page data
 router.get('/invite/:publicSlug', async (req, res) => {
   try {
@@ -377,6 +403,11 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
 
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
+    // Backfill invitationCode for orders created before this field existed.
+    if (!order.invitationCode) {
+      await order.save();
+    }
+
     res.json({
       id: order._id,
       status: order.status,
@@ -394,6 +425,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       musicPublicId: order.musicPublicId,
       musicEnabled: order.musicEnabled,
       publicSlug: order.publicSlug,
+      invitationCode: order.invitationCode,
       editsRemaining: order.editsRemaining,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,

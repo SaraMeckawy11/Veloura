@@ -254,6 +254,15 @@ export default function Dashboard() {
                 : 'Your Wedding'}
             </h1>
             <p className="dash-subtitle">Private dashboard — do not share this link</p>
+            {order.invitationCode && (
+              <div className="dash-code-row">
+                <span className="dash-code-label">Invitation code</span>
+                <code className="dash-code-value">{order.invitationCode}</code>
+                <button type="button" className="dash-code-copy" onClick={() => copyLink(order.invitationCode, 'code')} title="Copy code">
+                  {copied === 'code' ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            )}
           </div>
           <div className={`dash-status status-${order.status}`}>{order.status}</div>
         </div>

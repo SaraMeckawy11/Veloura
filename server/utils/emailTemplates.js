@@ -2,7 +2,7 @@ import { getClientUrl } from '../config/urls.js';
 
 const CLIENT_URL = getClientUrl();
 
-export function orderConfirmationEmail({ customerName, publicSlug, editToken, weddingDetails, isPending = false }) {
+export function orderConfirmationEmail({ customerName, publicSlug, editToken, weddingDetails, isPending = false, invitationCode }) {
   const dashboardUrl = `${CLIENT_URL}/dashboard/${editToken}`;
   const editUrl = `${CLIENT_URL}/edit/${editToken}`;
   const invitationUrl = `${CLIENT_URL}/i/${publicSlug}`;
@@ -45,6 +45,9 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
     .detail-row:last-child { border-bottom: none; }
     .detail-label { color: #A09A93; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; min-width: 80px; }
     .detail-value { color: #2D2A26; font-weight: 500; text-align: right; }
+    .invite-code-box { background: #F7F5F2; border: 1.5px dashed #D4AF5A; border-radius: 10px; padding: 16px 20px; text-align: center; margin-bottom: 28px; }
+    .invite-code-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #A09A93; font-weight: 600; margin-bottom: 6px; }
+    .invite-code-value { font-family: 'Courier New', Courier, monospace; font-size: 20px; font-weight: 700; color: #D4AF5A; letter-spacing: 2px; }
     .btn-group { margin-bottom: 8px; }
     .btn { display: block; width: 100%; padding: 16px; text-align: center; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 15px; margin-bottom: 10px; box-sizing: border-box; }
     .btn-primary { background: linear-gradient(135deg, #D4AF5A 0%, #C49B3A 100%); color: #fff; }
@@ -75,6 +78,13 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
           ${venue ? `<div class="detail-row"><span class="detail-label">Venue</span><span class="detail-value">${venue}</span></div>` : ''}
         </div>
 
+        ${invitationCode ? `
+        <div class="invite-code-box">
+          <div class="invite-code-label">Your Invitation Code</div>
+          <div class="invite-code-value">${invitationCode}</div>
+        </div>
+        ` : ''}
+
         <div class="btn-group">
           ${!isPending ? `<a href="${invitationUrl}" class="btn btn-primary">View Your Invitation</a>` : ''}
           <a href="${dashboardUrl}" class="btn ${isPending ? 'btn-primary' : 'btn-secondary'}">Go to Dashboard</a>
@@ -86,7 +96,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
         <p class="note">
           ${isPending
             ? 'Complete your payment to activate your invitation and share it with guests.'
-            : `You have <strong>5 free edits</strong> available. Simply click the edit link above to make changes.<br><br><strong>Keep the Dashboard link above private</strong> — it's the only way to access your private dashboard. The "View Your Invitation" link is the safe one to share with guests.`
+            : `You have <strong>5 free edits</strong> available. Simply click the edit link above to make changes.<br><br>You can also access your dashboard anytime at <a href="${CLIENT_URL}/my-invitation" style="color: #D4AF5A; text-decoration: none; font-weight: 600;">Veloura &rarr; My Invitation</a> using your invitation code above. <strong>Never share this code or the Dashboard link</strong> — they give full access to your invitation. The "View Your Invitation" link is the safe one to share with guests.`
           }
         </p>
       </div>

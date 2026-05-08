@@ -36,6 +36,7 @@ async function sendConfirmation(order) {
     publicSlug: order.publicSlug,
     editToken: order.editToken,
     weddingDetails: order.weddingDetails,
+    invitationCode: order.invitationCode,
   });
 
   try {

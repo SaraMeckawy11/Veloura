@@ -65,6 +65,7 @@ const orderSchema = new mongoose.Schema({
   // Access tokens (magic link auth)
   editToken:        { type: String, unique: true, index: true },
   publicSlug:       { type: String, unique: true, index: true }, // the invitation URL slug
+  invitationCode:   { type: String, unique: true, index: true, sparse: true }, // private owner code shown in email
 
   // Edit tracking
   editsRemaining:   { type: Number, default: 5 },
@@ -97,6 +98,10 @@ orderSchema.pre('save', function (next) {
       (this.weddingDetails?.brideName || '').slice(0, 2)
     ).toLowerCase().replace(/[^a-z]/g, '') || 'inv';
     this.publicSlug = `${namepart}-${crypto.randomBytes(3).toString('hex')}`;
+  }
+  if (!this.invitationCode) {
+    // Private owner code — short, separate from publicSlug, never appears in any guest-facing URL.
+    this.invitationCode = crypto.randomBytes(5).toString('hex'); // 10 chars, e.g. "a1b2c3d4e5"
   }
   next();
 });

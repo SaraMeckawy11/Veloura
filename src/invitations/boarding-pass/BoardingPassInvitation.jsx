@@ -378,8 +378,14 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                   <p className="data-label">LOCATION MAP</p>
                   <div className="airplane-window inv-map-window">
                     <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                    <a
+                      className="inv-map-click-overlay"
+                      href={openHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Open location in Google Maps"
+                    />
                   </div>
-                  <a className="inv-map-open-link" href={openHref} target="_blank" rel="noopener noreferrer">Open in Google Maps</a>
                 </div>
               );
             })()}
