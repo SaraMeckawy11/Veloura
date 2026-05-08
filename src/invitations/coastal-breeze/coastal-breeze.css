@@ -1689,13 +1689,6 @@
   animation: coastal-gallery-marquee 42s linear infinite;
 }
 
-.coastal-gallery-mobile-loop {
-  position: relative;
-  height: clamp(300px, 86vw, 390px);
-  overflow: hidden;
-  transform: translate3d(0, 0, 0);
-}
-
 .coastal-gallery-card {
   position: relative;
   flex: 0 0 clamp(220px, 22vw, 300px);
@@ -1708,20 +1701,6 @@
     0 18px 42px rgba(20, 53, 83, 0.14),
     0 1px 0 rgba(255, 255, 255, 0.7) inset;
   transition: transform 0.45s ease, box-shadow 0.45s ease;
-}
-
-.coastal-gallery-mobile-card {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: min(74vw, 300px);
-  height: 100%;
-  transform: translate3d(104vw, 0, 0);
-  animation: coastal-gallery-mobile-pass var(--coastal-mobile-cycle, 20s) linear infinite;
-  animation-delay: var(--coastal-mobile-delay, 0s);
-  animation-fill-mode: both;
-  backface-visibility: hidden;
-  will-change: transform, opacity;
 }
 
 .coastal-gallery-card:hover {
@@ -1746,26 +1725,6 @@
 @keyframes coastal-gallery-marquee {
   from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(-50%, 0, 0); }
-}
-
-@keyframes coastal-gallery-mobile-pass {
-  0% {
-    opacity: 0;
-    transform: translate3d(104vw, 0, 0);
-  }
-
-  5% {
-    opacity: 1;
-  }
-
-  88% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate3d(-88vw, 0, 0);
-  }
 }
 
 /* ============================================================
@@ -1995,6 +1954,19 @@
     animation-duration: 32s;
   }
 
+  .coastal-gallery-row {
+    --coastal-gallery-gap: 14px;
+  }
+
+  .coastal-gallery-row-loop {
+    animation-duration: 30s;
+  }
+
+  .coastal-gallery-card {
+    flex-basis: min(70vw, 270px);
+    height: clamp(292px, 82vw, 370px);
+  }
+
   .coastal-gallery-item {
     flex-basis: min(74vw, 292px);
   }
@@ -2080,21 +2052,7 @@
   .coastal-boat,
   .coastal-main-birds span,
   .coastal-gallery-grid-loop,
-  .coastal-gallery-mobile-card {
+  .coastal-gallery-row-loop {
     animation: none !important;
-  }
-
-  .coastal-gallery-mobile-loop {
-    display: flex;
-    gap: var(--coastal-gallery-gap, 14px);
-    height: auto;
-    overflow-x: auto;
-  }
-
-  .coastal-gallery-mobile-card {
-    position: relative;
-    flex: 0 0 min(74vw, 300px);
-    opacity: 1;
-    transform: none;
   }
 }
