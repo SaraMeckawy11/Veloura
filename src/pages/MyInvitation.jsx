@@ -2,44 +2,31 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/MyInvitation.css';
 
-const API = import.meta.env.VITE_API_URL || '/api';
+function extractEditToken(input) {
+  const trimmed = (input || '').trim();
+  if (!trimmed) return null;
+  // Accept either a full URL (/dashboard/<token> or /edit/<token>) or a raw token.
+  const urlMatch = trimmed.match(/\/(?:dashboard|edit)\/([a-f0-9]{32,})/i);
+  if (urlMatch) return urlMatch[1].toLowerCase();
+  if (/^[a-f0-9]{32,}$/i.test(trimmed)) return trimmed.toLowerCase();
+  return null;
+}
 
 export default function MyInvitation() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState(null);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const trimmed = code.trim().toLowerCase();
-    if (!trimmed) return;
-
-    setLoading(true);
+    const token = extractEditToken(code);
+    if (!token) {
+      setError('That doesn\'t look like a valid dashboard code. Paste the link from your confirmation email.');
+      return;
+    }
     setError('');
-    setResult(null);
-
-    try {
-      const res = await fetch(`${API}/orders/lookup/${encodeURIComponent(trimmed)}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setResult(data);
-    } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
-    }
-    setLoading(false);
+    navigate(`/dashboard/${token}`);
   };
-
-  const goToDashboard = () => {
-    if (result?.editToken) {
-      navigate(`/dashboard/${result.editToken}`);
-    }
-  };
-
-  const dateStr = result?.weddingDate
-    ? new Date(result.weddingDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    : '';
 
   return (
     <div className="portal-page">
@@ -59,7 +46,7 @@ export default function MyInvitation() {
 
           <h1 className="portal-title">My Invitation</h1>
           <p className="portal-subtitle">
-            Enter your invitation code to access your dashboard, manage RSVPs, and share your invitation with guests.
+            Paste your private dashboard link from your confirmation email to access your dashboard, manage RSVPs, and edit your invitation.
           </p>
 
           <form onSubmit={handleSubmit} className="portal-form">
@@ -67,53 +54,21 @@ export default function MyInvitation() {
               <input
                 type="text"
                 value={code}
-                onChange={(e) => { setCode(e.target.value); setError(''); setResult(null); }}
-                placeholder="e.g. jasa-a1b2c3"
+                onChange={(e) => { setCode(e.target.value); setError(''); }}
+                placeholder="Paste your dashboard link or token"
                 className={`portal-input${error ? ' has-error' : ''}`}
-                disabled={loading}
                 autoFocus
               />
-              <button type="submit" className="portal-submit" disabled={loading || !code.trim()}>
-                {loading ? (
-                  <span className="portal-spinner" />
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-                )}
+              <button type="submit" className="portal-submit" disabled={!code.trim()}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
               </button>
             </div>
             {error && <p className="portal-error">{error}</p>}
           </form>
 
-          {result && (
-            <div className="portal-result">
-              <div className="portal-result-header">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
-                <span>Invitation Found</span>
-              </div>
-              <div className="portal-result-details">
-                {result.coupleName && (
-                  <div className="portal-result-row">
-                    <span className="portal-result-label">Couple</span>
-                    <span className="portal-result-value">{result.coupleName}</span>
-                  </div>
-                )}
-                {dateStr && (
-                  <div className="portal-result-row">
-                    <span className="portal-result-label">Date</span>
-                    <span className="portal-result-value">{dateStr}</span>
-                  </div>
-                )}
-              </div>
-              <button className="portal-go-btn" onClick={goToDashboard}>
-                Open Dashboard
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-              </button>
-            </div>
-          )}
-
           <div className="portal-hint">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
-            <span>Your invitation code was sent to your email when you placed your order. Check your inbox for an email from Veloura.</span>
+            <span>The private link was sent to your email when you placed your order. Never share it with anyone — it gives full access to your invitation.</span>
           </div>
         </div>
       </div>

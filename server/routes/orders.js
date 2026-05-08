@@ -127,7 +127,6 @@ router.post('/confirm/:orderId', async (req, res) => {
         editToken: order.editToken,
         weddingDetails: order.weddingDetails,
         isPending: false,
-        invitationCode: order.publicSlug,
       });
       await sendMail({ to: order.customerEmail, ...email });
       order.confirmationSent = true;
@@ -177,8 +176,7 @@ router.get('/status/:orderId', async (req, res) => {
                 editToken: order.editToken,
                 weddingDetails: order.weddingDetails,
                 isPending: false,
-                invitationCode: order.publicSlug,
-              });
+                      });
               await sendMail({ to: order.customerEmail, ...email });
               order.confirmationSent = true;
               await order.save();
@@ -351,27 +349,6 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
       editsRemaining: order.editsRemaining,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// GET /api/orders/lookup/:code — look up order by invitation code (for portal access)
-router.get('/lookup/:code', async (req, res) => {
-  try {
-    const order = await Order.findOne({ publicSlug: req.params.code })
-      .populate('template', 'name slug');
-
-    if (!order) return res.status(404).json({ error: 'Invitation not found. Please check your code and try again.' });
-    if (order.status !== 'active') return res.status(403).json({ error: 'This invitation is no longer active.' });
-
-    res.json({
-      publicSlug: order.publicSlug,
-      editToken: order.editToken,
-      coupleName: [order.weddingDetails?.groomName, order.weddingDetails?.brideName].filter(Boolean).join(' & '),
-      weddingDate: order.weddingDetails?.weddingDate,
-      template: order.template,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
