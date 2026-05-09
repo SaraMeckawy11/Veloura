@@ -65,10 +65,15 @@ export default function Navbar() {
   const links = [
     { label: 'Designs', href: '#designs' },
     { label: 'How It Works', href: '#how-it-works' },
-    { label: 'Pricing', href: '#pricing' },
+    { label: 'Pricing', to: '/pricing' },
     { label: 'FAQ', href: '#faq' },
     { label: 'Get in Touch', href: '#contact' },
   ];
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+    document.body.style.overflow = '';
+  };
   const showMobileStickyCta = location.pathname === '/' && scrolled && !menuOpen && !primaryCreateVisible;
 
   return (
@@ -81,8 +86,12 @@ export default function Navbar() {
 
           <ul className="nav-links">
             {links.map(link => (
-              <li key={link.href}>
-                <a href={link.href} onClick={e => handleNavClick(e, link.href)}>{link.label}</a>
+              <li key={link.to || link.href}>
+                {link.to ? (
+                  <Link to={link.to} onClick={closeMenu}>{link.label}</Link>
+                ) : (
+                  <a href={link.href} onClick={e => handleNavClick(e, link.href)}>{link.label}</a>
+                )}
               </li>
             ))}
           </ul>
@@ -108,9 +117,15 @@ export default function Navbar() {
 
       <div className={`mobile-menu${menuOpen ? ' open' : ''}`}>
         {links.map(link => (
-          <a key={link.href} href={link.href} onClick={e => handleNavClick(e, link.href)}>
-            {link.label}
-          </a>
+          link.to ? (
+            <Link key={link.to} to={link.to} onClick={closeMenu}>
+              {link.label}
+            </Link>
+          ) : (
+            <a key={link.href} href={link.href} onClick={e => handleNavClick(e, link.href)}>
+              {link.label}
+            </a>
+          )
         ))}
         <div className="mobile-cta">
           <Link to="/my-invitation" className="btn btn-secondary btn-sm" onClick={() => { setMenuOpen(false); document.body.style.overflow = ''; }}>
