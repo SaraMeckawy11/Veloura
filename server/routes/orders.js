@@ -204,7 +204,7 @@ router.post('/capture/:orderId', async (req, res) => {
           issue === 'ORDER_NOT_APPROVED'
             ? 'PayPal could not complete the payment because the buyer did not approve it. Please try again — make sure to click "Pay Now" inside the PayPal popup before it closes.'
           : complianceBlocked
-            ? 'PayPal blocked this sandbox transaction. Please use a separate PayPal sandbox personal buyer account, make sure it is not the merchant account, and approve the payment through the PayPal popup.'
+            ? 'PayPal blocked this sandbox transaction. This is usually tied to the sandbox seller/app account, not only the buyer email. Use a fresh US sandbox business account for PAYPAL_CLIENT_ID/SECRET and a separate US sandbox personal account as the buyer.'
           : issue === 'INSTRUMENT_DECLINED' || issue === 'PAYER_ACTION_REQUIRED'
             ? 'Your card was declined or needs additional verification. Please try a different payment method.'
           : issue === 'ORDER_EXPIRED' || issue === 'ORDER_NOT_CAPTURABLE'

@@ -85,6 +85,8 @@ Use the standard PayPal checkout button with a sandbox personal buyer account. K
 
 Do not approve the checkout with the same sandbox account that owns the app. If PayPal shows a possible compliance violation, create a fresh sandbox personal buyer account in the PayPal Developer Dashboard and approve the payment through the PayPal popup.
 
+If the buyer account is already personal and PayPal still returns `COMPLIANCE_VIOLATION`, replace the seller credentials too: create a new **US sandbox business** account, create a sandbox REST app for that business account, then update `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET`. Some sandbox account countries can pass order creation but fail capture during PayPal's compliance checks.
+
 ## Going Live — Checklist
 
 1. PayPal business account is verified (email, bank, identity).
