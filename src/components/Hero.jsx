@@ -26,7 +26,7 @@ export default function Hero() {
           </h1>
 
           <p className="hero-description">
-            Cinematic, animated wedding invitations with RSVP tracking, interactive maps, music, and guest management — all in one elegant link.
+            Cinematic, animated wedding invitations with RSVP tracking, interactive maps, and guest management — all in one elegant link.
           </p>
 
           <div className="hero-buttons">

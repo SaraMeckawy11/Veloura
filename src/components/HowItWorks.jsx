@@ -10,7 +10,7 @@ const steps = [
   {
     number: '2',
     title: 'Personalize',
-    description: 'Send us your details — names, date, venue, photo, colors, and music. We craft your custom invitation.',
+    description: 'Send us your details — names, date, venue, and photos. We craft your custom invitation.',
   },
   {
     number: '3',
