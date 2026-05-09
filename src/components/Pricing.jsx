@@ -4,12 +4,13 @@ import useReveal from '../hooks/useReveal';
 
 const features = [
   'Any template theme',
-  'Animated envelope reveal',
+  // 'Animated envelope reveal',
+  'Live countdown timer',
   'Cinematic splash screen',
   'Couple photo, names & venue',
   'RSVP with guest tracking',
   'Google Maps venue embed',
-  'Background music',
+  // 'Background music',
   'Custom subdomain link',
   'Share button for any platform',
   'Live forever — no expiry',

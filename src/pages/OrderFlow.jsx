@@ -10,6 +10,15 @@ const DISPLAY_PRICE = '$89';
 const DEFAULT_INVITATION_MESSAGE = 'Two Souls, One Destination.';
 const OLD_MESSAGE_HELP_TEXT = 'This text appears as the tagline under your names in the invitation ';
 
+// Today as YYYY-MM-DD in local time — used as the min for the wedding date picker
+const todayISO = (() => {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+})();
+
 // --- localStorage helpers ---
 function loadDraft() {
   try {
@@ -477,6 +486,10 @@ export default function OrderFlow() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+    if (form.weddingDate && form.weddingDate < todayISO) {
+      setError('Please choose a wedding date that is today or in the future.');
+      return;
+    }
     if (music.uploading) {
       setError('Your music is still uploading. Please wait a moment before reviewing your order.');
       return;
@@ -611,9 +624,7 @@ export default function OrderFlow() {
   };
 
   const optionalFields = [
-    { key: 'weddingTime', label: 'Wedding Time' },
     { key: 'venueAddress', label: 'Venue Address' },
-    { key: 'venueMapUrl', label: 'Google Maps Link' },
     { key: 'message', label: 'Personal Message' },
     { key: 'rsvp', label: 'RSVP Section' },
     // Removed secondLanguage option
@@ -772,7 +783,7 @@ export default function OrderFlow() {
                 </div>
               </fieldset>
 
-              {/* Wedding details */}
+              {/* Wedding details — required */}
               <fieldset className="form-section">
                 <legend>Wedding Details</legend>
                 <div className="form-grid">
@@ -780,24 +791,36 @@ export default function OrderFlow() {
                     <div className="field-header">
                       <label>Wedding Date *</label>
                     </div>
-                    <input type="date" required value={form.weddingDate} onChange={e => handleInput('weddingDate', e.target.value)} />
+                    <input type="date" required min={todayISO} value={form.weddingDate} onChange={e => handleInput('weddingDate', e.target.value)} />
                   </div>
-                  <div className={`form-field ${disabledFields.includes('weddingTime') ? 'field-disabled' : ''}`}>
-                    <div className="field-header">
-                      <label>Wedding Time</label>
-                      <button type="button" className="field-toggle" onClick={() => toggleField('weddingTime')}>
-                        {disabledFields.includes('weddingTime') ? 'Enable' : 'Disable'}
-                      </button>
-                    </div>
-                    {!disabledFields.includes('weddingTime') && (
-                      <input type="time" value={form.weddingTime} onChange={e => handleInput('weddingTime', e.target.value)} />
-                    )}
+                  <div className="form-field">
+                    <label>Wedding Time *</label>
+                    <input type="time" required value={form.weddingTime} onChange={e => handleInput('weddingTime', e.target.value)} />
                   </div>
                   <div className="form-field">
                     <label>Venue Name *</label>
                     <input type="text" required value={form.venue} onChange={e => handleInput('venue', e.target.value)} placeholder="e.g. The Grand Pavilion" />
                   </div>
-                  {optionalFields.filter(f => f.key !== 'weddingTime').map(field => (
+                  <div className="form-field form-field--wide">
+                    <label>Google Maps Link *</label>
+                    <input
+                      type="url"
+                      required
+                      value={form.venueMapUrl}
+                      onChange={e => handleInput('venueMapUrl', e.target.value)}
+                      placeholder="https://maps.google.com/..."
+                    />
+                    <p className="form-hint message-hint">Paste a Google Maps share link so guests can navigate to your venue.</p>
+                  </div>
+                </div>
+              </fieldset>
+
+              {/* Optional personalizations — clearly separated so users know what's not required */}
+              <fieldset className="form-section form-section--optional">
+                <legend>Optional Personalizations</legend>
+                <p className="form-hint">All fields below are optional. Toggle off any you don't need — they won't appear on your invitation.</p>
+                <div className="form-grid">
+                  {optionalFields.map(field => (
                     <div key={field.key} className={`form-field ${['message', 'rsvp'].includes(field.key) ? 'form-field--wide' : ''} ${disabledFields.includes(field.key) ? 'field-disabled' : ''}`}>
                       <div className="field-header">
                         <label>{field.label}</label>
@@ -831,7 +854,7 @@ export default function OrderFlow() {
               </fieldset>
 
               {/* Background Music */}
-              <fieldset className="form-section form-section--music">
+              {/* <fieldset className="form-section form-section--music">
                 <legend>Background Music</legend>
                 <p className="form-hint">Add one audio track. It will loop softly while guests view the invitation.</p>
                 {musicError && <p className="photo-error">{musicError}</p>}
@@ -883,7 +906,7 @@ export default function OrderFlow() {
                     )}
                   </div>
                 </div>
-              </fieldset>
+              </fieldset> */}
 
               {/* Venue Photos */}
               <fieldset className="form-section">

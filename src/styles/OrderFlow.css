@@ -253,6 +253,14 @@
   padding: 0 8px;
 }
 
+.form-section--optional {
+  background: linear-gradient(180deg, rgba(212, 175, 110, 0.04), rgba(255, 255, 255, 0.6));
+  border-style: dashed;
+}
+.form-section--optional > legend {
+  color: var(--gold, #b8924a);
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

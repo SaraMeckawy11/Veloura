@@ -23,10 +23,10 @@ const faqs = [
     q: 'How long does it take to get my invitation?',
     a: 'Your invitation is created instantly the moment your payment is confirmed. You\'ll receive your invitation link right away — no waiting!',
   },
-  {
-    q: 'Can I add my own music?',
-    a: 'Yes! You can choose from our curated library of elegant background tracks, or provide your own music file. The music plays as guests open your invitation, creating a truly immersive experience.',
-  },
+  // {
+  //   q: 'Can I add my own music?',
+  //   a: 'Yes! You can choose from our curated library of elegant background tracks, or provide your own music file. The music plays as guests open your invitation, creating a truly immersive experience.',
+  // },
   {
     q: 'What if I need to change my wedding date?',
     a: 'Life happens and we understand. Date changes are completely free — just let us know and we\'ll update your invitation immediately. Your guests will always see the latest information.',
