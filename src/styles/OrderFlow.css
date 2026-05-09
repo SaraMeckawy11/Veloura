@@ -1129,22 +1129,50 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-.card-pay-fallback-note {
-  margin: 0 0 14px;
-  padding: 12px 14px;
-  border-radius: 10px;
+.card-pay-fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
   background: var(--bg-alt);
   border: 1px solid var(--border-light);
-  font-size: 0.85rem;
+  border-radius: 14px;
+}
+.card-pay-fallback-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.2px;
+}
+.card-pay-fallback-text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
   color: var(--text-secondary);
 }
-.paypal-fallback-button {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border-light);
+.card-pay-fallback-hint {
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--white);
+  border: 1px dashed var(--border);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text-light);
+}
+.card-pay-fallback-hint strong {
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 .paypal-fallback-button:empty {
   display: none;
+}
+.paypal-fallback-button--secondary {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-light);
 }
 
 .payment-trust-row {

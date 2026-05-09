@@ -1336,12 +1336,21 @@ export default function OrderFlow() {
                     )}
 
                     {!cardEligible && !paypalLoading && (
-                      <p className="card-pay-fallback-note">
-                        Card payment isn't available for this merchant account yet. You can still pay with your PayPal balance below.
-                      </p>
+                      <div className="card-pay-fallback">
+                        <h4 className="card-pay-fallback-title">Pay with PayPal</h4>
+                        <p className="card-pay-fallback-text">
+                          Sign in to your PayPal account to complete this payment. You'll return here automatically once approved.
+                        </p>
+                        <div ref={paypalButtonRef} className="paypal-fallback-button" />
+                        <p className="card-pay-fallback-hint">
+                          Want to enable card payments without leaving this page? Turn on <strong>Advanced Credit and Debit Card Payments</strong> on your sandbox business account.
+                        </p>
+                      </div>
                     )}
 
-                    <div ref={paypalButtonRef} className="paypal-fallback-button" />
+                    {cardEligible && (
+                      <div ref={paypalButtonRef} className="paypal-fallback-button paypal-fallback-button--secondary" />
+                    )}
                   </div>
 
                   <div className="payment-trust-row">
