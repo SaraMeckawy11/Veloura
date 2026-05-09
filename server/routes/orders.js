@@ -20,9 +20,8 @@ const router = Router();
 const PRICE_USD = process.env.PRICE_USD || '89.00';
 const CURRENCY = process.env.PRICE_CURRENCY || 'USD';
 const CLIENT_URL = getClientUrl();
-const paypalConfigured = paypalApiConfigured();
 
-// POST /api/orders - create order + PayPal order (or local dev activation fallback)
+// POST /api/orders - create order + PayPal order. Refuses with 503 if PayPal credentials are missing.
 router.post('/', validateOrderBody, async (req, res) => {
   try {
     const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones } = req.body;
@@ -78,93 +77,48 @@ router.post('/', validateOrderBody, async (req, res) => {
       await user.save();
     }
 
-    if (paypalConfigured) {
-      try {
-        const paypalOrder = await createPaypalOrder({
-          orderId: order._id.toString(),
-          amount: PRICE_USD,
-          currency: CURRENCY,
-        });
-        order.paymentProvider = 'paypal';
-        order.paypalOrderId = paypalOrder.id;
-        order.amountPaid = PRICE_USD;
-        order.currency = CURRENCY;
-        await order.save();
-        return res.status(201).json({
-          orderId: order._id,
-          paymentProvider: 'paypal',
-          paypal: {
-            clientId: process.env.PAYPAL_CLIENT_ID,
-            environment: process.env.PAYPAL_ENVIRONMENT === 'live' ? 'live' : 'sandbox',
-            paypalOrderId: paypalOrder.id,
-            currency: CURRENCY,
-            successUrl: `${CLIENT_URL}/order/success/${order._id}`,
-          },
-        });
-      } catch (paypalErr) {
-        console.error('PayPal order creation failed:', paypalErr);
-        return res.status(502).json({ error: paypalErr.message || 'Could not create PayPal order' });
-      }
+    if (!paypalApiConfigured()) {
+      console.error(`[paypal] order creation refused — PAYPAL_CLIENT_ID/SECRET not set on server. orderId=${order._id}`);
+      return res.status(503).json({
+        error: 'Payment system is not configured. Please contact support.',
+      });
     }
 
-    // Dev mode: no PayPal configured, let frontend confirm locally.
-    res.status(201).json({
-      orderId: order._id,
-      paymentProvider: 'manual',
-    });
+    try {
+      const paypalOrder = await createPaypalOrder({
+        orderId: order._id.toString(),
+        amount: PRICE_USD,
+        currency: CURRENCY,
+      });
+      order.paymentProvider = 'paypal';
+      order.paypalOrderId = paypalOrder.id;
+      order.amountPaid = PRICE_USD;
+      order.currency = CURRENCY;
+      await order.save();
+      console.log(`[paypal] order created orderId=${order._id} paypalOrderId=${paypalOrder.id} amount=${PRICE_USD} ${CURRENCY}`);
+      return res.status(201).json({
+        orderId: order._id,
+        paymentProvider: 'paypal',
+        paypal: {
+          clientId: process.env.PAYPAL_CLIENT_ID,
+          environment: process.env.PAYPAL_ENVIRONMENT === 'live' ? 'live' : 'sandbox',
+          paypalOrderId: paypalOrder.id,
+          currency: CURRENCY,
+          successUrl: `${CLIENT_URL}/order/success/${order._id}`,
+        },
+      });
+    } catch (paypalErr) {
+      console.error(`[paypal] order creation failed orderId=${order._id}:`, paypalErr.message, paypalErr.data);
+      return res.status(502).json({ error: paypalErr.message || 'Could not create PayPal order' });
+    }
   } catch (err) {
     console.error('Order creation error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// POST /api/orders/confirm/:orderId - confirm payment in local development only
-router.post('/confirm/:orderId', async (req, res) => {
-  try {
-    if (paypalConfigured && process.env.NODE_ENV === 'production') {
-      return res.status(400).json({ error: 'Payment must be confirmed by PayPal.' });
-    }
-
-    const order = await Order.findById(req.params.orderId);
-    if (!order) return res.status(404).json({ error: 'Order not found' });
-    if (order.paymentStatus === 'paid') {
-      return res.json({ message: 'Already paid', orderId: order._id });
-    }
-
-    // Activate the order
-    order.paymentProvider = 'manual';
-    order.amountPaid = PRICE_USD;
-    order.currency = 'USD';
-    await order.activate();
-
-    // Send confirmation email with live links
-    try {
-      const email = orderConfirmationEmail({
-        customerName: order.customerName,
-        publicSlug: order.publicSlug,
-        editToken: order.editToken,
-        weddingDetails: order.weddingDetails,
-        isPending: false,
-        invitationCode: order.invitationCode,
-      });
-      await sendMail({ to: order.customerEmail, ...email });
-      order.confirmationSent = true;
-      await order.save();
-    } catch (emailErr) {
-      console.error('Confirmation email failed:', emailErr.message);
-    }
-
-    res.json({
-      message: 'Payment confirmed',
-      orderId: order._id,
-      publicSlug: order.publicSlug,
-      editToken: order.editToken,
-    });
-  } catch (err) {
-    console.error('Payment confirmation error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
+// The legacy /confirm/:orderId endpoint that activated orders without payment
+// has been removed. All payments must go through PayPal capture.
 
 // Shared helper: mark an order paid using a captured PayPal order, then send the confirmation email.
 async function activateFromCapture(order, paypalOrder) {

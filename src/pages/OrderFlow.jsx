@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getPaypal } from '../lib/paypal';
 import '../styles/OrderFlow.css';
 
@@ -94,7 +93,6 @@ const LANGUAGE_OPTIONS = [
 ];
 
 export default function OrderFlow() {
-  const navigate = useNavigate();
   const draft = useRef(loadDraft()).current;
 
   const [step, setStep] = useState(draft?.step || 1);
@@ -692,8 +690,8 @@ export default function OrderFlow() {
       const data = await parseJsonOrThrow(res, 'Order creation');
       if (!res.ok) throw new Error(data.error || 'Order failed');
 
-      if (data.paymentProvider === 'paypal' && data.paypal) {
-        // Trigger inline payment render. The actual paypal.Buttons render
+      if (data.paymentProvider === 'paypal' && data.paypal?.clientId && data.paypal?.paypalOrderId) {
+        // Trigger inline payment render. The actual paypal.CardFields render
         // happens in a useEffect once the target frame is mounted.
         savePendingOrder(data.orderId);
         setPaypalOrderData({ orderId: data.orderId, paypal: data.paypal });
@@ -702,15 +700,12 @@ export default function OrderFlow() {
         return;
       }
 
-      // Dev mode: confirm payment directly
-      const confirmRes = await fetch(`${API}/orders/confirm/${data.orderId}`, {
-        method: 'POST',
-      });
-      const confirmData = await parseJsonOrThrow(confirmRes, 'Payment confirmation');
-      if (!confirmRes.ok) throw new Error(confirmData.error || 'Payment confirmation failed');
-
-      clearDraft();
-      navigate(`/order/success/${data.orderId}`);
+      // The server is supposed to return paymentProvider: 'paypal' with a
+      // PayPal order id. Anything else means PayPal credentials are missing
+      // on the server — never silently mark the order paid.
+      throw new Error(
+        'Payment system is not ready. Please refresh and try again, or contact support if the issue persists.'
+      );
     } catch (err) {
       setError(err.message);
       setConfirming(false);
