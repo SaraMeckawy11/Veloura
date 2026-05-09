@@ -5,17 +5,6 @@ import useReveal from '../hooks/useReveal';
 
 const designs = [
   {
-    name: 'Boarding Pass',
-    category: 'launch',
-    envelope: 'Airmail envelope with vintage stamps slides open',
-    description: 'Travel-themed ticket with hometowns as departure/arrival. Fun, playful, and shareable.',
-    image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
-    overlay: 'linear-gradient(135deg, rgba(66,165,245,0.3), rgba(13,71,161,0.4))',
-    badge: 'Available',
-    badgeClass: 'badge-launch',
-    demoPath: '/demo/boarding-pass',
-  },
-  {
     name: 'Coastal Breeze',
     category: 'launch',
     envelope: 'Blue envelope opens to a bride and groom walking toward the sea',
@@ -25,6 +14,17 @@ const designs = [
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/coastal-breeze',
+  },
+  {
+    name: 'Boarding Pass',
+    category: 'launch',
+    envelope: 'Airmail envelope with vintage stamps slides open',
+    description: 'Travel-themed ticket with hometowns as departure/arrival. Fun, playful, and shareable.',
+    image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
+    overlay: 'linear-gradient(135deg, rgba(66,165,245,0.3), rgba(13,71,161,0.4))',
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/boarding-pass',
   },
   // {
   //   name: 'Velvet Rose',

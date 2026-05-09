@@ -257,7 +257,9 @@ export default function OrderFlow() {
           }));
         setTemplates(merged);
         if (selectedTemplate && !merged.some(t => t.slug === selectedTemplate.slug)) {
-          setSelectedTemplate(null);
+          setSelectedTemplate(merged[0] || null);
+        } else if (!selectedTemplate && merged.length > 0) {
+          setSelectedTemplate(merged[0]);
         }
         setLoading(false);
       })
@@ -270,6 +272,9 @@ export default function OrderFlow() {
             previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
           }));
         setTemplates(fallback);
+        if (!selectedTemplate && fallback.length > 0) {
+          setSelectedTemplate(fallback[0]);
+        }
         setLoading(false);
       });
   }, []);
@@ -801,7 +806,7 @@ export default function OrderFlow() {
                     <label>Venue Name *</label>
                     <input type="text" required value={form.venue} onChange={e => handleInput('venue', e.target.value)} placeholder="e.g. The Grand Pavilion" />
                   </div>
-                  <div className="form-field form-field--wide">
+                  <div className="form-field">
                     <label>Google Maps Link *</label>
                     <input
                       type="url"
@@ -810,7 +815,7 @@ export default function OrderFlow() {
                       onChange={e => handleInput('venueMapUrl', e.target.value)}
                       placeholder="https://maps.google.com/..."
                     />
-                    <p className="form-hint message-hint">Paste a Google Maps share link so guests can navigate to your venue.</p>
+                    <p className="form-hint message-hint">Paste a Google Maps share link so guests can navigate.</p>
                   </div>
                 </div>
               </fieldset>

@@ -254,11 +254,47 @@
 }
 
 .form-section--optional {
-  background: linear-gradient(180deg, rgba(212, 175, 110, 0.04), rgba(255, 255, 255, 0.6));
+  background: linear-gradient(180deg, rgba(212, 175, 110, 0.05), rgba(255, 255, 255, 0.65));
+  border-color: rgba(184, 146, 74, 0.35);
   border-style: dashed;
+  position: relative;
 }
 .form-section--optional > legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: var(--gold, #b8924a);
+}
+.form-section--optional > legend::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold, #b8924a);
+  box-shadow: 0 0 0 4px rgba(184, 146, 74, 0.15);
+}
+.form-section--optional > legend::after {
+  content: 'Optional';
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold, #b8924a);
+  background: rgba(184, 146, 74, 0.12);
+  border: 1px solid rgba(184, 146, 74, 0.25);
+  padding: 3px 9px;
+  border-radius: 50px;
+  margin-left: 4px;
+}
+.form-section--optional .field-toggle {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.form-section--optional > .form-hint:first-of-type {
+  margin: 6px 0 4px;
+  color: var(--text-light, #6b6863);
+  font-style: italic;
 }
 
 .form-grid {
