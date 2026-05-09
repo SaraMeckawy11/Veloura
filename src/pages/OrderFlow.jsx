@@ -104,8 +104,11 @@ export default function OrderFlow() {
   const [confirming, setConfirming] = useState(false);
   const [paypalOrderData, setPaypalOrderData] = useState(null);
   const [paypalLoading, setPaypalLoading] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const [cardEligible, setCardEligible] = useState(true);
   const [error, setError] = useState('');
-  const paypalFrameRef = useRef(null);
+  const paypalButtonRef = useRef(null);
+  const cardFieldsRef = useRef(null);
 
   // Form state — restore from draft
   const defaultForm = {
@@ -499,11 +502,30 @@ export default function OrderFlow() {
     setStep(3);
   };
 
-  // Render PayPal Buttons once the target div is mounted.
+  // Capture the order on the server after PayPal approves it. Shared by Card
+  // Fields and the PayPal-balance fallback button so behaviour stays identical.
+  const captureAndFinish = useCallback(async () => {
+    try {
+      const res = await fetch(`${API}/orders/capture/${paypalOrderData.orderId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Payment capture failed');
+      goToSuccessPage(paypalOrderData.orderId);
+    } catch (captureErr) {
+      setError(captureErr.message || 'Could not finalise payment');
+      setPaying(false);
+    }
+  }, [paypalOrderData, goToSuccessPage]);
+
+  // Render the custom card form (PayPal Card Fields). PayPal hosts each field
+  // inside a tiny iframe so PAN/CVV never touch our server (PCI-friendly), but
+  // the surrounding form is fully ours.
   useEffect(() => {
     if (!paypalOrderData) return;
-    if (!paypalFrameRef.current) return;
     let cancelled = false;
+    let cardFieldsInstance = null;
     let buttonsInstance = null;
 
     (async () => {
@@ -514,44 +536,78 @@ export default function OrderFlow() {
         });
         if (cancelled) return;
 
-        // Clear any previous render before mounting a fresh button.
-        if (paypalFrameRef.current) paypalFrameRef.current.innerHTML = '';
-
-        buttonsInstance = paypal.Buttons({
-          style: { layout: 'vertical', shape: 'rect', label: 'paypal' },
-          // We pre-created the PayPal order on the server; just hand the id back.
+        const handlers = {
           createOrder: () => paypalOrderData.paypal.paypalOrderId,
-          onApprove: async () => {
-            try {
-              const res = await fetch(`${API}/orders/capture/${paypalOrderData.orderId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-              });
-              const data = await res.json().catch(() => ({}));
-              if (!res.ok) throw new Error(data.error || 'Payment capture failed');
-              goToSuccessPage(paypalOrderData.orderId);
-            } catch (captureErr) {
-              if (!cancelled) setError(captureErr.message || 'Could not finalise payment');
+          onApprove: () => captureAndFinish(),
+          onError: (err) => {
+            if (!cancelled) {
+              console.error('[paypal] error', err);
+              setError(err?.message || 'PayPal reported an error. Please try again.');
+              setPaying(false);
             }
           },
-          onCancel: () => {
-            if (!cancelled) setError('Payment was cancelled. You can try again any time.');
-          },
-          onError: (err) => {
-            if (!cancelled) setError(err?.message || 'PayPal reported an error. Please try again.');
+        };
+
+        cardFieldsInstance = paypal.CardFields({
+          ...handlers,
+          style: {
+            input: {
+              'font-size': '15px',
+              'font-family': 'inherit',
+              color: '#1a1a1a',
+              'font-weight': '400',
+            },
+            '.invalid': { color: '#c4121f' },
+            ':focus': { color: '#1a1a1a' },
           },
         });
 
-        if (!buttonsInstance.isEligible()) {
-          if (!cancelled) setError('PayPal is not available in this browser. Please try a different browser or contact support.');
-          setPaypalLoading(false);
+        if (!cardFieldsInstance.isEligible()) {
+          // Merchant account isn't approved for Advanced Card Payments.
+          // Fall back to the PayPal-branded button so the buyer can still pay.
+          if (!cancelled) setCardEligible(false);
+
+          if (paypalButtonRef.current) {
+            paypalButtonRef.current.innerHTML = '';
+            buttonsInstance = paypal.Buttons({
+              ...handlers,
+              style: { layout: 'vertical', shape: 'rect', label: 'paypal' },
+            });
+            if (buttonsInstance.isEligible()) {
+              await buttonsInstance.render(paypalButtonRef.current);
+            }
+          }
+          if (!cancelled) setPaypalLoading(false);
           return;
         }
 
-        await buttonsInstance.render(paypalFrameRef.current);
+        if (!cancelled) setCardEligible(true);
+        cardFieldsRef.current = cardFieldsInstance;
+
+        await Promise.all([
+          cardFieldsInstance.NameField().render('#veloura-card-name'),
+          cardFieldsInstance.NumberField({ placeholder: '1234 1234 1234 1234' }).render('#veloura-card-number'),
+          cardFieldsInstance.ExpiryField({ placeholder: 'MM/YY' }).render('#veloura-card-expiry'),
+          cardFieldsInstance.CVVField({ placeholder: 'CVC' }).render('#veloura-card-cvv'),
+        ]);
+
+        // Also render the PayPal-balance button alongside, so buyers who prefer
+        // logging into PayPal can still do that without leaving the page.
+        if (paypalButtonRef.current) {
+          paypalButtonRef.current.innerHTML = '';
+          buttonsInstance = paypal.Buttons({
+            ...handlers,
+            style: { layout: 'horizontal', shape: 'rect', label: 'paypal', height: 45 },
+          });
+          if (buttonsInstance.isEligible()) {
+            await buttonsInstance.render(paypalButtonRef.current);
+          }
+        }
+
         if (!cancelled) setPaypalLoading(false);
       } catch (err) {
         if (!cancelled) {
+          console.error('[paypal] init', err);
           setError(err.message || 'Could not load payment form');
           setPaypalLoading(false);
         }
@@ -560,10 +616,29 @@ export default function OrderFlow() {
 
     return () => {
       cancelled = true;
-      try { buttonsInstance?.close?.(); } catch { /* SDK may have unmounted already */ }
+      cardFieldsRef.current = null;
+      try { buttonsInstance?.close?.(); } catch { /* unmounted */ }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paypalOrderData, goToSuccessPage]);
+  }, [paypalOrderData, captureAndFinish]);
+
+  const handleCardSubmit = async (e) => {
+    e.preventDefault();
+    if (!cardFieldsRef.current) return;
+    setError('');
+    setPaying(true);
+    try {
+      await cardFieldsRef.current.submit({ cardholderName: form.customerName });
+      // onApprove fires after submit() resolves and triggers captureAndFinish.
+    } catch (err) {
+      console.error('[paypal] card submit', err);
+      const message = err?.message
+        || err?.details?.[0]?.description
+        || 'Card was not accepted. Please check the details and try again.';
+      setError(message);
+      setPaying(false);
+    }
+  };
 
   // Parse JSON safely — server may return empty body on 502/504/cold-start
   const parseJsonOrThrow = async (res, label) => {
@@ -1227,14 +1302,51 @@ export default function OrderFlow() {
                     </div>
                   </div>
 
-                  <div className="paypal-checkout-wrap">
+                  <div className="card-pay-wrap">
                     {paypalLoading && (
-                      <div className="paypal-checkout-loading">
+                      <div className="card-pay-loading">
                         <div className="redirect-spinner" />
                         <p>Preparing secure checkout…</p>
                       </div>
                     )}
-                    <div ref={paypalFrameRef} className="paypal-checkout-frame" />
+
+                    {cardEligible && (
+                      <form onSubmit={handleCardSubmit} className="card-pay-form" autoComplete="on">
+                        <div className="card-field">
+                          <label htmlFor="veloura-card-name">Cardholder name</label>
+                          <div id="veloura-card-name" className="card-input" />
+                        </div>
+                        <div className="card-field">
+                          <label htmlFor="veloura-card-number">Card number</label>
+                          <div id="veloura-card-number" className="card-input" />
+                        </div>
+                        <div className="card-field-row">
+                          <div className="card-field">
+                            <label htmlFor="veloura-card-expiry">Expiry</label>
+                            <div id="veloura-card-expiry" className="card-input" />
+                          </div>
+                          <div className="card-field">
+                            <label htmlFor="veloura-card-cvv">CVC</label>
+                            <div id="veloura-card-cvv" className="card-input" />
+                          </div>
+                        </div>
+                        <button
+                          type="submit"
+                          className="btn btn-gold card-pay-submit"
+                          disabled={paying || paypalLoading}
+                        >
+                          {paying ? 'Processing payment…' : `Pay ${DISPLAY_PRICE} securely`}
+                        </button>
+                      </form>
+                    )}
+
+                    {!cardEligible && !paypalLoading && (
+                      <p className="card-pay-fallback-note">
+                        Card payment isn't available for this merchant account yet. You can still pay with your PayPal balance below.
+                      </p>
+                    )}
+
+                    <div ref={paypalButtonRef} className="paypal-fallback-button" />
                   </div>
 
                   <div className="payment-trust-row">

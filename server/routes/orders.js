@@ -169,7 +169,10 @@ router.post('/confirm/:orderId', async (req, res) => {
 // Shared helper: mark an order paid using a captured PayPal order, then send the confirmation email.
 async function activateFromCapture(order, paypalOrder) {
   const details = extractCaptureDetails(paypalOrder);
-  if (!details || details.status !== 'COMPLETED') return false;
+  if (!details || details.status !== 'COMPLETED') {
+    console.warn(`[paypal] activateFromCapture skipped: orderId=${order._id} paypalStatus=${paypalOrder?.status} captureStatus=${details?.status}`);
+    return false;
+  }
 
   order.paypalOrderId = paypalOrder.id || order.paypalOrderId;
   order.paypalCaptureId = details.captureId || order.paypalCaptureId;
@@ -177,6 +180,7 @@ async function activateFromCapture(order, paypalOrder) {
   order.currency = details.currency || order.currency || CURRENCY;
   if (order.paymentStatus !== 'paid') {
     await order.activate();
+    console.log(`[paypal] activated orderId=${order._id} captureId=${details.captureId} amount=${details.amount} ${details.currency}`);
   }
 
   if (!order.confirmationSent) {
@@ -192,23 +196,32 @@ async function activateFromCapture(order, paypalOrder) {
       await sendMail({ to: order.customerEmail, ...email });
       order.confirmationSent = true;
       await order.save();
+      console.log(`[paypal] confirmation email sent orderId=${order._id} to=${order.customerEmail}`);
     } catch (emailErr) {
-      console.error('Confirmation email failed:', emailErr.message);
+      console.error(`[paypal] confirmation email failed orderId=${order._id} to=${order.customerEmail}:`, emailErr.message);
     }
   }
   return true;
 }
 
-// POST /api/orders/capture/:orderId — called by the PayPal Buttons onApprove handler.
+// POST /api/orders/capture/:orderId — called by the PayPal SDK onApprove handler.
 // Performs the server-side capture (do not trust client-side completion alone) and
 // activates the order. Webhook PAYMENT.CAPTURE.COMPLETED still runs as a redundant safety net.
 router.post('/capture/:orderId', async (req, res) => {
+  console.log(`[paypal] capture request orderId=${req.params.orderId}`);
   try {
     const order = await Order.findById(req.params.orderId);
-    if (!order) return res.status(404).json({ error: 'Order not found' });
-    if (!order.paypalOrderId) return res.status(400).json({ error: 'No PayPal order linked to this order' });
+    if (!order) {
+      console.warn(`[paypal] capture: order not found orderId=${req.params.orderId}`);
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    if (!order.paypalOrderId) {
+      console.warn(`[paypal] capture: no paypalOrderId on order ${order._id}`);
+      return res.status(400).json({ error: 'No PayPal order linked to this order' });
+    }
 
     if (order.paymentStatus === 'paid') {
+      console.log(`[paypal] capture: order ${order._id} already paid, returning success`);
       return res.json({
         message: 'Already paid',
         orderId: order._id,
@@ -220,17 +233,21 @@ router.post('/capture/:orderId', async (req, res) => {
     let captured;
     try {
       captured = await capturePaypalOrder(order.paypalOrderId);
+      console.log(`[paypal] capture API ok orderId=${order._id} paypalOrderId=${order.paypalOrderId} status=${captured?.status}`);
     } catch (captureErr) {
       // If the order was already captured (e.g. webhook beat us), fetch its current state.
       if (captureErr.status === 422 || captureErr.data?.details?.[0]?.issue === 'ORDER_ALREADY_CAPTURED') {
+        console.log(`[paypal] capture: already captured, fetching state orderId=${order._id}`);
         captured = await getPaypalOrder(order.paypalOrderId);
       } else {
+        console.error(`[paypal] capture API failed orderId=${order._id}:`, captureErr.message, captureErr.data);
         throw captureErr;
       }
     }
 
     const ok = await activateFromCapture(order, captured);
     if (!ok) {
+      console.warn(`[paypal] capture: PayPal returned non-COMPLETED status for orderId=${order._id} status=${captured?.status}`);
       return res.status(402).json({ error: 'PayPal payment was not completed.' });
     }
 

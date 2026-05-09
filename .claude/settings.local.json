@@ -58,7 +58,8 @@
       "Bash(curl -s -o /tmp/orderflow.js -w \"HTTP=%{http_code} BYTES=%{size_download}\\\\n\" \"http://127.0.0.1:5174/src/pages/OrderFlow.jsx\")",
       "Bash(curl -s -o /tmp/paypal.js -w \"HTTP=%{http_code} BYTES=%{size_download}\\\\n\" \"http://127.0.0.1:5174/src/lib/paypal.js\")",
       "Bash(kill 27546)",
-      "Bash(grep -E \"^\\\\.env|env$|\\\\.env\\\\.\" .gitignore server/.gitignore)"
+      "Bash(grep -E \"^\\\\.env|env$|\\\\.env\\\\.\" .gitignore server/.gitignore)",
+      "Bash(echo \"PID=$!\")"
     ]
   }
 }
