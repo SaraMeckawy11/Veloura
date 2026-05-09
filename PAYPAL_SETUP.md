@@ -76,16 +76,14 @@ The end-to-end flow you should test:
 4. Approve the payment. The popup closes, the front-end calls `POST /api/orders/capture/:orderId`, the server captures the PayPal order, activates the Veloura order, and you are redirected to the success page.
 5. The webhook also fires `PAYMENT.CAPTURE.COMPLETED` — this is idempotent; the order is already paid by the time it arrives.
 
-### Sandbox test cards
+### Sandbox buyer accounts
 
-PayPal generates test cards on demand at <https://developer.paypal.com/api/rest/sandbox/card-testing/>. Common scenarios:
+Use the standard PayPal checkout button with a sandbox personal buyer account. Keep these accounts separate:
 
-- **Successful capture**: any generated approved card, any future expiry, any 3-digit CVV.
-- **3-D Secure challenge**: use the generator's "challenge required" option.
-- **Declined card**: use the generator's "decline" option.
-- **Insufficient funds**: log in with a sandbox personal account whose PayPal balance is set to 0.
+- **Merchant**: the sandbox business account attached to `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET`.
+- **Buyer**: a different sandbox personal account used to approve the payment in the popup.
 
-Visa/Mastercard test card numbers from other providers (e.g. Stripe's `4242 4242 4242 4242`) are **not** valid in the PayPal sandbox.
+Do not approve the checkout with the same sandbox account that owns the app. If PayPal shows a possible compliance violation, create a fresh sandbox personal buyer account in the PayPal Developer Dashboard and approve the payment through the PayPal popup.
 
 ## Going Live — Checklist
 

@@ -5,7 +5,7 @@ import useReveal from '../hooks/useReveal';
 const faqs = [
   {
     q: 'How does the payment work?',
-    a: "It's a simple one-time payment — no subscriptions, no hidden fees. You pay once and your invitation stays live forever. We accept all major credit/debit cards through our secure payment system.",
+    a: "It's a simple one-time payment — no subscriptions, no hidden fees. You pay once and your invitation stays live forever. Payments are handled through secure PayPal checkout.",
   },
   {
     q: 'Can I edit my invitation after it\'s published?',

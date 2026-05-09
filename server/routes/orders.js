@@ -191,6 +191,8 @@ router.post('/capture/:orderId', async (req, res) => {
     } catch (captureErr) {
       const issue = captureErr.data?.details?.[0]?.issue;
       const description = captureErr.data?.details?.[0]?.description;
+      const complianceBlocked = issue === 'COMPLIANCE_VIOLATION'
+        || /compliance violation/i.test(description || captureErr.message || '');
       console.error(`[paypal] capture API failed orderId=${order._id} status=${captureErr.status} issue=${issue} description=${description} body=${JSON.stringify(captureErr.data)}`);
 
       // Webhook may have beaten us — only on this specific issue do we treat as success.
@@ -201,6 +203,8 @@ router.post('/capture/:orderId', async (req, res) => {
         const userMessage = (
           issue === 'ORDER_NOT_APPROVED'
             ? 'PayPal could not complete the payment because the buyer did not approve it. Please try again — make sure to click "Pay Now" inside the PayPal popup before it closes.'
+          : complianceBlocked
+            ? 'PayPal blocked this sandbox transaction. Please use a separate PayPal sandbox personal buyer account, make sure it is not the merchant account, and approve the payment through the PayPal popup.'
           : issue === 'INSTRUMENT_DECLINED' || issue === 'PAYER_ACTION_REQUIRED'
             ? 'Your card was declined or needs additional verification. Please try a different payment method.'
           : issue === 'ORDER_EXPIRED' || issue === 'ORDER_NOT_CAPTURABLE'

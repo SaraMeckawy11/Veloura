@@ -4,7 +4,7 @@
 let paypalScriptPromise;
 let loadedClientId = null;
 
-export function getPaypal({ clientId, currency = 'USD', components = 'buttons,card-fields' }) {
+export function getPaypal({ clientId, currency = 'USD', components = 'buttons' }) {
   if (!clientId) {
     return Promise.reject(new Error('PayPal client id is missing.'));
   }

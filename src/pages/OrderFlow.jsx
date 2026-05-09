@@ -102,14 +102,10 @@ export default function OrderFlow() {
   const [confirming, setConfirming] = useState(false);
   const [paypalOrderData, setPaypalOrderData] = useState(null);
   const [paypalLoading, setPaypalLoading] = useState(false);
-  const [paying, setPaying] = useState(false);
-  // null = unknown (still detecting), true = render Card Fields, false = render Buttons fallback
-  const [cardEligible, setCardEligible] = useState(null);
   const [needsRetry, setNeedsRetry] = useState(false);
   const [paypalSdk, setPaypalSdk] = useState(null);
   const [error, setError] = useState('');
   const paypalButtonRef = useRef(null);
-  const cardFieldsRef = useRef(null);
 
   // Form state — restore from draft
   const defaultForm = {
@@ -150,7 +146,7 @@ export default function OrderFlow() {
   })();
   const [photos, setPhotos] = useState(initPhotos);
   const [uploadError, setUploadError] = useState('');
-  const [music, setMusic] = useState(draft?.music || {
+  const [music] = useState(draft?.music || {
     url: '',
     publicId: '',
     name: '',
@@ -158,7 +154,6 @@ export default function OrderFlow() {
     uploading: false,
     failed: false,
   });
-  const [musicError, setMusicError] = useState('');
   // Story milestones — text/date for each story photo
   const [storyMilestones, setStoryMilestones] = useState(
     draft?.storyMilestones || [{ date: '', title: '', description: '' }]
@@ -395,81 +390,6 @@ export default function OrderFlow() {
     }
   };
 
-  const handleMusicUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = '';
-    setMusicError('');
-
-    if (!file.type.startsWith('audio/')) {
-      setMusicError('Please upload an audio file such as MP3, WAV, or M4A.');
-      return;
-    }
-
-    const localPreviewUrl = URL.createObjectURL(file);
-    setMusic({
-      url: localPreviewUrl,
-      publicId: '',
-      name: file.name,
-      enabled: true,
-      uploading: true,
-      failed: false,
-    });
-
-    try {
-      const signatureRes = await fetch(`${API}/upload/signature?category=music`);
-      const signatureData = await signatureRes.json();
-      if (!signatureRes.ok) throw new Error(signatureData.error || 'Could not prepare direct upload');
-
-      const cloudinaryForm = new FormData();
-      cloudinaryForm.append('file', file);
-      cloudinaryForm.append('api_key', signatureData.apiKey);
-      cloudinaryForm.append('timestamp', signatureData.timestamp);
-      cloudinaryForm.append('folder', signatureData.folder);
-      cloudinaryForm.append('signature', signatureData.signature);
-
-      const uploadUrl = `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/${signatureData.resourceType}/upload`;
-      const uploadRes = await fetch(uploadUrl, { method: 'POST', body: cloudinaryForm });
-      const uploadData = await uploadRes.json();
-      if (!uploadRes.ok) throw new Error(uploadData.error?.message || 'Music upload failed');
-
-      URL.revokeObjectURL(localPreviewUrl);
-      setMusic({
-        url: uploadData.secure_url,
-        publicId: uploadData.public_id,
-        name: file.name,
-        enabled: true,
-        uploading: false,
-        failed: false,
-      });
-    } catch {
-      try {
-        const fd = new FormData();
-        fd.append('photos', file);
-        const res = await fetch(`${API}/upload?category=music`, { method: 'POST', body: fd });
-        const data = await res.json();
-        if (!res.ok || !data.files?.[0]) throw new Error(data.error || 'Music upload failed');
-        URL.revokeObjectURL(localPreviewUrl);
-        setMusic({
-          url: data.files[0].url,
-          publicId: data.files[0].publicId,
-          name: file.name,
-          enabled: true,
-          uploading: false,
-          failed: false,
-        });
-      } catch (err) {
-        setMusic(prev => ({ ...prev, uploading: false, failed: true }));
-        setMusicError(err.message || 'Music upload failed. Please try another file.');
-      }
-    }
-  };
-
-  const removeMusic = () => {
-    setMusic({ url: '', publicId: '', name: '', enabled: true, uploading: false, failed: false });
-    setMusicError('');
-  };
-
   const handleStoryMilestone = (index, key, value) => {
     setStoryMilestones(prev => prev.map((m, i) => i === index ? { ...m, [key]: value } : m));
   };
@@ -503,8 +423,7 @@ export default function OrderFlow() {
     setStep(3);
   };
 
-  // Capture the order on the server after PayPal approves it. Shared by Card
-  // Fields and the PayPal-balance fallback button so behaviour stays identical.
+  // Capture the order on the server after the buyer approves it in PayPal.
   const captureAndFinish = useCallback(async () => {
     try {
       const res = await fetch(`${API}/orders/capture/${paypalOrderData.orderId}`, {
@@ -523,12 +442,11 @@ export default function OrderFlow() {
       goToSuccessPage(paypalOrderData.orderId);
     } catch (captureErr) {
       setError(captureErr.message || 'Could not finalise payment');
-      setPaying(false);
     }
   }, [paypalOrderData, goToSuccessPage]);
 
-  // Effect 1: Load the PayPal SDK and detect Card Fields eligibility ONLY.
-  // No DOM rendering happens here, so we don't depend on refs being mounted.
+  // Load the PayPal SDK once an order exists. The UI uses PayPal Buttons only
+  // because the standard approval flow is the most reliable sandbox path.
   useEffect(() => {
     if (!paypalOrderData) return;
     let cancelled = false;
@@ -540,17 +458,6 @@ export default function OrderFlow() {
           currency: paypalOrderData.paypal.currency || 'USD',
         });
         if (cancelled) return;
-
-        // Probe Card Fields eligibility without rendering anything yet.
-        const probe = paypal.CardFields({
-          createOrder: () => paypalOrderData.paypal.paypalOrderId,
-          onApprove: () => {},
-        });
-        const eligible = probe.isEligible();
-        console.log(`[paypal] CardFields eligible=${eligible}`);
-
-        if (cancelled) return;
-        setCardEligible(eligible);
         setPaypalSdk(paypal);
       } catch (err) {
         if (!cancelled) {
@@ -564,69 +471,9 @@ export default function OrderFlow() {
     return () => { cancelled = true; };
   }, [paypalOrderData]);
 
-  // Effect 2: Render Card Fields when eligible. Re-runs after React commits
-  // the JSX so the #veloura-card-* divs are guaranteed to be in the DOM.
+  // Render the PayPal Buttons after React has mounted the target container.
   useEffect(() => {
-    if (!paypalSdk || !paypalOrderData || cardEligible !== true || needsRetry) return;
-    let cancelled = false;
-    let cardFieldsInstance = null;
-
-    (async () => {
-      try {
-        cardFieldsInstance = paypalSdk.CardFields({
-          createOrder: () => paypalOrderData.paypal.paypalOrderId,
-          onApprove: () => captureAndFinish(),
-          onError: (err) => {
-            if (!cancelled) {
-              console.error('[paypal] cardfields error', err);
-              setError(err?.message || 'PayPal reported an error. Please try again.');
-              setPaying(false);
-            }
-          },
-          style: {
-            input: {
-              'font-size': '15px',
-              'font-family': 'inherit',
-              color: '#1a1a1a',
-              'font-weight': '400',
-            },
-            '.invalid': { color: '#c4121f' },
-            ':focus': { color: '#1a1a1a' },
-          },
-        });
-
-        if (!cardFieldsInstance.isEligible()) return;
-        cardFieldsRef.current = cardFieldsInstance;
-
-        await Promise.all([
-          cardFieldsInstance.NameField().render('#veloura-card-name'),
-          cardFieldsInstance.NumberField({ placeholder: '1234 1234 1234 1234' }).render('#veloura-card-number'),
-          cardFieldsInstance.ExpiryField({ placeholder: 'MM/YY' }).render('#veloura-card-expiry'),
-          cardFieldsInstance.CVVField({ placeholder: 'CVC' }).render('#veloura-card-cvv'),
-        ]);
-
-        if (!cancelled) setPaypalLoading(false);
-      } catch (err) {
-        if (!cancelled) {
-          console.error('[paypal] cardfields render', err);
-          setError(err.message || 'Could not load payment form');
-          setPaypalLoading(false);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      cardFieldsRef.current = null;
-    };
-  }, [paypalSdk, paypalOrderData, cardEligible, needsRetry, captureAndFinish]);
-
-  // Effect 3: Render the PayPal Buttons (yellow "Pay with PayPal") into
-  // whichever container the JSX has currently mounted. cardEligible is in
-  // the dep list so this re-runs after the DOM swaps between fallback (when
-  // ineligible) and secondary slot (when eligible).
-  useEffect(() => {
-    if (!paypalSdk || !paypalOrderData || cardEligible === null || needsRetry) return;
+    if (!paypalSdk || !paypalOrderData || needsRetry) return;
     const target = paypalButtonRef.current;
     if (!target) return;
     let cancelled = false;
@@ -641,20 +488,15 @@ export default function OrderFlow() {
             if (!cancelled) {
               console.error('[paypal] buttons error', err);
               setError(err?.message || 'PayPal reported an error. Please try again.');
-              setPaying(false);
             }
           },
-          style: cardEligible
-            ? { layout: 'horizontal', shape: 'rect', label: 'paypal', height: 45 }
-            : { layout: 'vertical', shape: 'rect', label: 'paypal' },
+          style: { layout: 'vertical', shape: 'rect', label: 'paypal' },
         });
 
         if (!buttonsInstance.isEligible()) {
           console.warn('[paypal] Buttons reported ineligible');
           if (!cancelled) {
-            if (!cardEligible) {
-              setError('PayPal payments are not available in this browser. Please try a different browser, or contact support.');
-            }
+            setError('PayPal payments are not available in this browser. Please try a different browser, or contact support.');
             setPaypalLoading(false);
           }
           return;
@@ -675,25 +517,7 @@ export default function OrderFlow() {
       cancelled = true;
       try { buttonsInstance?.close?.(); } catch { /* unmounted */ }
     };
-  }, [paypalSdk, paypalOrderData, cardEligible, needsRetry, captureAndFinish]);
-
-  const handleCardSubmit = async (e) => {
-    e.preventDefault();
-    if (!cardFieldsRef.current) return;
-    setError('');
-    setPaying(true);
-    try {
-      await cardFieldsRef.current.submit({ cardholderName: form.customerName });
-      // onApprove fires after submit() resolves and triggers captureAndFinish.
-    } catch (err) {
-      console.error('[paypal] card submit', err);
-      const message = err?.message
-        || err?.details?.[0]?.description
-        || 'Card was not accepted. Please check the details and try again.';
-      setError(message);
-      setPaying(false);
-    }
-  };
+  }, [paypalSdk, paypalOrderData, needsRetry, captureAndFinish]);
 
   // Parse JSON safely — server may return empty body on 502/504/cold-start
   const parseJsonOrThrow = async (res, label) => {
@@ -748,8 +572,7 @@ export default function OrderFlow() {
       if (!res.ok) throw new Error(data.error || 'Order failed');
 
       if (data.paymentProvider === 'paypal' && data.paypal?.clientId && data.paypal?.paypalOrderId) {
-        // Trigger inline payment render. The actual paypal.CardFields render
-        // happens in a useEffect once the target frame is mounted.
+        // Trigger inline PayPal Buttons render once the target frame is mounted.
         savePendingOrder(data.orderId);
         setPaypalOrderData({ orderId: data.orderId, paypal: data.paypal });
         setPaypalLoading(true);
@@ -998,61 +821,6 @@ export default function OrderFlow() {
                   ))}
                 </div>
               </fieldset>
-
-              {/* Background Music */}
-              {/* <fieldset className="form-section form-section--music">
-                <legend>Background Music</legend>
-                <p className="form-hint">Add one audio track. It will loop softly while guests view the invitation.</p>
-                {musicError && <p className="photo-error">{musicError}</p>}
-                <div className={`music-upload-card${music.failed ? ' music-upload-card--failed' : ''}`}>
-                  <div className="music-upload-icon" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 18V5l12-2v13" />
-                      <circle cx="6" cy="18" r="3" />
-                      <circle cx="18" cy="16" r="3" />
-                    </svg>
-                  </div>
-                  <div className="music-upload-copy">
-                    <span className="music-upload-title">
-                      {music.name || 'Choose background music'}
-                    </span>
-                    <span className="music-upload-subtitle">
-                      {music.uploading ? 'Uploading...' : music.url ? 'Music will play on loop in the invitation.' : 'MP3, WAV, or M4A recommended.'}
-                    </span>
-                    {music.url && !music.uploading && !music.failed && (
-                      <audio className="music-preview" src={music.url} controls preload="metadata" />
-                    )}
-                  </div>
-                  <div className="music-upload-actions">
-                    {music.url && (
-                      <label className="music-toggle">
-                        <input
-                          type="checkbox"
-                          checked={music.enabled}
-                          onChange={e => setMusic(prev => ({ ...prev, enabled: e.target.checked }))}
-                        />
-                        <span>Use music</span>
-                      </label>
-                    )}
-                    {music.url ? (
-                      <button type="button" className="music-remove-btn" onClick={removeMusic}>
-                        Remove
-                      </button>
-                    ) : (
-                      <label className="music-select-btn">
-                        Upload Music
-                        <input type="file" accept="audio/*,.mp3,.wav,.m4a" onChange={handleMusicUpload} />
-                      </label>
-                    )}
-                    {music.url && (
-                      <label className="music-select-btn music-select-btn--secondary">
-                        Replace
-                        <input type="file" accept="audio/*,.mp3,.wav,.m4a" onChange={handleMusicUpload} />
-                      </label>
-                    )}
-                  </div>
-                </div>
-              </fieldset> */}
 
               {/* Venue Photos */}
               <fieldset className="form-section">
@@ -1375,7 +1143,6 @@ export default function OrderFlow() {
                             setError('');
                             setPaypalOrderData(null);
                             setPaypalLoading(false);
-                            setPaying(false);
                             handleConfirmPayment();
                           }}
                         >
@@ -1384,51 +1151,14 @@ export default function OrderFlow() {
                       </div>
                     )}
 
-                    {cardEligible === true && !needsRetry && (
-                      <form onSubmit={handleCardSubmit} className="card-pay-form" autoComplete="on">
-                        <div className="card-field">
-                          <label htmlFor="veloura-card-name">Cardholder name</label>
-                          <div id="veloura-card-name" className="card-input" />
-                        </div>
-                        <div className="card-field">
-                          <label htmlFor="veloura-card-number">Card number</label>
-                          <div id="veloura-card-number" className="card-input" />
-                        </div>
-                        <div className="card-field-row">
-                          <div className="card-field">
-                            <label htmlFor="veloura-card-expiry">Expiry</label>
-                            <div id="veloura-card-expiry" className="card-input" />
-                          </div>
-                          <div className="card-field">
-                            <label htmlFor="veloura-card-cvv">CVC</label>
-                            <div id="veloura-card-cvv" className="card-input" />
-                          </div>
-                        </div>
-                        <button
-                          type="submit"
-                          className="btn btn-gold card-pay-submit"
-                          disabled={paying || paypalLoading}
-                        >
-                          {paying ? 'Processing payment…' : `Pay ${DISPLAY_PRICE} securely`}
-                        </button>
-                      </form>
-                    )}
-
-                    {cardEligible === false && !needsRetry && (
+                    {!needsRetry && (
                       <div className="card-pay-fallback">
                         <h4 className="card-pay-fallback-title">Pay with PayPal</h4>
                         <p className="card-pay-fallback-text">
-                          Sign in to your PayPal account to complete this payment. You'll return here automatically once approved.
+                          Sign in with your PayPal sandbox personal account to approve this secure checkout.
                         </p>
                         <div ref={paypalButtonRef} className="paypal-fallback-button" />
-                        <p className="card-pay-fallback-hint">
-                          Want to enable card payments without leaving this page? Turn on <strong>Advanced Credit and Debit Card Payments</strong> on your sandbox business account.
-                        </p>
                       </div>
-                    )}
-
-                    {cardEligible === true && !needsRetry && (
-                      <div ref={paypalButtonRef} className="paypal-fallback-button paypal-fallback-button--secondary" />
                     )}
                   </div>
 
