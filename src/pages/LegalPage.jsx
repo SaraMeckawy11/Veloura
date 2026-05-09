@@ -19,7 +19,7 @@ const pages = {
       },
       {
         title: 'Payment',
-        body: 'Veloura charges a one-time price for each invitation order. Payments are processed by Paddle, our merchant of record, and may include applicable taxes based on customer location.',
+        body: 'Veloura charges a one-time price for each invitation order. Payments are processed by PayPal and may include applicable taxes based on customer location.',
       },
       {
         title: 'Edits and Delivery',
@@ -50,7 +50,7 @@ const pages = {
       },
       {
         title: 'Payments',
-        body: 'Payments are processed by Paddle. Veloura does not store full card numbers. Paddle may collect payment, tax, billing, and fraud-prevention information under its own buyer terms and privacy notices.',
+        body: 'Payments are processed by PayPal. Veloura does not store full card numbers. PayPal may collect payment, tax, billing, and fraud-prevention information under its own buyer terms and privacy notices.',
       },
       {
         title: 'Sharing',
@@ -89,7 +89,7 @@ const pages = {
       },
       {
         title: 'Processing',
-        body: 'Approved refunds are processed through Paddle. Timing depends on Paddle, the payment method, and the customer bank or card provider.',
+        body: 'Approved refunds are processed through PayPal. Timing depends on PayPal, the payment method, and the customer bank or card provider.',
       },
       {
         title: 'Contact',

@@ -56,8 +56,9 @@ const orderSchema = new mongoose.Schema({
   },
 
   // Payment
-  paymentProvider:  { type: String, enum: ['paddle', 'manual'], default: 'paddle' },
-  paddleTransactionId: { type: String, index: true },
+  paymentProvider:  { type: String, enum: ['paypal', 'manual'], default: 'paypal' },
+  paypalOrderId:    { type: String, index: true },
+  paypalCaptureId:  { type: String, index: true },
   amountPaid:       { type: String },                     // e.g. "89.00"
   currency:         { type: String, default: 'USD' },
   paymentStatus:    { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending', index: true },

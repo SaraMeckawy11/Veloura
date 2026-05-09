@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPaddle } from '../lib/paddle';
+import { getPaypal } from '../lib/paypal';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -102,10 +102,10 @@ export default function OrderFlow() {
   const [selectedTemplate, setSelectedTemplate] = useState(draft?.selectedTemplate || null);
   const [loading, setLoading] = useState(true);
   const [confirming, setConfirming] = useState(false);
-  const [paddleOrderData, setPaddleOrderData] = useState(null);
-  const [paddleLoading, setPaddleLoading] = useState(false);
+  const [paypalOrderData, setPaypalOrderData] = useState(null);
+  const [paypalLoading, setPaypalLoading] = useState(false);
   const [error, setError] = useState('');
-  const paddleFrameRef = useRef(null);
+  const paypalFrameRef = useRef(null);
 
   // Form state — restore from draft
   const defaultForm = {
@@ -214,22 +214,19 @@ export default function OrderFlow() {
   }, []);
 
   useEffect(() => {
-    const recoverPaddleHashRedirect = () => {
-      if (window.location.hash !== '#!') return;
+    // PayPal Buttons keeps the user on this page (no top-level redirect), so
+    // there's no hash to recover from. We only run a pending-order check on
+    // mount in case the page was reloaded mid-checkout and we already have
+    // a captured order on the server side.
+    const pendingOrderId = loadPendingOrder();
+    if (!pendingOrderId) return;
 
-      const pendingOrderId = loadPendingOrder();
-      if (pendingOrderId) {
-        goToSuccessPage(pendingOrderId);
-        return;
-      }
-
-      window.history.replaceState(null, '', '/order');
-      setError('Payment finished, but the order id was not available in this browser. Check your email or use My Invitation.');
-    };
-
-    recoverPaddleHashRedirect();
-    window.addEventListener('hashchange', recoverPaddleHashRedirect);
-    return () => window.removeEventListener('hashchange', recoverPaddleHashRedirect);
+    fetch(`${API}/orders/status/${pendingOrderId}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.paymentStatus === 'paid') goToSuccessPage(pendingOrderId);
+      })
+      .catch(() => {});
   }, [goToSuccessPage]);
 
   useEffect(() => {
@@ -502,54 +499,71 @@ export default function OrderFlow() {
     setStep(3);
   };
 
-  // Open Paddle inline checkout once the target div is mounted
+  // Render PayPal Buttons once the target div is mounted.
   useEffect(() => {
-    if (!paddleOrderData) return;
-    if (!paddleFrameRef.current) return;
+    if (!paypalOrderData) return;
+    if (!paypalFrameRef.current) return;
     let cancelled = false;
+    let buttonsInstance = null;
 
     (async () => {
       try {
-        const Paddle = await getPaddle({
-          ...paddleOrderData.paddle,
-          onCheckoutCompleted: () => goToSuccessPage(paddleOrderData.orderId),
+        const paypal = await getPaypal({
+          clientId: paypalOrderData.paypal.clientId,
+          currency: paypalOrderData.paypal.currency || 'USD',
         });
         if (cancelled) return;
 
-        Paddle.Checkout.open({
-          settings: {
-            displayMode: 'inline',
-            frameTarget: 'paddle-checkout-frame',
-            frameInitialHeight: 500,
-            frameStyle: 'width: 100%; min-width: 312px; background-color: transparent; border: none;',
-            theme: 'light',
-            locale: 'en',
-            successUrl: `${window.location.origin}/order/success/${paddleOrderData.orderId}`,
+        // Clear any previous render before mounting a fresh button.
+        if (paypalFrameRef.current) paypalFrameRef.current.innerHTML = '';
+
+        buttonsInstance = paypal.Buttons({
+          style: { layout: 'vertical', shape: 'rect', label: 'paypal' },
+          // We pre-created the PayPal order on the server; just hand the id back.
+          createOrder: () => paypalOrderData.paypal.paypalOrderId,
+          onApprove: async () => {
+            try {
+              const res = await fetch(`${API}/orders/capture/${paypalOrderData.orderId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+              });
+              const data = await res.json().catch(() => ({}));
+              if (!res.ok) throw new Error(data.error || 'Payment capture failed');
+              goToSuccessPage(paypalOrderData.orderId);
+            } catch (captureErr) {
+              if (!cancelled) setError(captureErr.message || 'Could not finalise payment');
+            }
           },
-          items: [{ priceId: paddleOrderData.paddle.priceId, quantity: 1 }],
-          customer: {
-            email: form.customerEmail,
+          onCancel: () => {
+            if (!cancelled) setError('Payment was cancelled. You can try again any time.');
           },
-          customData: {
-            orderId: paddleOrderData.orderId,
-            templateId: selectedTemplate?._id,
-            platform: 'veloura',
+          onError: (err) => {
+            if (!cancelled) setError(err?.message || 'PayPal reported an error. Please try again.');
           },
         });
 
-        // Hide the loading state once Paddle has had a chance to inject the iframe
-        setTimeout(() => { if (!cancelled) setPaddleLoading(false); }, 1200);
+        if (!buttonsInstance.isEligible()) {
+          if (!cancelled) setError('PayPal is not available in this browser. Please try a different browser or contact support.');
+          setPaypalLoading(false);
+          return;
+        }
+
+        await buttonsInstance.render(paypalFrameRef.current);
+        if (!cancelled) setPaypalLoading(false);
       } catch (err) {
         if (!cancelled) {
           setError(err.message || 'Could not load payment form');
-          setPaddleLoading(false);
+          setPaypalLoading(false);
         }
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      try { buttonsInstance?.close?.(); } catch { /* SDK may have unmounted already */ }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paddleOrderData, goToSuccessPage]);
+  }, [paypalOrderData, goToSuccessPage]);
 
   // Parse JSON safely — server may return empty body on 502/504/cold-start
   const parseJsonOrThrow = async (res, label) => {
@@ -603,12 +617,12 @@ export default function OrderFlow() {
       const data = await parseJsonOrThrow(res, 'Order creation');
       if (!res.ok) throw new Error(data.error || 'Order failed');
 
-      if (data.paymentProvider === 'paddle' && data.paddle) {
-        // Trigger inline payment render. The actual Paddle.Checkout.open call
+      if (data.paymentProvider === 'paypal' && data.paypal) {
+        // Trigger inline payment render. The actual paypal.Buttons render
         // happens in a useEffect once the target frame is mounted.
         savePendingOrder(data.orderId);
-        setPaddleOrderData({ orderId: data.orderId, paddle: data.paddle });
-        setPaddleLoading(true);
+        setPaypalOrderData({ orderId: data.orderId, paypal: data.paypal });
+        setPaypalLoading(true);
         setConfirming(false);
         return;
       }
@@ -1059,17 +1073,17 @@ export default function OrderFlow() {
         {/* Step 3: Review & Confirm Payment */}
         {step === 3 && (
           <div className="step-content">
-            {!paddleOrderData && (
+            {!paypalOrderData && (
               <button className="step-back-btn" onClick={() => setStep(2)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                 Back to Details
               </button>
             )}
 
-            <h1 className="step-title">{paddleOrderData ? 'Complete Your Order' : 'Review & Confirm'}</h1>
-            <p className="step-subtitle">{paddleOrderData ? 'You\'re one step away from your invitation.' : 'Please review your order details before confirming payment'}</p>
+            <h1 className="step-title">{paypalOrderData ? 'Complete Your Order' : 'Review & Confirm'}</h1>
+            <p className="step-subtitle">{paypalOrderData ? 'You\'re one step away from your invitation.' : 'Please review your order details before confirming payment'}</p>
 
-            {!paddleOrderData && (
+            {!paypalOrderData && (
             <div className="review-card">
               <div className="review-section">
                 <h3 className="review-section-title">Selected Design</h3>
@@ -1129,7 +1143,7 @@ export default function OrderFlow() {
             </div>
             )}
 
-            {!paddleOrderData && (
+            {!paypalOrderData && (
               <div className="form-submit review-submit">
                 <div className="review-submit-info">
                   <div className="price-summary">
@@ -1145,7 +1159,7 @@ export default function OrderFlow() {
               </div>
             )}
 
-            {paddleOrderData && (
+            {paypalOrderData && (
               <div className="payment-layout">
                 <aside className="payment-summary-card">
                   <div className="payment-summary-header">
@@ -1191,7 +1205,7 @@ export default function OrderFlow() {
                       <dd>{DISPLAY_PRICE}</dd>
                     </div>
                   </div>
-                  <button type="button" className="payment-summary-edit" onClick={() => { setPaddleOrderData(null); setPaddleLoading(false); }}>
+                  <button type="button" className="payment-summary-edit" onClick={() => { setPaypalOrderData(null); setPaypalLoading(false); }}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
                     Edit order
                   </button>
@@ -1213,14 +1227,14 @@ export default function OrderFlow() {
                     </div>
                   </div>
 
-                  <div className="paddle-checkout-wrap">
-                    {paddleLoading && (
-                      <div className="paddle-checkout-loading">
+                  <div className="paypal-checkout-wrap">
+                    {paypalLoading && (
+                      <div className="paypal-checkout-loading">
                         <div className="redirect-spinner" />
                         <p>Preparing secure checkout…</p>
                       </div>
                     )}
-                    <div ref={paddleFrameRef} className="paddle-checkout-frame" />
+                    <div ref={paypalFrameRef} className="paypal-checkout-frame" />
                   </div>
 
                   <div className="payment-trust-row">

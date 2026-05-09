@@ -979,7 +979,7 @@
   color: var(--gold);
 }
 
-/* Inline Paddle payment */
+/* Inline PayPal payment */
 .payment-section {
   padding: 28px;
   background: var(--white);
@@ -1050,7 +1050,7 @@
   color: var(--gold);
 }
 
-.paddle-checkout-wrap {
+.paypal-checkout-wrap {
   position: relative;
   min-height: 450px;
   background: var(--bg-alt);
@@ -1059,11 +1059,11 @@
   overflow: hidden;
   padding: 4px;
 }
-.paddle-checkout-frame {
+.paypal-checkout-frame {
   min-height: 450px;
   width: 100%;
 }
-.paddle-checkout-loading {
+.paypal-checkout-loading {
   position: absolute;
   inset: 0;
   display: flex;
@@ -1074,7 +1074,7 @@
   background: var(--bg-alt);
   z-index: 1;
 }
-.paddle-checkout-loading p {
+.paypal-checkout-loading p {
   margin: 0;
   font-size: 0.875rem;
   color: var(--text-secondary);

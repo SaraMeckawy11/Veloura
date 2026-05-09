@@ -6,17 +6,23 @@ import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail, editLimitWarningEmail, sensitiveFieldChangeEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 import { getFallbackTemplate } from '../data/templateFallbacks.js';
-import { findPaddleTransactionForOrder, paddleApiConfigured } from '../config/paddle.js';
+import {
+  paypalApiConfigured,
+  createPaypalOrder,
+  capturePaypalOrder,
+  getPaypalOrder,
+  extractCaptureDetails,
+} from '../config/paypal.js';
 import { getClientUrl } from '../config/urls.js';
 
 const router = Router();
 
 const PRICE_USD = process.env.PRICE_USD || '89.00';
+const CURRENCY = process.env.PRICE_CURRENCY || 'USD';
 const CLIENT_URL = getClientUrl();
-const isConfigured = value => value && !value.startsWith('replace_me') && !value.startsWith('your_');
-const paddleConfigured = isConfigured(process.env.PADDLE_CLIENT_TOKEN) && isConfigured(process.env.PADDLE_PRICE_ID);
+const paypalConfigured = paypalApiConfigured();
 
-// POST /api/orders - create order + Paddle checkout (or local dev activation fallback)
+// POST /api/orders - create order + PayPal order (or local dev activation fallback)
 router.post('/', validateOrderBody, async (req, res) => {
   try {
     const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones } = req.body;
@@ -72,24 +78,36 @@ router.post('/', validateOrderBody, async (req, res) => {
       await user.save();
     }
 
-    if (paddleConfigured) {
-      order.paymentProvider = 'paddle';
-      order.amountPaid = PRICE_USD;
-      order.currency = 'USD';
-      await order.save();
-      return res.status(201).json({
-        orderId: order._id,
-        paymentProvider: 'paddle',
-        paddle: {
-          clientToken: process.env.PADDLE_CLIENT_TOKEN,
-          environment: process.env.PADDLE_ENVIRONMENT === 'sandbox' ? 'sandbox' : 'production',
-          priceId: process.env.PADDLE_PRICE_ID,
-          successUrl: `${CLIENT_URL}/order/success/${order._id}`,
-        },
-      });
+    if (paypalConfigured) {
+      try {
+        const paypalOrder = await createPaypalOrder({
+          orderId: order._id.toString(),
+          amount: PRICE_USD,
+          currency: CURRENCY,
+        });
+        order.paymentProvider = 'paypal';
+        order.paypalOrderId = paypalOrder.id;
+        order.amountPaid = PRICE_USD;
+        order.currency = CURRENCY;
+        await order.save();
+        return res.status(201).json({
+          orderId: order._id,
+          paymentProvider: 'paypal',
+          paypal: {
+            clientId: process.env.PAYPAL_CLIENT_ID,
+            environment: process.env.PAYPAL_ENVIRONMENT === 'live' ? 'live' : 'sandbox',
+            paypalOrderId: paypalOrder.id,
+            currency: CURRENCY,
+            successUrl: `${CLIENT_URL}/order/success/${order._id}`,
+          },
+        });
+      } catch (paypalErr) {
+        console.error('PayPal order creation failed:', paypalErr);
+        return res.status(502).json({ error: paypalErr.message || 'Could not create PayPal order' });
+      }
     }
 
-    // Dev mode: no Paddle configured, let frontend confirm locally.
+    // Dev mode: no PayPal configured, let frontend confirm locally.
     res.status(201).json({
       orderId: order._id,
       paymentProvider: 'manual',
@@ -103,8 +121,8 @@ router.post('/', validateOrderBody, async (req, res) => {
 // POST /api/orders/confirm/:orderId - confirm payment in local development only
 router.post('/confirm/:orderId', async (req, res) => {
   try {
-    if (paddleConfigured && process.env.NODE_ENV === 'production') {
-      return res.status(400).json({ error: 'Payment must be confirmed by Paddle.' });
+    if (paypalConfigured && process.env.NODE_ENV === 'production') {
+      return res.status(400).json({ error: 'Payment must be confirmed by PayPal.' });
     }
 
     const order = await Order.findById(req.params.orderId);
@@ -148,8 +166,88 @@ router.post('/confirm/:orderId', async (req, res) => {
   }
 });
 
+// Shared helper: mark an order paid using a captured PayPal order, then send the confirmation email.
+async function activateFromCapture(order, paypalOrder) {
+  const details = extractCaptureDetails(paypalOrder);
+  if (!details || details.status !== 'COMPLETED') return false;
+
+  order.paypalOrderId = paypalOrder.id || order.paypalOrderId;
+  order.paypalCaptureId = details.captureId || order.paypalCaptureId;
+  order.amountPaid = details.amount || order.amountPaid || PRICE_USD;
+  order.currency = details.currency || order.currency || CURRENCY;
+  if (order.paymentStatus !== 'paid') {
+    await order.activate();
+  }
+
+  if (!order.confirmationSent) {
+    try {
+      const email = orderConfirmationEmail({
+        customerName: order.customerName,
+        publicSlug: order.publicSlug,
+        editToken: order.editToken,
+        weddingDetails: order.weddingDetails,
+        isPending: false,
+        invitationCode: order.invitationCode,
+      });
+      await sendMail({ to: order.customerEmail, ...email });
+      order.confirmationSent = true;
+      await order.save();
+    } catch (emailErr) {
+      console.error('Confirmation email failed:', emailErr.message);
+    }
+  }
+  return true;
+}
+
+// POST /api/orders/capture/:orderId — called by the PayPal Buttons onApprove handler.
+// Performs the server-side capture (do not trust client-side completion alone) and
+// activates the order. Webhook PAYMENT.CAPTURE.COMPLETED still runs as a redundant safety net.
+router.post('/capture/:orderId', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.orderId);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    if (!order.paypalOrderId) return res.status(400).json({ error: 'No PayPal order linked to this order' });
+
+    if (order.paymentStatus === 'paid') {
+      return res.json({
+        message: 'Already paid',
+        orderId: order._id,
+        publicSlug: order.publicSlug,
+        editToken: order.editToken,
+      });
+    }
+
+    let captured;
+    try {
+      captured = await capturePaypalOrder(order.paypalOrderId);
+    } catch (captureErr) {
+      // If the order was already captured (e.g. webhook beat us), fetch its current state.
+      if (captureErr.status === 422 || captureErr.data?.details?.[0]?.issue === 'ORDER_ALREADY_CAPTURED') {
+        captured = await getPaypalOrder(order.paypalOrderId);
+      } else {
+        throw captureErr;
+      }
+    }
+
+    const ok = await activateFromCapture(order, captured);
+    if (!ok) {
+      return res.status(402).json({ error: 'PayPal payment was not completed.' });
+    }
+
+    res.json({
+      message: 'Payment captured',
+      orderId: order._id,
+      publicSlug: order.publicSlug,
+      editToken: order.editToken,
+    });
+  } catch (err) {
+    console.error('PayPal capture error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET /api/orders/status/:orderId — check payment status after redirect.
-// Falls back to verifying directly with Paddle's API if the webhook hasn't
+// Falls back to verifying directly with PayPal's API if the webhook hasn't
 // arrived yet, so the success screen activates the order without depending
 // on the webhook delivery delay.
 router.get('/status/:orderId', async (req, res) => {
@@ -157,40 +255,18 @@ router.get('/status/:orderId', async (req, res) => {
     const order = await Order.findById(req.params.orderId).populate('template', 'name slug previewImage');
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
-    // If the order is still pending and we can call Paddle's API, see if a paid
-    // transaction exists for this order on Paddle's side. If so, activate it
-    // and send the confirmation email — webhook may follow later (idempotent).
-    if (order.paymentStatus !== 'paid' && order.paymentProvider === 'paddle' && paddleApiConfigured()) {
+    // If still pending and we have a PayPal order id, ask PayPal directly. If the
+    // order is already captured, activate locally — webhook may follow later (idempotent).
+    if (order.paymentStatus !== 'paid' && order.paymentProvider === 'paypal' && order.paypalOrderId && paypalApiConfigured()) {
       try {
-        const tx = await findPaddleTransactionForOrder(req.params.orderId);
-        if (tx && (tx.status === 'completed' || tx.status === 'paid')) {
-          order.paddleTransactionId = tx.id || order.paddleTransactionId;
-          order.amountPaid = tx?.details?.totals?.total || PRICE_USD;
-          order.currency = tx.currency_code || order.currency || 'USD';
-          await order.activate();
-
-          if (!order.confirmationSent) {
-            try {
-              const email = orderConfirmationEmail({
-                customerName: order.customerName,
-                publicSlug: order.publicSlug,
-                editToken: order.editToken,
-                weddingDetails: order.weddingDetails,
-                isPending: false,
-                invitationCode: order.invitationCode,
-              });
-              await sendMail({ to: order.customerEmail, ...email });
-              order.confirmationSent = true;
-              await order.save();
-            } catch (emailErr) {
-              console.error('Confirmation email failed (status fallback):', emailErr.message);
-            }
-          }
+        const paypalOrder = await getPaypalOrder(order.paypalOrderId);
+        if (paypalOrder?.status === 'COMPLETED') {
+          await activateFromCapture(order, paypalOrder);
         }
-      } catch (paddleErr) {
-        // Don't fail the status endpoint just because Paddle lookup failed —
+      } catch (paypalErr) {
+        // Don't fail the status endpoint just because PayPal lookup failed —
         // webhook is still primary. Just log and return current state.
-        console.warn('Paddle status fallback lookup failed:', paddleErr.message);
+        console.warn('PayPal status fallback lookup failed:', paypalErr.message);
       }
     }
 
@@ -386,7 +462,7 @@ router.get('/invite/:publicSlug', async (req, res) => {
   try {
     const order = await Order.findOne({ publicSlug: req.params.publicSlug, status: 'active' })
       .populate('template')
-      .select('-editToken -paddleTransactionId -customerEmail -editHistory');
+      .select('-editToken -paypalOrderId -paypalCaptureId -customerEmail -editHistory');
 
     if (!order) return res.status(404).json({ error: 'Invitation not found' });
     res.json(order);

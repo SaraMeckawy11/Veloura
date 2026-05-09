@@ -23,7 +23,7 @@ console.log(
 
 // Global middleware
 app.use(cors());
-app.use('/api/webhooks/paddle', express.raw({ type: 'application/json' }));
+app.use('/api/webhooks/paypal', express.raw({ type: 'application/json' }));
 app.use(express.json({ limit: '10mb' }));
 
 // API routes

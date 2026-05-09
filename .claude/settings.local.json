@@ -44,9 +44,21 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "Bash(node --check routes/orders.js)",
-      "Bash(node --check config/paddle.js)",
+      "Bash(node --check config/paypal.js)",
       "Bash(node --check config/email.js)",
-      "Bash(node --check routes/webhooks.js)"
+      "Bash(node --check routes/webhooks.js)",
+      "Bash(node --check server/config/paypal.js)",
+      "Bash(node --check server/routes/orders.js)",
+      "Bash(node --check server/routes/webhooks.js)",
+      "Bash(node --check server/server.js)",
+      "Bash(node --check server/models/Order.js)",
+      "Bash(npx -y vite --port 5174 --host 127.0.0.1)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /tmp/order.html -w \"HTTP=%{http_code}\\\\n\" http://127.0.0.1:5174/order)",
+      "Bash(curl -s -o /tmp/orderflow.js -w \"HTTP=%{http_code} BYTES=%{size_download}\\\\n\" \"http://127.0.0.1:5174/src/pages/OrderFlow.jsx\")",
+      "Bash(curl -s -o /tmp/paypal.js -w \"HTTP=%{http_code} BYTES=%{size_download}\\\\n\" \"http://127.0.0.1:5174/src/lib/paypal.js\")",
+      "Bash(kill 27546)",
+      "Bash(grep -E \"^\\\\.env|env$|\\\\.env\\\\.\" .gitignore server/.gitignore)"
     ]
   }
 }
