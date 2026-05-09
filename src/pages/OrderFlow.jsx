@@ -104,6 +104,7 @@ export default function OrderFlow() {
   const [paypalLoading, setPaypalLoading] = useState(false);
   const [paying, setPaying] = useState(false);
   const [cardEligible, setCardEligible] = useState(true);
+  const [needsRetry, setNeedsRetry] = useState(false);
   const [error, setError] = useState('');
   const paypalButtonRef = useRef(null);
   const cardFieldsRef = useRef(null);
@@ -509,7 +510,14 @@ export default function OrderFlow() {
         headers: { 'Content-Type': 'application/json' },
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'Payment capture failed');
+      if (!res.ok) {
+        // PayPal orders are single-use. If capture failed because the order
+        // expired or was never approved, the user must create a fresh one.
+        if (data.paypalOrderExpired || res.status === 402) {
+          setNeedsRetry(true);
+        }
+        throw new Error(data.error || 'Payment capture failed');
+      }
       goToSuccessPage(paypalOrderData.orderId);
     } catch (captureErr) {
       setError(captureErr.message || 'Could not finalise payment');
@@ -1305,7 +1313,29 @@ export default function OrderFlow() {
                       </div>
                     )}
 
-                    {cardEligible && (
+                    {needsRetry && !paypalLoading && (
+                      <div className="card-pay-retry">
+                        <p className="card-pay-retry-text">
+                          That payment session ended without completing. Start a fresh secure checkout to try again.
+                        </p>
+                        <button
+                          type="button"
+                          className="btn btn-gold card-pay-retry-btn"
+                          onClick={() => {
+                            setNeedsRetry(false);
+                            setError('');
+                            setPaypalOrderData(null);
+                            setPaypalLoading(false);
+                            setPaying(false);
+                            handleConfirmPayment();
+                          }}
+                        >
+                          Start a new payment
+                        </button>
+                      </div>
+                    )}
+
+                    {cardEligible && !needsRetry && (
                       <form onSubmit={handleCardSubmit} className="card-pay-form" autoComplete="on">
                         <div className="card-field">
                           <label htmlFor="veloura-card-name">Cardholder name</label>
@@ -1335,7 +1365,7 @@ export default function OrderFlow() {
                       </form>
                     )}
 
-                    {!cardEligible && !paypalLoading && (
+                    {!cardEligible && !paypalLoading && !needsRetry && (
                       <div className="card-pay-fallback">
                         <h4 className="card-pay-fallback-title">Pay with PayPal</h4>
                         <p className="card-pay-fallback-text">
@@ -1348,7 +1378,7 @@ export default function OrderFlow() {
                       </div>
                     )}
 
-                    {cardEligible && (
+                    {cardEligible && !needsRetry && (
                       <div ref={paypalButtonRef} className="paypal-fallback-button paypal-fallback-button--secondary" />
                     )}
                   </div>

@@ -189,20 +189,32 @@ router.post('/capture/:orderId', async (req, res) => {
       captured = await capturePaypalOrder(order.paypalOrderId);
       console.log(`[paypal] capture API ok orderId=${order._id} paypalOrderId=${order.paypalOrderId} status=${captured?.status}`);
     } catch (captureErr) {
-      // If the order was already captured (e.g. webhook beat us), fetch its current state.
-      if (captureErr.status === 422 || captureErr.data?.details?.[0]?.issue === 'ORDER_ALREADY_CAPTURED') {
-        console.log(`[paypal] capture: already captured, fetching state orderId=${order._id}`);
+      const issue = captureErr.data?.details?.[0]?.issue;
+      const description = captureErr.data?.details?.[0]?.description;
+      console.error(`[paypal] capture API failed orderId=${order._id} status=${captureErr.status} issue=${issue} description=${description} body=${JSON.stringify(captureErr.data)}`);
+
+      // Webhook may have beaten us — only on this specific issue do we treat as success.
+      if (issue === 'ORDER_ALREADY_CAPTURED') {
         captured = await getPaypalOrder(order.paypalOrderId);
       } else {
-        console.error(`[paypal] capture API failed orderId=${order._id}:`, captureErr.message, captureErr.data);
-        throw captureErr;
+        // Translate PayPal's machine codes into user-actionable messages.
+        const userMessage = (
+          issue === 'ORDER_NOT_APPROVED'
+            ? 'PayPal could not complete the payment because the buyer did not approve it. Please try again — make sure to click "Pay Now" inside the PayPal popup before it closes.'
+          : issue === 'INSTRUMENT_DECLINED' || issue === 'PAYER_ACTION_REQUIRED'
+            ? 'Your card was declined or needs additional verification. Please try a different payment method.'
+          : issue === 'ORDER_EXPIRED' || issue === 'ORDER_NOT_CAPTURABLE'
+            ? 'This payment session expired. Please go back and start again.'
+          : description || 'PayPal could not capture the payment. Please try again.'
+        );
+        return res.status(402).json({ error: userMessage, paypalIssue: issue, paypalOrderExpired: issue === 'ORDER_EXPIRED' || issue === 'ORDER_NOT_CAPTURABLE' });
       }
     }
 
     const ok = await activateFromCapture(order, captured);
     if (!ok) {
       console.warn(`[paypal] capture: PayPal returned non-COMPLETED status for orderId=${order._id} status=${captured?.status}`);
-      return res.status(402).json({ error: 'PayPal payment was not completed.' });
+      return res.status(402).json({ error: 'PayPal payment was not completed. Please try the payment again.', paypalOrderExpired: true });
     }
 
     res.json({

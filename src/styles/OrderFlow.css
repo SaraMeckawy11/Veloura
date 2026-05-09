@@ -1175,6 +1175,27 @@
   border-top: 1px solid var(--border-light);
 }
 
+.card-pay-retry {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  align-items: flex-start;
+}
+.card-pay-retry-text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.card-pay-retry-btn {
+  align-self: stretch;
+  height: 48px;
+}
+
 .payment-trust-row {
   display: flex;
   justify-content: center;
