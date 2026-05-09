@@ -103,8 +103,10 @@ export default function OrderFlow() {
   const [paypalOrderData, setPaypalOrderData] = useState(null);
   const [paypalLoading, setPaypalLoading] = useState(false);
   const [paying, setPaying] = useState(false);
-  const [cardEligible, setCardEligible] = useState(true);
+  // null = unknown (still detecting), true = render Card Fields, false = render Buttons fallback
+  const [cardEligible, setCardEligible] = useState(null);
   const [needsRetry, setNeedsRetry] = useState(false);
+  const [paypalSdk, setPaypalSdk] = useState(null);
   const [error, setError] = useState('');
   const paypalButtonRef = useRef(null);
   const cardFieldsRef = useRef(null);
@@ -525,14 +527,11 @@ export default function OrderFlow() {
     }
   }, [paypalOrderData, goToSuccessPage]);
 
-  // Render the custom card form (PayPal Card Fields). PayPal hosts each field
-  // inside a tiny iframe so PAN/CVV never touch our server (PCI-friendly), but
-  // the surrounding form is fully ours.
+  // Effect 1: Load the PayPal SDK and detect Card Fields eligibility ONLY.
+  // No DOM rendering happens here, so we don't depend on refs being mounted.
   useEffect(() => {
     if (!paypalOrderData) return;
     let cancelled = false;
-    let cardFieldsInstance = null;
-    let buttonsInstance = null;
 
     (async () => {
       try {
@@ -542,20 +541,48 @@ export default function OrderFlow() {
         });
         if (cancelled) return;
 
-        const handlers = {
+        // Probe Card Fields eligibility without rendering anything yet.
+        const probe = paypal.CardFields({
+          createOrder: () => paypalOrderData.paypal.paypalOrderId,
+          onApprove: () => {},
+        });
+        const eligible = probe.isEligible();
+        console.log(`[paypal] CardFields eligible=${eligible}`);
+
+        if (cancelled) return;
+        setCardEligible(eligible);
+        setPaypalSdk(paypal);
+      } catch (err) {
+        if (!cancelled) {
+          console.error('[paypal] init', err);
+          setError(err.message || 'Could not load payment form');
+          setPaypalLoading(false);
+        }
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [paypalOrderData]);
+
+  // Effect 2: Render Card Fields when eligible. Re-runs after React commits
+  // the JSX so the #veloura-card-* divs are guaranteed to be in the DOM.
+  useEffect(() => {
+    if (!paypalSdk || !paypalOrderData || cardEligible !== true || needsRetry) return;
+    let cancelled = false;
+    let cardFieldsInstance = null;
+
+    (async () => {
+      try {
+        cardFieldsInstance = paypalSdk.CardFields({
           createOrder: () => paypalOrderData.paypal.paypalOrderId,
           onApprove: () => captureAndFinish(),
           onError: (err) => {
             if (!cancelled) {
-              console.error('[paypal] error', err);
+              console.error('[paypal] cardfields error', err);
               setError(err?.message || 'PayPal reported an error. Please try again.');
               setPaying(false);
             }
           },
-        };
-
-        cardFieldsInstance = paypal.CardFields({
-          ...handlers,
           style: {
             input: {
               'font-size': '15px',
@@ -568,26 +595,7 @@ export default function OrderFlow() {
           },
         });
 
-        if (!cardFieldsInstance.isEligible()) {
-          // Merchant account isn't approved for Advanced Card Payments.
-          // Fall back to the PayPal-branded button so the buyer can still pay.
-          if (!cancelled) setCardEligible(false);
-
-          if (paypalButtonRef.current) {
-            paypalButtonRef.current.innerHTML = '';
-            buttonsInstance = paypal.Buttons({
-              ...handlers,
-              style: { layout: 'vertical', shape: 'rect', label: 'paypal' },
-            });
-            if (buttonsInstance.isEligible()) {
-              await buttonsInstance.render(paypalButtonRef.current);
-            }
-          }
-          if (!cancelled) setPaypalLoading(false);
-          return;
-        }
-
-        if (!cancelled) setCardEligible(true);
+        if (!cardFieldsInstance.isEligible()) return;
         cardFieldsRef.current = cardFieldsInstance;
 
         await Promise.all([
@@ -597,23 +605,10 @@ export default function OrderFlow() {
           cardFieldsInstance.CVVField({ placeholder: 'CVC' }).render('#veloura-card-cvv'),
         ]);
 
-        // Also render the PayPal-balance button alongside, so buyers who prefer
-        // logging into PayPal can still do that without leaving the page.
-        if (paypalButtonRef.current) {
-          paypalButtonRef.current.innerHTML = '';
-          buttonsInstance = paypal.Buttons({
-            ...handlers,
-            style: { layout: 'horizontal', shape: 'rect', label: 'paypal', height: 45 },
-          });
-          if (buttonsInstance.isEligible()) {
-            await buttonsInstance.render(paypalButtonRef.current);
-          }
-        }
-
         if (!cancelled) setPaypalLoading(false);
       } catch (err) {
         if (!cancelled) {
-          console.error('[paypal] init', err);
+          console.error('[paypal] cardfields render', err);
           setError(err.message || 'Could not load payment form');
           setPaypalLoading(false);
         }
@@ -623,10 +618,64 @@ export default function OrderFlow() {
     return () => {
       cancelled = true;
       cardFieldsRef.current = null;
+    };
+  }, [paypalSdk, paypalOrderData, cardEligible, needsRetry, captureAndFinish]);
+
+  // Effect 3: Render the PayPal Buttons (yellow "Pay with PayPal") into
+  // whichever container the JSX has currently mounted. cardEligible is in
+  // the dep list so this re-runs after the DOM swaps between fallback (when
+  // ineligible) and secondary slot (when eligible).
+  useEffect(() => {
+    if (!paypalSdk || !paypalOrderData || cardEligible === null || needsRetry) return;
+    const target = paypalButtonRef.current;
+    if (!target) return;
+    let cancelled = false;
+    let buttonsInstance = null;
+
+    (async () => {
+      try {
+        buttonsInstance = paypalSdk.Buttons({
+          createOrder: () => paypalOrderData.paypal.paypalOrderId,
+          onApprove: () => captureAndFinish(),
+          onError: (err) => {
+            if (!cancelled) {
+              console.error('[paypal] buttons error', err);
+              setError(err?.message || 'PayPal reported an error. Please try again.');
+              setPaying(false);
+            }
+          },
+          style: cardEligible
+            ? { layout: 'horizontal', shape: 'rect', label: 'paypal', height: 45 }
+            : { layout: 'vertical', shape: 'rect', label: 'paypal' },
+        });
+
+        if (!buttonsInstance.isEligible()) {
+          console.warn('[paypal] Buttons reported ineligible');
+          if (!cancelled) {
+            if (!cardEligible) {
+              setError('PayPal payments are not available in this browser. Please try a different browser, or contact support.');
+            }
+            setPaypalLoading(false);
+          }
+          return;
+        }
+
+        target.innerHTML = '';
+        await buttonsInstance.render(target);
+        if (!cancelled) setPaypalLoading(false);
+      } catch (err) {
+        if (!cancelled) {
+          console.error('[paypal] buttons render', err);
+          setPaypalLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
       try { buttonsInstance?.close?.(); } catch { /* unmounted */ }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paypalOrderData, captureAndFinish]);
+  }, [paypalSdk, paypalOrderData, cardEligible, needsRetry, captureAndFinish]);
 
   const handleCardSubmit = async (e) => {
     e.preventDefault();
@@ -1335,7 +1384,7 @@ export default function OrderFlow() {
                       </div>
                     )}
 
-                    {cardEligible && !needsRetry && (
+                    {cardEligible === true && !needsRetry && (
                       <form onSubmit={handleCardSubmit} className="card-pay-form" autoComplete="on">
                         <div className="card-field">
                           <label htmlFor="veloura-card-name">Cardholder name</label>
@@ -1365,7 +1414,7 @@ export default function OrderFlow() {
                       </form>
                     )}
 
-                    {!cardEligible && !paypalLoading && !needsRetry && (
+                    {cardEligible === false && !needsRetry && (
                       <div className="card-pay-fallback">
                         <h4 className="card-pay-fallback-title">Pay with PayPal</h4>
                         <p className="card-pay-fallback-text">
@@ -1378,7 +1427,7 @@ export default function OrderFlow() {
                       </div>
                     )}
 
-                    {cardEligible && !needsRetry && (
+                    {cardEligible === true && !needsRetry && (
                       <div ref={paypalButtonRef} className="paypal-fallback-button paypal-fallback-button--secondary" />
                     )}
                   </div>
