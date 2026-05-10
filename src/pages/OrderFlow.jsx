@@ -9,6 +9,9 @@ const DISPLAY_PRICE = '$89';
 const DEFAULT_INVITATION_MESSAGE = 'Two Souls, One Destination.';
 const OLD_MESSAGE_HELP_TEXT = 'This text appears as the tagline under your names in the invitation ';
 
+const normalizeEmail = (value = '') => value.trim().toLowerCase();
+const isValidEmail = (value = '') => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
 // Today as YYYY-MM-DD in local time — used as the min for the wedding date picker
 const todayISO = (() => {
   const d = new Date();
@@ -111,6 +114,7 @@ export default function OrderFlow() {
   const defaultForm = {
     customerName: '',
     customerEmail: '',
+    customerEmailConfirm: '',
     customerPhone: '',
     groomName: '',
     brideName: '',
@@ -412,6 +416,17 @@ export default function OrderFlow() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+    const customerEmail = normalizeEmail(form.customerEmail);
+    const confirmedEmail = normalizeEmail(form.customerEmailConfirm);
+    if (!isValidEmail(customerEmail)) {
+      setError('Please enter a valid email address for your invitation code.');
+      return;
+    }
+    if (customerEmail !== confirmedEmail) {
+      setError('Please make sure both email fields match. This is where your invitation code will be sent.');
+      return;
+    }
+    setForm(prev => ({ ...prev, customerEmail, customerEmailConfirm: confirmedEmail }));
     if (form.weddingDate && form.weddingDate < todayISO) {
       setError('Please choose a wedding date that is today or in the future.');
       return;
@@ -536,6 +551,14 @@ export default function OrderFlow() {
   const handleConfirmPayment = async () => {
     setConfirming(true);
     setError('');
+    const customerEmail = normalizeEmail(form.customerEmail);
+    const confirmedEmail = normalizeEmail(form.customerEmailConfirm);
+
+    if (!isValidEmail(customerEmail) || customerEmail !== confirmedEmail) {
+      setError('Please go back and confirm the email address before payment.');
+      setConfirming(false);
+      return;
+    }
 
     try {
       // Create the order now
@@ -544,7 +567,7 @@ export default function OrderFlow() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customerName: form.customerName,
-          customerEmail: form.customerEmail,
+          customerEmail,
           customerPhone: form.customerPhone,
           templateId: selectedTemplate._id,
           weddingDetails: {
@@ -554,7 +577,7 @@ export default function OrderFlow() {
             weddingTime: form.weddingTime || undefined,
             venue: form.venue,
             venueAddress: form.venueAddress || undefined,
-            venueMapUrl: form.venueMapUrl || undefined,
+            venueMapUrl: disabledFields.includes('venueMapUrl') ? undefined : (form.venueMapUrl || undefined),
             message: form.message.trim() || undefined,
             language: form.language,
             secondLanguage: form.secondLanguage || undefined,
@@ -728,7 +751,12 @@ export default function OrderFlow() {
                   </div>
                   <div className="form-field">
                     <label>Email Address *</label>
-                    <input type="email" required value={form.customerEmail} onChange={e => handleInput('customerEmail', e.target.value)} placeholder="you@example.com" />
+                    <input type="email" required value={form.customerEmail} onChange={e => handleInput('customerEmail', e.target.value)} placeholder="you@example.com" autoComplete="email" />
+                    <p className="form-hint message-hint">Your invitation link and private code will be sent here.</p>
+                  </div>
+                  <div className="form-field">
+                    <label>Confirm Email Address *</label>
+                    <input type="email" required value={form.customerEmailConfirm} onChange={e => handleInput('customerEmailConfirm', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                   </div>
                   <div className="form-field">
                     <label>Phone Number</label>
@@ -771,15 +799,26 @@ export default function OrderFlow() {
                     <input type="text" required value={form.venue} onChange={e => handleInput('venue', e.target.value)} placeholder="e.g. The Grand Pavilion" />
                   </div>
                   <div className="form-field">
-                    <label>Google Maps Link *</label>
-                    <input
-                      type="url"
-                      required
-                      value={form.venueMapUrl}
-                      onChange={e => handleInput('venueMapUrl', e.target.value)}
-                      placeholder="https://maps.google.com/..."
-                    />
-                    <p className="form-hint message-hint">Paste a Google Maps share link so guests can navigate.</p>
+                    <div className="field-header">
+                      <label>Google Maps Link {!disabledFields.includes('venueMapUrl') && '*'}</label>
+                      <button type="button" className="field-toggle" onClick={() => toggleField('venueMapUrl')}>
+                        {disabledFields.includes('venueMapUrl') ? 'Enable' : 'Disable'}
+                      </button>
+                    </div>
+                    {!disabledFields.includes('venueMapUrl') ? (
+                      <>
+                        <input
+                          type="url"
+                          required
+                          value={form.venueMapUrl}
+                          onChange={e => handleInput('venueMapUrl', e.target.value)}
+                          placeholder="https://maps.google.com/..."
+                        />
+                        <p className="form-hint message-hint">Paste a Google Maps share link so guests can navigate.</p>
+                      </>
+                    ) : (
+                      <p className="form-hint message-hint form-hint-disabled">The map will be hidden from your invitation.</p>
+                    )}
                   </div>
                 </div>
               </fieldset>
@@ -1157,7 +1196,10 @@ export default function OrderFlow() {
                         <p className="card-pay-fallback-text">
                           Sign in with your PayPal sandbox personal account to approve this secure checkout.
                         </p>
-                        <div ref={paypalButtonRef} className="paypal-fallback-button" />
+                        <div
+                          ref={paypalButtonRef}
+                          className={`paypal-fallback-button ${paypalLoading ? 'paypal-fallback-button--loading' : ''}`}
+                        />
                       </div>
                     )}
                   </div>

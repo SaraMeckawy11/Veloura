@@ -84,6 +84,8 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const audioRef = useRef(null);
 
   const wd = order.weddingDetails || {};
+  const disabledFields = order.disabledFields || [];
+  const mapEnabled = !disabledFields.includes('venueMapUrl');
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
@@ -207,7 +209,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     }
   };
 
-  const embedSrc = buildMapEmbedUrl(wd.venueMapUrl, [venue, venueAddress].filter(Boolean).join(', '));
+  const embedSrc = mapEnabled ? buildMapEmbedUrl(wd.venueMapUrl, [venue, venueAddress].filter(Boolean).join(', ')) : null;
   const openMapHref = wd.venueMapUrl
     ? wd.venueMapUrl
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;

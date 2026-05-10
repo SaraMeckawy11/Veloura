@@ -347,6 +347,15 @@
   margin: 7px 0 0;
   font-size: 0.76rem;
 }
+.form-hint-disabled {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg-alt);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+}
 
 .field-header {
   display: flex;
@@ -1062,9 +1071,10 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  background: var(--bg-alt);
+  background: rgba(253, 252, 250, 0.96);
   border-radius: 12px;
-  z-index: 2;
+  z-index: 10;
+  pointer-events: none;
 }
 .card-pay-loading p {
   margin: 0;
@@ -1111,6 +1121,10 @@
 }
 .paypal-fallback-button:empty {
   display: none;
+}
+.paypal-fallback-button--loading {
+  opacity: 0;
+  pointer-events: none;
 }
 .paypal-fallback-button--secondary {
   margin-top: 18px;

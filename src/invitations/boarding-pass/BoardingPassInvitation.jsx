@@ -77,6 +77,8 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   };
 
   const wd = order.weddingDetails || {};
+  const disabledFields = order.disabledFields || [];
+  const mapEnabled = !disabledFields.includes('venueMapUrl');
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
@@ -368,6 +370,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             </div>
 
             {(() => {
+              if (!mapEnabled) return null;
               const embedSrc = buildMapEmbedUrl(wd.venueMapUrl, [venue, venueAddress].filter(Boolean).join(', '));
               if (!embedSrc) return null;
               const openHref = wd.venueMapUrl
