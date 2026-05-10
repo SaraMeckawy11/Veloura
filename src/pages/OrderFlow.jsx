@@ -114,7 +114,6 @@ export default function OrderFlow() {
   const defaultForm = {
     customerName: '',
     customerEmail: '',
-    customerEmailConfirm: '',
     customerPhone: '',
     groomName: '',
     brideName: '',
@@ -417,16 +416,11 @@ export default function OrderFlow() {
     e.preventDefault();
     setError('');
     const customerEmail = normalizeEmail(form.customerEmail);
-    const confirmedEmail = normalizeEmail(form.customerEmailConfirm);
     if (!isValidEmail(customerEmail)) {
       setError('Please enter a valid email address for your invitation code.');
       return;
     }
-    if (customerEmail !== confirmedEmail) {
-      setError('Please make sure both email fields match. This is where your invitation code will be sent.');
-      return;
-    }
-    setForm(prev => ({ ...prev, customerEmail, customerEmailConfirm: confirmedEmail }));
+    setForm(prev => ({ ...prev, customerEmail }));
     if (form.weddingDate && form.weddingDate < todayISO) {
       setError('Please choose a wedding date that is today or in the future.');
       return;
@@ -552,10 +546,9 @@ export default function OrderFlow() {
     setConfirming(true);
     setError('');
     const customerEmail = normalizeEmail(form.customerEmail);
-    const confirmedEmail = normalizeEmail(form.customerEmailConfirm);
 
-    if (!isValidEmail(customerEmail) || customerEmail !== confirmedEmail) {
-      setError('Please go back and confirm the email address before payment.');
+    if (!isValidEmail(customerEmail)) {
+      setError('Please go back and enter a valid email address before payment.');
       setConfirming(false);
       return;
     }
@@ -753,10 +746,6 @@ export default function OrderFlow() {
                     <label>Email Address *</label>
                     <input type="email" required value={form.customerEmail} onChange={e => handleInput('customerEmail', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                     <p className="form-hint message-hint">Your invitation link and private code will be sent here.</p>
-                  </div>
-                  <div className="form-field">
-                    <label>Confirm Email Address *</label>
-                    <input type="email" required value={form.customerEmailConfirm} onChange={e => handleInput('customerEmailConfirm', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                   </div>
                   <div className="form-field">
                     <label>Phone Number</label>
@@ -1194,7 +1183,7 @@ export default function OrderFlow() {
                       <div className="card-pay-fallback">
                         <h4 className="card-pay-fallback-title">Pay with PayPal</h4>
                         <p className="card-pay-fallback-text">
-                          Sign in with your PayPal sandbox personal account to approve this secure checkout.
+                          Choose PayPal or a card to complete your secure checkout.
                         </p>
                         <div
                           ref={paypalButtonRef}
