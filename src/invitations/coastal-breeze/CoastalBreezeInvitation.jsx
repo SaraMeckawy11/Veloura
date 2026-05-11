@@ -5,7 +5,6 @@ import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
-import pierArch from '../../assets/coastal/images.jpg';
 import cruiseShip from '../../assets/coastal/cruise-ship-clean.webp';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.webp';
 
