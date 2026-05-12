@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
-const SPLASH_PLAYBACK_RATE = 0.7;
-const SPLASH_END_PADDING_MS = 420;
-const FALLBACK_DISMISS_MS = 7600;
+const SPLASH_PLAYBACK_RATE = 0.45;
+const SPLASH_END_PADDING_MS = 700;
+const FALLBACK_DISMISS_MS = 11000;
 
 export default function GazeboSplash({ onDismiss }) {
   const ambientVideoRef = useRef(null);
@@ -86,7 +86,7 @@ export default function GazeboSplash({ onDismiss }) {
             handleOpen();
           }
         }}
-        exit={{ opacity: 0, transition: { duration: 0.45 } }}
+        exit={{ opacity: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } }}
       >
         <video
           ref={ambientVideoRef}
@@ -116,7 +116,7 @@ export default function GazeboSplash({ onDismiss }) {
           className="gazebo-splash-copy"
           initial={{ opacity: 0, y: 18 }}
           animate={opening ? { opacity: 0, y: -18 } : { opacity: 1, y: 0 }}
-          transition={{ duration: opening ? 0.35 : 0.9, delay: opening ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: opening ? 0.6 : 0.9, delay: opening ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
           <div>
             <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
