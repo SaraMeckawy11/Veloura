@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function GazeboSplash({ displayDate, onDismiss }) {
+export default function GazeboSplash({ coupleNames, displayDate, onDismiss }) {
   const ambientVideoRef = useRef(null);
   const foregroundVideoRef = useRef(null);
   const fallbackTimerRef = useRef(null);
@@ -95,6 +95,7 @@ export default function GazeboSplash({ displayDate, onDismiss }) {
           animate={opening ? { opacity: 0, y: -18 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
         >
+          {coupleNames && <b>{coupleNames}</b>}
           {displayDate && <span>{displayDate}</span>}
           <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
           <small>your invitation</small>

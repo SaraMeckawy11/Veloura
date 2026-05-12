@@ -131,6 +131,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const mapEnabled = !disabledFields.includes('venueMapUrl');
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
+  const coupleNames = `${name1} & ${name2}`;
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
   const fullDateStr = weddingDate ? formatDate(weddingDate) : '';
   const compactDateStr = weddingDate
@@ -256,7 +257,13 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
-      {showSplash && <GazeboSplash displayDate={compactDateStr || fullDateStr} onDismiss={handleSplashDismiss} />}
+      {showSplash && (
+        <GazeboSplash
+          coupleNames={coupleNames}
+          displayDate={compactDateStr || fullDateStr}
+          onDismiss={handleSplashDismiss}
+        />
+      )}
 
       <section id="hero" className="gazebo-hero">
         <div className="gazebo-hero-media" aria-hidden>
@@ -274,7 +281,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
         >
           <p className="gazebo-hero-date">{compactDateStr || fullDateStr}</p>
-          <h1>{name1} &amp; {name2}</h1>
+          <h1>{coupleNames}</h1>
           <p className="gazebo-hero-tagline">{message}</p>
         </motion.article>
       </section>
@@ -323,7 +330,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         <SectionTitle
           eyebrow="Event details"
           title="Where love gathers"
-          lead="Garden Ceremony & Evening Reception"
+          lead={[venue, fullDateStr].filter(Boolean).join(' | ')}
         />
         <div className="gazebo-details-layout">
           <motion.div
@@ -513,6 +520,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         <p className="gazebo-footer-made">With love</p>
         <p className="gazebo-footer-thanks">Thank you for being part of our beginning.</p>
         <span aria-hidden />
+        <h2>{coupleNames}</h2>
         <strong>{monogram}</strong>
         <small>{compactDateStr || fullDateStr}</small>
       </footer>
