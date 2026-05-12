@@ -2,15 +2,32 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 
+const SPLASH_FRAME_COUNT = 16;
+const SPLASH_FRAME_DURATION = 70;
+const SPLASH_FRAMES = Array.from(
+  { length: SPLASH_FRAME_COUNT },
+  (_, index) => `/assets/gazebo-splash-frames/frame-${String(index).padStart(2, '0')}.jpg`,
+);
+
 export default function GazeboSplash({ displayDate, coupleInitials, onDismiss }) {
   const fallbackTimerRef = useRef(null);
+  const frameTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const [opening, setOpening] = useState(false);
+  const [frameIndex, setFrameIndex] = useState(0);
 
   useEffect(() => {
+    SPLASH_FRAMES.forEach((src) => {
+      const image = new Image();
+      image.src = src;
+    });
+
     return () => {
       if (fallbackTimerRef.current) {
         window.clearTimeout(fallbackTimerRef.current);
+      }
+      if (frameTimerRef.current) {
+        window.clearInterval(frameTimerRef.current);
       }
     };
   }, []);
@@ -28,7 +45,19 @@ export default function GazeboSplash({ displayDate, coupleInitials, onDismiss })
     if (opening) return;
     setOpening(true);
 
-    fallbackTimerRef.current = window.setTimeout(finishOpening, 1750);
+    let nextFrame = 0;
+    frameTimerRef.current = window.setInterval(() => {
+      nextFrame += 1;
+      setFrameIndex(Math.min(nextFrame, SPLASH_FRAME_COUNT - 1));
+      if (nextFrame >= SPLASH_FRAME_COUNT - 1 && frameTimerRef.current) {
+        window.clearInterval(frameTimerRef.current);
+      }
+    }, SPLASH_FRAME_DURATION);
+
+    fallbackTimerRef.current = window.setTimeout(
+      finishOpening,
+      SPLASH_FRAME_COUNT * SPLASH_FRAME_DURATION + 260,
+    );
   };
 
   return (
@@ -49,25 +78,16 @@ export default function GazeboSplash({ displayDate, coupleInitials, onDismiss })
         exit={{ opacity: 0, transition: { duration: 0.45 } }}
       >
         <div className="gazebo-splash-glow" aria-hidden />
-        <div className="gazebo-bird-flight" aria-hidden>
-          <span />
-          <span />
-          <span />
-        </div>
-        <div className="gazebo-envelope-scene" aria-hidden>
-          <div className="gazebo-envelope-shadow" />
-          <div className="gazebo-envelope">
-            <div className="gazebo-envelope-back" />
-            <div className="gazebo-envelope-card">
-              <span>{displayDate}</span>
-            </div>
-            <div className="gazebo-envelope-panel gazebo-envelope-panel--left" />
-            <div className="gazebo-envelope-panel gazebo-envelope-panel--right" />
-            <div className="gazebo-envelope-panel gazebo-envelope-panel--bottom" />
-            <div className="gazebo-envelope-flap" />
-            <div className="gazebo-envelope-seal">
-              <span>{coupleInitials}</span>
-            </div>
+        <div className="gazebo-splash-frame-scene" aria-hidden>
+          <img
+            className="gazebo-splash-frame"
+            src={SPLASH_FRAMES[frameIndex]}
+            alt=""
+            draggable="false"
+          />
+          <div className="gazebo-splash-paper-texture" />
+          <div className="gazebo-splash-seal">
+            <span>{coupleInitials}</span>
           </div>
         </div>
         <div className="gazebo-splash-overlay" aria-hidden />

@@ -50,10 +50,66 @@
   position: absolute;
   inset: 0;
   z-index: 4;
-  background:
-    radial-gradient(circle at 50% 45%, rgba(255, 255, 245, 0), rgba(238, 248, 219, 0.08) 42%, rgba(60, 76, 43, 0.12)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 24%, transparent 72%, rgba(247, 251, 239, 0.88));
+  background: transparent;
   pointer-events: none;
+}
+
+.gazebo-splash-frame-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.gazebo-splash-frame {
+  display: block;
+  width: auto;
+  height: 100%;
+  min-width: 100%;
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+}
+
+.gazebo-splash-paper-texture {
+  position: absolute;
+  inset: 0;
+  background-image: url("../../assets/coastal/envelope-texture.jpg");
+  background-position: center;
+  background-size: cover;
+  mix-blend-mode: soft-light;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.gazebo-splash-seal {
+  position: absolute;
+  left: 50%;
+  top: 55.2%;
+  z-index: 5;
+  display: grid;
+  width: clamp(5.6rem, 13.4vh, 7.4rem);
+  aspect-ratio: 1;
+  place-items: center;
+  background-image: url("../../assets/coastal/wax-seal.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  color: rgba(255, 225, 198, 0.92);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.3rem, 3.2vh, 1.9rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 0 rgba(89, 44, 26, 0.72), 0 -1px 0 rgba(255, 206, 179, 0.28);
+  transform: translate(-50%, -50%);
+  transition: opacity 0.62s ease, transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gazebo-splash--opening .gazebo-splash-seal {
+  opacity: 0.16;
+  transform: translate(-50%, -50%) scale(0.96);
 }
 
 .gazebo-envelope-scene {
@@ -68,37 +124,37 @@
 
 .gazebo-envelope-shadow {
   position: absolute;
-  width: min(78vw, 31rem);
-  height: min(28vw, 9rem);
-  max-height: 9rem;
+  width: min(58vw, 21rem);
+  height: min(18vw, 5.6rem);
+  max-height: 5.6rem;
   border-radius: 999px;
   background: rgba(70, 78, 48, 0.22);
   filter: blur(32px);
   opacity: 0.66;
-  transform: translateY(min(23vw, 11rem));
+  transform: translateY(min(38vh, 17rem));
   transition: opacity 0.7s ease, transform 1.15s ease;
 }
 
 .gazebo-envelope {
-  --paper-shadow: rgba(119, 91, 49, 0.18);
-  --paper-edge: rgba(160, 124, 67, 0.24);
+  --paper-shadow: rgba(119, 91, 49, 0.16);
+  --paper-edge: rgba(174, 136, 77, 0.2);
   position: relative;
-  width: min(82vw, 31rem);
-  aspect-ratio: 1.48;
-  filter: drop-shadow(0 26px 38px rgba(71, 83, 52, 0.24));
-  transform: translate3d(0, 0, 0) rotateX(0deg);
+  height: min(86vh, 46rem);
+  aspect-ratio: 9 / 16;
+  filter: drop-shadow(0 24px 42px rgba(71, 83, 52, 0.22));
+  transform: translate3d(0, 0, 0) rotateX(0deg) rotateZ(-0.4deg);
   transform-style: preserve-3d;
   transition: transform 1.15s cubic-bezier(0.22, 1, 0.36, 1), filter 1s ease;
 }
 
 .gazebo-splash--opening .gazebo-envelope {
   filter: drop-shadow(0 36px 48px rgba(71, 83, 52, 0.16));
-  transform: translate3d(0, -5vh, 0) scale(0.98);
+  transform: translate3d(0, -4vh, 0) scale(0.985) rotateZ(0deg);
 }
 
 .gazebo-splash--opening .gazebo-envelope-shadow {
   opacity: 0.28;
-  transform: translateY(min(25vw, 12rem)) scale(0.88);
+  transform: translateY(min(39vh, 18rem)) scale(0.88);
 }
 
 .gazebo-envelope-back,
@@ -109,66 +165,91 @@
   inset: 0;
   border: 1px solid var(--paper-edge);
   background-image:
-    linear-gradient(135deg, rgba(255, 253, 239, 0.34), rgba(220, 197, 149, 0.13)),
+    linear-gradient(135deg, rgba(255, 253, 239, 0.38), rgba(220, 197, 149, 0.1)),
     url("../../assets/coastal/envelope-texture.jpg");
   background-position: center;
   background-size: cover;
 }
 
 .gazebo-envelope-back {
-  border-radius: 0.28rem;
-  background-color: #efe1be;
+  border-radius: 0.18rem;
+  background-color: #efe2bf;
   box-shadow:
-    inset 0 2px 18px rgba(255, 255, 255, 0.4),
-    inset 0 -18px 34px rgba(134, 102, 56, 0.13);
+    inset 0 1px 18px rgba(255, 255, 255, 0.5),
+    inset 0 -18px 34px rgba(134, 102, 56, 0.1);
 }
 
 .gazebo-envelope-card {
-  left: 7%;
-  right: 7%;
-  top: 10%;
-  bottom: 12%;
+  left: 5.5%;
+  right: 5.5%;
+  top: 5.5%;
+  bottom: 5.5%;
   z-index: 1;
   display: grid;
-  place-items: start center;
-  border-radius: 0.22rem;
-  background-color: #fff8e6;
-  box-shadow: 0 18px 34px rgba(122, 108, 58, 0.16);
-  color: #8b6a2e;
+  align-content: end;
+  justify-items: center;
+  overflow: hidden;
+  border-radius: 0.15rem;
+  background-color: #eaf6f3;
+  box-shadow: 0 18px 34px rgba(122, 108, 58, 0.14);
+  color: #6d5120;
   font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.28em;
-  padding-top: 2.4rem;
+  letter-spacing: 0.22em;
+  padding: 0 1rem 3.2rem;
   text-transform: uppercase;
-  transform: translateY(20%);
-  transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.36s;
+  transform: translateY(9%);
+  transition: transform 1.08s cubic-bezier(0.22, 1, 0.36, 1) 0.32s, opacity 0.7s ease 0.2s;
 }
 
 .gazebo-splash--opening .gazebo-envelope-card {
-  transform: translateY(-22%);
+  transform: translateY(-7%);
+}
+
+.gazebo-envelope-garden {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 245, 0), rgba(255, 255, 245, 0.22)),
+    url("/assets/gazebo-watercolor-poster1.jpg");
+  background-position: center;
+  background-size: cover;
+  filter: saturate(0.96);
+  transform: scale(1.04);
+}
+
+.gazebo-envelope-card span {
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  background: rgba(255, 249, 232, 0.72);
+  box-shadow: 0 14px 30px rgba(93, 112, 70, 0.14);
+  padding: 0.62rem 0.9rem;
+  backdrop-filter: blur(8px);
 }
 
 .gazebo-envelope-panel {
   z-index: 3;
-  background-color: #ebddbb;
-  box-shadow: inset 0 0 28px rgba(121, 93, 47, 0.08);
+  background-color: #eadcbb;
+  box-shadow: inset 0 0 28px rgba(121, 93, 47, 0.06);
 }
 
 .gazebo-envelope-panel--left {
-  clip-path: polygon(0 0, 52% 52%, 0 100%);
+  clip-path: polygon(0 0, 50% 49%, 0 100%);
 }
 
 .gazebo-envelope-panel--right {
-  clip-path: polygon(100% 0, 48% 52%, 100% 100%);
+  clip-path: polygon(100% 0, 50% 49%, 100% 100%);
 }
 
 .gazebo-envelope-panel--bottom {
-  clip-path: polygon(0 100%, 50% 45%, 100% 100%);
+  clip-path: polygon(0 100%, 50% 57%, 100% 100%);
 }
 
 .gazebo-envelope-flap {
   z-index: 5;
-  clip-path: polygon(0 0, 100% 0, 50% 57%);
+  clip-path: polygon(0 0, 100% 0, 50% 47%);
   background-color: #f1e4c2;
   box-shadow:
     inset 0 10px 22px rgba(255, 255, 255, 0.38),
@@ -184,10 +265,10 @@
 .gazebo-envelope-seal {
   position: absolute;
   left: 50%;
-  top: 49%;
+  top: 45.5%;
   z-index: 6;
   display: grid;
-  width: clamp(4.8rem, 17vw, 6.6rem);
+  width: clamp(4.4rem, 13vh, 6.1rem);
   aspect-ratio: 1;
   place-items: center;
   background-image: url("../../assets/coastal/wax-seal.png");
@@ -222,8 +303,8 @@
 
 .gazebo-bird-flight span {
   position: absolute;
-  left: 47%;
-  top: 45%;
+  left: 49%;
+  top: 36%;
   width: 2.1rem;
   height: 0.85rem;
   opacity: 0;
@@ -410,12 +491,21 @@
   line-height: 0.96;
 }
 
+.gazebo-hero-time {
+  margin: 0.95rem 0 0;
+  color: #8a7332;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
 .gazebo-hero-tagline {
   max-width: min(86vw, 42rem);
-  margin: 1rem auto 0;
+  margin: 0.9rem auto 0;
   color: #5d7046;
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.05rem, 3.4vw, 1.55rem);
+  font-size: clamp(1.22rem, 3.8vw, 1.82rem);
   line-height: 1.35;
 }
 
@@ -598,6 +688,10 @@
 
 .gazebo-details-card {
   overflow: hidden;
+  border-color: rgba(255, 255, 255, 0.82);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(248, 255, 242, 0.66)),
+    radial-gradient(circle at 12% 10%, rgba(205, 238, 250, 0.24), transparent 34%);
   padding: clamp(1.25rem, 3vw, 2rem);
 }
 
@@ -663,12 +757,14 @@
   border-radius: 0.5rem;
   background: rgba(255, 255, 255, 0.52);
   padding: 0.95rem;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  box-shadow: 0 10px 28px rgba(108, 141, 112, 0.06);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
 }
 
 .gazebo-detail-item:hover {
   border-color: rgba(134, 173, 97, 0.48);
   background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 14px 34px rgba(108, 141, 112, 0.1);
   transform: translateY(-2px);
 }
 
@@ -762,6 +858,10 @@
   gap: 1.4rem;
   max-width: 60rem;
   margin: 0 auto;
+  border-color: rgba(255, 255, 255, 0.82);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.84), rgba(248, 255, 242, 0.66)),
+    radial-gradient(circle at 86% 12%, rgba(245, 200, 192, 0.18), transparent 30%);
   padding: clamp(1.25rem, 3vw, 2rem);
 }
 
@@ -828,7 +928,8 @@
   font: inherit;
   outline: none;
   padding: 0.9rem 1rem;
-  transition: border 180ms ease, box-shadow 180ms ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  transition: border 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
 .gazebo-rsvp-card textarea {
@@ -840,6 +941,7 @@
 .gazebo-rsvp-card select:focus,
 .gazebo-rsvp-card textarea:focus {
   border-color: #9fc57d;
+  background: #ffffff;
   box-shadow: 0 0 0 4px rgba(159, 197, 125, 0.18);
 }
 

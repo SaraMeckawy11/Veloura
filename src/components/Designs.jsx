@@ -7,7 +7,6 @@ const designs = [
   {
     name: 'Coastal Breeze',
     category: 'launch',
-    envelope: 'Blue envelope opens to a bride and groom walking toward the sea',
     description: 'Denim blues, watercolor shells, flowers, birds, and sailboats. Elegant, colorful, and perfect for coastal weddings.',
     image: coastalSplashPreview,
     overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
@@ -18,7 +17,6 @@ const designs = [
   {
     name: 'Watercolor Garden Gazebo',
     category: 'launch',
-    envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight',
     description: 'Soft leaf green, ivory paper, pressed botanicals, warm gold, and a dreamy animated gazebo entrance.',
     image: '/assets/gazebo-watercolor-poster1.jpg',
     overlay: 'linear-gradient(135deg, rgba(91,125,68,0.12), rgba(255,255,245,0.22))',
@@ -29,7 +27,6 @@ const designs = [
   {
     name: 'Boarding Pass',
     category: 'launch',
-    envelope: 'Airmail envelope with vintage stamps slides open',
     description: 'Travel-themed ticket with hometowns as departure/arrival. Fun, playful, and shareable.',
     image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
     overlay: 'linear-gradient(135deg, rgba(66,165,245,0.3), rgba(13,71,161,0.4))',
@@ -200,7 +197,6 @@ export default function Designs() {
               </div>
               <div className="design-card-body">
                 <h3>{design.name}</h3>
-                <div className="design-card-envelope">{design.envelope}</div>
                 <p>{design.description}</p>
               </div>
             </div>

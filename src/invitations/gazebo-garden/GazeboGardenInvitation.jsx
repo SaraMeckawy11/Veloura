@@ -145,7 +145,8 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const message = wd.message || 'A garden promise sealed in soft light.';
   const monogram = `${name1.charAt(0)}&${name2.charAt(0)}`.toUpperCase();
   const sealInitials = `${name1.charAt(0)}${name2.charAt(0)}`.toUpperCase();
-  const heroDateTime = [compactDateStr || fullDateStr, timeStr].filter(Boolean).join(' at ');
+  const heroDate = compactDateStr || fullDateStr;
+  const heroDateTime = [heroDate, timeStr].filter(Boolean).join(' at ');
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (value) => String(value).padStart(2, '0');
@@ -305,9 +306,10 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0, scale: 1 }}
           transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="gazebo-hero-date">{heroDateTime || fullDateStr}</p>
+          <p className="gazebo-hero-date">{heroDate || fullDateStr}</p>
           <h1>{coupleNames}</h1>
           <p className="gazebo-hero-tagline">{message}</p>
+          {timeStr && <p className="gazebo-hero-time">{timeStr}</p>}
         </motion.article>
       </section>
 
