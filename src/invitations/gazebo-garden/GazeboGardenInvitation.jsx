@@ -144,6 +144,9 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const venueAddress = wd.venueAddress || '';
   const message = wd.message || 'A garden promise sealed in soft light.';
   const monogram = `${name1.charAt(0)}&${name2.charAt(0)}`.toUpperCase();
+  const sealInitials = `${name1.charAt(0)}${name2.charAt(0)}`.toUpperCase();
+  const heroDateTime = [compactDateStr || fullDateStr, timeStr].filter(Boolean).join(' at ');
+  const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (value) => String(value).padStart(2, '0');
 
@@ -272,6 +275,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       {showSplash && (
         <GazeboSplash
           displayDate={compactDateStr || fullDateStr}
+          coupleInitials={sealInitials}
           onDismiss={handleSplashDismiss}
         />
       )}
@@ -301,7 +305,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0, scale: 1 }}
           transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="gazebo-hero-date">{compactDateStr || fullDateStr}</p>
+          <p className="gazebo-hero-date">{heroDateTime || fullDateStr}</p>
           <h1>{coupleNames}</h1>
           <p className="gazebo-hero-tagline">{message}</p>
         </motion.article>
@@ -310,7 +314,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       {weddingDate && (
         <section className="gazebo-section gazebo-countdown">
           <div className="gazebo-section-soft-pattern" aria-hidden="true" />
-          <SectionTitle eyebrow="The celebration begins in" title="Counting every heartbeat" lead={compactDateStr || fullDateStr} />
+          <SectionTitle eyebrow="The celebration begins in" title="Counting every heartbeat" lead={heroDateTime || fullDateStr} />
           <div className="gazebo-count-grid">
             <CountdownUnit value={pad(timeLeft.days)} label="Days" />
             <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
@@ -351,7 +355,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         <SectionTitle
           eyebrow="Event details"
           title="Where love gathers"
-          lead={[venue, fullDateStr].filter(Boolean).join(' | ')}
+          lead={[venue, fullDateTime].filter(Boolean).join(' | ')}
         />
         <div className="gazebo-details-layout">
           <motion.div
@@ -361,9 +365,16 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
             viewport={{ once: true, amount: 0.22 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <DetailItem label="Date & time" value={[fullDateStr, timeStr].filter(Boolean).join(' at ') || 'To be announced'} />
-            <DetailItem label="Venue" value={venue || 'Garden venue'} />
-            {venueAddress && <DetailItem label="Address" value={venueAddress} />}
+            <div className="gazebo-details-intro">
+              <span>{monogram}</span>
+              <h3>{venue || 'Garden venue'}</h3>
+              <p>{message}</p>
+            </div>
+            <div className="gazebo-detail-list">
+              <DetailItem label="Date & time" value={fullDateTime || 'To be announced'} />
+              <DetailItem label="Venue" value={venue || 'Garden venue'} />
+              {venueAddress && <DetailItem label="Address" value={venueAddress} />}
+            </div>
 
             <a className="gazebo-primary-button" href={openMapHref} target="_blank" rel="noreferrer">
               <span>Open location</span>
@@ -385,7 +396,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       </section>
 
       <section id="rsvp" className="gazebo-section gazebo-rsvp-section">
-        <SectionTitle eyebrow="Kindly reply" title="Reserve your place" />
+        <SectionTitle eyebrow="Kindly reply" title="Reserve your place" lead="A quick note helps us prepare a seat, a plate, and a warm welcome." />
         <AnimatePresence mode="wait">
           {!rsvpSubmitted ? (
             <motion.form
@@ -398,6 +409,10 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               viewport={{ once: true, amount: 0.22 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
             >
+              <div className="gazebo-rsvp-note">
+                <span>{heroDateTime || fullDateStr}</span>
+                <strong>{venue || 'Wedding celebration'}</strong>
+              </div>
               <div className="gazebo-rsvp-grid">
                 <label>
                   <span>Guest name</span>

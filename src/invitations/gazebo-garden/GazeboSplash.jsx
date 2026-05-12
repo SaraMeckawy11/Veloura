@@ -2,9 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function GazeboSplash({ displayDate, onDismiss }) {
-  const ambientVideoRef = useRef(null);
-  const foregroundVideoRef = useRef(null);
+export default function GazeboSplash({ displayDate, coupleInitials, onDismiss }) {
   const fallbackTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const [opening, setOpening] = useState(false);
@@ -30,25 +28,7 @@ export default function GazeboSplash({ displayDate, onDismiss }) {
     if (opening) return;
     setOpening(true);
 
-    const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
-    videos.forEach((video) => {
-      video.currentTime = 0;
-      video.playbackRate = 1;
-    });
-
-    const primaryVideo = foregroundVideoRef.current;
-    const fallbackDelay =
-      primaryVideo && Number.isFinite(primaryVideo.duration) && primaryVideo.duration > 0
-        ? primaryVideo.duration * 1000 + 160
-        : 1200;
-
-    fallbackTimerRef.current = window.setTimeout(finishOpening, fallbackDelay);
-
-    Promise.allSettled(videos.map((video) => video.play())).then((results) => {
-      if (results.every((result) => result.status === 'rejected')) {
-        finishOpening();
-      }
-    });
+    fallbackTimerRef.current = window.setTimeout(finishOpening, 1750);
   };
 
   return (
@@ -68,26 +48,28 @@ export default function GazeboSplash({ displayDate, onDismiss }) {
         }}
         exit={{ opacity: 0, transition: { duration: 0.45 } }}
       >
-        <video
-          ref={ambientVideoRef}
-          className="gazebo-splash-video gazebo-splash-video--ambient"
-          muted
-          playsInline
-          preload="auto"
-          aria-hidden="true"
-        >
-          <source src="/assets/eal.mp4" type="video/mp4" />
-        </video>
-        <video
-          ref={foregroundVideoRef}
-          className="gazebo-splash-video gazebo-splash-video--foreground"
-          muted
-          playsInline
-          preload="auto"
-          onEnded={finishOpening}
-        >
-          <source src="/assets/eal.mp4" type="video/mp4" />
-        </video>
+        <div className="gazebo-splash-glow" aria-hidden />
+        <div className="gazebo-bird-flight" aria-hidden>
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className="gazebo-envelope-scene" aria-hidden>
+          <div className="gazebo-envelope-shadow" />
+          <div className="gazebo-envelope">
+            <div className="gazebo-envelope-back" />
+            <div className="gazebo-envelope-card">
+              <span>{displayDate}</span>
+            </div>
+            <div className="gazebo-envelope-panel gazebo-envelope-panel--left" />
+            <div className="gazebo-envelope-panel gazebo-envelope-panel--right" />
+            <div className="gazebo-envelope-panel gazebo-envelope-panel--bottom" />
+            <div className="gazebo-envelope-flap" />
+            <div className="gazebo-envelope-seal">
+              <span>{coupleInitials}</span>
+            </div>
+          </div>
+        </div>
         <div className="gazebo-splash-overlay" aria-hidden />
 
         <motion.div
