@@ -274,7 +274,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       )}
       {showSplash && (
         <GazeboSplash
-          displayDate={compactDateStr || fullDateStr}
           onDismiss={handleSplashDismiss}
         />
       )}

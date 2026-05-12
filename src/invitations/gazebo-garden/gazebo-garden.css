@@ -27,8 +27,8 @@
   overflow: hidden;
   cursor: pointer;
   background:
-    radial-gradient(circle at 50% 34%, rgba(255, 255, 246, 0.86), rgba(240, 248, 220, 0.34) 42%, rgba(116, 135, 82, 0.2) 78%),
-    linear-gradient(180deg, #f8f4df 0%, #eaf5dd 100%);
+    radial-gradient(circle at 50% 34%, rgba(255, 250, 232, 0.92), rgba(238, 221, 183, 0.24) 50%, rgba(156, 125, 78, 0.16) 86%),
+    linear-gradient(180deg, #fbf3dd 0%, #eadbbd 100%);
   color: #314234;
   outline: none;
 }
@@ -38,7 +38,7 @@
   inset: -14%;
   background-image:
     url("../../assets/coastal/envelope-texture.jpg"),
-    radial-gradient(circle at 50% 38%, rgba(255, 249, 225, 0.88), rgba(238, 248, 219, 0.18) 48%, rgba(60, 76, 43, 0.18));
+    radial-gradient(circle at 50% 38%, rgba(255, 249, 225, 0.9), rgba(236, 217, 174, 0.24) 48%, rgba(120, 87, 43, 0.14));
   background-position: center;
   background-size: cover;
   filter: blur(12px) saturate(0.86);
@@ -344,7 +344,7 @@
 
 .gazebo-splash-copy strong {
   display: block;
-  margin-top: 0.75rem;
+  margin-top: 0;
   border: 1px solid rgba(199, 163, 91, 0.45);
   border-radius: 999px;
   background: rgba(255, 249, 232, 0.72);

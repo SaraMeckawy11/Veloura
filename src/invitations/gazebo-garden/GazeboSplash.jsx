@@ -2,16 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 
-const SPLASH_FRAME_COUNT = 16;
-const SPLASH_FRAME_DURATION = 70;
+const SPLASH_FRAME_COUNT = 30;
+const SPLASH_ANIMATION_DURATION = 1000;
 const SPLASH_FRAMES = Array.from(
   { length: SPLASH_FRAME_COUNT },
   (_, index) => `/assets/gazebo-splash-frames/frame-${String(index).padStart(2, '0')}.jpg`,
 );
 
-export default function GazeboSplash({ displayDate, onDismiss }) {
+export default function GazeboSplash({ onDismiss }) {
   const fallbackTimerRef = useRef(null);
-  const frameTimerRef = useRef(null);
+  const frameAnimationRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const [opening, setOpening] = useState(false);
   const [frameIndex, setFrameIndex] = useState(0);
@@ -26,8 +26,8 @@ export default function GazeboSplash({ displayDate, onDismiss }) {
       if (fallbackTimerRef.current) {
         window.clearTimeout(fallbackTimerRef.current);
       }
-      if (frameTimerRef.current) {
-        window.clearInterval(frameTimerRef.current);
+      if (frameAnimationRef.current) {
+        window.cancelAnimationFrame(frameAnimationRef.current);
       }
     };
   }, []);
@@ -45,18 +45,25 @@ export default function GazeboSplash({ displayDate, onDismiss }) {
     if (opening) return;
     setOpening(true);
 
-    let nextFrame = 0;
-    frameTimerRef.current = window.setInterval(() => {
-      nextFrame += 1;
-      setFrameIndex(Math.min(nextFrame, SPLASH_FRAME_COUNT - 1));
-      if (nextFrame >= SPLASH_FRAME_COUNT - 1 && frameTimerRef.current) {
-        window.clearInterval(frameTimerRef.current);
+    const startTime = performance.now();
+    const animateFrames = (now) => {
+      const progress = Math.min((now - startTime) / SPLASH_ANIMATION_DURATION, 1);
+      const nextFrame = Math.min(
+        SPLASH_FRAME_COUNT - 1,
+        Math.floor(progress * SPLASH_FRAME_COUNT),
+      );
+      setFrameIndex(nextFrame);
+
+      if (progress < 1) {
+        frameAnimationRef.current = window.requestAnimationFrame(animateFrames);
       }
-    }, SPLASH_FRAME_DURATION);
+    };
+
+    frameAnimationRef.current = window.requestAnimationFrame(animateFrames);
 
     fallbackTimerRef.current = window.setTimeout(
       finishOpening,
-      SPLASH_FRAME_COUNT * SPLASH_FRAME_DURATION + 260,
+      SPLASH_ANIMATION_DURATION + 180,
     );
   };
 
@@ -95,7 +102,6 @@ export default function GazeboSplash({ displayDate, onDismiss }) {
           transition={{ duration: opening ? 0.35 : 0.9, delay: opening ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
           <div>
-            {displayDate && <span>{displayDate}</span>}
             <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
           </div>
         </motion.div>
