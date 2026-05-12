@@ -144,7 +144,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const venueAddress = wd.venueAddress || '';
   const message = wd.message || 'A garden promise sealed in soft light.';
   const monogram = `${name1.charAt(0)}&${name2.charAt(0)}`.toUpperCase();
-  const sealInitials = `${name1.charAt(0)}${name2.charAt(0)}`.toUpperCase();
   const heroDate = compactDateStr || fullDateStr;
   const heroDateTime = [heroDate, timeStr].filter(Boolean).join(' at ');
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
@@ -276,7 +275,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       {showSplash && (
         <GazeboSplash
           displayDate={compactDateStr || fullDateStr}
-          coupleInitials={sealInitials}
           onDismiss={handleSplashDismiss}
         />
       )}

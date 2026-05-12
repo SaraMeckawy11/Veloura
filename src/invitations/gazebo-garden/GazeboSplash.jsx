@@ -9,7 +9,7 @@ const SPLASH_FRAMES = Array.from(
   (_, index) => `/assets/gazebo-splash-frames/frame-${String(index).padStart(2, '0')}.jpg`,
 );
 
-export default function GazeboSplash({ displayDate, coupleInitials, onDismiss }) {
+export default function GazeboSplash({ displayDate, onDismiss }) {
   const fallbackTimerRef = useRef(null);
   const frameTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
@@ -85,10 +85,6 @@ export default function GazeboSplash({ displayDate, coupleInitials, onDismiss })
             alt=""
             draggable="false"
           />
-          <div className="gazebo-splash-paper-texture" />
-          <div className="gazebo-splash-seal">
-            <span>{coupleInitials}</span>
-          </div>
         </div>
         <div className="gazebo-splash-overlay" aria-hidden />
 

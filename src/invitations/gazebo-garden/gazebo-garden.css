@@ -73,45 +73,6 @@
   user-select: none;
 }
 
-.gazebo-splash-paper-texture {
-  position: absolute;
-  inset: 0;
-  background-image: url("../../assets/coastal/envelope-texture.jpg");
-  background-position: center;
-  background-size: cover;
-  mix-blend-mode: soft-light;
-  opacity: 0.16;
-  pointer-events: none;
-}
-
-.gazebo-splash-seal {
-  position: absolute;
-  left: 50%;
-  top: 55.2%;
-  z-index: 5;
-  display: grid;
-  width: clamp(5.6rem, 13.4vh, 7.4rem);
-  aspect-ratio: 1;
-  place-items: center;
-  background-image: url("../../assets/coastal/wax-seal.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  color: rgba(255, 225, 198, 0.92);
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.3rem, 3.2vh, 1.9rem);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-shadow: 0 1px 0 rgba(89, 44, 26, 0.72), 0 -1px 0 rgba(255, 206, 179, 0.28);
-  transform: translate(-50%, -50%);
-  transition: opacity 0.62s ease, transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.gazebo-splash--opening .gazebo-splash-seal {
-  opacity: 0.16;
-  transform: translate(-50%, -50%) scale(0.96);
-}
-
 .gazebo-envelope-scene {
   position: absolute;
   inset: 0;
