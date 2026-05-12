@@ -391,22 +391,18 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               {venueAddress && <DetailItem label="Address" value={venueAddress} />}
             </div>
 
-            <a className="gazebo-primary-button" href={openMapHref} target="_blank" rel="noreferrer">
-              <span>Open location</span>
-            </a>
+            {embedSrc && (
+              <a className="gazebo-map-frame" href={openMapHref} target="_blank" rel="noreferrer" aria-label="Open location map">
+                <iframe
+                  src={embedSrc}
+                  title={venue || 'Venue location'}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  tabIndex="-1"
+                />
+              </a>
+            )}
           </motion.div>
-
-          {embedSrc && (
-            <motion.div
-              className="gazebo-map-frame"
-              initial={{ opacity: 0, y: 36 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.22 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-            >
-              <iframe src={embedSrc} title={venue || 'Venue location'} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-            </motion.div>
-          )}
         </div>
       </section>
 
@@ -499,17 +495,12 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       </section>
 
       <footer className="gazebo-footer">
-        <div className="gazebo-footer-ornaments" aria-hidden="true">
-          <span className="gazebo-floating-petal gazebo-floating-petal--one" />
-          <span className="gazebo-floating-petal gazebo-floating-petal--two" />
-          <span className="gazebo-floating-petal gazebo-floating-petal--three" />
+        <div className="gazebo-footer-inner">
+          <p className="gazebo-footer-made">With love</p>
+          <h2>{coupleNames}</h2>
+          <div className="gazebo-footer-rule" aria-hidden />
+          <p className="gazebo-footer-thanks">Thank you for being part of our beginning.</p>
         </div>
-        <p className="gazebo-footer-made">With love</p>
-        <p className="gazebo-footer-thanks">Thank you for being part of our beginning.</p>
-        <span aria-hidden />
-        <h2>{coupleNames}</h2>
-        <strong>{monogram}</strong>
-        <small>{compactDateStr || fullDateStr}</small>
       </footer>
     </div>
   );
