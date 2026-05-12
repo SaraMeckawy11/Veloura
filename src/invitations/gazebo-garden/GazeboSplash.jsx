@@ -23,9 +23,7 @@ export default function GazeboSplash({ onDismiss }) {
       }
     };
 
-    const playAll = () => videos.forEach(safePlay);
-
-    playAll();
+    videos.forEach(safePlay);
 
     const cleanups = videos.map((video) => {
       const onCanPlay = () => safePlay(video);
@@ -45,7 +43,11 @@ export default function GazeboSplash({ onDismiss }) {
     };
   }, []);
 
-  const handleOpen = () => {
+  const handleOpen = (event) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     if (opening || hasOpenedRef.current) return;
     hasOpenedRef.current = true;
     setOpening(true);
@@ -57,16 +59,7 @@ export default function GazeboSplash({ onDismiss }) {
       <motion.div
         key="gazebo-splash"
         className={`gazebo-splash${opening ? ' gazebo-splash--opening' : ''}`}
-        role="button"
-        tabIndex={0}
-        aria-label="Open invitation"
-        onClick={handleOpen}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            handleOpen();
-          }
-        }}
+        aria-hidden={opening ? 'true' : undefined}
         exit={{ opacity: 0, transition: { duration: 0.45 } }}
       >
         <video
@@ -89,6 +82,7 @@ export default function GazeboSplash({ onDismiss }) {
           loop
           playsInline
           preload="auto"
+          aria-hidden="true"
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />
         </video>
@@ -101,9 +95,15 @@ export default function GazeboSplash({ onDismiss }) {
           animate={opening ? { opacity: 0, y: -18 } : { opacity: 1, y: 0 }}
           transition={{ duration: opening ? 0.35 : 0.9, delay: opening ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div>
-            <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
-          </div>
+          <button
+            type="button"
+            className="gazebo-splash-button"
+            onClick={handleOpen}
+            disabled={opening}
+            aria-label="Open invitation"
+          >
+            {opening ? 'Opening' : 'Tap to open'}
+          </button>
         </motion.div>
       </motion.div>
     </AnimatePresence>
