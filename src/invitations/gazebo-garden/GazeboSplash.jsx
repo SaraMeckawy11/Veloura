@@ -3,55 +3,72 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
-const EXIT_DURATION_MS = 450;
+const SPLASH_PLAYBACK_RATE = 0.7;
+const SPLASH_END_PADDING_MS = 420;
+const FALLBACK_DISMISS_MS = 7600;
 
 export default function GazeboSplash({ onDismiss }) {
   const ambientVideoRef = useRef(null);
   const foregroundVideoRef = useRef(null);
-  const dismissTimerRef = useRef(null);
+  const fallbackTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const [opening, setOpening] = useState(false);
 
   useEffect(() => {
     const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
-
-    const safePlay = (video) => {
-      if (!video || !video.paused) return;
-      const result = video.play();
-      if (result && typeof result.catch === 'function') {
-        result.catch(() => undefined);
+    videos.forEach((video) => {
+      try {
+        video.pause();
+        video.currentTime = 0;
+      } catch {
+        // Ignore — pause/seek may throw before metadata is ready.
       }
-    };
-
-    videos.forEach(safePlay);
-
-    const cleanups = videos.map((video) => {
-      const onCanPlay = () => safePlay(video);
-      video.addEventListener('canplay', onCanPlay);
-      video.addEventListener('loadeddata', onCanPlay);
-      return () => {
-        video.removeEventListener('canplay', onCanPlay);
-        video.removeEventListener('loadeddata', onCanPlay);
-      };
     });
 
     return () => {
-      cleanups.forEach((fn) => fn());
-      if (dismissTimerRef.current) {
-        window.clearTimeout(dismissTimerRef.current);
+      if (fallbackTimerRef.current) {
+        window.clearTimeout(fallbackTimerRef.current);
       }
     };
   }, []);
 
-  const handleOpen = (event) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    if (opening || hasOpenedRef.current) return;
+  const finishOpening = () => {
+    if (hasOpenedRef.current) return;
     hasOpenedRef.current = true;
+    if (fallbackTimerRef.current) {
+      window.clearTimeout(fallbackTimerRef.current);
+      fallbackTimerRef.current = null;
+    }
+    onDismiss();
+  };
+
+  const handleOpen = () => {
+    if (opening || hasOpenedRef.current) return;
     setOpening(true);
-    dismissTimerRef.current = window.setTimeout(onDismiss, EXIT_DURATION_MS);
+
+    const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
+    videos.forEach((video) => {
+      try {
+        video.currentTime = 0;
+        video.playbackRate = SPLASH_PLAYBACK_RATE;
+      } catch {
+        // Ignore — fresh streams can throw on seek; play() below still works.
+      }
+    });
+
+    const primaryVideo = foregroundVideoRef.current;
+    const fallbackDelay =
+      primaryVideo && Number.isFinite(primaryVideo.duration) && primaryVideo.duration > 0
+        ? (primaryVideo.duration / SPLASH_PLAYBACK_RATE) * 1000 + SPLASH_END_PADDING_MS
+        : FALLBACK_DISMISS_MS;
+
+    fallbackTimerRef.current = window.setTimeout(finishOpening, fallbackDelay);
+
+    Promise.allSettled(videos.map((video) => video.play())).then((results) => {
+      if (results.every((result) => result.status === 'rejected')) {
+        finishOpening();
+      }
+    });
   };
 
   return (
@@ -59,15 +76,22 @@ export default function GazeboSplash({ onDismiss }) {
       <motion.div
         key="gazebo-splash"
         className={`gazebo-splash${opening ? ' gazebo-splash--opening' : ''}`}
-        aria-hidden={opening ? 'true' : undefined}
+        role="button"
+        tabIndex={0}
+        aria-label="Open invitation"
+        onClick={handleOpen}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleOpen();
+          }
+        }}
         exit={{ opacity: 0, transition: { duration: 0.45 } }}
       >
         <video
           ref={ambientVideoRef}
           className="gazebo-splash-video gazebo-splash-video--ambient"
           muted
-          autoPlay
-          loop
           playsInline
           preload="auto"
           aria-hidden="true"
@@ -78,10 +102,9 @@ export default function GazeboSplash({ onDismiss }) {
           ref={foregroundVideoRef}
           className="gazebo-splash-video gazebo-splash-video--foreground"
           muted
-          autoPlay
-          loop
           playsInline
           preload="auto"
+          onEnded={finishOpening}
           aria-hidden="true"
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />
@@ -95,15 +118,9 @@ export default function GazeboSplash({ onDismiss }) {
           animate={opening ? { opacity: 0, y: -18 } : { opacity: 1, y: 0 }}
           transition={{ duration: opening ? 0.35 : 0.9, delay: opening ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
-          <button
-            type="button"
-            className="gazebo-splash-button"
-            onClick={handleOpen}
-            disabled={opening}
-            aria-label="Open invitation"
-          >
-            {opening ? 'Opening' : 'Tap to open'}
-          </button>
+          <div>
+            <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

@@ -25,6 +25,7 @@
   inset: 0;
   z-index: 9999;
   overflow: hidden;
+  cursor: pointer;
   background: #f0e4c8;
   color: #314234;
   outline: none;
@@ -322,47 +323,29 @@
   display: flex;
   justify-content: center;
   padding-inline: 1.25rem;
-  pointer-events: none;
   text-align: center;
 }
 
-.gazebo-splash-button {
-  display: inline-block;
-  margin: 0;
+.gazebo-splash-copy,
+.gazebo-splash-copy > div {
+  pointer-events: none;
+}
+
+.gazebo-splash-copy strong {
+  display: block;
+  margin-top: 0;
   border: 1px solid rgba(199, 163, 91, 0.45);
   border-radius: 999px;
   background: rgba(255, 249, 232, 0.72);
   box-shadow: 0 16px 42px rgba(122, 108, 58, 0.16);
   color: #8b6a2e;
-  cursor: pointer;
   font-family: Inter, system-ui, sans-serif;
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.28em;
   padding: 0.85rem 1.35rem;
-  pointer-events: auto;
   text-transform: uppercase;
-  touch-action: manipulation;
-  transition: transform 200ms ease, background 200ms ease;
-  -webkit-appearance: none;
-  appearance: none;
   backdrop-filter: blur(12px);
-}
-
-.gazebo-splash-button:hover,
-.gazebo-splash-button:focus-visible {
-  background: rgba(255, 249, 232, 0.92);
-  transform: translateY(-1px);
-}
-
-.gazebo-splash-button:focus-visible {
-  outline: 2px solid rgba(199, 163, 91, 0.7);
-  outline-offset: 3px;
-}
-
-.gazebo-splash-button:disabled {
-  cursor: default;
-  opacity: 0.85;
 }
 
 .gazebo-hero {
