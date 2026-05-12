@@ -92,7 +92,7 @@ export const fallbackTemplates = [
     active: true,
   },
   {
-    name: 'Watercolor Garden Gazebo',
+    name: 'Garden Pavilion',
     slug: 'gazebo-garden',
     category: 'launch',
     description: 'Soft leaf green, ivory paper, pressed botanicals, warm gold, and a dreamy animated gazebo entrance.',

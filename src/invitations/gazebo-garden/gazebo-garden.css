@@ -31,8 +31,7 @@
   outline: none;
 }
 
-.gazebo-splash-video,
-.gazebo-splash-poster {
+.gazebo-splash-video {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -42,24 +41,18 @@
   transform: translate(-50%, -50%);
 }
 
-.gazebo-splash-video--ambient,
-.gazebo-splash-poster--ambient {
+.gazebo-splash-video--ambient {
   width: 100%;
   opacity: 0.34;
   filter: blur(22px) grayscale(1) sepia(0.28) saturate(0.78) brightness(0.96);
   transform: translate(-50%, -50%) scale(1.1);
 }
 
-.gazebo-splash-video--foreground,
-.gazebo-splash-poster--foreground {
+.gazebo-splash-video--foreground {
   z-index: 1;
   width: auto;
   filter: grayscale(1) sepia(0.34) saturate(0.82) brightness(1.04) contrast(0.98);
   box-shadow: 0 0 70px rgba(139, 105, 55, 0.16);
-}
-
-.gazebo-splash-poster {
-  pointer-events: none;
 }
 
 .gazebo-splash-beige-texture {

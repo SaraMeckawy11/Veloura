@@ -15,11 +15,11 @@ const designs = [
     demoPath: '/demo/coastal-breeze',
   },
   {
-    name: 'Watercolor Garden Gazebo',
+    name: 'Garden Pavilion',
     previewName: (
       <>
-        <span>Watercolor</span>
-        <span>Garden Gazebo</span>
+        <span>Garden</span>
+        <span>Pavilion</span>
       </>
     ),
     previewClassName: 'design-preview-text--gazebo',

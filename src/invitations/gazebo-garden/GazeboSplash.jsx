@@ -3,57 +3,53 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
-const SPLASH_POSTER = '/assets/gazebo-splash-frames/frame-00.jpg';
-const SPLASH_PLAYBACK_RATE = 0.7;
-const SPLASH_END_PADDING_MS = 420;
+const EXIT_DURATION_MS = 450;
 
 export default function GazeboSplash({ onDismiss }) {
   const ambientVideoRef = useRef(null);
   const foregroundVideoRef = useRef(null);
-  const fallbackTimerRef = useRef(null);
+  const dismissTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const [opening, setOpening] = useState(false);
 
   useEffect(() => {
+    const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
+
+    const safePlay = (video) => {
+      if (!video || !video.paused) return;
+      const result = video.play();
+      if (result && typeof result.catch === 'function') {
+        result.catch(() => undefined);
+      }
+    };
+
+    const playAll = () => videos.forEach(safePlay);
+
+    playAll();
+
+    const cleanups = videos.map((video) => {
+      const onCanPlay = () => safePlay(video);
+      video.addEventListener('canplay', onCanPlay);
+      video.addEventListener('loadeddata', onCanPlay);
+      return () => {
+        video.removeEventListener('canplay', onCanPlay);
+        video.removeEventListener('loadeddata', onCanPlay);
+      };
+    });
+
     return () => {
-      if (fallbackTimerRef.current) {
-        window.clearTimeout(fallbackTimerRef.current);
+      cleanups.forEach((fn) => fn());
+      if (dismissTimerRef.current) {
+        window.clearTimeout(dismissTimerRef.current);
       }
     };
   }, []);
 
-  const finishOpening = () => {
-    if (hasOpenedRef.current) return;
-    hasOpenedRef.current = true;
-    if (fallbackTimerRef.current) {
-      window.clearTimeout(fallbackTimerRef.current);
-    }
-    onDismiss();
-  };
-
   const handleOpen = () => {
-    if (opening) return;
+    if (opening || hasOpenedRef.current) return;
+    hasOpenedRef.current = true;
     setOpening(true);
-
-    const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
-    videos.forEach((video) => {
-      video.currentTime = 0;
-      video.playbackRate = SPLASH_PLAYBACK_RATE;
-    });
-
-    const primaryVideo = foregroundVideoRef.current;
-    const fallbackDelay =
-      primaryVideo && Number.isFinite(primaryVideo.duration) && primaryVideo.duration > 0
-        ? (primaryVideo.duration / SPLASH_PLAYBACK_RATE) * 1000 + SPLASH_END_PADDING_MS
-        : 7600;
-
-    fallbackTimerRef.current = window.setTimeout(finishOpening, fallbackDelay);
-
-    Promise.allSettled(videos.map((video) => video.play())).then((results) => {
-      if (results.every((result) => result.status === 'rejected')) {
-        finishOpening();
-      }
-    });
+    dismissTimerRef.current = window.setTimeout(onDismiss, EXIT_DURATION_MS);
   };
 
   return (
@@ -73,29 +69,14 @@ export default function GazeboSplash({ onDismiss }) {
         }}
         exit={{ opacity: 0, transition: { duration: 0.45 } }}
       >
-        <img
-          className="gazebo-splash-poster gazebo-splash-poster--ambient"
-          src={SPLASH_POSTER}
-          alt=""
-          aria-hidden="true"
-          fetchPriority="high"
-          decoding="async"
-        />
-        <img
-          className="gazebo-splash-poster gazebo-splash-poster--foreground"
-          src={SPLASH_POSTER}
-          alt=""
-          aria-hidden="true"
-          fetchPriority="high"
-          decoding="async"
-        />
         <video
           ref={ambientVideoRef}
           className="gazebo-splash-video gazebo-splash-video--ambient"
           muted
+          autoPlay
+          loop
           playsInline
           preload="auto"
-          poster={SPLASH_POSTER}
           aria-hidden="true"
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />
@@ -104,10 +85,10 @@ export default function GazeboSplash({ onDismiss }) {
           ref={foregroundVideoRef}
           className="gazebo-splash-video gazebo-splash-video--foreground"
           muted
+          autoPlay
+          loop
           playsInline
           preload="auto"
-          poster={SPLASH_POSTER}
-          onEnded={finishOpening}
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />
         </video>
