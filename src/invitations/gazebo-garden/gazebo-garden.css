@@ -31,7 +31,8 @@
   outline: none;
 }
 
-.gazebo-splash-video {
+.gazebo-splash-video,
+.gazebo-splash-poster {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -41,18 +42,24 @@
   transform: translate(-50%, -50%);
 }
 
-.gazebo-splash-video--ambient {
+.gazebo-splash-video--ambient,
+.gazebo-splash-poster--ambient {
   width: 100%;
   opacity: 0.34;
   filter: blur(22px) grayscale(1) sepia(0.28) saturate(0.78) brightness(0.96);
   transform: translate(-50%, -50%) scale(1.1);
 }
 
-.gazebo-splash-video--foreground {
+.gazebo-splash-video--foreground,
+.gazebo-splash-poster--foreground {
   z-index: 1;
   width: auto;
   filter: grayscale(1) sepia(0.34) saturate(0.82) brightness(1.04) contrast(0.98);
   box-shadow: 0 0 70px rgba(139, 105, 55, 0.16);
+}
+
+.gazebo-splash-poster {
+  pointer-events: none;
 }
 
 .gazebo-splash-beige-texture {
@@ -668,23 +675,6 @@
   padding: 1.3rem;
 }
 
-.gazebo-details-intro span {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: grid;
-  width: 3.25rem;
-  aspect-ratio: 1;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: 1rem;
-  font-weight: 700;
-  backdrop-filter: blur(10px);
-}
-
 .gazebo-details-intro h3 {
   margin: 0;
   font-size: clamp(2rem, 5vw, 3rem);
@@ -792,28 +782,26 @@
   grid-column: 1 / -1;
   min-height: clamp(18rem, 40vw, 26rem);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.78);
+  border: 0;
   border-radius: 0.5rem;
-  background:
-    linear-gradient(135deg, rgba(205, 238, 250, 0.34), rgba(255, 249, 232, 0.48)),
-    rgba(255, 255, 255, 0.48);
+  background: transparent;
   box-shadow: 0 24px 80px rgba(142, 102, 50, 0.13);
   cursor: pointer;
-  padding: 0.55rem;
+  padding: 0;
   text-decoration: none;
-  backdrop-filter: blur(12px);
 }
 
 .gazebo-map-frame:focus-visible {
-  outline: 3px solid rgba(168, 201, 138, 0.78);
-  outline-offset: 4px;
+  outline: none;
 }
 
 .gazebo-map-frame iframe {
+  display: block;
   width: 100%;
   height: 100%;
   min-height: clamp(18rem, 40vw, 26rem);
-  border-radius: 0.35rem;
+  border: 0;
+  border-radius: 0.5rem;
   pointer-events: none;
 }
 
@@ -1149,6 +1137,11 @@
   .gazebo-rsvp-grid,
   .gazebo-attending-grid {
     grid-template-columns: 1fr;
+  }
+
+  .gazebo-rsvp-submit {
+    justify-self: stretch;
+    width: 100%;
   }
 
   .gazebo-hero {

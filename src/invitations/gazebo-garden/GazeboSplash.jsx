@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
+const SPLASH_POSTER = '/assets/gazebo-splash-frames/frame-00.jpg';
 const SPLASH_PLAYBACK_RATE = 0.7;
 const SPLASH_END_PADDING_MS = 420;
 
@@ -72,12 +73,29 @@ export default function GazeboSplash({ onDismiss }) {
         }}
         exit={{ opacity: 0, transition: { duration: 0.45 } }}
       >
+        <img
+          className="gazebo-splash-poster gazebo-splash-poster--ambient"
+          src={SPLASH_POSTER}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          decoding="async"
+        />
+        <img
+          className="gazebo-splash-poster gazebo-splash-poster--foreground"
+          src={SPLASH_POSTER}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          decoding="async"
+        />
         <video
           ref={ambientVideoRef}
           className="gazebo-splash-video gazebo-splash-video--ambient"
           muted
           playsInline
           preload="auto"
+          poster={SPLASH_POSTER}
           aria-hidden="true"
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />
@@ -88,6 +106,7 @@ export default function GazeboSplash({ onDismiss }) {
           muted
           playsInline
           preload="auto"
+          poster={SPLASH_POSTER}
           onEnded={finishOpening}
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />

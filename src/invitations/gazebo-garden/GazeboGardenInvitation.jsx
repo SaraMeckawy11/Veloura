@@ -161,9 +161,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const venue = wd.venue || '';
   const venueAddress = wd.venueAddress || '';
   const message = wd.message || 'A garden promise sealed in soft light.';
-  const monogram = `${name1.charAt(0)}&${name2.charAt(0)}`.toUpperCase();
   const heroDate = compactDateStr || fullDateStr;
-  const heroDateTime = [heroDate, timeStr].filter(Boolean).join(' at ');
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (value) => String(value).padStart(2, '0');
@@ -331,7 +329,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       {weddingDate && (
         <section className="gazebo-section gazebo-countdown">
           <div className="gazebo-section-soft-pattern" aria-hidden="true" />
-          <SectionTitle eyebrow="The celebration begins in" title="Counting every heartbeat" lead={heroDateTime || fullDateStr} />
+          <SectionTitle eyebrow="The celebration begins in" title="Counting every heartbeat" />
           <div className="gazebo-count-grid">
             <CountdownUnit value={pad(timeLeft.days)} label="Days" />
             <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
@@ -381,7 +379,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="gazebo-details-intro">
-              <span>{monogram}</span>
               <h3>{venue || 'Garden venue'}</h3>
               <p>{message}</p>
             </div>
