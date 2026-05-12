@@ -34,10 +34,6 @@
   transition: background 340ms ease 620ms;
 }
 
-.gazebo-splash--opening {
-  background: transparent;
-}
-
 .gazebo-splash-glow {
   position: absolute;
   inset: -14%;
@@ -50,10 +46,6 @@
   opacity: 0.38;
   transform: scale(1.04);
   transition: opacity 520ms ease 520ms;
-}
-
-.gazebo-splash--opening .gazebo-splash-glow {
-  opacity: 0;
 }
 
 .gazebo-splash-overlay {
@@ -73,24 +65,6 @@
   overflow: hidden;
 }
 
-.gazebo-splash-reveal {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 245, 0.04), rgba(255, 255, 245, 0.24)),
-    url("/assets/gazebo-watercolor-poster1.jpg");
-  background-position: center;
-  background-size: cover;
-  opacity: 0;
-  transform: scale(1.018);
-  transition: opacity 520ms ease 560ms, transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.gazebo-splash--opening .gazebo-splash-reveal {
-  opacity: 1;
-  transform: scale(1);
-}
-
 .gazebo-splash-frame {
   display: block;
   width: auto;
@@ -99,31 +73,6 @@
   object-fit: cover;
   object-position: center;
   user-select: none;
-  transition: opacity 420ms ease 650ms;
-}
-
-.gazebo-splash--opening .gazebo-splash-frame {
-  opacity: 0.08;
-}
-
-.gazebo-splash-fold-shadow {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 40.5%;
-  height: 18%;
-  background:
-    linear-gradient(150deg, transparent 0 48.6%, rgba(105, 79, 42, 0.16) 49.4%, transparent 51.4%),
-    linear-gradient(210deg, transparent 0 48.6%, rgba(105, 79, 42, 0.16) 49.4%, transparent 51.4%);
-  opacity: 0.7;
-  pointer-events: none;
-  transform-origin: 50% 0;
-  transition: opacity 620ms ease, transform 860ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.gazebo-splash--opening .gazebo-splash-fold-shadow {
-  opacity: 0;
-  transform: translateY(-4vh) scaleY(0.72);
 }
 
 .gazebo-envelope-scene {
@@ -947,7 +896,7 @@
 }
 
 .gazebo-rsvp-card textarea {
-  min-height: 9rem;
+  min-height: 5.75rem;
   resize: vertical;
 }
 

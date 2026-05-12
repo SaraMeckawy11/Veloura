@@ -67,13 +67,6 @@ const DEFAULT_GALLERY = [
   },
 ];
 
-const MEAL_OPTIONS = [
-  { value: 'classic', label: 'Classic dinner' },
-  { value: 'vegetarian', label: 'Vegetarian' },
-  { value: 'seafood', label: 'Seafood' },
-  { value: 'kids', label: "Children's meal" },
-];
-
 function buildMapEmbedUrl(rawUrl, fallbackQuery) {
   const url = (rawUrl || '').trim();
   if (url) {
@@ -120,7 +113,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
     guestName: '',
     guestCount: '1',
     attending: '',
-    mealPreference: '',
     message: '',
   });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
@@ -237,7 +229,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
     event.preventDefault();
     setRsvpError('');
 
-    if (!rsvpForm.guestName.trim() || !rsvpForm.guestCount || !rsvpForm.attending || !rsvpForm.mealPreference) {
+    if (!rsvpForm.guestName.trim() || !rsvpForm.guestCount || !rsvpForm.attending) {
       setRsvpError('Please complete the required fields.');
       return;
     }
@@ -255,7 +247,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           guestName: rsvpForm.guestName.trim(),
           guestCount: Number(rsvpForm.guestCount) || 1,
           attending: rsvpForm.attending,
-          dietaryPreferences: rsvpForm.mealPreference,
+          dietaryPreferences: '',
           message: rsvpForm.message,
         }),
       });
@@ -455,22 +447,12 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               </fieldset>
 
               <label>
-                <span>Meal preference</span>
-                <select value={rsvpForm.mealPreference} onChange={event => updateRsvpField('mealPreference', event.target.value)} required>
-                  <option value="" disabled>Meal preference</option>
-                  {MEAL_OPTIONS.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
                 <span>Message</span>
                 <textarea
                   value={rsvpForm.message}
                   onChange={event => updateRsvpField('message', event.target.value)}
                   placeholder="Share a note for the couple"
-                  rows={5}
+                  rows={3}
                 />
               </label>
 

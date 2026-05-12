@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 
-const SPLASH_FRAME_COUNT = 30;
-const SPLASH_ANIMATION_DURATION = 1000;
+const SPLASH_FRAME_COUNT = 45;
+const SPLASH_ANIMATION_DURATION = 1500;
 const SPLASH_FRAMES = Array.from(
   { length: SPLASH_FRAME_COUNT },
   (_, index) => `/assets/gazebo-splash-frames/frame-${String(index).padStart(2, '0')}.jpg`,
@@ -86,14 +86,12 @@ export default function GazeboSplash({ onDismiss }) {
       >
         <div className="gazebo-splash-glow" aria-hidden />
         <div className="gazebo-splash-frame-scene" aria-hidden>
-          <div className="gazebo-splash-reveal" />
           <img
             className="gazebo-splash-frame"
             src={SPLASH_FRAMES[frameIndex]}
             alt=""
             draggable="false"
           />
-          <div className="gazebo-splash-fold-shadow" />
         </div>
         <div className="gazebo-splash-overlay" aria-hidden />
 
