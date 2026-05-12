@@ -92,6 +92,17 @@ export const fallbackTemplates = [
     active: true,
   },
   {
+    name: 'Watercolor Garden Gazebo',
+    slug: 'gazebo-garden',
+    category: 'launch',
+    description: 'Soft leaf green, ivory paper, pressed botanicals, warm gold, and a dreamy animated gazebo entrance.',
+    envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight',
+    previewImage: '/assets/gazebo-watercolor-poster1.jpg',
+    colorScheme: { primary: '#86ad61', secondary: '#fff8ea', background: '#eff8dc' },
+    placeholders: commonPlaceholders,
+    active: true,
+  },
+  {
     name: 'Midnight Garden',
     slug: 'midnight-garden',
     category: 'new',

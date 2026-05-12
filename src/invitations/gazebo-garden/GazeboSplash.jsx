@@ -1,0 +1,105 @@
+import { useEffect, useRef, useState } from 'react';
+// eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
+import { motion, AnimatePresence } from 'framer-motion';
+
+export default function GazeboSplash({ displayDate, onDismiss }) {
+  const ambientVideoRef = useRef(null);
+  const foregroundVideoRef = useRef(null);
+  const fallbackTimerRef = useRef(null);
+  const hasOpenedRef = useRef(false);
+  const [opening, setOpening] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (fallbackTimerRef.current) {
+        window.clearTimeout(fallbackTimerRef.current);
+      }
+    };
+  }, []);
+
+  const finishOpening = () => {
+    if (hasOpenedRef.current) return;
+    hasOpenedRef.current = true;
+    if (fallbackTimerRef.current) {
+      window.clearTimeout(fallbackTimerRef.current);
+    }
+    onDismiss();
+  };
+
+  const handleOpen = () => {
+    if (opening) return;
+    setOpening(true);
+
+    const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
+    videos.forEach((video) => {
+      video.currentTime = 0;
+      video.playbackRate = 1;
+    });
+
+    const primaryVideo = foregroundVideoRef.current;
+    const fallbackDelay =
+      primaryVideo && Number.isFinite(primaryVideo.duration) && primaryVideo.duration > 0
+        ? primaryVideo.duration * 1000 + 180
+        : 5200;
+
+    fallbackTimerRef.current = window.setTimeout(finishOpening, fallbackDelay);
+
+    Promise.allSettled(videos.map((video) => video.play())).then((results) => {
+      if (results.every((result) => result.status === 'rejected')) {
+        finishOpening();
+      }
+    });
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="gazebo-splash"
+        className={`gazebo-splash${opening ? ' gazebo-splash--opening' : ''}`}
+        role="button"
+        tabIndex={0}
+        aria-label="Open invitation"
+        onClick={handleOpen}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleOpen();
+          }
+        }}
+        exit={{ opacity: 0, transition: { duration: 0.45 } }}
+      >
+        <video
+          ref={ambientVideoRef}
+          className="gazebo-splash-video gazebo-splash-video--ambient"
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+        >
+          <source src="/assets/eal.mp4" type="video/mp4" />
+        </video>
+        <video
+          ref={foregroundVideoRef}
+          className="gazebo-splash-video gazebo-splash-video--foreground"
+          muted
+          playsInline
+          preload="auto"
+          onEnded={finishOpening}
+        >
+          <source src="/assets/eal.mp4" type="video/mp4" />
+        </video>
+        <div className="gazebo-splash-overlay" aria-hidden />
+
+        <motion.div
+          className="gazebo-splash-copy"
+          animate={opening ? { opacity: 0, y: -18 } : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+        >
+          {displayDate && <span>{displayDate}</span>}
+          <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
+          <small>your invitation</small>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}

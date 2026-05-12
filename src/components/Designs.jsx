@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
 import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
@@ -9,8 +9,8 @@ const designs = [
     category: 'launch',
     envelope: 'Blue envelope opens to a bride and groom walking toward the sea',
     description: 'Denim blues, watercolor shells, flowers, birds, and sailboats. Elegant, colorful, and perfect for coastal weddings.',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
-    overlay: 'linear-gradient(135deg, rgba(31,95,143,0.26), rgba(236,134,111,0.22))',
+    image: coastalSplashPreview,
+    overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/coastal-breeze',
@@ -25,6 +25,17 @@ const designs = [
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/boarding-pass',
+  },
+  {
+    name: 'Watercolor Garden Gazebo',
+    category: 'launch',
+    envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight',
+    description: 'Soft leaf green, ivory paper, pressed botanicals, warm gold, and a dreamy animated gazebo entrance.',
+    image: '/assets/gazebo-watercolor-poster1.jpg',
+    overlay: 'linear-gradient(135deg, rgba(91,125,68,0.12), rgba(255,255,245,0.22))',
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/gazebo-garden',
   },
   // {
   //   name: 'Velvet Rose',
@@ -128,23 +139,9 @@ const designs = [
   // },
 ];
 
-const filters = [
-  { label: 'All Designs', value: 'all' },
-  { label: 'Available Now', value: 'launch' },
-  { label: 'Coming Soon', value: 'new' },
-];
-
 export default function Designs() {
-  const [activeFilter, setActiveFilter] = useState('all');
   const revealRef = useReveal();
   const navigate = useNavigate();
-  const availableFilters = filters.filter(f => (
-    f.value === 'all' || designs.some(design => design.category === f.value)
-  ));
-
-  const filtered = activeFilter === 'all'
-    ? designs
-    : designs.filter(d => d.category === activeFilter);
 
   return (
     <section className="section designs-section" id="designs">
@@ -172,7 +169,7 @@ export default function Designs() {
         )} */}
 
         <div className="designs-grid">
-          {filtered.map(design => (
+          {designs.map(design => (
             <div
               className={`design-card${design.demoPath ? ' design-card--demo' : ''}`}
               key={design.name}
