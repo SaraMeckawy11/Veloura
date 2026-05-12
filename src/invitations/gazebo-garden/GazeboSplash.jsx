@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
+const SPLASH_PLAYBACK_RATE = 0.7;
+const SPLASH_END_PADDING_MS = 420;
 
 export default function GazeboSplash({ onDismiss }) {
   const ambientVideoRef = useRef(null);
@@ -35,14 +37,14 @@ export default function GazeboSplash({ onDismiss }) {
     const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
     videos.forEach((video) => {
       video.currentTime = 0;
-      video.playbackRate = 1;
+      video.playbackRate = SPLASH_PLAYBACK_RATE;
     });
 
     const primaryVideo = foregroundVideoRef.current;
     const fallbackDelay =
       primaryVideo && Number.isFinite(primaryVideo.duration) && primaryVideo.duration > 0
-        ? primaryVideo.duration * 1000 + 180
-        : 5200;
+        ? (primaryVideo.duration / SPLASH_PLAYBACK_RATE) * 1000 + SPLASH_END_PADDING_MS
+        : 7600;
 
     fallbackTimerRef.current = window.setTimeout(finishOpening, fallbackDelay);
 

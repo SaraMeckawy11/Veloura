@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import whiteBouquet from '../../assets/gazebo-white-bouquet.svg';
 import './gazebo-garden.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -412,9 +411,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       </section>
 
       <section id="rsvp" className="gazebo-section gazebo-rsvp-section">
-        <SectionTitle eyebrow="Kindly reply" title="Reserve your place">
-          <img className="gazebo-rsvp-flower-image" src={whiteBouquet} alt="" aria-hidden="true" />
-        </SectionTitle>
+        <SectionTitle eyebrow="Kindly reply" title="Reserve your place" />
         <AnimatePresence mode="wait">
           {!rsvpSubmitted ? (
             <motion.form
