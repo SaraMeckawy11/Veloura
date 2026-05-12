@@ -86,12 +86,14 @@ export default function GazeboSplash({ onDismiss }) {
       >
         <div className="gazebo-splash-glow" aria-hidden />
         <div className="gazebo-splash-frame-scene" aria-hidden>
+          <div className="gazebo-splash-reveal" />
           <img
             className="gazebo-splash-frame"
             src={SPLASH_FRAMES[frameIndex]}
             alt=""
             draggable="false"
           />
+          <div className="gazebo-splash-fold-shadow" />
         </div>
         <div className="gazebo-splash-overlay" aria-hidden />
 
