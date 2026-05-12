@@ -113,6 +113,8 @@ function getGalleryPhotoUrl(photo) {
 
 export default function GazeboGardenInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
+  const [heroVideoFailed, setHeroVideoFailed] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [rsvpForm, setRsvpForm] = useState({
     guestName: '',
@@ -180,6 +182,16 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const openMapHref = wd.venueMapUrl
     ? wd.venueMapUrl
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
+
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setPrefersReducedMotion(query.matches);
+
+    updatePreference();
+    query.addEventListener('change', updatePreference);
+
+    return () => query.removeEventListener('change', updatePreference);
+  }, []);
 
   useEffect(() => {
     if (!order?.weddingDetails?.weddingDate) return undefined;
@@ -259,7 +271,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       )}
       {showSplash && (
         <GazeboSplash
-          coupleNames={coupleNames}
           displayDate={compactDateStr || fullDateStr}
           onDismiss={handleSplashDismiss}
         />
@@ -268,17 +279,27 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       <section id="hero" className="gazebo-hero">
         <div className="gazebo-hero-media" aria-hidden>
           <img src="/assets/gazebo-watercolor-poster1.jpg" alt="" />
-          <video autoPlay muted loop playsInline poster="/assets/gazebo-watercolor-poster1.jpg">
-            <source src="/assets/gazebo-watercolor2.mp4" type="video/mp4" />
-          </video>
+          {!prefersReducedMotion && !heroVideoFailed && (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster="/assets/gazebo-watercolor-poster1.jpg"
+              onError={() => setHeroVideoFailed(true)}
+            >
+              <source src="/assets/gazebo-watercolor2.mp4" type="video/mp4" />
+            </video>
+          )}
           <div className="gazebo-hero-media-wash" />
+          <div className="gazebo-watercolor-grain" />
         </div>
 
         <motion.article
           className="gazebo-hero-copy"
           initial={{ opacity: 0, filter: 'blur(18px)', y: 28, scale: 0.98 }}
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0, scale: 1 }}
-          transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="gazebo-hero-date">{compactDateStr || fullDateStr}</p>
           <h1>{coupleNames}</h1>

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function GazeboSplash({ coupleNames, displayDate, onDismiss }) {
+export default function GazeboSplash({ displayDate, onDismiss }) {
   const ambientVideoRef = useRef(null);
   const foregroundVideoRef = useRef(null);
   const fallbackTimerRef = useRef(null);
@@ -39,8 +39,8 @@ export default function GazeboSplash({ coupleNames, displayDate, onDismiss }) {
     const primaryVideo = foregroundVideoRef.current;
     const fallbackDelay =
       primaryVideo && Number.isFinite(primaryVideo.duration) && primaryVideo.duration > 0
-        ? primaryVideo.duration * 1000 + 180
-        : 5200;
+        ? primaryVideo.duration * 1000 + 160
+        : 1200;
 
     fallbackTimerRef.current = window.setTimeout(finishOpening, fallbackDelay);
 
@@ -92,13 +92,14 @@ export default function GazeboSplash({ coupleNames, displayDate, onDismiss }) {
 
         <motion.div
           className="gazebo-splash-copy"
+          initial={{ opacity: 0, y: 18 }}
           animate={opening ? { opacity: 0, y: -18 } : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: opening ? 0.35 : 0.9, delay: opening ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
-          {coupleNames && <b>{coupleNames}</b>}
-          {displayDate && <span>{displayDate}</span>}
-          <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
-          <small>your invitation</small>
+          <div>
+            {displayDate && <span>{displayDate}</span>}
+            <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
+          </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
