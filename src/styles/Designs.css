@@ -105,6 +105,27 @@
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+.design-preview-text--gazebo {
+  display: grid;
+  gap: 2px;
+  color: #fffaf0;
+  font-size: clamp(1.55rem, 3.2vw, 2rem);
+  letter-spacing: 0.02em;
+  line-height: 0.94;
+  text-align: center;
+  text-shadow:
+    0 2px 14px rgba(49, 66, 52, 0.42),
+    0 0 28px rgba(255, 250, 232, 0.46);
+}
+
+.design-preview-text--gazebo span:first-child {
+  color: rgba(255, 250, 232, 0.9);
+  font-size: 0.72em;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
 .design-badge {
   position: absolute;
   top: 14px;

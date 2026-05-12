@@ -50,6 +50,7 @@ router.post('/', validateOrderBody, async (req, res) => {
       customerName,
       customerEmail,
       template: template._id,
+      templateName: template.name,
       weddingDetails,
       customizations: customizations || {},
       disabledFields: disabledFields || [],
@@ -263,6 +264,7 @@ router.get('/status/:orderId', async (req, res) => {
       publicSlug: order.publicSlug,
       editToken: order.paymentStatus === 'paid' ? order.editToken : undefined,
       template: order.template,
+      templateName: order.templateName || order.template?.name,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -284,6 +286,7 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       customerName: order.customerName,
       customerEmail: order.customerEmail,
       template: order.template,
+      templateName: order.templateName || order.template?.name,
       weddingDetails: order.weddingDetails,
       customizations: order.customizations,
       disabledFields: order.disabledFields,
@@ -478,6 +481,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       customerName: order.customerName,
       customerEmail: order.customerEmail,
       template: order.template,
+      templateName: order.templateName || order.template?.name,
       weddingDetails: order.weddingDetails,
       customizations: order.customizations,
       disabledFields: order.disabledFields,

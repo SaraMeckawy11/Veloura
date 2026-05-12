@@ -2,32 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 
-const SPLASH_FRAME_COUNT = 45;
-const SPLASH_ANIMATION_DURATION = 1500;
-const SPLASH_FRAMES = Array.from(
-  { length: SPLASH_FRAME_COUNT },
-  (_, index) => `/assets/gazebo-splash-frames/frame-${String(index).padStart(2, '0')}.jpg`,
-);
+const SPLASH_VIDEO = '/assets/eal.mp4';
 
 export default function GazeboSplash({ onDismiss }) {
+  const ambientVideoRef = useRef(null);
+  const foregroundVideoRef = useRef(null);
   const fallbackTimerRef = useRef(null);
-  const frameAnimationRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const [opening, setOpening] = useState(false);
-  const [frameIndex, setFrameIndex] = useState(0);
 
   useEffect(() => {
-    SPLASH_FRAMES.forEach((src) => {
-      const image = new Image();
-      image.src = src;
-    });
-
     return () => {
       if (fallbackTimerRef.current) {
         window.clearTimeout(fallbackTimerRef.current);
-      }
-      if (frameAnimationRef.current) {
-        window.cancelAnimationFrame(frameAnimationRef.current);
       }
     };
   }, []);
@@ -45,26 +32,25 @@ export default function GazeboSplash({ onDismiss }) {
     if (opening) return;
     setOpening(true);
 
-    const startTime = performance.now();
-    const animateFrames = (now) => {
-      const progress = Math.min((now - startTime) / SPLASH_ANIMATION_DURATION, 1);
-      const nextFrame = Math.min(
-        SPLASH_FRAME_COUNT - 1,
-        Math.floor(progress * SPLASH_FRAME_COUNT),
-      );
-      setFrameIndex(nextFrame);
+    const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
+    videos.forEach((video) => {
+      video.currentTime = 0;
+      video.playbackRate = 1;
+    });
 
-      if (progress < 1) {
-        frameAnimationRef.current = window.requestAnimationFrame(animateFrames);
+    const primaryVideo = foregroundVideoRef.current;
+    const fallbackDelay =
+      primaryVideo && Number.isFinite(primaryVideo.duration) && primaryVideo.duration > 0
+        ? primaryVideo.duration * 1000 + 180
+        : 5200;
+
+    fallbackTimerRef.current = window.setTimeout(finishOpening, fallbackDelay);
+
+    Promise.allSettled(videos.map((video) => video.play())).then((results) => {
+      if (results.every((result) => result.status === 'rejected')) {
+        finishOpening();
       }
-    };
-
-    frameAnimationRef.current = window.requestAnimationFrame(animateFrames);
-
-    fallbackTimerRef.current = window.setTimeout(
-      finishOpening,
-      SPLASH_ANIMATION_DURATION + 180,
-    );
+    });
   };
 
   return (
@@ -84,15 +70,27 @@ export default function GazeboSplash({ onDismiss }) {
         }}
         exit={{ opacity: 0, transition: { duration: 0.45 } }}
       >
-        <div className="gazebo-splash-glow" aria-hidden />
-        <div className="gazebo-splash-frame-scene" aria-hidden>
-          <img
-            className="gazebo-splash-frame"
-            src={SPLASH_FRAMES[frameIndex]}
-            alt=""
-            draggable="false"
-          />
-        </div>
+        <video
+          ref={ambientVideoRef}
+          className="gazebo-splash-video gazebo-splash-video--ambient"
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+        >
+          <source src={SPLASH_VIDEO} type="video/mp4" />
+        </video>
+        <video
+          ref={foregroundVideoRef}
+          className="gazebo-splash-video gazebo-splash-video--foreground"
+          muted
+          playsInline
+          preload="auto"
+          onEnded={finishOpening}
+        >
+          <source src={SPLASH_VIDEO} type="video/mp4" />
+        </video>
+        <div className="gazebo-splash-beige-texture" aria-hidden />
         <div className="gazebo-splash-overlay" aria-hidden />
 
         <motion.div

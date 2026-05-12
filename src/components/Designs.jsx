@@ -16,8 +16,15 @@ const designs = [
   },
   {
     name: 'Watercolor Garden Gazebo',
+    previewName: (
+      <>
+        <span>Watercolor</span>
+        <span>Garden Gazebo</span>
+      </>
+    ),
+    previewClassName: 'design-preview-text--gazebo',
     category: 'launch',
-    description: 'Soft leaf green, ivory paper, pressed botanicals, warm gold, and a dreamy animated gazebo entrance.',
+    description: 'A romantic garden invitation with beige paper texture, watercolor gazebo motion, white florals, and warm botanical details.',
     image: '/assets/gazebo-watercolor-poster1.jpg',
     overlay: 'linear-gradient(135deg, rgba(91,125,68,0.12), rgba(255,255,245,0.22))',
     badge: 'Available',
@@ -188,7 +195,9 @@ export default function Designs() {
                     backgroundImage: `${design.overlay}, url(${design.image})`,
                   }}
                 >
-                  <span className="design-preview-text">{design.name}</span>
+                  <span className={`design-preview-text ${design.previewClassName || ''}`.trim()}>
+                    {design.previewName || design.name}
+                  </span>
                 </div>
                 <span className={`design-badge ${design.badgeClass}`}>{design.badge}</span>
                 {design.demoPath && (

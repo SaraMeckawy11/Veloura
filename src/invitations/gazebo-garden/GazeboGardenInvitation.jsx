@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
+import whiteBouquet from '../../assets/gazebo-white-bouquet.svg';
 import './gazebo-garden.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
+const CLOUDINARY_UPLOAD_SEGMENT = '/image/upload/';
 
 const STORY_TONES = [
   'linear-gradient(135deg, #cdeefa, #fffaf0 48%, #f5c8c0)',
@@ -104,6 +106,32 @@ function getGalleryPhotoUrl(photo) {
   return typeof photo === 'string' ? photo : photo?.url;
 }
 
+function buildOptimizedImageUrl(src, transform) {
+  if (!src || src.startsWith('data:') || src.startsWith('blob:') || !src.includes(CLOUDINARY_UPLOAD_SEGMENT)) {
+    return src;
+  }
+
+  const [prefix, rest] = src.split(CLOUDINARY_UPLOAD_SEGMENT);
+  if (!prefix || !rest || rest.startsWith(`${transform}/`)) return src;
+
+  return `${prefix}${CLOUDINARY_UPLOAD_SEGMENT}${transform}/${rest}`;
+}
+
+function buildGalleryImageSources(src) {
+  const mobile = buildOptimizedImageUrl(src, 'f_auto,q_auto:eco,c_fill,g_auto,w_520,h_700');
+  const small = buildOptimizedImageUrl(src, 'f_auto,q_auto:eco,c_fill,g_auto,w_360,h_485');
+  const large = buildOptimizedImageUrl(src, 'f_auto,q_auto:good,c_fill,g_auto,w_700,h_940');
+
+  if (mobile === src) {
+    return { src, srcSet: undefined };
+  }
+
+  return {
+    src: mobile,
+    srcSet: `${small} 360w, ${mobile} 520w, ${large} 700w`,
+  };
+}
+
 export default function GazeboGardenInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
@@ -117,7 +145,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
-  const [activeGalleryItem, setActiveGalleryItem] = useState(null);
   const audioRef = useRef(null);
 
   const wd = order.weddingDetails || {};
@@ -330,7 +357,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               <div className="gazebo-story-art" style={{ background: item.tone }}>
                 {item.image && <img src={item.image} alt="" />}
                 <div />
-                <p>{item.imageLabel}</p>
               </div>
               <div className="gazebo-story-copy">
                 <p className="gazebo-section-eyebrow">{item.date}</p>
@@ -346,7 +372,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         <SectionTitle
           eyebrow="Event details"
           title="Where love gathers"
-          lead={[venue, fullDateTime].filter(Boolean).join(' | ')}
         />
         <div className="gazebo-details-layout">
           <motion.div
@@ -387,7 +412,9 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       </section>
 
       <section id="rsvp" className="gazebo-section gazebo-rsvp-section">
-        <SectionTitle eyebrow="Kindly reply" title="Reserve your place" lead="A quick note helps us prepare a seat, a plate, and a warm welcome." />
+        <SectionTitle eyebrow="Kindly reply" title="Reserve your place">
+          <img className="gazebo-rsvp-flower-image" src={whiteBouquet} alt="" aria-hidden="true" />
+        </SectionTitle>
         <AnimatePresence mode="wait">
           {!rsvpSubmitted ? (
             <motion.form
@@ -400,10 +427,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               viewport={{ once: true, amount: 0.22 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
             >
-              <div className="gazebo-rsvp-note">
-                <span>{heroDateTime || fullDateStr}</span>
-                <strong>{venue || 'Wedding celebration'}</strong>
-              </div>
               <div className="gazebo-rsvp-grid">
                 <label>
                   <span>Guest name</span>
@@ -475,57 +498,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       </section>
 
       <section id="gallery" className="gazebo-section gazebo-gallery-section">
-        <SectionTitle eyebrow="Photo gallery" title="Moments in bloom" />
-        <div className="gazebo-gallery-grid">
-          {galleryItems.map((item, index) => (
-            <motion.button
-              key={`${item.title}-${index}`}
-              type="button"
-              className="gazebo-gallery-card"
-              onClick={() => setActiveGalleryItem(item)}
-              initial={{ opacity: 0, y: 36 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.22 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.04 }}
-            >
-              {item.image ? <img src={item.image} alt="" /> : <div style={{ background: item.tone }} />}
-              <span className="gazebo-gallery-wash" />
-              <span className="gazebo-gallery-content">
-                <i aria-hidden />
-                <strong>{item.title}</strong>
-                <small>{item.caption}</small>
-              </span>
-            </motion.button>
-          ))}
-        </div>
-
-        <AnimatePresence>
-          {activeGalleryItem && (
-            <motion.div
-              className="gazebo-gallery-modal"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActiveGalleryItem(null)}
-            >
-              <motion.div
-                className="gazebo-gallery-modal-card"
-                initial={{ opacity: 0, y: 24, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 12, scale: 0.98 }}
-                transition={{ duration: 0.28 }}
-                onClick={event => event.stopPropagation()}
-              >
-                {activeGalleryItem.image ? <img src={activeGalleryItem.image} alt="" /> : <div style={{ background: activeGalleryItem.tone }} />}
-                <div>
-                  <h3>{activeGalleryItem.title}</h3>
-                  <p>{activeGalleryItem.caption}</p>
-                </div>
-                <button type="button" onClick={() => setActiveGalleryItem(null)} aria-label="Close">x</button>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <GazeboGallerySection items={galleryItems} />
       </section>
 
       <footer className="gazebo-footer">
@@ -545,11 +518,12 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   );
 }
 
-function SectionTitle({ eyebrow, title, lead }) {
+function SectionTitle({ eyebrow, title, lead, children }) {
   return (
     <div className="gazebo-section-title">
       <p className="gazebo-section-eyebrow">{eyebrow}</p>
       <h2>{title}</h2>
+      {children}
       {lead && <p className="gazebo-section-lead">{lead}</p>}
       <i aria-hidden />
     </div>
@@ -573,6 +547,142 @@ function CountdownUnit({ value, label }) {
       </motion.strong>
       <span>{label}</span>
     </motion.div>
+  );
+}
+
+function GazeboGallerySection({ items }) {
+  const galleryRowRef = useRef(null);
+  const galleryUnitRef = useRef(null);
+  const imageItems = items.filter(item => item.image);
+  const fallbackItems = imageItems.length ? [] : items;
+  const galleryKey = items.map(item => item.image || item.title).join('|');
+  const unitRepeatCount = imageItems.length ? Math.max(3, Math.ceil(12 / imageItems.length)) : 1;
+  const unitItems = imageItems.length
+    ? Array.from({ length: unitRepeatCount }, () => imageItems).flat()
+    : fallbackItems;
+
+  useEffect(() => {
+    const row = galleryRowRef.current;
+    const unit = galleryUnitRef.current;
+    if (!row || !unit || !unitItems.length || typeof window === 'undefined') return undefined;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let animationFrame = 0;
+    let distance = 0;
+    let offset = 0;
+    let previousTime = 0;
+    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
+
+    const updateDistance = () => {
+      distance = unit.scrollWidth;
+      offset = distance ? offset % distance : 0;
+      row.style.transform = `translate3d(${-offset}px, 0, 0)`;
+    };
+
+    const updateSpeed = () => {
+      pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
+    };
+
+    const animate = (time) => {
+      if (!previousTime) previousTime = time;
+      const elapsedSeconds = Math.min((time - previousTime) / 1000, 0.04);
+      previousTime = time;
+
+      if (distance > 0) {
+        offset += pixelsPerSecond * elapsedSeconds;
+        if (offset >= distance - 1) offset = 0;
+        row.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      }
+
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    const startAnimation = () => {
+      window.cancelAnimationFrame(animationFrame);
+      previousTime = 0;
+      if (reducedMotion.matches) {
+        row.style.transform = 'translate3d(0, 0, 0)';
+        return;
+      }
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    updateDistance();
+    updateSpeed();
+    startAnimation();
+
+    const resizeObserver = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(updateDistance)
+      : null;
+
+    resizeObserver?.observe(unit);
+    if (reducedMotion.addEventListener) {
+      reducedMotion.addEventListener('change', startAnimation);
+    } else {
+      reducedMotion.addListener(startAnimation);
+    }
+    window.addEventListener('resize', updateDistance);
+    window.addEventListener('resize', updateSpeed);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      resizeObserver?.disconnect();
+      if (reducedMotion.removeEventListener) {
+        reducedMotion.removeEventListener('change', startAnimation);
+      } else {
+        reducedMotion.removeListener(startAnimation);
+      }
+      window.removeEventListener('resize', updateDistance);
+      window.removeEventListener('resize', updateSpeed);
+    };
+  }, [unitItems.length, galleryKey]);
+
+  const renderGalleryGroup = (groupIndex) => unitItems.map((item, index) => {
+    const optimized = item.image ? buildGalleryImageSources(item.image) : null;
+    const imageNumber = imageItems.length ? (index % imageItems.length) + 1 : index + 1;
+
+    return (
+      <figure key={`${groupIndex}-${item.image || item.title}-${index}`} className="gazebo-memory-card">
+        {optimized ? (
+          <img
+            src={optimized.src}
+            srcSet={optimized.srcSet}
+            sizes="(max-width: 680px) 220px, 300px"
+            alt={`Memory ${imageNumber}`}
+            loading="eager"
+            decoding="async"
+            fetchPriority={groupIndex === 0 && index < imageItems.length ? 'high' : 'auto'}
+          />
+        ) : (
+          <div style={{ background: item.tone }} />
+        )}
+      </figure>
+    );
+  });
+
+  return (
+    <>
+      <div className="gazebo-gallery-header">
+        <h2>Memories</h2>
+      </div>
+      <div className="gazebo-gallery-viewport">
+        <div
+          className={`gazebo-gallery-row${unitItems.length ? ' gazebo-gallery-row-loop' : ''}`}
+          ref={galleryRowRef}
+        >
+          {[0, 1, 2, 3].map((groupIndex) => (
+            <div
+              key={groupIndex}
+              ref={groupIndex === 0 ? galleryUnitRef : null}
+              className="gazebo-gallery-group"
+              aria-hidden={groupIndex > 0 ? 'true' : undefined}
+            >
+              {renderGalleryGroup(groupIndex)}
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
 

@@ -584,7 +584,7 @@ export default function Dashboard() {
             )}
             <div className="detail-item">
               <span className="detail-label">Template</span>
-              <span className="detail-value">{order.template?.name}</span>
+              <span className="detail-value">{order.templateName || order.template?.name}</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Expires</span>
