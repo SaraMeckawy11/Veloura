@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
+const SPLASH_POSTER = '/assets/gazebo-splash-frames/frame-00.jpg';
 const SPLASH_PLAYBACK_RATE = 0.45;
 const SPLASH_END_PADDING_MS = 700;
 const FALLBACK_DISMISS_MS = 11000;
@@ -20,6 +21,10 @@ export default function GazeboSplash({ onDismiss }) {
       try {
         video.pause();
         video.currentTime = 0;
+        // Force the browser to fetch and decode the first frame so it
+        // shows up immediately on mobile (where the poster attribute is
+        // sometimes ignored until user interaction).
+        video.load();
       } catch {
         // Ignore — pause/seek may throw before metadata is ready.
       }
@@ -94,6 +99,7 @@ export default function GazeboSplash({ onDismiss }) {
           muted
           playsInline
           preload="auto"
+          poster={SPLASH_POSTER}
           aria-hidden="true"
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />
@@ -104,6 +110,7 @@ export default function GazeboSplash({ onDismiss }) {
           muted
           playsInline
           preload="auto"
+          poster={SPLASH_POSTER}
           onEnded={finishOpening}
           aria-hidden="true"
         >

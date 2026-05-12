@@ -26,7 +26,11 @@
   z-index: 9999;
   overflow: hidden;
   cursor: pointer;
-  background: #f0e4c8;
+  background-color: #f0e4c8;
+  background-image: url("/assets/gazebo-splash-frames/frame-00.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   color: #314234;
   outline: none;
   touch-action: manipulation;
