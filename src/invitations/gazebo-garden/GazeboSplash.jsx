@@ -3,17 +3,18 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
-const SPLASH_POSTER = '/assets/gazebo-splash-frames/frame-00.jpg';
-const SPLASH_PLAYBACK_RATE = 0.45;
-const SPLASH_END_PADDING_MS = 700;
-const FALLBACK_DISMISS_MS = 11000;
+const SPLASH_PLAYBACK_RATE = 0.6;
+const SPLASH_END_PADDING_MS = 500;
+const FALLBACK_DISMISS_MS = 9500;
 
 export default function GazeboSplash({ onDismiss }) {
   const ambientVideoRef = useRef(null);
   const foregroundVideoRef = useRef(null);
+  const posterRef = useRef(null);
   const fallbackTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const [opening, setOpening] = useState(false);
+  const [posterUrl, setPosterUrl] = useState(null);
 
   useEffect(() => {
     const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
@@ -21,16 +22,60 @@ export default function GazeboSplash({ onDismiss }) {
       try {
         video.pause();
         video.currentTime = 0;
-        // Force the browser to fetch and decode the first frame so it
-        // shows up immediately on mobile (where the poster attribute is
-        // sometimes ignored until user interaction).
         video.load();
       } catch {
-        // Ignore — pause/seek may throw before metadata is ready.
+        // Ignore — fresh streams can throw before metadata loads.
       }
     });
 
+    // Decode the actual first frame of the video and use it as the
+    // splash background. This avoids mobile browsers leaving the video
+    // surface blank until the user interacts with the screen.
+    let cancelled = false;
+    let createdUrl = null;
+    const loader = document.createElement('video');
+    loader.src = SPLASH_VIDEO;
+    loader.muted = true;
+    loader.playsInline = true;
+    loader.preload = 'auto';
+    loader.crossOrigin = 'anonymous';
+
+    const onSeeked = () => {
+      if (cancelled) return;
+      const w = loader.videoWidth;
+      const h = loader.videoHeight;
+      if (!w || !h) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      try {
+        canvas.getContext('2d').drawImage(loader, 0, 0, w, h);
+        canvas.toBlob((blob) => {
+          if (cancelled || !blob) return;
+          createdUrl = URL.createObjectURL(blob);
+          setPosterUrl(createdUrl);
+        }, 'image/jpeg', 0.9);
+      } catch {
+        // Most likely a cross-origin taint — fall back to the static poster.
+      }
+    };
+
+    const onLoaded = () => {
+      try {
+        loader.currentTime = 0;
+      } catch {
+        // ignored
+      }
+    };
+
+    loader.addEventListener('loadeddata', onLoaded);
+    loader.addEventListener('seeked', onSeeked);
+
     return () => {
+      cancelled = true;
+      loader.removeEventListener('loadeddata', onLoaded);
+      loader.removeEventListener('seeked', onSeeked);
+      if (createdUrl) URL.revokeObjectURL(createdUrl);
       if (fallbackTimerRef.current) {
         window.clearTimeout(fallbackTimerRef.current);
       }
@@ -50,6 +95,7 @@ export default function GazeboSplash({ onDismiss }) {
   const handleOpen = () => {
     if (opening || hasOpenedRef.current) return;
     setOpening(true);
+    if (posterRef.current) posterRef.current.style.opacity = '0';
 
     const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
     videos.forEach((video) => {
@@ -93,13 +139,23 @@ export default function GazeboSplash({ onDismiss }) {
         }}
         exit={{ opacity: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } }}
       >
+        {posterUrl && (
+          <img
+            ref={posterRef}
+            className="gazebo-splash-poster"
+            src={posterUrl}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+            fetchPriority="high"
+          />
+        )}
         <video
           ref={ambientVideoRef}
           className="gazebo-splash-video gazebo-splash-video--ambient"
           muted
           playsInline
           preload="auto"
-          poster={SPLASH_POSTER}
           aria-hidden="true"
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />
@@ -110,7 +166,6 @@ export default function GazeboSplash({ onDismiss }) {
           muted
           playsInline
           preload="auto"
-          poster={SPLASH_POSTER}
           onEnded={finishOpening}
           aria-hidden="true"
         >

@@ -27,13 +27,20 @@
   overflow: hidden;
   cursor: pointer;
   background-color: #f0e4c8;
-  background-image: url("/assets/gazebo-splash-frames/frame-00.jpg");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
   color: #314234;
   outline: none;
   touch-action: manipulation;
+}
+
+.gazebo-splash-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  transition: opacity 0.45s ease-out;
 }
 
 .gazebo-splash-video {
