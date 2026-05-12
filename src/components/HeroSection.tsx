@@ -79,7 +79,7 @@ export function HeroSection({
                 ? "border border-[#d6b15f] text-[#d6b15f]"
                 : theme.id === "arabic-royal"
                   ? "bg-[#0c3b2e] text-[#fff8ea]"
-                  : "bg-white/70 text-[#d98b75]"
+                  : "bg-white/70 text-[#86ad61]"
             )}
           >
             <Heart className="h-6 w-6" aria-hidden="true" />

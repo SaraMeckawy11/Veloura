@@ -178,7 +178,7 @@ export function RSVPSection({
                           ? "bg-[#1f1f1d] text-white"
                           : theme.id === "arabic-royal"
                             ? "bg-[#0c3b2e] text-[#fff8ea]"
-                            : "bg-[#d98b75] text-white"
+                            : "bg-[#86ad61] text-white"
                       : "bg-transparent"
                   )}
                 >

@@ -44,7 +44,7 @@ export function CountdownSection({
         />
       </ScrollReveal>
 
-      <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-2 gap-4 sm:grid-cols-4 lg:gap-6">
+      <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
         {units.map((unit, index) => (
           <ScrollReveal key={unit.label} theme={theme} delay={index * 0.07}>
             <motion.div
@@ -53,7 +53,7 @@ export function CountdownSection({
               transition={{ type: "spring", stiffness: 260, damping: 22 }}
             >
               <motion.p
-                className="font-serif text-5xl font-semibold leading-none sm:text-6xl"
+                className="font-serif text-3xl font-semibold leading-none sm:text-5xl lg:text-6xl"
                 key={`${unit.label}-${unit.value}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -61,7 +61,7 @@ export function CountdownSection({
               >
                 {String(unit.value).padStart(2, "0")}
               </motion.p>
-              <p className="mt-3 text-xs font-semibold uppercase tracking-[0.22em] opacity-70">
+              <p className="mt-2 text-[0.54rem] font-semibold uppercase tracking-[0.08em] opacity-70 sm:mt-3 sm:text-xs sm:tracking-[0.22em]">
                 {unit.label}
               </p>
             </motion.div>

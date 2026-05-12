@@ -82,7 +82,7 @@ export function EventDetailsSection({
                             ? "bg-[#0c3b2e] text-[#fff8ea]"
                             : theme.id === "minimal-modern"
                               ? "bg-[#1f1f1d] text-white"
-                              : "bg-[#d98b75] text-white"
+                              : "bg-[#86ad61] text-white"
                       )}
                     >
                       <Icon className="h-5 w-5" aria-hidden="true" />

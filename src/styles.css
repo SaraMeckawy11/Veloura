@@ -19,7 +19,7 @@ html {
 body {
   min-width: 320px;
   margin: 0;
-  background: #fff9f1;
+  background: #fbfff7;
 }
 
 button,
@@ -75,41 +75,29 @@ iframe {
 
 .theme-watercolor .section-soft-pattern {
   background:
-    radial-gradient(circle at 12% 18%, rgba(205, 235, 250, 0.62), transparent 30%),
-    radial-gradient(circle at 88% 0%, rgba(216, 238, 248, 0.58), transparent 30%),
-    radial-gradient(circle at 78% 48%, rgba(248, 207, 198, 0.26), transparent 24%),
-    radial-gradient(circle at 48% 92%, rgba(255, 235, 173, 0.3), transparent 24%);
+    linear-gradient(120deg, rgba(205, 235, 250, 0.18), rgba(255, 255, 246, 0.34) 48%, rgba(218, 235, 185, 0.16)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.1));
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
 }
 
 .theme-watercolor {
+  background-color: #fbfff7;
   background-image:
-    radial-gradient(circle at 4% 8%, rgba(205, 235, 250, 0.68), transparent 24%),
-    radial-gradient(circle at 64% 16%, rgba(216, 238, 248, 0.5), transparent 25%),
-    radial-gradient(circle at 94% 10%, rgba(248, 207, 198, 0.36), transparent 24%),
-    radial-gradient(circle at 10% 58%, rgba(255, 232, 174, 0.28), transparent 24%),
-    radial-gradient(circle at 88% 78%, rgba(190, 217, 156, 0.2), transparent 26%),
-    linear-gradient(180deg, #f4fbff 0%, #fffaf2 42%, #eef8fd 100%);
+    linear-gradient(180deg, rgba(246, 255, 242, 0.98) 0%, rgba(251, 255, 247, 0.98) 22%, rgba(246, 252, 255, 0.94) 58%, rgba(255, 251, 240, 0.96) 100%);
 }
 
 .theme-watercolor section:not(#hero) {
-  background:
-    radial-gradient(circle at 16% 8%, rgba(205, 235, 250, 0.48), transparent 27%),
-    radial-gradient(circle at 88% 18%, rgba(248, 207, 198, 0.2), transparent 24%),
-    linear-gradient(180deg, rgba(244, 251, 255, 0.62), rgba(255, 250, 242, 0.84));
+  background: transparent;
 }
 
 .theme-watercolor section:not(#hero):nth-of-type(even) {
-  background:
-    radial-gradient(circle at 84% 8%, rgba(205, 235, 250, 0.56), transparent 30%),
-    radial-gradient(circle at 12% 72%, rgba(255, 232, 174, 0.22), transparent 24%),
-    linear-gradient(180deg, rgba(255, 250, 242, 0.82), rgba(239, 248, 253, 0.7));
+  background: transparent;
 }
 
 .theme-watercolor section#hero + section:nth-of-type(even) {
   background:
-    radial-gradient(circle at 14% 22%, rgba(205, 235, 250, 0.56), transparent 30%),
-    radial-gradient(circle at 78% 34%, rgba(248, 207, 198, 0.18), transparent 26%),
-    linear-gradient(180deg, #ffffff 0%, #f8fcff 20%, #eef8fd 58%, #fffaf2 100%);
+    linear-gradient(180deg, #ffffff 0%, #fbfff7 34%, rgba(251, 255, 247, 0) 100%);
 }
 
 .theme-black-gold .section-soft-pattern {
