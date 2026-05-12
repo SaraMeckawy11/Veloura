@@ -4,17 +4,7 @@ import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
 const designs = [
-  {
-    name: 'Coastal Breeze',
-    category: 'launch',
-    description: 'Denim blues, watercolor shells, flowers, birds, and sailboats. Elegant, colorful, and perfect for coastal weddings.',
-    image: coastalSplashPreview,
-    overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
-    badge: 'Available',
-    badgeClass: 'badge-launch',
-    demoPath: '/demo/coastal-breeze',
-  },
-  {
+    {
     name: 'Garden Pavilion',
     previewName: (
       <>
@@ -30,6 +20,16 @@ const designs = [
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/gazebo-garden',
+  },
+  {
+    name: 'Coastal Breeze',
+    category: 'launch',
+    description: 'Denim blues, watercolor shells, flowers, birds, and sailboats. Elegant, colorful, and perfect for coastal weddings.',
+    image: coastalSplashPreview,
+    overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/coastal-breeze',
   },
   {
     name: 'Boarding Pass',
