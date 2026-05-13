@@ -84,7 +84,9 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
-  const mapEnabled = !disabledFields.includes('venueMapUrl');
+  const fieldEnabled = (key) => !disabledFields.includes(key);
+  const mapEnabled = fieldEnabled('venueMapUrl');
+  const rsvpEnabled = fieldEnabled('rsvp');
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
@@ -95,14 +97,13 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     ? weddingDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
     : '';
   const dayOfMonth = weddingDate ? weddingDate.getDate() : '';
-  const yearStr = weddingDate ? weddingDate.getFullYear() : '';
   const fullDateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
     : '';
-  const timeStr = wd.weddingTime || '';
+  const timeStr = fieldEnabled('weddingTime') ? (wd.weddingTime || '') : '';
   const venue = wd.venue || '';
-  const venueAddress = wd.venueAddress || '';
-  const message = wd.message || 'With the sea as our witness, we begin forever.';
+  const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
+  const message = fieldEnabled('message') ? (wd.message || 'With the sea as our witness, we begin forever.') : '';
   const tideCode = wd.flightNo || `COAST-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -263,12 +264,8 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           ) : null}
 
           <p className="coastal-hero-venue">{venue || 'By the sea'}</p>
-          {venueAddress && <p className="coastal-hero-address">{venueAddress}</p>}
-          {!venueAddress && yearStr && <p className="coastal-hero-address">{yearStr}</p>}
 
-          <span className="coastal-hero-reception">Reception to follow</span>
-
-          <p className="coastal-hero-message">"{message}"</p>
+          {message && <p className="coastal-hero-message">"{message}"</p>}
         </motion.article>
       </section>
 
@@ -328,10 +325,12 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                 <dt>Date</dt>
                 <dd>{fullDateStr || 'To be announced'}</dd>
               </div>
-              <div>
-                <dt>Time</dt>
-                <dd>{timeStr || 'See invitation'}</dd>
-              </div>
+              {timeStr && (
+                <div>
+                  <dt>Time</dt>
+                  <dd>{timeStr}</dd>
+                </div>
+              )}
               {venueAddress && (
                 <div>
                   <dt>Address</dt>
@@ -369,6 +368,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         )}
       </section>
 
+      {rsvpEnabled && (
       <section className="coastal-rsvp-section">
         <div className="coastal-rsvp-ocean" aria-hidden>
           <span className="coastal-rsvp-foam coastal-rsvp-foam-one" />
@@ -484,6 +484,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           </AnimatePresence>
         </div>
       </section>
+      )}
 
       {isReferenceDemo && order.galleryImages?.length ? (
         <GallerySection images={order.galleryImages} />
@@ -534,7 +535,7 @@ function CountdownUnit({ value, label }) {
 function StorySection({ milestones, images }) {
   const items = images.length
     ? images.map((src, index) => ({ src, ...(milestones[index] || {}) }))
-    : milestones.map((milestone, index) => ({ ...milestone, src: index % 2 === 0 ? pierArch : ceremonyArch }));
+    : milestones.map((milestone) => ({ ...milestone, src: ceremonyArch }));
 
   return (
     <section className="coastal-section coastal-story-section">

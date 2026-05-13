@@ -20,11 +20,55 @@ const router = Router();
 const PRICE_USD = process.env.PRICE_USD || '89.00';
 const CURRENCY = process.env.PRICE_CURRENCY || 'USD';
 const CLIENT_URL = getClientUrl();
+const HIDEABLE_WEDDING_FIELDS = new Set([
+  'weddingTime',
+  'venueAddress',
+  'venueMapUrl',
+  'message',
+  'secondLanguage',
+]);
+
+function normalizeDisabledFields(fields) {
+  return Array.isArray(fields) ? [...new Set(fields.filter(Boolean))] : [];
+}
+
+function applyDisabledFields(weddingDetails = {}, disabledFields = []) {
+  const cleaned = { ...weddingDetails };
+  for (const field of disabledFields) {
+    if (HIDEABLE_WEDDING_FIELDS.has(field)) {
+      delete cleaned[field];
+    }
+  }
+  return cleaned;
+}
+
+function publicInvitationUrl(publicSlug) {
+  return publicSlug ? `${CLIENT_URL}/i/${publicSlug}` : undefined;
+}
+
+function dashboardUrl(editToken) {
+  return editToken ? `${CLIENT_URL}/dashboard/${editToken}` : undefined;
+}
+
+async function ensureTemplateMetadata(order) {
+  let changed = false;
+  if (!order.templateName && order.template?.name) {
+    order.templateName = order.template.name;
+    changed = true;
+  }
+  if (!order.templateSlug && order.template?.slug) {
+    order.templateSlug = order.template.slug;
+    changed = true;
+  }
+  if (changed) await order.save();
+}
 
 // POST /api/orders - create order + PayPal order. Refuses with 503 if PayPal credentials are missing.
 router.post('/', validateOrderBody, async (req, res) => {
   try {
-    const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, disabledFields, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones } = req.body;
+    const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones } = req.body;
+    const disabledFields = normalizeDisabledFields(req.body.disabledFields);
+    const cleanWeddingDetails = applyDisabledFields(weddingDetails, disabledFields);
 
     let template = null;
     if (templateId?.match?.(/^[a-f\d]{24}$/i)) {
@@ -51,9 +95,10 @@ router.post('/', validateOrderBody, async (req, res) => {
       customerEmail,
       template: template._id,
       templateName: template.name,
-      weddingDetails,
+      templateSlug: template.slug,
+      weddingDetails: cleanWeddingDetails,
       customizations: customizations || {},
-      disabledFields: disabledFields || [],
+      disabledFields,
       colorOverrides: colorOverrides || {},
       photos: photos || [],
       musicUrl,
@@ -182,6 +227,8 @@ router.post('/capture/:orderId', async (req, res) => {
         orderId: order._id,
         publicSlug: order.publicSlug,
         editToken: order.editToken,
+        invitationUrl: publicInvitationUrl(order.publicSlug),
+        dashboardUrl: dashboardUrl(order.editToken),
       });
     }
 
@@ -227,6 +274,8 @@ router.post('/capture/:orderId', async (req, res) => {
       orderId: order._id,
       publicSlug: order.publicSlug,
       editToken: order.editToken,
+      invitationUrl: publicInvitationUrl(order.publicSlug),
+      dashboardUrl: dashboardUrl(order.editToken),
     });
   } catch (err) {
     console.error('PayPal capture error:', err);
@@ -242,6 +291,7 @@ router.get('/status/:orderId', async (req, res) => {
   try {
     const order = await Order.findById(req.params.orderId).populate('template', 'name slug previewImage');
     if (!order) return res.status(404).json({ error: 'Order not found' });
+    await ensureTemplateMetadata(order);
 
     // If still pending and we have a PayPal order id, ask PayPal directly. If the
     // order is already captured, activate locally — webhook may follow later (idempotent).
@@ -262,9 +312,12 @@ router.get('/status/:orderId', async (req, res) => {
       paymentStatus: order.paymentStatus,
       status: order.status,
       publicSlug: order.publicSlug,
+      invitationUrl: publicInvitationUrl(order.publicSlug),
       editToken: order.paymentStatus === 'paid' ? order.editToken : undefined,
+      dashboardUrl: order.paymentStatus === 'paid' ? dashboardUrl(order.editToken) : undefined,
       template: order.template,
       templateName: order.templateName || order.template?.name,
+      templateSlug: order.templateSlug || order.template?.slug,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -278,6 +331,7 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       .populate('template');
 
     if (!order) return res.status(404).json({ error: 'Order not found' });
+    await ensureTemplateMetadata(order);
 
     res.json({
       id: order._id,
@@ -287,6 +341,7 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       customerEmail: order.customerEmail,
       template: order.template,
       templateName: order.templateName || order.template?.name,
+      templateSlug: order.templateSlug || order.template?.slug,
       weddingDetails: order.weddingDetails,
       customizations: order.customizations,
       disabledFields: order.disabledFields,
@@ -297,6 +352,7 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       musicPublicId: order.musicPublicId,
       musicEnabled: order.musicEnabled,
       publicSlug: order.publicSlug,
+      invitationUrl: publicInvitationUrl(order.publicSlug),
       editsRemaining: order.editsRemaining,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,
@@ -323,7 +379,13 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
       });
     }
 
-    const { weddingDetails, customizations, disabledFields, colorOverrides, photos, storyMilestones, musicUrl, musicPublicId, musicEnabled } = req.body;
+    const { customizations, colorOverrides, photos, storyMilestones, musicUrl, musicPublicId, musicEnabled } = req.body;
+    const disabledFields = req.body.disabledFields !== undefined
+      ? normalizeDisabledFields(req.body.disabledFields)
+      : order.disabledFields || [];
+    const weddingDetails = req.body.weddingDetails
+      ? applyDisabledFields(req.body.weddingDetails, disabledFields)
+      : undefined;
 
     // --- Name change validation ---
     const nameChanges = weddingDetails ? order.getNameFieldChanges(weddingDetails) : [];
@@ -366,7 +428,7 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
       for (const [k, v] of Object.entries(customizations)) order.customizations.set(k, v);
       fieldsChanged.push('customizations');
     }
-    if (disabledFields) { order.disabledFields = disabledFields; fieldsChanged.push('disabledFields'); }
+    if (req.body.disabledFields !== undefined) { order.disabledFields = disabledFields; fieldsChanged.push('disabledFields'); }
     if (colorOverrides) { order.colorOverrides = { ...order.colorOverrides, ...colorOverrides }; fieldsChanged.push('colorOverrides'); }
     if (photos) { order.photos = photos; fieldsChanged.push('photos'); }
     if (storyMilestones) { order.storyMilestones = storyMilestones; fieldsChanged.push('storyMilestones'); }
@@ -473,6 +535,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
     if (!order.invitationCode) {
       await order.save();
     }
+    await ensureTemplateMetadata(order);
 
     res.json({
       id: order._id,
@@ -482,6 +545,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       customerEmail: order.customerEmail,
       template: order.template,
       templateName: order.templateName || order.template?.name,
+      templateSlug: order.templateSlug || order.template?.slug,
       weddingDetails: order.weddingDetails,
       customizations: order.customizations,
       disabledFields: order.disabledFields,
@@ -492,6 +556,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       musicPublicId: order.musicPublicId,
       musicEnabled: order.musicEnabled,
       publicSlug: order.publicSlug,
+      invitationUrl: publicInvitationUrl(order.publicSlug),
       invitationCode: order.invitationCode,
       editsRemaining: order.editsRemaining,
       nameEditsRemaining: order.nameEditsRemaining,

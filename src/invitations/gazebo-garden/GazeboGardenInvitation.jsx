@@ -148,7 +148,9 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
-  const mapEnabled = !disabledFields.includes('venueMapUrl');
+  const fieldEnabled = (key) => !disabledFields.includes(key);
+  const mapEnabled = fieldEnabled('venueMapUrl');
+  const rsvpEnabled = fieldEnabled('rsvp');
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
   const coupleNames = `${name1} & ${name2}`;
@@ -157,10 +159,10 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const compactDateStr = weddingDate
     ? `${String(weddingDate.getMonth() + 1).padStart(2, '0')}.${String(weddingDate.getDate()).padStart(2, '0')}.${weddingDate.getFullYear()}`
     : '';
-  const timeStr = wd.weddingTime || '';
+  const timeStr = fieldEnabled('weddingTime') ? (wd.weddingTime || '') : '';
   const venue = wd.venue || '';
-  const venueAddress = wd.venueAddress || '';
-  const message = wd.message || 'A garden promise sealed in soft light.';
+  const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
+  const message = fieldEnabled('message') ? (wd.message || 'A garden promise sealed in soft light.') : '';
   const heroDate = compactDateStr || fullDateStr;
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
@@ -168,7 +170,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
   const orderPhotos = order.photos || [];
   const storyPhotos = orderPhotos.filter(photo => photo.label === 'story');
-  const storySource = order.storyMilestones?.length ? order.storyMilestones : DEFAULT_STORY;
+  const storySource = order.storyMilestones?.length ? order.storyMilestones : (demo ? DEFAULT_STORY : []);
   const storyItems = storySource.map((item, index) => ({
     id: `${item.title || 'story'}-${index}`,
     date: item.date || DEFAULT_STORY[index % DEFAULT_STORY.length].date,
@@ -195,7 +197,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       tone: DEFAULT_GALLERY[index % DEFAULT_GALLERY.length].tone,
       image: src,
     }))
-    : DEFAULT_GALLERY;
+    : [];
 
   const embedSrc = mapEnabled ? buildMapEmbedUrl(wd.venueMapUrl, [venue, venueAddress].filter(Boolean).join(', ')) : null;
   const openMapHref = wd.venueMapUrl
@@ -321,7 +323,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         >
           <p className="gazebo-hero-date">{heroDate || fullDateStr}</p>
           <h1>{coupleNames}</h1>
-          <p className="gazebo-hero-tagline">{message}</p>
+          {message && <p className="gazebo-hero-tagline">{message}</p>}
           {timeStr && <p className="gazebo-hero-time">{timeStr}</p>}
         </motion.article>
       </section>
@@ -339,6 +341,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         </section>
       )}
 
+      {storyItems.length > 0 && (
       <section id="story" className="gazebo-section gazebo-story-section">
         <SectionTitle eyebrow="Our story" title="The path that brought us here" />
         <div className="gazebo-story-grid">
@@ -364,6 +367,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           ))}
         </div>
       </section>
+      )}
 
       <section id="details" className="gazebo-section gazebo-details-section">
         <SectionTitle
@@ -380,7 +384,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           >
             <div className="gazebo-details-intro">
               <h3>{venue || 'Garden venue'}</h3>
-              <p>{message}</p>
+              {message && <p>{message}</p>}
             </div>
             <div className="gazebo-detail-list">
               <DetailItem label="Date & time" value={fullDateTime || 'To be announced'} />
@@ -403,6 +407,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         </div>
       </section>
 
+      {rsvpEnabled && (
       <section id="rsvp" className="gazebo-section gazebo-rsvp-section">
         <SectionTitle eyebrow="Kindly reply" title="Reserve your place" />
         <AnimatePresence mode="wait">
@@ -486,10 +491,13 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           )}
         </AnimatePresence>
       </section>
+      )}
 
-      <section id="gallery" className="gazebo-section gazebo-gallery-section">
-        <GazeboGallerySection items={galleryItems} />
-      </section>
+      {galleryItems.length > 0 && (
+        <section id="gallery" className="gazebo-section gazebo-gallery-section">
+          <GazeboGallerySection items={galleryItems} />
+        </section>
+      )}
 
       <footer className="gazebo-footer">
         <div className="gazebo-footer-inner">

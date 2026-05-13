@@ -56,9 +56,14 @@
   border-radius: var(--radius-md);
   padding: 14px 16px;
   text-align: left;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 12px;
+  align-items: center;
 }
 .link-label {
   display: block;
+  grid-column: 1 / -1;
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -70,6 +75,20 @@
   font-size: 0.82rem;
   color: var(--gold);
   word-break: break-all;
+}
+.success-link-card button {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--text);
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.success-link-card button:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .success-actions {

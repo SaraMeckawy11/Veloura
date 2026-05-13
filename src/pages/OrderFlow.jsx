@@ -60,19 +60,9 @@ const PHOTO_CATEGORIES = [
 
 // Local fallback images keyed by slug — used when API images fail to load
 const TEMPLATE_PREVIEW_IMAGES = {
-  'velvet-rose': 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop&q=80',
-  'golden-hour': 'https://images.unsplash.com/photo-1478146059778-26028b07395a?w=600&h=400&fit=crop&q=80',
-  'sakura-spring': 'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?w=600&h=400&fit=crop&q=80',
-  'dark-romance': 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=600&h=400&fit=crop&q=80',
-  'pharaonic': 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&h=400&fit=crop&q=80',
   'coastal-breeze': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
-  'boarding-pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
   'gazebo-garden': '/assets/gazebo-watercolor-poster1.jpg',
-  'midnight-garden': 'https://images.unsplash.com/photo-1507400492013-162706c8c05e?w=600&h=400&fit=crop&q=80',
-  'f1-race': 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=400&fit=crop&q=80',
-  'art-deco-noir': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=400&fit=crop&q=80',
-  celestial: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&h=400&fit=crop&q=80',
-  cinema: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&h=400&fit=crop&q=80',
+  'boarding-pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
 };
 
 const LANGUAGE_OPTIONS = [
@@ -195,19 +185,9 @@ export default function OrderFlow() {
 
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
-    { _id: 'velvet-rose', name: 'Velvet Rose', slug: 'velvet-rose', category: 'new', envelope: 'Burgundy wax seal breaks open, rose petals scatter', colorScheme: { primary: '#8b2942', secondary: '#f5d5dc', background: '#3d0f1a' } },
-    { _id: 'golden-hour', name: 'Golden Hour', slug: 'golden-hour', category: 'new', envelope: 'Gold foil envelope unfolds with a warm light burst', colorScheme: { primary: '#daa520', secondary: '#fff8e7', background: '#8b6914' } },
-    { _id: 'sakura-spring', name: 'Sakura Spring', slug: 'sakura-spring', category: 'new', envelope: 'Pale pink envelope opens, cherry blossoms cascade down', colorScheme: { primary: '#f48fb1', secondary: '#880e4f', background: '#fce4ec' } },
-    { _id: 'dark-romance', name: 'Dark Romance', slug: 'dark-romance', category: 'new', envelope: 'Dark velvet envelope with blood-red wax seal cracks open', colorScheme: { primary: '#c62828', secondary: '#ffcdd2', background: '#1a1a1a' } },
-    { _id: 'pharaonic', name: 'Pharaonic', slug: 'pharaonic', category: 'new', envelope: 'Gold sarcophagus-style envelope with hieroglyphic border unseals', colorScheme: { primary: '#ffd54f', secondary: '#1a237e', background: '#2e1a00' } },
     { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', category: 'launch', envelope: 'Blue envelope opens to a bride and groom walking toward the sea', colorScheme: { primary: '#1f5f8f', secondary: '#ec866f', background: '#fffaf1' } },
     { _id: 'gazebo-garden', name: 'Garden Pavilion', slug: 'gazebo-garden', category: 'launch', envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight', colorScheme: { primary: '#86ad61', secondary: '#fff8ea', background: '#eff8dc' } },
     { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', category: 'launch', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
-    { _id: 'midnight-garden', name: 'Midnight Garden', slug: 'midnight-garden', category: 'new', envelope: 'Dark envelope opens, fireflies emerge into the night', colorScheme: { primary: '#b0bec5', secondary: '#cfd8dc', background: '#0d1b2a' } },
-    { _id: 'f1-race', name: 'F1 Race', slug: 'f1-race', category: 'new', envelope: 'Racing helmet visor lifts open', colorScheme: { primary: '#b71c1c', secondary: '#f5f5f5', background: '#1a1a1a' } },
-    { _id: 'art-deco-noir', name: 'Art Deco Noir', slug: 'art-deco-noir', category: 'new', envelope: 'Black and gold geometric envelope fans open', colorScheme: { primary: '#d4af37', secondary: '#f8f1d4', background: '#111111' } },
-    { _id: 'celestial', name: 'Celestial', slug: 'celestial', category: 'new', envelope: 'Star-map envelope dissolves into constellation', colorScheme: { primary: '#90caf9', secondary: '#e3f2fd', background: '#0d1b3e' } },
-    { _id: 'cinema', name: 'Cinema', slug: 'cinema', category: 'new', envelope: 'Film strip unrolls from a vintage envelope', colorScheme: { primary: '#ffc857', secondary: '#fff4d6', background: '#1b1b1b' } },
   ];
 
   const goToSuccessPage = useCallback((orderId) => {
@@ -412,6 +392,10 @@ export default function OrderFlow() {
       .filter(p => !p._uploading && !p._failed && !p._pendingUpload)
       .map(p => ({ ...p, label: p.label || cat }))
   );
+  const fieldEnabled = (key) => !disabledFields.includes(key);
+  const optionalValue = (key, fallback = undefined) => (
+    fieldEnabled(key) && form[key] ? form[key] : fallback
+  );
 
   // Step 2 → Step 3: just validate and move to review (no order created yet)
   const handleSubmit = (e) => {
@@ -569,13 +553,13 @@ export default function OrderFlow() {
             groomName: form.groomName,
             brideName: form.brideName,
             weddingDate: form.weddingDate || undefined,
-            weddingTime: form.weddingTime || undefined,
+            weddingTime: optionalValue('weddingTime'),
             venue: form.venue,
-            venueAddress: form.venueAddress || undefined,
-            venueMapUrl: disabledFields.includes('venueMapUrl') ? undefined : (form.venueMapUrl || undefined),
-            message: form.message.trim() || undefined,
+            venueAddress: optionalValue('venueAddress'),
+            venueMapUrl: optionalValue('venueMapUrl'),
+            message: fieldEnabled('message') ? (form.message.trim() || undefined) : undefined,
             language: form.language,
-            secondLanguage: form.secondLanguage || undefined,
+            secondLanguage: optionalValue('secondLanguage'),
           },
           disabledFields,
           photos: allPhotos.filter(p => !p._uploading && !p._failed),

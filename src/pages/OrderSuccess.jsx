@@ -8,6 +8,7 @@ const POLL_INTERVAL_MS = 3000;
 export default function OrderSuccess() {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
+  const [copied, setCopied] = useState('');
 
   useEffect(() => {
     if (!orderId) return undefined;
@@ -44,6 +45,14 @@ export default function OrderSuccess() {
   }, [orderId]);
 
   const isPaid = order?.paymentStatus === 'paid';
+  const invitationUrl = order?.invitationUrl || (order?.publicSlug ? `${window.location.origin}/i/${order.publicSlug}` : '');
+  const dashboardUrl = order?.dashboardUrl || (order?.editToken ? `${window.location.origin}/dashboard/${order.editToken}` : '');
+  const copyLink = async (value, key) => {
+    if (!value) return;
+    await navigator.clipboard.writeText(value);
+    setCopied(key);
+    window.setTimeout(() => setCopied(''), 1600);
+  };
 
   if (!isPaid) {
     return (
@@ -65,19 +74,25 @@ export default function OrderSuccess() {
 
           <h1>Payment Verified</h1>
           <p className="success-subtitle">
-            Congratulations! A confirmation email with your invitation link and private edit link is on its way.
+            Congratulations! Your invitation is live now. We also sent these links to your email.
           </p>
 
-          {order.publicSlug && (
+          {invitationUrl && (
             <div className="success-links">
               <div className="success-link-card">
                 <span className="link-label">Invitation Link (share with guests)</span>
-                <code>{window.location.origin}/i/{order.publicSlug}</code>
+                <code>{invitationUrl}</code>
+                <button type="button" onClick={() => copyLink(invitationUrl, 'invitation')}>
+                  {copied === 'invitation' ? 'Copied' : 'Copy'}
+                </button>
               </div>
-              {order.editToken && (
+              {dashboardUrl && (
                 <div className="success-link-card">
                   <span className="link-label">Dashboard & Edit (private - check your email)</span>
-                  <code>{window.location.origin}/dashboard/{order.editToken}</code>
+                  <code>{dashboardUrl}</code>
+                  <button type="button" onClick={() => copyLink(dashboardUrl, 'dashboard')}>
+                    {copied === 'dashboard' ? 'Copied' : 'Copy'}
+                  </button>
                 </div>
               )}
             </div>
