@@ -7,7 +7,7 @@ import gallery6 from '../../assets/gallery-6.png';
 import story1 from '../../assets/story-1.png';
 import story2 from '../../assets/story-2.png';
 import story3 from '../../assets/story-3.png';
-import story3 from '../../assets/story-4.png';
+import story4 from '../../assets/story-4.png';
 
 export const GAZEBO_GARDEN_DEMO_ORDER = {
   referenceLayout: true,
