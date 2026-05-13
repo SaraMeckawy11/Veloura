@@ -568,7 +568,9 @@
 }
 
 .coastal-photo-frame > .invitation-photo {
-  --invitation-photo-pad: 0.8rem;
+  --invitation-photo-pad: 0.3rem;
+  --invitation-photo-scale: 1.1;
+  --invitation-photo-hover-scale: 1.14;
   --invitation-photo-surface: linear-gradient(180deg, rgba(255, 253, 247, 0.94), rgba(238, 248, 250, 0.92));
   --invitation-photo-overlay-top: rgba(255, 255, 255, 0.1);
   --invitation-photo-overlay-bottom: rgba(251, 246, 236, 0.3);
@@ -1389,7 +1391,9 @@
 }
 
 .coastal-gallery-card > .invitation-photo {
-  --invitation-photo-pad: 0.85rem;
+  --invitation-photo-pad: 0.24rem;
+  --invitation-photo-scale: 1.12;
+  --invitation-photo-hover-scale: 1.16;
   --invitation-photo-surface: linear-gradient(180deg, rgba(255, 253, 247, 0.96), rgba(240, 246, 250, 0.92));
   --invitation-photo-overlay-top: rgba(255, 255, 255, 0.08);
   --invitation-photo-overlay-bottom: rgba(247, 241, 228, 0.26);

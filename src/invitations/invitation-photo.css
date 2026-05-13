@@ -1,5 +1,7 @@
 .invitation-photo {
-  --invitation-photo-pad: clamp(0.65rem, 1.1vw, 0.95rem);
+  --invitation-photo-pad: clamp(0.3rem, 0.75vw, 0.6rem);
+  --invitation-photo-scale: 1.08;
+  --invitation-photo-hover-scale: 1.12;
   --invitation-photo-surface: #f8f5ef;
   --invitation-photo-overlay-top: rgba(255, 255, 255, 0.16);
   --invitation-photo-overlay-bottom: rgba(255, 255, 255, 0.42);
@@ -57,7 +59,10 @@
   padding: var(--invitation-photo-pad);
   box-sizing: border-box;
   filter: drop-shadow(0 16px 30px var(--invitation-photo-shadow));
+  transform: scale(var(--invitation-photo-scale));
+  transform-origin: center;
   transition: transform 0.45s ease;
+  will-change: transform;
 }
 
 .invitation-photo:hover .invitation-photo__backdrop-image {
@@ -65,5 +70,5 @@
 }
 
 .invitation-photo:hover .invitation-photo__img {
-  transform: scale(1.015);
+  transform: scale(var(--invitation-photo-hover-scale));
 }

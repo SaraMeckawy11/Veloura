@@ -737,7 +737,9 @@
   background: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
 }
 .inv-gallery-item > .invitation-photo {
-  --invitation-photo-pad: 0.7rem;
+  --invitation-photo-pad: 0.3rem;
+  --invitation-photo-scale: 1.1;
+  --invitation-photo-hover-scale: 1.14;
   --invitation-photo-surface: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
   --invitation-photo-overlay-top: rgba(251, 239, 231, 0.12);
   --invitation-photo-overlay-bottom: rgba(246, 238, 228, 0.46);
@@ -1234,7 +1236,9 @@ textarea.kiosk-input {
   background: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
 }
 .inv-story-photo > .invitation-photo {
-  --invitation-photo-pad: 0.75rem;
+  --invitation-photo-pad: 0.35rem;
+  --invitation-photo-scale: 1.08;
+  --invitation-photo-hover-scale: 1.12;
   --invitation-photo-surface: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
   --invitation-photo-overlay-top: rgba(253, 244, 236, 0.1);
   --invitation-photo-overlay-bottom: rgba(245, 236, 226, 0.42);
@@ -1273,7 +1277,9 @@ textarea.kiosk-input {
   background: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
 }
 .inv-venue-photo-item > .invitation-photo {
-  --invitation-photo-pad: 0.65rem;
+  --invitation-photo-pad: 0.28rem;
+  --invitation-photo-scale: 1.06;
+  --invitation-photo-hover-scale: 1.1;
   --invitation-photo-surface: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
   --invitation-photo-overlay-top: rgba(255, 244, 236, 0.14);
   --invitation-photo-overlay-bottom: rgba(245, 236, 226, 0.42);
@@ -1295,7 +1301,9 @@ textarea.kiosk-input {
   background: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
 }
 .inv-couple-photo-item > .invitation-photo {
-  --invitation-photo-pad: 0.75rem;
+  --invitation-photo-pad: 0.3rem;
+  --invitation-photo-scale: 1.1;
+  --invitation-photo-hover-scale: 1.14;
   --invitation-photo-surface: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
   --invitation-photo-overlay-top: rgba(255, 244, 236, 0.12);
   --invitation-photo-overlay-bottom: rgba(245, 236, 226, 0.46);

@@ -590,7 +590,9 @@
 }
 
 .gazebo-story-art > .invitation-photo {
-  --invitation-photo-pad: 0.85rem;
+  --invitation-photo-pad: 0.32rem;
+  --invitation-photo-scale: 1.08;
+  --invitation-photo-hover-scale: 1.12;
   --invitation-photo-surface: linear-gradient(180deg, rgba(255, 255, 251, 0.9), rgba(241, 248, 236, 0.92));
   --invitation-photo-overlay-top: rgba(255, 255, 255, 0.08);
   --invitation-photo-overlay-bottom: rgba(245, 250, 238, 0.24);
@@ -1017,7 +1019,9 @@
 }
 
 .gazebo-memory-card > .invitation-photo {
-  --invitation-photo-pad: 0.85rem;
+  --invitation-photo-pad: 0.24rem;
+  --invitation-photo-scale: 1.12;
+  --invitation-photo-hover-scale: 1.16;
   --invitation-photo-surface: linear-gradient(180deg, rgba(255, 255, 251, 0.9), rgba(240, 247, 235, 0.94));
   --invitation-photo-overlay-top: rgba(255, 255, 255, 0.08);
   --invitation-photo-overlay-bottom: rgba(244, 249, 238, 0.24);
