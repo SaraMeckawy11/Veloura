@@ -1,14 +1,13 @@
-import gallery1 from '../../assets/gallery-1.jpg';
-import gallery2 from '../../assets/gallery-2.jpg';
-import gallery3 from '../../assets/gallery-3.jpg';
-import gallery4 from '../../assets/gallery-4.jpg';
-import gallery5 from '../../assets/gallery-5.jpg';
-import gallery6 from '../../assets/gallery-6.jpg';
-import story1 from '../../assets/story-1.jpg';
-import story2 from '../../assets/story-2.jpg';
-import story3 from '../../assets/story-3.jpg';
-import story4 from '../../assets/story-4.jpg';
-
+import gallery1 from '../../assets/gallery-1.png';
+import gallery2 from '../../assets/gallery-2.png';
+import gallery3 from '../../assets/gallery-3.png';
+import gallery4 from '../../assets/gallery-4.png';
+import gallery5 from '../../assets/gallery-5.png';
+import gallery6 from '../../assets/gallery-6.png';
+import story1 from '../../assets/story-1.png';
+import story2 from '../../assets/story-2.png';
+import story3 from '../../assets/story-3.png';
+import story4 from '../../assets/story-4.png';
 export const COASTAL_BREEZE_DEMO_ORDER = {
   referenceLayout: true,
   weddingDetails: {
@@ -27,22 +26,22 @@ export const COASTAL_BREEZE_DEMO_ORDER = {
     {
       date: '2019',
       title: 'First Meeting',
-      description: 'Our paths crossed at a coffee shop in downtown Dubai.',
+      description: 'A simple coffee date became the start of something unforgettable.',
     },
     {
       date: '2020',
       title: 'First Adventure',
-      description: 'A spontaneous trip to Istanbul changed everything.',
+      description: 'Our first trip together turned into a memory we would always cherish.',
     },
     {
       date: '2022',
-      title: 'Moving In Together',
-      description: 'We built our first home together.',
+      title: 'A Golden Escape',
+      description: 'A sunset walk through the city became one of our most cherished memories',
     },
     {
       date: '2025',
       title: 'The Proposal',
-      description: 'Under the stars in Santorini, a forever promise.',
+      description: 'A quiet sunset, a beautiful view, and a promise for forever.',
     },
   ],
   storyImages: [story1, story2, story3, story4],
