@@ -240,7 +240,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           <div className="inv-couple-gallery">
             {couplePhotos.map((p, i) => (
               <div key={i} className="airplane-window inv-couple-photo-item">
-                <InvitationPhoto src={p.url} alt={`Couple ${i + 1}`} sizes="(max-width: 768px) 80vw, 240px" />
+                <InvitationPhoto src={p} alt={`Couple ${i + 1}`} sizes="(max-width: 768px) 80vw, 240px" />
               </div>
             ))}
           </div>
@@ -320,7 +320,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.7 3.3-3.3 3.3-2-.7c-.4-.1-.8 0-1 .3l-.2.3c-.2.3-.1.7.1.9l3.3 2.3 2.3 3.3c.2.3.6.3.9.1l.3-.2c.3-.2.4-.6.3-1l-.7-2 3.3-3.3 3.3 5.7c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
                   </div>
                   <div className="inv-story-photo">
-                    <InvitationPhoto src={photo.url} alt={milestone?.title || `Story ${i + 1}`} sizes="(max-width: 640px) 80vw, 320px" />
+                    <InvitationPhoto src={photo} alt={milestone?.title || `Story ${i + 1}`} sizes="(max-width: 640px) 80vw, 320px" />
                   </div>
                 </motion.div>
               );
@@ -400,7 +400,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                 <div className="inv-venue-photos">
                   {venuePhotos.map((p, i) => (
                     <div key={i} className="airplane-window inv-venue-photo-item">
-                      <InvitationPhoto src={p.url} alt={`Venue ${i + 1}`} sizes="200px" />
+                      <InvitationPhoto src={p} alt={`Venue ${i + 1}`} sizes="200px" />
                     </div>
                   ))}
                 </div>
@@ -561,7 +561,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
-                <InvitationPhoto src={p.url} alt={`Gallery ${i + 1}`} sizes="(max-width: 768px) 45vw, 260px" loading="eager" fetchPriority={i < 3 ? 'high' : 'auto'} />
+                <InvitationPhoto src={p} alt={`Gallery ${i + 1}`} sizes="(max-width: 768px) 45vw, 260px" loading="eager" fetchPriority={i < 3 ? 'high' : 'auto'} />
                 <div className="inv-gallery-blind">
                   <span>Memories</span><span className="inv-blind-ornament">✦</span>
                 </div>

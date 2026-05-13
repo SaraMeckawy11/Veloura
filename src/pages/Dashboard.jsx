@@ -117,7 +117,7 @@ export default function Dashboard() {
       if (data.files && data.files[0]) {
         setEditPhotos(prev => {
           const updated = [...prev.story];
-          updated[index] = data.files[0];
+          updated[index] = { ...data.files[0], fit: 'cover' };
           return { ...prev, story: updated };
         });
       }
@@ -183,7 +183,7 @@ export default function Dashboard() {
     try {
       const res = await fetch(`${API}/upload?category=${category}`, { method: 'POST', body: formData });
       const data = await res.json();
-      if (data.files) setEditPhotos(prev => ({ ...prev, [category]: [...prev[category], ...data.files] }));
+      if (data.files) setEditPhotos(prev => ({ ...prev, [category]: [...prev[category], ...data.files.map(photo => ({ ...photo, fit: 'cover' }))] }));
     } catch {
       setSaveMsg('Photo upload failed');
     }
@@ -282,7 +282,6 @@ export default function Dashboard() {
   }
 
   const inviteUrl = `${window.location.origin}/i/${order.publicSlug}`;
-  const editUrl = `${window.location.origin}/edit/${editToken}`;
   const wd = order.weddingDetails || {};
 
   return (

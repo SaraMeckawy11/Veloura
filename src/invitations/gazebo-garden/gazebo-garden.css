@@ -579,6 +579,7 @@
 .gazebo-story-art {
   position: relative;
   min-height: 14rem;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 0.5rem;
 }

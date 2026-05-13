@@ -1,5 +1,5 @@
 import './invitation-photo.css';
-import { buildInvitationImageSources } from './shared';
+import { buildInvitationImageSources, resolveInvitationPhoto } from './shared';
 
 export default function InvitationPhoto({
   src,
@@ -10,12 +10,13 @@ export default function InvitationPhoto({
   decoding = 'async',
   fetchPriority = 'auto',
 }) {
-  if (!src) return null;
+  const resolved = resolveInvitationPhoto(src);
+  if (!resolved.src) return null;
 
-  const optimized = buildInvitationImageSources(src);
+  const optimized = buildInvitationImageSources(resolved.src);
 
   return (
-    <span className={['invitation-photo', className].filter(Boolean).join(' ')}>
+    <span className={['invitation-photo', className].filter(Boolean).join(' ')} data-fit={resolved.fit}>
       <span className="invitation-photo__backdrop" aria-hidden="true">
         <span
           className="invitation-photo__backdrop-image"

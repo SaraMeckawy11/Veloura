@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, formatInvitationTime } from '../shared';
+import { buildInvitationImageSources, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
@@ -120,9 +120,9 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       ? order.galleryImages
       : (order.photos || [])
         .filter(photo => photo.label === 'gallery' || !photo.label || !['couple', 'story', 'venue'].includes(photo.label))
-        .map(photo => photo.url);
+        .map(photo => photo);
 
-    const preloads = [...new Set(memorySources.filter(Boolean))]
+    const preloads = [...new Set(memorySources.map(getInvitationPhotoSrc).filter(Boolean))]
       .slice(0, 6)
       .map((src) => buildInvitationImageSources(src));
 
@@ -269,7 +269,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: index * 0.08 }}
               >
-                <InvitationPhoto src={photo.url} alt={`Couple ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
+                <InvitationPhoto src={photo} alt={`Couple ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
               </motion.figure>
             ))}
           </div>
@@ -279,7 +279,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       {isReferenceDemo && order.storyMilestones?.length ? (
         <StorySection milestones={order.storyMilestones} images={order.storyImages || []} />
       ) : storyPhotos.length > 0 ? (
-        <StorySection milestones={order.storyMilestones || []} images={storyPhotos.map(photo => photo.url)} />
+        <StorySection milestones={order.storyMilestones || []} images={storyPhotos} />
       ) : null}
 
       <section className="coastal-section coastal-event-section">
@@ -335,7 +335,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <div className="coastal-venue-grid">
             {venuePhotos.map((photo, index) => (
               <figure key={index} className="coastal-photo-frame">
-                <InvitationPhoto src={photo.url} alt={`Venue ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
+                <InvitationPhoto src={photo} alt={`Venue ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
               </figure>
             ))}
           </div>
@@ -463,7 +463,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       {isReferenceDemo && order.galleryImages?.length ? (
         <GallerySection images={order.galleryImages} />
       ) : allGallery.length > 0 ? (
-        <GallerySection images={allGallery.map(photo => photo.url)} />
+        <GallerySection images={allGallery} />
       ) : null}
 
       <footer className="coastal-footer">
@@ -546,8 +546,11 @@ function StorySection({ milestones, images }) {
 }
 
 function GallerySection({ images }) {
-  const uniqueImages = [...new Set(images.filter(Boolean))];
-  const galleryImageKey = uniqueImages.join('|');
+  const uniqueImages = images.filter((image, index, allImages) => {
+    const src = getInvitationPhotoSrc(image);
+    return src && allImages.findIndex(candidate => getInvitationPhotoSrc(candidate) === src) === index;
+  });
+  const galleryImageKey = uniqueImages.map(getInvitationPhotoSrc).join('|');
   const galleryRowRef = useRef(null);
   const galleryUnitRef = useRef(null);
   // Repeat images enough times to fill at least 2x the viewport for seamless looping
@@ -639,9 +642,10 @@ function GallerySection({ images }) {
 
   const renderGalleryGroup = (groupIndex) => unitImages.map((src, index) => {
     const imageNumber = (index % uniqueImages.length) + 1;
+    const imageSrc = getInvitationPhotoSrc(src);
 
     return (
-      <figure key={`${groupIndex}-${src}-${index}`} className="coastal-gallery-card">
+      <figure key={`${groupIndex}-${imageSrc}-${index}`} className="coastal-gallery-card">
         <InvitationPhoto
           src={src}
           sizes="(max-width: 680px) 220px, 300px"

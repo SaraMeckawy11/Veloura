@@ -1,7 +1,7 @@
 .invitation-photo {
   --invitation-photo-pad: clamp(0.3rem, 0.75vw, 0.6rem);
-  --invitation-photo-scale: 1.08;
-  --invitation-photo-hover-scale: 1.12;
+  --invitation-photo-scale: 1.02;
+  --invitation-photo-hover-scale: 1.05;
   --invitation-photo-surface: #f8f5ef;
   --invitation-photo-overlay-top: rgba(255, 255, 255, 0.16);
   --invitation-photo-overlay-bottom: rgba(255, 255, 255, 0.42);
@@ -54,9 +54,9 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
-  padding: var(--invitation-photo-pad);
+  padding: 0;
   box-sizing: border-box;
   filter: drop-shadow(0 16px 30px var(--invitation-photo-shadow));
   transform: scale(var(--invitation-photo-scale));
@@ -65,10 +65,26 @@
   will-change: transform;
 }
 
+.invitation-photo[data-fit='contain'] .invitation-photo__img {
+  object-fit: contain;
+  padding: var(--invitation-photo-pad);
+  transform: scale(1);
+}
+
+.invitation-photo[data-fit='containFit'] .invitation-photo__img {
+  object-fit: contain;
+  padding: calc(var(--invitation-photo-pad) * 0.4);
+  transform: scale(1.08);
+}
+
 .invitation-photo:hover .invitation-photo__backdrop-image {
   transform: scale(1.14);
 }
 
 .invitation-photo:hover .invitation-photo__img {
   transform: scale(var(--invitation-photo-hover-scale));
+}
+
+.invitation-photo[data-fit='containFit']:hover .invitation-photo__img {
+  transform: scale(1.11);
 }

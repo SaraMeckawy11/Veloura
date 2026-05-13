@@ -44,7 +44,19 @@ export const COASTAL_BREEZE_DEMO_ORDER = {
       description: 'A quiet sunset, a beautiful view, and a promise for forever.',
     },
   ],
-  storyImages: [story1, story2, story3, story4],
-  galleryImages: [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6],
+  storyImages: [
+    { src: story1, fit: 'cover' },
+    { src: story2, fit: 'cover' },
+    { src: story3, fit: 'cover' },
+    { src: story4, fit: 'cover' },
+  ],
+  galleryImages: [
+    { src: gallery1, fit: 'cover' },
+    { src: gallery2, fit: 'cover' },
+    { src: gallery3, fit: 'cover' },
+    { src: gallery4, fit: 'cover' },
+    { src: gallery5, fit: 'cover' },
+    { src: gallery6, fit: 'cover' },
+  ],
   photos: [],
 };

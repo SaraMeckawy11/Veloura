@@ -1,4 +1,23 @@
 const CLOUDINARY_UPLOAD_SEGMENT = '/image/upload/';
+const VALID_PHOTO_FITS = new Set(['cover', 'containFit', 'contain']);
+const normalizePhotoFit = (value) => {
+  if (value === 'fit') return 'contain';
+  return VALID_PHOTO_FITS.has(value) ? value : 'cover';
+};
+
+export function resolveInvitationPhoto(source) {
+  if (!source) return { src: '', fit: 'cover' };
+  if (typeof source === 'string') return { src: source, fit: 'cover' };
+
+  return {
+    src: source.url || source.src || '',
+    fit: normalizePhotoFit(source.fit),
+  };
+}
+
+export function getInvitationPhotoSrc(source) {
+  return resolveInvitationPhoto(source).src;
+}
 
 export function formatInvitationTime(value) {
   const raw = `${value || ''}`.trim();

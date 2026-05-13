@@ -39,6 +39,7 @@ const orderSchema = new mongoose.Schema({
     url:       { type: String, required: true },
     publicId:  { type: String, required: true },          // Cloudinary public_id for deletion
     label:     { type: String },                          // e.g. "couple_photo", "venue_photo"
+    fit:       { type: String, enum: ['cover', 'containFit', 'contain', 'fit'], default: 'cover' },
   }],
 
   // Music

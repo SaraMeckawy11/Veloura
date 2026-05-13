@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { formatInvitationTime } from '../shared';
+import { formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import './gazebo-garden.css';
 
@@ -102,10 +102,6 @@ function formatDate(date) {
   });
 }
 
-function getGalleryPhotoUrl(photo) {
-  return typeof photo === 'string' ? photo : photo?.url;
-}
-
 export default function GazeboGardenInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
@@ -153,14 +149,13 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
     body: item.description || item.body || DEFAULT_STORY[index % DEFAULT_STORY.length].description,
     imageLabel: item.imageLabel || item.title || DEFAULT_STORY[index % DEFAULT_STORY.length].imageLabel,
     tone: item.tone || STORY_TONES[index % STORY_TONES.length],
-    image: order.storyImages?.[index] || storyPhotos[index]?.url,
+    image: order.storyImages?.[index] || storyPhotos[index],
   }));
 
   const galleryPhotos = order.referenceLayout
     ? []
     : orderPhotos
       .filter(photo => photo.label === 'gallery' || !photo.label || !['couple', 'story', 'venue'].includes(photo.label))
-      .map(getGalleryPhotoUrl)
       .filter(Boolean);
 
   const gallerySources = order.galleryImages?.length ? order.galleryImages : galleryPhotos;
@@ -521,9 +516,9 @@ function CountdownUnit({ value, label }) {
 function GazeboGallerySection({ items }) {
   const galleryRowRef = useRef(null);
   const galleryUnitRef = useRef(null);
-  const imageItems = items.filter(item => item.image);
+  const imageItems = items.filter(item => getInvitationPhotoSrc(item.image));
   const fallbackItems = imageItems.length ? [] : items;
-  const galleryKey = items.map(item => item.image || item.title).join('|');
+  const galleryKey = items.map(item => getInvitationPhotoSrc(item.image) || item.title).join('|');
   const unitRepeatCount = imageItems.length ? Math.max(3, Math.ceil(12 / imageItems.length)) : 1;
   const unitItems = imageItems.length
     ? Array.from({ length: unitRepeatCount }, () => imageItems).flat()
@@ -608,9 +603,10 @@ function GazeboGallerySection({ items }) {
   const renderGalleryGroup = (groupIndex) => unitItems.map((item, index) => {
     const hasImage = Boolean(item.image);
     const imageNumber = imageItems.length ? (index % imageItems.length) + 1 : index + 1;
+    const imageSrc = getInvitationPhotoSrc(item.image);
 
     return (
-      <figure key={`${groupIndex}-${item.image || item.title}-${index}`} className="gazebo-memory-card">
+      <figure key={`${groupIndex}-${imageSrc || item.title}-${index}`} className="gazebo-memory-card">
         {hasImage ? (
           <InvitationPhoto
             src={item.image}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { getPaypal } from '../lib/paypal';
+import InvitationPhoto from '../invitations/InvitationPhoto';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -59,6 +60,38 @@ const PHOTO_CATEGORIES = [
 ];
 
 // Local fallback images keyed by slug — used when API images fail to load
+const DEFAULT_PHOTO_FIT = 'cover';
+const VALID_PHOTO_FITS = new Set(['cover', 'containFit', 'contain']);
+const PHOTO_FIT_OPTIONS = [
+  { value: 'cover', label: 'Fill', hint: 'Fill the frame' },
+  { value: 'containFit', label: 'Smart', hint: 'Keep most of the photo visible' },
+  { value: 'contain', label: 'Full', hint: 'Show the full photo' },
+];
+
+const TEMPLATE_UPLOAD_LAYOUTS = {
+  'boarding-pass': {
+    story: { width: '88px', aspectRatio: '4 / 5' },
+    gallery: { width: '92px', aspectRatio: '1 / 1' },
+  },
+  'coastal-breeze': {
+    story: { width: '88px', aspectRatio: '4 / 5' },
+    gallery: { width: '92px', aspectRatio: '11 / 14' },
+  },
+  'gazebo-garden': {
+    story: { width: '88px', aspectRatio: '4 / 5' },
+    gallery: { width: '92px', aspectRatio: '11 / 14' },
+  },
+};
+
+const normalizePhotoFit = (value) => {
+  if (value === 'fit') return 'contain';
+  return VALID_PHOTO_FITS.has(value) ? value : DEFAULT_PHOTO_FIT;
+};
+const getPreviewStyle = (layout) => ({
+  '--upload-preview-width': layout?.width || '88px',
+  '--upload-preview-aspect-ratio': layout?.aspectRatio || '1 / 1',
+});
+
 const TEMPLATE_PREVIEW_IMAGES = {
   'coastal-breeze': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
   'gazebo-garden': '/assets/gazebo-watercolor-poster1.jpg',
@@ -132,9 +165,10 @@ export default function OrderFlow() {
     const raw = draft?.photos || { venue: [], story: [], gallery: [] };
     const result = {};
     for (const cat of Object.keys(raw)) {
-      result[cat] = (raw[cat] || []).map(p =>
-        p._pendingUpload ? { ...p, _failed: true, _pendingUpload: false } : p
-      );
+      result[cat] = (raw[cat] || []).map((p) => {
+        const fit = normalizePhotoFit(p.fit);
+        return p._pendingUpload ? { ...p, fit, _failed: true, _pendingUpload: false } : { ...p, fit };
+      });
     }
     return result;
   })();
@@ -161,11 +195,11 @@ export default function OrderFlow() {
         .map(p => {
           // Uploaded to Cloudinary — save the real URL
           if (p.publicId && !p._uploading) {
-            return { url: p.url, publicId: p.publicId, label: p.label };
+            return { url: p.url, publicId: p.publicId, label: p.label, fit: normalizePhotoFit(p.fit) };
           }
           // Still uploading or failed — save the thumbnail for reload survival
           if (p._thumbUrl) {
-            return { url: p._thumbUrl, publicId: '', label: p.label, _pendingUpload: true };
+            return { url: p._thumbUrl, publicId: '', label: p.label, fit: normalizePhotoFit(p.fit), _pendingUpload: true };
           }
           // No thumbnail available (e.g. HEIC couldn't render) — skip
           return null;
@@ -271,17 +305,6 @@ export default function OrderFlow() {
   };
 
   // Fallback for images the browser can't render natively (e.g. HEIC)
-  const handleImgError = (e) => {
-    const img = e.target;
-    if (img.dataset.fallback) return;
-    img.dataset.fallback = '1';
-    img.style.display = 'none';
-    const placeholder = document.createElement('div');
-    placeholder.className = 'photo-preview-fallback';
-    placeholder.textContent = 'Preview unavailable';
-    img.parentElement.appendChild(placeholder);
-  };
-
   // Create a small thumbnail data URL from a File (fits in localStorage without blowing the 5MB limit)
   const fileToThumbUrl = (file) => new Promise((resolve) => {
     const img = new Image();
@@ -315,7 +338,7 @@ export default function OrderFlow() {
           ...prev,
           [category]: prev[category].map(p =>
             p._localId === localId
-              ? { url: data.files[0].url, publicId: data.files[0].publicId, label: category }
+              ? { url: data.files[0].url, publicId: data.files[0].publicId, label: category, fit: normalizePhotoFit(p.fit) }
               : p
           ),
         }));
@@ -357,6 +380,7 @@ export default function OrderFlow() {
         url: URL.createObjectURL(f),
         publicId: '',
         label: category,
+        fit: DEFAULT_PHOTO_FIT,
         _uploading: true,
         _localId: localId,
         _thumbUrl: thumbUrl, // small data URL saved to localStorage
@@ -385,6 +409,20 @@ export default function OrderFlow() {
       [category]: prev[category].filter((_, i) => i !== index),
     }));
   };
+
+  const setPhotoFit = (category, index, fit) => {
+    const nextFit = normalizePhotoFit(fit);
+    setPhotos(prev => ({
+      ...prev,
+      [category]: prev[category].map((photo, i) => (
+        i === index && photo ? { ...photo, fit: nextFit } : photo
+      )),
+    }));
+  };
+
+  const selectedUploadLayout = TEMPLATE_UPLOAD_LAYOUTS[selectedTemplate?.slug] || TEMPLATE_UPLOAD_LAYOUTS['boarding-pass'];
+  const storyPreviewStyle = getPreviewStyle(selectedUploadLayout.story);
+  const galleryPreviewStyle = getPreviewStyle(selectedUploadLayout.gallery);
 
   // Flatten all photos for submission & review (exclude failed/uploading)
   const allPhotos = Object.entries(photos).flatMap(([cat, items]) =>
@@ -596,7 +634,7 @@ export default function OrderFlow() {
 
   const optionalFields = [
     { key: 'venueAddress', label: 'Venue Address' },
-    { key: 'message', label: 'Personal Message' },
+    // { key: 'message', label: 'Personal Message' },
     { key: 'rsvp', label: 'RSVP Section' },
     // Removed secondLanguage option
   ];
@@ -723,7 +761,7 @@ export default function OrderFlow() {
               {/* Contact info */}
               <fieldset className="form-section">
                 <legend>Your Contact Info</legend>
-                <div className="form-grid">
+                <div className="form-grid form-grid--contact">
                   <div className="form-field">
                     <label>Your Full Name *</label>
                     <input type="text" required value={form.customerName} onChange={e => handleInput('customerName', e.target.value)} placeholder="Your name" />
@@ -733,7 +771,7 @@ export default function OrderFlow() {
                     <input type="email" required value={form.customerEmail} onChange={e => handleInput('customerEmail', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                     <p className="form-hint message-hint">Your invitation link and private code will be sent here.</p>
                   </div>
-                  <div className="form-field">
+                  <div className="form-field form-field--phone">
                     <label>Phone Number</label>
                     <input type="tel" value={form.customerPhone} onChange={e => handleInput('customerPhone', e.target.value)} placeholder="+20 xxx xxx xxxx" />
                   </div>
@@ -836,7 +874,7 @@ export default function OrderFlow() {
                 </div>
               </fieldset>
 
-              {/* Venue Photos */}
+              {/* Venue Photos
               <fieldset className="form-section">
                 <legend>Venue Photos</legend>
                 <p className="form-hint">Photos of your venue or ceremony location (max 2)</p>
@@ -861,11 +899,13 @@ export default function OrderFlow() {
                   ))}
                 </div>
               </fieldset>
+              */}
 
               {/* Our Story — each milestone has its own text fields + optional photo */}
               <fieldset className="form-section">
                 <legend>Our Story</legend>
                 <p className="form-hint">Add milestones from your journey together — first date, proposal, and more. Each one appears on your invitation timeline.</p>
+                {uploadError && <p className="photo-error">{uploadError}</p>}
                 <div className="story-milestones">
                   {storyMilestones.map((milestone, i) => (
                     <div key={i} className="story-milestone-item">
@@ -886,10 +926,23 @@ export default function OrderFlow() {
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                         </button>
                       )}
-                      <div className="story-milestone-photo">
+                      <div className="story-milestone-photo" style={storyPreviewStyle}>
                         {photos.story[i] ? (
                           <>
-                            <img src={photos.story[i].url} alt={`Story ${i + 1}`} onError={handleImgError} />
+                            <InvitationPhoto src={photos.story[i]} alt={`Story ${i + 1}`} />
+                            <div className="photo-fit-controls" role="group" aria-label={`Story photo ${i + 1} fit`}>
+                              {PHOTO_FIT_OPTIONS.map((option) => (
+                                <button
+                                  key={option.value}
+                                  type="button"
+                                  className={`photo-fit-btn ${(photos.story[i].fit || DEFAULT_PHOTO_FIT) === option.value ? 'active' : ''}`}
+                                  onClick={() => setPhotoFit('story', i, option.value)}
+                                  title={option.hint}
+                                >
+                                  {option.label}
+                                </button>
+                              ))}
+                            </div>
                             {photos.story[i]._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                             {photos.story[i]._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
                             <button type="button" className="photo-remove" onClick={() => removePhoto('story', i)}>
@@ -897,7 +950,7 @@ export default function OrderFlow() {
                             </button>
                           </>
                         ) : (
-                          <label className="photo-upload-btn photo-upload-btn--square">
+                          <label className="photo-upload-btn photo-upload-btn--square photo-upload-btn--template" style={storyPreviewStyle}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                             Photo
                             <input type="file" accept="image/*,.heic,.heif" onChange={async (e) => {
@@ -910,7 +963,7 @@ export default function OrderFlow() {
                               const thumbUrl = await fileToThumbUrl(file);
                               setPhotos(prev => {
                                 const updated = [...prev.story];
-                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', _uploading: true, _localId: localId, _thumbUrl: thumbUrl };
+                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', fit: DEFAULT_PHOTO_FIT, _uploading: true, _localId: localId, _thumbUrl: thumbUrl };
                                 return { ...prev, story: updated };
                               });
                               // Background upload
@@ -945,15 +998,32 @@ export default function OrderFlow() {
                 <p className="form-hint">Additional photos for the gallery section (max 6)</p>
                 <div className="photo-upload-area">
                   {photos.gallery.length < 6 && (
-                    <label className="photo-upload-btn">
+                    <label className="photo-upload-btn photo-upload-btn--template" style={galleryPreviewStyle}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                       Add
                       <input type="file" multiple accept="image/*,.heic,.heif" onChange={e => handlePhotoUpload(e, 'gallery')} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                     </label>
                   )}
                   {photos.gallery.map((photo, i) => (
-                    <div key={photo._localId || i} className={`photo-preview ${photo._failed ? 'photo-failed' : ''}`}>
-                      <img src={photo.url} alt={`Gallery ${i + 1}`} onError={handleImgError} />
+                    <div
+                      key={photo._localId || i}
+                      className={`photo-preview photo-preview--template ${photo._failed ? 'photo-failed' : ''}`}
+                      style={galleryPreviewStyle}
+                    >
+                      <InvitationPhoto src={photo} alt={`Gallery ${i + 1}`} />
+                      <div className="photo-fit-controls" role="group" aria-label={`Gallery photo ${i + 1} fit`}>
+                        {PHOTO_FIT_OPTIONS.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            className={`photo-fit-btn ${(photo.fit || DEFAULT_PHOTO_FIT) === option.value ? 'active' : ''}`}
+                            onClick={() => setPhotoFit('gallery', i, option.value)}
+                            title={option.hint}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
                       {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                       {photo._failed && <div className="photo-failed-badge" title="Upload failed — remove and re-add">!</div>}
                       <button type="button" className="photo-remove" onClick={() => removePhoto('gallery', i)}>
