@@ -533,11 +533,13 @@ function StorySection({ milestones, images }) {
             >
               <InvitationPhoto src={item.src} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 768px) 80vw, 280px" />
             </motion.figure>
-            <div>
-              {item.date && <span>{item.date}</span>}
-              <h3>{item.title || `Chapter ${index + 1}`}</h3>
-              {item.description && <p>{item.description}</p>}
-            </div>
+            {(item.date || item.title || item.description) && (
+              <div>
+                {item.date && <span>{item.date}</span>}
+                {item.title && <h3>{item.title}</h3>}
+                {item.description && <p>{item.description}</p>}
+              </div>
+            )}
           </motion.article>
         ))}
       </div>

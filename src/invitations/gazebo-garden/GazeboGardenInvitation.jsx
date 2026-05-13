@@ -141,16 +141,25 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
   const orderPhotos = order.photos || [];
   const storyPhotos = orderPhotos.filter(photo => photo.label === 'story');
-  const storySource = order.storyMilestones?.length ? order.storyMilestones : (demo ? DEFAULT_STORY : []);
-  const storyItems = storySource.map((item, index) => ({
-    id: `${item.title || 'story'}-${index}`,
-    date: item.date || DEFAULT_STORY[index % DEFAULT_STORY.length].date,
-    title: item.title || DEFAULT_STORY[index % DEFAULT_STORY.length].title,
-    body: item.description || item.body || DEFAULT_STORY[index % DEFAULT_STORY.length].description,
-    imageLabel: item.imageLabel || item.title || DEFAULT_STORY[index % DEFAULT_STORY.length].imageLabel,
-    tone: item.tone || STORY_TONES[index % STORY_TONES.length],
-    image: order.storyImages?.[index] || storyPhotos[index],
-  }));
+  const storyMilestones = order.storyMilestones || [];
+  const storyCount = demo
+    ? Math.max(DEFAULT_STORY.length, storyMilestones.length, storyPhotos.length)
+    : Math.max(storyMilestones.length, storyPhotos.length);
+  const storyItems = Array.from({ length: storyCount }, (_, index) => {
+    const item = storyMilestones[index] || {};
+    const fallback = DEFAULT_STORY[index % DEFAULT_STORY.length];
+    const image = order.storyImages?.[index] || storyPhotos[index];
+
+    return {
+      id: `${item.title || item.date || 'story'}-${index}`,
+      date: item.date || (demo ? fallback.date : ''),
+      title: item.title || (demo ? fallback.title : ''),
+      body: item.description || item.body || (demo ? fallback.description : ''),
+      imageLabel: item.imageLabel || item.title || (demo ? fallback.imageLabel : ''),
+      tone: item.tone || STORY_TONES[index % STORY_TONES.length],
+      image,
+    };
+  }).filter(item => item.image || item.date || item.title || item.body);
 
   const galleryPhotos = order.referenceLayout
     ? []
@@ -328,11 +337,13 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                 {item.image && <InvitationPhoto src={item.image} alt="" sizes="(max-width: 768px) 80vw, 320px" />}
                 <div />
               </div>
-              <div className="gazebo-story-copy">
-                <p className="gazebo-section-eyebrow">{item.date}</p>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </div>
+              {(item.date || item.title || item.body) && (
+                <div className="gazebo-story-copy">
+                  {item.date && <p className="gazebo-section-eyebrow">{item.date}</p>}
+                  {item.title && <h3>{item.title}</h3>}
+                  {item.body && <p>{item.body}</p>}
+                </div>
+              )}
             </motion.article>
           ))}
         </div>
