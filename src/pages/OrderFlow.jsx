@@ -71,15 +71,15 @@ const PHOTO_FIT_OPTIONS = [
 const TEMPLATE_UPLOAD_LAYOUTS = {
   'boarding-pass': {
     story: { width: '88px', aspectRatio: '4 / 5' },
-    gallery: { width: '92px', aspectRatio: '1 / 1' },
+    gallery: { width: '148px', aspectRatio: '1 / 1' },
   },
   'coastal-breeze': {
     story: { width: '88px', aspectRatio: '4 / 5' },
-    gallery: { width: '92px', aspectRatio: '11 / 14' },
+    gallery: { width: '148px', aspectRatio: '11 / 14' },
   },
   'gazebo-garden': {
     story: { width: '88px', aspectRatio: '4 / 5' },
-    gallery: { width: '92px', aspectRatio: '11 / 14' },
+    gallery: { width: '148px', aspectRatio: '11 / 14' },
   },
 };
 
@@ -996,9 +996,9 @@ export default function OrderFlow() {
               <fieldset className="form-section">
                 <legend>Gallery</legend>
                 <p className="form-hint">Additional photos for the gallery section (max 6)</p>
-                <div className="photo-upload-area">
+                <div className="photo-upload-area photo-upload-area--gallery">
                   {photos.gallery.length < 6 && (
-                    <label className="photo-upload-btn photo-upload-btn--template" style={galleryPreviewStyle}>
+                    <label className="photo-upload-btn photo-upload-btn--template photo-upload-btn--gallery" style={galleryPreviewStyle}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                       Add
                       <input type="file" multiple accept="image/*,.heic,.heif" onChange={e => handlePhotoUpload(e, 'gallery')} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
@@ -1007,7 +1007,7 @@ export default function OrderFlow() {
                   {photos.gallery.map((photo, i) => (
                     <div
                       key={photo._localId || i}
-                      className={`photo-preview photo-preview--template ${photo._failed ? 'photo-failed' : ''}`}
+                      className={`photo-preview photo-preview--template photo-preview--gallery ${photo._failed ? 'photo-failed' : ''}`}
                       style={galleryPreviewStyle}
                     >
                       <InvitationPhoto src={photo} alt={`Gallery ${i + 1}`} />
