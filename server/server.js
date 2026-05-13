@@ -18,6 +18,7 @@ import rsvpRoutes from './routes/rsvps.js';
 import uploadRoutes from './routes/upload.js';
 import webhookRoutes from './routes/webhooks.js';
 import cronJob from './cron.js';
+import { syncOrderTemplateMetadata } from './services/orderSync.js';
 import { syncDefaultTemplates } from './services/templateSync.js';
 import { paypalApiConfigured } from './config/paypal.js';
 
@@ -37,6 +38,10 @@ await connectDB();
 const templateSyncResult = await syncDefaultTemplates();
 console.log(
   `Templates ready (${templateSyncResult.upsertedCount || 0} inserted, ${templateSyncResult.modifiedCount || 0} updated)`
+);
+const orderSyncResult = await syncOrderTemplateMetadata();
+console.log(
+  `Orders normalized (${orderSyncResult.matchedCount || 0} checked, ${orderSyncResult.modifiedCount || 0} updated)`
 );
 
 // Global middleware

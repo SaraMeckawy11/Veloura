@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
+import { formatInvitationTime } from '../shared';
+import InvitationPhoto from '../InvitationPhoto';
 import './gazebo-garden.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
-const CLOUDINARY_UPLOAD_SEGMENT = '/image/upload/';
 
 const STORY_TONES = [
   'linear-gradient(135deg, #cdeefa, #fffaf0 48%, #f5c8c0)',
@@ -105,32 +106,6 @@ function getGalleryPhotoUrl(photo) {
   return typeof photo === 'string' ? photo : photo?.url;
 }
 
-function buildOptimizedImageUrl(src, transform) {
-  if (!src || src.startsWith('data:') || src.startsWith('blob:') || !src.includes(CLOUDINARY_UPLOAD_SEGMENT)) {
-    return src;
-  }
-
-  const [prefix, rest] = src.split(CLOUDINARY_UPLOAD_SEGMENT);
-  if (!prefix || !rest || rest.startsWith(`${transform}/`)) return src;
-
-  return `${prefix}${CLOUDINARY_UPLOAD_SEGMENT}${transform}/${rest}`;
-}
-
-function buildGalleryImageSources(src) {
-  const mobile = buildOptimizedImageUrl(src, 'f_auto,q_auto:eco,c_fill,g_auto,w_520,h_700');
-  const small = buildOptimizedImageUrl(src, 'f_auto,q_auto:eco,c_fill,g_auto,w_360,h_485');
-  const large = buildOptimizedImageUrl(src, 'f_auto,q_auto:good,c_fill,g_auto,w_700,h_940');
-
-  if (mobile === src) {
-    return { src, srcSet: undefined };
-  }
-
-  return {
-    src: mobile,
-    srcSet: `${small} 360w, ${mobile} 520w, ${large} 700w`,
-  };
-}
-
 export default function GazeboGardenInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
@@ -159,7 +134,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const compactDateStr = weddingDate
     ? `${String(weddingDate.getMonth() + 1).padStart(2, '0')}.${String(weddingDate.getDate()).padStart(2, '0')}.${weddingDate.getFullYear()}`
     : '';
-  const timeStr = fieldEnabled('weddingTime') ? (wd.weddingTime || '') : '';
+  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime) : '';
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
   const message = fieldEnabled('message') ? (wd.message || 'A garden promise sealed in soft light.') : '';
@@ -355,7 +330,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.08 }}
             >
               <div className="gazebo-story-art" style={{ background: item.tone }}>
-                {item.image && <img src={item.image} alt="" />}
+                {item.image && <InvitationPhoto src={item.image} alt="" sizes="(max-width: 768px) 80vw, 320px" />}
                 <div />
               </div>
               <div className="gazebo-story-copy">
@@ -631,23 +606,21 @@ function GazeboGallerySection({ items }) {
   }, [unitItems.length, galleryKey]);
 
   const renderGalleryGroup = (groupIndex) => unitItems.map((item, index) => {
-    const optimized = item.image ? buildGalleryImageSources(item.image) : null;
+    const hasImage = Boolean(item.image);
     const imageNumber = imageItems.length ? (index % imageItems.length) + 1 : index + 1;
 
     return (
       <figure key={`${groupIndex}-${item.image || item.title}-${index}`} className="gazebo-memory-card">
-        {optimized ? (
-          <img
-            src={optimized.src}
-            srcSet={optimized.srcSet}
+        {hasImage ? (
+          <InvitationPhoto
+            src={item.image}
             sizes="(max-width: 680px) 220px, 300px"
             alt={`Memory ${imageNumber}`}
             loading="eager"
-            decoding="async"
             fetchPriority={groupIndex === 0 && index < imageItems.length ? 'high' : 'auto'}
           />
         ) : (
-          <div style={{ background: item.tone }} />
+          <div className="gazebo-memory-fill" style={{ background: item.tone }} />
         )}
       </figure>
     );

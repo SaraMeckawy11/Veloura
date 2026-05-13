@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
+import { buildInvitationImageSources, formatInvitationTime } from '../shared';
+import InvitationPhoto from '../InvitationPhoto';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
 import cruiseShip from '../../assets/coastal/cruise-ship-clean.webp';
@@ -46,34 +48,6 @@ const BlueShellMark = ({ className = '' }) => (
   <img className={className} src={blueShellAsset} alt="" aria-hidden="true" />
 );
 
-const CLOUDINARY_UPLOAD_SEGMENT = '/image/upload/';
-
-function buildOptimizedImageUrl(src, transform) {
-  if (!src || src.startsWith('data:') || src.startsWith('blob:') || !src.includes(CLOUDINARY_UPLOAD_SEGMENT)) {
-    return src;
-  }
-
-  const [prefix, rest] = src.split(CLOUDINARY_UPLOAD_SEGMENT);
-  if (!prefix || !rest || rest.startsWith(`${transform}/`)) return src;
-
-  return `${prefix}${CLOUDINARY_UPLOAD_SEGMENT}${transform}/${rest}`;
-}
-
-function buildGalleryImageSources(src) {
-  const mobile = buildOptimizedImageUrl(src, 'f_auto,q_auto:eco,c_fill,g_auto,w_520,h_700');
-  const small = buildOptimizedImageUrl(src, 'f_auto,q_auto:eco,c_fill,g_auto,w_360,h_485');
-  const large = buildOptimizedImageUrl(src, 'f_auto,q_auto:good,c_fill,g_auto,w_700,h_940');
-
-  if (mobile === src) {
-    return { src, srcSet: undefined };
-  }
-
-  return {
-    src: mobile,
-    srcSet: `${small} 360w, ${mobile} 520w, ${large} 700w`,
-  };
-}
-
 export default function CoastalBreezeInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -100,7 +74,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const fullDateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
     : '';
-  const timeStr = fieldEnabled('weddingTime') ? (wd.weddingTime || '') : '';
+  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime) : '';
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
   const message = fieldEnabled('message') ? (wd.message || 'With the sea as our witness, we begin forever.') : '';
@@ -150,7 +124,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
     const preloads = [...new Set(memorySources.filter(Boolean))]
       .slice(0, 6)
-      .map((src) => buildGalleryImageSources(src));
+      .map((src) => buildInvitationImageSources(src));
 
     const links = preloads.map(({ src, srcSet }) => {
       const link = document.createElement('link');
@@ -295,7 +269,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: index * 0.08 }}
               >
-                <img src={photo.url} alt={`Couple ${index + 1}`} />
+                <InvitationPhoto src={photo.url} alt={`Couple ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
               </motion.figure>
             ))}
           </div>
@@ -361,7 +335,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <div className="coastal-venue-grid">
             {venuePhotos.map((photo, index) => (
               <figure key={index} className="coastal-photo-frame">
-                <img src={photo.url} alt={`Venue ${index + 1}`} />
+                <InvitationPhoto src={photo.url} alt={`Venue ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
               </figure>
             ))}
           </div>
@@ -557,7 +531,7 @@ function StorySection({ milestones, images }) {
               viewport={{ once: true }}
               transition={{ duration: 0.9, delay: index * 0.1 + 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
-              <img src={item.src} alt={item.title || `Story ${index + 1}`} />
+              <InvitationPhoto src={item.src} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 768px) 80vw, 280px" />
             </motion.figure>
             <div>
               {item.date && <span>{item.date}</span>}
@@ -664,18 +638,15 @@ function GallerySection({ images }) {
   }, [unitImages.length, galleryImageKey]);
 
   const renderGalleryGroup = (groupIndex) => unitImages.map((src, index) => {
-    const optimized = buildGalleryImageSources(src);
     const imageNumber = (index % uniqueImages.length) + 1;
 
     return (
       <figure key={`${groupIndex}-${src}-${index}`} className="coastal-gallery-card">
-        <img
-          src={optimized.src}
-          srcSet={optimized.srcSet}
+        <InvitationPhoto
+          src={src}
           sizes="(max-width: 680px) 220px, 300px"
           alt={`Memory ${imageNumber}`}
           loading="eager"
-          decoding="async"
           fetchPriority={groupIndex === 0 && index < uniqueImages.length ? 'high' : 'auto'}
         />
       </figure>

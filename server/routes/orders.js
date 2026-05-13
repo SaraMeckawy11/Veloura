@@ -51,16 +51,16 @@ function dashboardUrl(editToken) {
 }
 
 async function ensureTemplateMetadata(order) {
-  let changed = false;
+  const update = {};
+
   if (!order.templateName && order.template?.name) {
+    update.$set = { templateName: order.template.name };
     order.templateName = order.template.name;
-    changed = true;
   }
-  if (!order.templateSlug && order.template?.slug) {
-    order.templateSlug = order.template.slug;
-    changed = true;
+
+  if (Object.keys(update).length > 0) {
+    await Order.updateOne({ _id: order._id }, update);
   }
-  if (changed) await order.save();
 }
 
 // POST /api/orders - create order + PayPal order. Refuses with 503 if PayPal credentials are missing.
@@ -95,7 +95,6 @@ router.post('/', validateOrderBody, async (req, res) => {
       customerEmail,
       template: template._id,
       templateName: template.name,
-      templateSlug: template.slug,
       weddingDetails: cleanWeddingDetails,
       customizations: customizations || {},
       disabledFields,
@@ -229,6 +228,7 @@ router.post('/capture/:orderId', async (req, res) => {
         editToken: order.editToken,
         invitationUrl: publicInvitationUrl(order.publicSlug),
         dashboardUrl: dashboardUrl(order.editToken),
+        invitationCode: order.invitationCode,
       });
     }
 
@@ -276,6 +276,7 @@ router.post('/capture/:orderId', async (req, res) => {
       editToken: order.editToken,
       invitationUrl: publicInvitationUrl(order.publicSlug),
       dashboardUrl: dashboardUrl(order.editToken),
+      invitationCode: order.invitationCode,
     });
   } catch (err) {
     console.error('PayPal capture error:', err);
@@ -315,9 +316,9 @@ router.get('/status/:orderId', async (req, res) => {
       invitationUrl: publicInvitationUrl(order.publicSlug),
       editToken: order.paymentStatus === 'paid' ? order.editToken : undefined,
       dashboardUrl: order.paymentStatus === 'paid' ? dashboardUrl(order.editToken) : undefined,
+      invitationCode: order.paymentStatus === 'paid' ? order.invitationCode : undefined,
       template: order.template,
       templateName: order.templateName || order.template?.name,
-      templateSlug: order.templateSlug || order.template?.slug,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -341,7 +342,6 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       customerEmail: order.customerEmail,
       template: order.template,
       templateName: order.templateName || order.template?.name,
-      templateSlug: order.templateSlug || order.template?.slug,
       weddingDetails: order.weddingDetails,
       customizations: order.customizations,
       disabledFields: order.disabledFields,
@@ -545,7 +545,6 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       customerEmail: order.customerEmail,
       template: order.template,
       templateName: order.templateName || order.template?.name,
-      templateSlug: order.templateSlug || order.template?.slug,
       weddingDetails: order.weddingDetails,
       customizations: order.customizations,
       disabledFields: order.disabledFields,

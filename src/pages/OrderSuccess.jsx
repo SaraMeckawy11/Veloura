@@ -79,6 +79,15 @@ export default function OrderSuccess() {
 
           {invitationUrl && (
             <div className="success-links">
+              {order.invitationCode && (
+                <div className="success-link-card">
+                  <span className="link-label">Invitation Code</span>
+                  <code>{order.invitationCode}</code>
+                  <button type="button" onClick={() => copyLink(order.invitationCode, 'code')}>
+                    {copied === 'code' ? 'Copied' : 'Copy'}
+                  </button>
+                </div>
+              )}
               <div className="success-link-card">
                 <span className="link-label">Invitation Link (share with guests)</span>
                 <code>{invitationUrl}</code>
