@@ -1,7 +1,7 @@
 const CLOUDINARY_UPLOAD_SEGMENT = '/image/upload/';
-const VALID_PHOTO_FITS = new Set(['cover', 'containFit', 'contain']);
+const VALID_PHOTO_FITS = new Set(['cover', 'contain']);
 const normalizePhotoFit = (value) => {
-  if (value === 'fit') return 'contain';
+  if (value === 'fit' || value === 'containFit' || value === 'contain') return 'contain';
   return VALID_PHOTO_FITS.has(value) ? value : 'cover';
 };
 

@@ -65,12 +65,7 @@
   will-change: transform;
 }
 
-.invitation-photo[data-fit='contain'] .invitation-photo__img {
-  object-fit: contain;
-  padding: var(--invitation-photo-pad);
-  transform: scale(1);
-}
-
+.invitation-photo[data-fit='contain'] .invitation-photo__img,
 .invitation-photo[data-fit='containFit'] .invitation-photo__img {
   object-fit: contain;
   padding: calc(var(--invitation-photo-pad) * 0.4);
@@ -85,6 +80,7 @@
   transform: scale(var(--invitation-photo-hover-scale));
 }
 
+.invitation-photo[data-fit='contain']:hover .invitation-photo__img,
 .invitation-photo[data-fit='containFit']:hover .invitation-photo__img {
   transform: scale(1.11);
 }

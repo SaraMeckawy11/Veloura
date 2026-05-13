@@ -61,11 +61,10 @@ const PHOTO_CATEGORIES = [
 
 // Local fallback images keyed by slug — used when API images fail to load
 const DEFAULT_PHOTO_FIT = 'cover';
-const VALID_PHOTO_FITS = new Set(['cover', 'containFit', 'contain']);
+const VALID_PHOTO_FITS = new Set(['cover', 'contain']);
 const PHOTO_FIT_OPTIONS = [
   { value: 'cover', label: 'Fill', hint: 'Fill the frame' },
-  { value: 'containFit', label: 'Smart', hint: 'Keep most of the photo visible' },
-  { value: 'contain', label: 'Full', hint: 'Show the full photo' },
+  { value: 'contain', label: 'Contain', hint: 'Keep most of the photo visible' },
 ];
 
 const TEMPLATE_UPLOAD_LAYOUTS = {
@@ -84,7 +83,7 @@ const TEMPLATE_UPLOAD_LAYOUTS = {
 };
 
 const normalizePhotoFit = (value) => {
-  if (value === 'fit') return 'contain';
+  if (value === 'fit' || value === 'containFit' || value === 'contain') return 'contain';
   return VALID_PHOTO_FITS.has(value) ? value : DEFAULT_PHOTO_FIT;
 };
 const getPreviewStyle = (layout) => ({
