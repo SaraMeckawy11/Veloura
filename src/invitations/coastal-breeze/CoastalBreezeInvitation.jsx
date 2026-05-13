@@ -501,9 +501,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           </h2>
           <div className="coastal-footer-rule" aria-hidden />
           <p className="coastal-footer-meta-line">
-            {fullDateStr || 'Date to be announced'}
-            {venue && <span className="coastal-footer-dot" aria-hidden>&middot;</span>}
-            {venue || ''}
+            Thank you for being part of our beginning
           </p>
         </div>
       </footer>

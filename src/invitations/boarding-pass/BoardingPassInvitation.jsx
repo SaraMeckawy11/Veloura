@@ -580,18 +580,18 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           viewport={{ once: true }}
         >
           <div className="inv-footer-decor-ring" />
-          <div className="inv-monogram">
+          {/* <div className="inv-monogram">
             <span className="inv-mono-initials">{initials}</span>
-          </div>
-          <p className="inv-footer-thanks">Thank You</p>
+          </div> */}
+          <p className="inv-footer-thanks">With love</p>
           <div className="inv-footer-divider" />
           <p className="inv-footer-couple">{name1} &amp; {name2}</p>
-          <p className="inv-footer-flight">{flightNo}</p>
+          {/* <p className="inv-footer-flight">{flightNo}</p> */}
         </motion.div>
         <div className="inv-footer-bar">
-          <span className="inv-footer-bar-text">Made with love</span>
-          <span className="inv-footer-bar-dot" />
-          <span className="inv-footer-bar-text">Veloura</span>
+          <span className="inv-footer-bar-text">Thank you for being part of our beginning</span>
+          {/* <span className="inv-footer-bar-dot" />
+          <span className="inv-footer-bar-text">Veloura</span> */}
         </div>
       </section>
     </div>
