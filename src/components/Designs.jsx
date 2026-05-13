@@ -14,7 +14,7 @@ const designs = [
     ),
     previewClassName: 'design-preview-text--gazebo',
     category: 'launch',
-    description: 'A romantic garden invitation with beige paper texture, watercolor gazebo motion, white florals, and warm botanical details.',
+    description: 'Watercolor garden elegance with soft florals and romantic details.',
     image: '/assets/gazebo-watercolor-poster1.jpg',
     overlay: 'linear-gradient(135deg, rgba(91,125,68,0.12), rgba(255,255,245,0.22))',
     badge: 'Available',
@@ -24,7 +24,7 @@ const designs = [
   {
     name: 'Coastal Breeze',
     category: 'launch',
-    description: 'Denim blues, watercolor shells, flowers, birds, and sailboats. Elegant, colorful, and perfect for coastal weddings.',
+    description: 'Coastal blues, watercolor details, and effortless seaside romance.',
     image: coastalSplashPreview,
     overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
     badge: 'Available',
@@ -34,7 +34,7 @@ const designs = [
   {
     name: 'Boarding Pass',
     category: 'launch',
-    description: 'Travel-themed ticket with hometowns as departure/arrival. Fun, playful, and shareable.',
+    description: 'A playful travel-ticket design for destination-inspired celebrations.',
     image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
     overlay: 'linear-gradient(135deg, rgba(66,165,245,0.3), rgba(13,71,161,0.4))',
     badge: 'Available',
