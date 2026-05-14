@@ -2,7 +2,6 @@ import { useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* is used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import closedDoor from '../../assets/coastal/coastal-closed-door.webp';
-import openedDoor from '../../assets/coastal/coastal-door-open-empty.webp';
 import './coastal-splash.css';
 
 const BIRDS = [
@@ -47,19 +46,6 @@ export default function CoastalSplash({ onDismiss }) {
       >
         <div className="coastal-splash-stage" aria-hidden>
           <div className="coastal-door-frame">
-            <motion.div
-              className="coastal-splash-scene"
-              initial={{ filter: 'brightness(0.78) saturate(0.92)' }}
-              animate={
-                opening
-                  ? { filter: 'brightness(1) saturate(1)' }
-                  : { filter: 'brightness(0.78) saturate(0.92)' }
-              }
-              transition={{ duration: swingDuration, ease: swingEase }}
-            >
-              <img className="coastal-splash-open-door" src={openedDoor} alt="" />
-            </motion.div>
-
             <div className="coastal-closed-door" aria-hidden>
               <motion.div
                 className="coastal-door-panel coastal-door-panel-left"
@@ -105,7 +91,12 @@ export default function CoastalSplash({ onDismiss }) {
             </div>
           </div>
 
-          <div className="coastal-splash-vignette" aria-hidden />
+          <motion.div
+            className="coastal-splash-vignette"
+            aria-hidden
+            animate={opening ? { opacity: 0 } : { opacity: 1 }}
+            transition={{ duration: swingDuration * 0.6, ease: 'easeOut' }}
+          />
 
           <div className="coastal-bird-layer" aria-hidden>
             {BIRDS.map((bird) => (
