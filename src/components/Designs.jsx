@@ -41,6 +41,23 @@ const designs = [
     badgeClass: 'badge-launch',
     demoPath: '/demo/boarding-pass',
   },
+  {
+    name: 'Theater',
+    previewName: (
+      <>
+        <span>Opening Night</span>
+        <span>Theater</span>
+      </>
+    ),
+    previewClassName: 'design-preview-text--theater',
+    category: 'launch',
+    description: 'A velvet-stage wedding with gilded marquee details and a cinematic curtain reveal.',
+    image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop&q=80',
+    overlay: 'linear-gradient(135deg, rgba(45,7,16,0.62), rgba(201,164,90,0.2))',
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/theater',
+  },
   // {
   //   name: 'Velvet Rose',
   //   category: 'new',

@@ -80,6 +80,10 @@ const TEMPLATE_UPLOAD_LAYOUTS = {
     story: { width: '88px', aspectRatio: '4 / 5' },
     gallery: { width: '148px', aspectRatio: '11 / 14' },
   },
+  'theater': {
+    story: { width: '88px', aspectRatio: '4 / 5' },
+    gallery: { width: '148px', aspectRatio: '11 / 14' },
+  },
 };
 
 const normalizePhotoFit = (value) => {
@@ -95,6 +99,7 @@ const TEMPLATE_PREVIEW_IMAGES = {
   'coastal-breeze': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
   'gazebo-garden': '/assets/gazebo-watercolor-poster1.jpg',
   'boarding-pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
+  'theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop&q=80',
 };
 
 const LANGUAGE_OPTIONS = [
@@ -221,6 +226,7 @@ export default function OrderFlow() {
     { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', category: 'launch', envelope: 'Blue envelope opens to a bride and groom walking toward the sea', colorScheme: { primary: '#1f5f8f', secondary: '#ec866f', background: '#fffaf1' } },
     { _id: 'gazebo-garden', name: 'Garden Pavilion', slug: 'gazebo-garden', category: 'launch', envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight', colorScheme: { primary: '#86ad61', secondary: '#fff8ea', background: '#eff8dc' } },
     { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', category: 'launch', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
+    { _id: 'theater', name: 'Theater', slug: 'theater', category: 'launch', envelope: 'Velvet curtain parts to reveal a softly lit stage', colorScheme: { primary: '#6e0f1f', secondary: '#c9a45a', background: '#fff5e1' } },
   ];
 
   const goToSuccessPage = useCallback((orderId) => {

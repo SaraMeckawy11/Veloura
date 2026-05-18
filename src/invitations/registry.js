@@ -24,6 +24,10 @@ const registry = {
     component: lazy(() => import('./gazebo-garden/GazeboGardenInvitation')),
     demoData: () => import('./gazebo-garden/demoData').then(m => m.GAZEBO_GARDEN_DEMO_ORDER),
   },
+  'theater': {
+    component: lazy(() => import('./theater/TheaterInvitation')),
+    demoData: () => import('./theater/demoData').then(m => m.THEATER_DEMO_ORDER),
+  },
   // Future templates:
   // 'velvet-rose': {
   //   component: lazy(() => import('./velvet-rose/VelvetRoseInvitation')),

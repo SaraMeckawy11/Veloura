@@ -47,6 +47,17 @@ export const fallbackTemplates = [
     placeholders: commonPlaceholders,
     active: true,
   },
+  {
+    name: 'Theater',
+    slug: 'theater',
+    category: 'launch',
+    description: 'A playbill-styled wedding with a velvet stage, gilded marquee, and a cinematic curtain reveal.',
+    envelope: 'Velvet curtain parts to reveal a softly lit stage',
+    previewImage: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop&q=80',
+    colorScheme: { primary: '#6e0f1f', secondary: '#c9a45a', background: '#fff5e1' },
+    placeholders: commonPlaceholders,
+    active: true,
+  },
 ];
 
 export const retiredTemplateSlugs = [

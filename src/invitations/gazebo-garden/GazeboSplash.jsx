@@ -3,11 +3,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
+const SPLASH_POSTER = '/assets/gazebo-splash-video-first-frame.png';
 const SPLASH_PLAYBACK_RATE = 0.6;
 const SPLASH_END_PADDING_MS = 500;
-const FALLBACK_DISMISS_MS = 9500;
+const FALLBACK_DISMISS_MS = 7600;
 const AUTO_OPEN_MIN_MS = 1300;
-const AUTO_OPEN_FALLBACK_MS = 5000;
+const AUTO_OPEN_FALLBACK_MS = 2600;
 
 export default function GazeboSplash({ onDismiss }) {
   const ambientVideoRef = useRef(null);
@@ -18,7 +19,7 @@ export default function GazeboSplash({ onDismiss }) {
   const openingRef = useRef(false);
   const onDismissRef = useRef(onDismiss);
   const [opening, setOpening] = useState(false);
-  const [posterUrl, setPosterUrl] = useState(null);
+  const [posterUrl, setPosterUrl] = useState(SPLASH_POSTER);
 
   useEffect(() => {
     onDismissRef.current = onDismiss;
@@ -36,9 +37,8 @@ export default function GazeboSplash({ onDismiss }) {
       }
     });
 
-    // Decode the actual first frame of the video and use it as the
-    // splash background. This avoids mobile browsers leaving the video
-    // surface blank until the user interacts with the screen.
+    // Start with a real extracted frame, then upgrade to a decoded video
+    // frame when available so the splash never sits on a blank beige layer.
     let cancelled = false;
     let createdUrl = null;
     const loader = document.createElement('video');
@@ -210,6 +210,7 @@ export default function GazeboSplash({ onDismiss }) {
           muted
           playsInline
           preload="auto"
+          poster={SPLASH_POSTER}
           aria-hidden="true"
         >
           <source src={SPLASH_VIDEO} type="video/mp4" />
@@ -220,6 +221,7 @@ export default function GazeboSplash({ onDismiss }) {
           muted
           playsInline
           preload="auto"
+          poster={SPLASH_POSTER}
           onEnded={finishOpening}
           aria-hidden="true"
         >
