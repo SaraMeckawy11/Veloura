@@ -211,6 +211,11 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
       <section className="theater-hero">
         <span className="theater-hero-curtain theater-hero-curtain-left" aria-hidden />
         <span className="theater-hero-curtain theater-hero-curtain-right" aria-hidden />
+        <div className="theater-hero-marquee" aria-hidden>
+          <span>Velvet House</span>
+          <span>Main Stage</span>
+          <span>One Night Only</span>
+        </div>
         <div className="theater-hero-spotlight" aria-hidden />
         <div className="theater-hero-sparks" aria-hidden>
           <span /><span /><span /><span /><span />
@@ -226,6 +231,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           <span className="theater-kicker theater-kicker-thin">A wedding in one act</span>
 
           <MarqueeBulbs count={5} />
+          <StarMark className="theater-hero-stage-mark" />
 
           <h1>
             <span className="theater-hero-name">{name1}</span>
@@ -261,6 +267,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 
       {weddingDate && (
         <section className="theater-countdown theater-section-denim">
+          <div className="theater-countdown-proscenium" aria-hidden />
           <SectionTitle eyebrow="Save The Date" title="Counting The Moments" light />
           <div className="theater-count-grid">
             <CountdownUnit value={pad(timeLeft.days)} label="Days" />
@@ -360,7 +367,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
             <span className="theater-rsvp-eyebrow">RSVP</span>
             <h2 className="theater-rsvp-title">Take Your Seat</h2>
             <p className="theater-rsvp-lead">
-              The stage is set and the curtain awaits — please let us know you'll be there.
+              The stage is set and the curtain awaits - please let us know you'll be there.
             </p>
             <div className="theater-rsvp-tide-card" aria-label="Wedding details">
               <span>{fullDateStr || 'Date to be announced'}</span>
@@ -436,7 +443,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
                       rows={4}
                       value={rsvpForm.message}
                       onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
-                      placeholder="Share a wish, a memory, or a song request…"
+                      placeholder="Share a wish, a memory, or a song request..."
                     />
                   </div>
                 </div>

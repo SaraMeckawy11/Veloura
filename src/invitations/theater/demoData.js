@@ -27,7 +27,7 @@ export const THEATER_DEMO_ORDER = {
     {
       date: '2018',
       title: 'Curtain Call',
-      description: 'A chance encounter after the show — and our story began with applause still echoing.',
+      description: 'A chance encounter after the show - and our story began with applause still echoing.',
     },
     {
       date: '2020',
@@ -42,7 +42,7 @@ export const THEATER_DEMO_ORDER = {
     {
       date: '2025',
       title: 'The Proposal',
-      description: 'Under a single warm spotlight, a question — and the only possible answer.',
+      description: 'Under a single warm spotlight, a question - and the only possible answer.',
     },
   ],
   storyImages: [

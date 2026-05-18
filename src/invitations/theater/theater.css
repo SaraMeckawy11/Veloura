@@ -2599,3 +2599,417 @@
     min-height: 118px;
   }
 }
+
+/* Premium theater pass: stagecraft, readable mobile timing, richer section rhythm. */
+.theater-theme {
+  background:
+    radial-gradient(ellipse at 50% -8%, rgba(241, 212, 137, 0.18), transparent 30rem),
+    linear-gradient(90deg, rgba(11, 2, 5, 0.98), rgba(82, 8, 25, 0.93) 16%, rgba(23, 4, 9, 0.99) 50%, rgba(82, 8, 25, 0.93) 84%, rgba(11, 2, 5, 0.98)),
+    repeating-linear-gradient(90deg, rgba(255, 232, 178, 0.035) 0 1px, transparent 1px 20px);
+}
+
+.theater-hero {
+  min-height: 100svh;
+  align-items: center;
+  background:
+    radial-gradient(ellipse 42% 72% at 50% 2%, rgba(255, 235, 179, 0.36), rgba(255, 235, 179, 0.12) 32%, transparent 66%),
+    radial-gradient(ellipse 72% 25% at 50% 96%, rgba(241, 212, 137, 0.16), transparent 70%),
+    linear-gradient(180deg, #0c0205 0%, #2b0611 50%, #090103 100%);
+}
+
+.theater-hero-marquee {
+  position: absolute;
+  left: max(18px, 7vw);
+  right: max(18px, 7vw);
+  top: clamp(16px, 3vw, 30px);
+  z-index: 6;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  min-height: 46px;
+  padding: 0 18px;
+  color: #fff5e1;
+  font-family: var(--font-marquee);
+  font-size: clamp(0.54rem, 1.2vw, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  border: 1px solid rgba(241, 212, 137, 0.38);
+  background:
+    radial-gradient(circle, #fff4c7 0 18%, #f1d489 34%, rgba(241, 212, 137, 0) 62%) 0 50% / 28px 10px repeat-x,
+    linear-gradient(180deg, rgba(55, 8, 18, 0.94), rgba(17, 3, 7, 0.9));
+  box-shadow:
+    0 18px 54px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 245, 225, 0.08);
+}
+
+.theater-hero-marquee span {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+}
+
+.theater-hero-marquee span + span {
+  border-left: 1px solid rgba(241, 212, 137, 0.26);
+}
+
+.theater-hero-curtain {
+  width: clamp(88px, 17vw, 220px);
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.42), transparent 22%, rgba(255, 232, 178, 0.07) 50%, rgba(0, 0, 0, 0.34)),
+    repeating-linear-gradient(90deg, #4c0614 0 16px, #8f1429 16px 31px, #33050d 31px 45px, #6c0a1d 45px 64px);
+}
+
+.theater-hero-card {
+  margin-top: clamp(46px, 7vw, 72px);
+  width: min(660px, calc(100vw - 56px));
+  border-radius: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 245, 225, 0.05), rgba(255, 245, 225, 0.012)),
+    radial-gradient(ellipse at 50% 0%, rgba(241, 212, 137, 0.14), transparent 58%),
+    rgba(23, 4, 9, 0.9);
+  border-color: rgba(241, 212, 137, 0.48);
+  box-shadow:
+    0 44px 120px rgba(0, 0, 0, 0.68),
+    0 0 0 1px rgba(255, 245, 225, 0.04),
+    inset 0 1px 0 rgba(255, 245, 225, 0.08);
+}
+
+.theater-hero-card::before {
+  inset: 12px;
+  border-color: rgba(241, 212, 137, 0.34);
+}
+
+.theater-hero-stage-mark {
+  display: block;
+  width: clamp(28px, 5vw, 42px);
+  height: auto;
+  margin: -2px auto 10px;
+  color: var(--theater-gold-bright);
+  filter: drop-shadow(0 0 18px rgba(241, 212, 137, 0.42));
+}
+
+.theater-hero-card h1 {
+  gap: 0;
+  margin-top: 10px;
+  font-size: clamp(3.05rem, 7.6vw, 5.35rem);
+  line-height: 0.94;
+}
+
+.theater-hero-name {
+  letter-spacing: 0.13em;
+}
+
+.theater-hero-amp {
+  margin: 8px 0 10px;
+  font-size: 0.58em;
+}
+
+.theater-hero-datepill {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr);
+  width: min(460px, 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 245, 225, 0.05), rgba(255, 245, 225, 0.015)),
+    rgba(10, 2, 5, 0.62);
+  border: 1px solid rgba(241, 212, 137, 0.42);
+}
+
+.theater-hero-datepill::before,
+.theater-hero-datepill::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #160307;
+  border: 1px solid rgba(241, 212, 137, 0.28);
+  transform: translateY(-50%);
+}
+
+.theater-hero-datepill::before {
+  left: -8px;
+}
+
+.theater-hero-datepill::after {
+  right: -8px;
+}
+
+.theater-countdown {
+  position: relative;
+  min-height: 500px;
+  padding-top: clamp(74px, 9vw, 118px);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 235, 179, 0.18), transparent 28rem),
+    linear-gradient(180deg, #120306 0%, #330713 50%, #120306 100%) !important;
+}
+
+.theater-countdown-proscenium {
+  position: absolute;
+  left: 50%;
+  top: clamp(18px, 3vw, 34px);
+  z-index: 1;
+  width: min(980px, calc(100% - 36px));
+  height: 36px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(241, 212, 137, 0.34);
+  background:
+    radial-gradient(circle, #fff4c7 0 20%, #f1d489 38%, rgba(241, 212, 137, 0) 64%) 0 50% / 32px 12px repeat-x,
+    linear-gradient(180deg, rgba(70, 8, 20, 0.82), rgba(16, 3, 7, 0.82));
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.38);
+}
+
+.theater-count-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: min(900px, calc(100vw - 40px));
+  margin-top: 42px;
+}
+
+.theater-count-unit {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 0;
+  border-color: rgba(241, 212, 137, 0.48) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 245, 225, 0.08), rgba(255, 245, 225, 0.018)),
+    radial-gradient(ellipse at 50% 0%, rgba(241, 212, 137, 0.2), transparent 62%),
+    rgba(14, 3, 7, 0.84) !important;
+}
+
+.theater-count-unit strong {
+  font-size: clamp(2.25rem, 5.2vw, 4.1rem);
+  letter-spacing: 0.02em;
+}
+
+.theater-count-unit span {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.theater-story-list {
+  gap: 22px;
+}
+
+.theater-story-item {
+  position: relative;
+  border-radius: 0;
+}
+
+.theater-story-item::before {
+  content: 'Act';
+  position: absolute;
+  right: 22px;
+  top: 18px;
+  color: rgba(241, 212, 137, 0.38);
+  font-family: var(--font-marquee);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.theater-story-item::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  bottom: 12px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(241, 212, 137, 0.46), transparent);
+}
+
+.theater-event-card {
+  border-radius: 0;
+}
+
+.theater-event-card::after {
+  content: '';
+  position: absolute;
+  left: -10px;
+  right: -10px;
+  top: 0;
+  height: 16px;
+  background:
+    radial-gradient(8px 8px at 8px 0, #120306 62%, transparent 66%) 0 0 / 26px 16px repeat-x;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.theater-event-card dl > div {
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(241, 212, 137, 0.18);
+}
+
+.theater-event-card dl > div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.theater-rsvp-section {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(241, 212, 137, 0.12), transparent 30rem),
+    linear-gradient(180deg, rgba(18, 3, 7, 0), rgba(67, 7, 20, 0.42), rgba(18, 3, 7, 0));
+}
+
+.theater-rsvp-card {
+  border-radius: 0;
+}
+
+.theater-rsvp-toggle button,
+.theater-rsvp-card input,
+.theater-rsvp-card textarea,
+.theater-submit,
+.theater-map {
+  border-radius: 2px;
+}
+
+.theater-gallery-card {
+  border-radius: 2px;
+  border: 1px solid rgba(241, 212, 137, 0.26);
+}
+
+.theater-footer {
+  background:
+    linear-gradient(180deg, rgba(18, 3, 7, 0), rgba(6, 1, 3, 0.88)),
+    repeating-linear-gradient(90deg, rgba(241, 212, 137, 0.035) 0 1px, transparent 1px 20px);
+}
+
+@media (max-width: 760px) {
+  .theater-hero {
+    min-height: 100svh;
+    padding: 74px 12px 28px;
+  }
+
+  .theater-hero-marquee {
+    left: 12px;
+    right: 12px;
+    grid-template-columns: 1fr;
+    min-height: 34px;
+    padding: 0 8px;
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    background: linear-gradient(180deg, rgba(55, 8, 18, 0.96), rgba(17, 3, 7, 0.94));
+  }
+
+  .theater-hero-marquee span:first-child,
+  .theater-hero-marquee span:last-child {
+    display: none;
+  }
+
+  .theater-hero-marquee span + span {
+    border-left: 0;
+  }
+
+  .theater-hero-card {
+    width: min(476px, calc(100vw - 24px));
+    margin-top: 0;
+    padding: 28px 16px 30px;
+  }
+
+  .theater-hero-card h1 {
+    font-size: clamp(2.25rem, 12.4vw, 3.55rem);
+  }
+
+  .theater-hero-name {
+    letter-spacing: 0.08em;
+  }
+
+  .theater-kicker {
+    font-size: 0.56rem;
+    letter-spacing: 0.28em;
+  }
+
+  .theater-kicker-thin {
+    font-size: 0.56rem;
+    letter-spacing: 0.2em;
+  }
+
+  .theater-hero-datepill {
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr);
+    gap: 8px;
+    padding: 11px 12px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+
+  .theater-hero-datepill > span {
+    width: 1px;
+    height: 28px;
+  }
+
+  .theater-hero-datepill small {
+    letter-spacing: 0.1em;
+  }
+
+  .theater-hero-datepill-month small {
+    letter-spacing: 0.12em;
+  }
+
+  .theater-hero-venue {
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
+  }
+
+  .theater-hero-address {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  .theater-hero-message {
+    margin-top: 18px;
+    font-size: 1.02rem;
+  }
+
+  .theater-countdown {
+    min-height: auto;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .theater-count-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: min(100%, 380px);
+    gap: 6px;
+    margin-top: 28px;
+  }
+
+  .theater-count-unit {
+    min-height: 88px;
+    padding: 12px 2px;
+    gap: 5px;
+  }
+
+  .theater-count-unit::before {
+    inset: 4px;
+  }
+
+  .theater-count-unit strong {
+    font-size: clamp(1.42rem, 8vw, 2.05rem);
+  }
+
+  .theater-count-unit span {
+    font-size: 0.47rem;
+    letter-spacing: 0.06em;
+  }
+
+  .theater-marquee-wrap {
+    margin-top: 26px;
+    gap: 8px;
+  }
+
+  .theater-story-item,
+  .theater-story-item:nth-child(even) {
+    padding: 20px;
+  }
+
+  .theater-story-item::before {
+    right: 18px;
+    top: 14px;
+  }
+}
