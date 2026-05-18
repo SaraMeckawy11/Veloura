@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -6,6 +6,8 @@ const SPLASH_VIDEO = '/assets/eal.mp4';
 const SPLASH_PLAYBACK_RATE = 0.6;
 const SPLASH_END_PADDING_MS = 500;
 const FALLBACK_DISMISS_MS = 9500;
+const AUTO_OPEN_MIN_MS = 1300;
+const AUTO_OPEN_FALLBACK_MS = 5000;
 
 export default function GazeboSplash({ onDismiss }) {
   const ambientVideoRef = useRef(null);
@@ -13,8 +15,14 @@ export default function GazeboSplash({ onDismiss }) {
   const posterRef = useRef(null);
   const fallbackTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
+  const openingRef = useRef(false);
+  const onDismissRef = useRef(onDismiss);
   const [opening, setOpening] = useState(false);
   const [posterUrl, setPosterUrl] = useState(null);
+
+  useEffect(() => {
+    onDismissRef.current = onDismiss;
+  }, [onDismiss]);
 
   useEffect(() => {
     const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
@@ -82,18 +90,19 @@ export default function GazeboSplash({ onDismiss }) {
     };
   }, []);
 
-  const finishOpening = () => {
+  const finishOpening = useCallback(() => {
     if (hasOpenedRef.current) return;
     hasOpenedRef.current = true;
     if (fallbackTimerRef.current) {
       window.clearTimeout(fallbackTimerRef.current);
       fallbackTimerRef.current = null;
     }
-    onDismiss();
-  };
+    onDismissRef.current();
+  }, []);
 
-  const handleOpen = () => {
-    if (opening || hasOpenedRef.current) return;
+  const handleOpen = useCallback(() => {
+    if (openingRef.current || hasOpenedRef.current) return;
+    openingRef.current = true;
     setOpening(true);
     if (posterRef.current) posterRef.current.style.opacity = '0';
 
@@ -120,7 +129,52 @@ export default function GazeboSplash({ onDismiss }) {
         finishOpening();
       }
     });
-  };
+  }, [finishOpening]);
+
+  useEffect(() => {
+    let cancelled = false;
+    let openTimer = null;
+    let fallbackTimer = null;
+    let openScheduled = false;
+    const startedAt = performance.now();
+    const videos = [ambientVideoRef.current, foregroundVideoRef.current].filter(Boolean);
+
+    const scheduleOpen = () => {
+      if (cancelled || openScheduled) return;
+      openScheduled = true;
+      const elapsed = performance.now() - startedAt;
+      const delay = Math.max(AUTO_OPEN_MIN_MS - elapsed, 0);
+      openTimer = window.setTimeout(() => {
+        if (!cancelled) handleOpen();
+      }, delay);
+    };
+
+    const checkReady = () => {
+      const primaryVideo = foregroundVideoRef.current;
+      const videoReady = !primaryVideo || primaryVideo.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+      if (posterUrl && videoReady) scheduleOpen();
+    };
+
+    fallbackTimer = window.setTimeout(scheduleOpen, AUTO_OPEN_FALLBACK_MS);
+    checkReady();
+
+    videos.forEach((video) => {
+      video.addEventListener('loadeddata', checkReady);
+      video.addEventListener('canplay', checkReady);
+      video.addEventListener('error', scheduleOpen);
+    });
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(openTimer);
+      window.clearTimeout(fallbackTimer);
+      videos.forEach((video) => {
+        video.removeEventListener('loadeddata', checkReady);
+        video.removeEventListener('canplay', checkReady);
+        video.removeEventListener('error', scheduleOpen);
+      });
+    };
+  }, [handleOpen, posterUrl]);
 
   return (
     <AnimatePresence>
@@ -181,7 +235,7 @@ export default function GazeboSplash({ onDismiss }) {
           transition={{ duration: opening ? 0.6 : 0.9, delay: opening ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
           <div>
-            <strong>{opening ? 'Opening' : 'Tap to open'}</strong>
+            <strong>{opening ? 'Opening' : 'Opening soon'}</strong>
           </div>
         </motion.div>
       </motion.div>

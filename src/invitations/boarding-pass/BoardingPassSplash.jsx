@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.div / motion.img use `motion` via JSX members
 import { motion, AnimatePresence } from 'framer-motion';
 import airplaneSplash from '../../assets/plane-splash.jpeg';
@@ -34,14 +34,69 @@ const STARS = [
   { id: 9, left: 6, top: 75, delay: 1.1, dur: 1.9 },
 ];
 
+const AUTO_OPEN_MIN_MS = 1500;
+const AUTO_OPEN_FALLBACK_MS = 3000;
+
 export default function BoardingPassSplash({ onDismiss }) {
   const [dismissed, setDismissed] = useState(false);
+  const dismissedRef = useRef(false);
+  const onDismissRef = useRef(onDismiss);
 
-  const handleClick = () => {
-    if (dismissed) return;
+  useEffect(() => {
+    onDismissRef.current = onDismiss;
+  }, [onDismiss]);
+
+  const handleOpen = useCallback(() => {
+    if (dismissedRef.current) return;
+    dismissedRef.current = true;
     setDismissed(true);
-    setTimeout(onDismiss, 1800);
-  };
+    setTimeout(() => onDismissRef.current(), 1800);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    let openTimer = null;
+    let fallbackTimer = null;
+    let openScheduled = false;
+    const startedAt = performance.now();
+
+    const scheduleOpen = () => {
+      if (cancelled || openScheduled) return;
+      openScheduled = true;
+      const elapsed = performance.now() - startedAt;
+      const delay = Math.max(AUTO_OPEN_MIN_MS - elapsed, 0);
+      openTimer = window.setTimeout(() => {
+        if (!cancelled) handleOpen();
+      }, delay);
+    };
+
+    const image = new Image();
+    image.src = airplaneSplash;
+    fallbackTimer = window.setTimeout(scheduleOpen, AUTO_OPEN_FALLBACK_MS);
+
+    if (image.decode) {
+      image.decode()
+        .catch(() => undefined)
+        .then(() => {
+          window.clearTimeout(fallbackTimer);
+          scheduleOpen();
+        });
+    } else {
+      image.onload = () => {
+        window.clearTimeout(fallbackTimer);
+        scheduleOpen();
+      };
+      image.onerror = scheduleOpen;
+    }
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(openTimer);
+      window.clearTimeout(fallbackTimer);
+      image.onload = null;
+      image.onerror = null;
+    };
+  }, [handleOpen]);
 
   return (
     <AnimatePresence>
@@ -51,11 +106,11 @@ export default function BoardingPassSplash({ onDismiss }) {
         role="button"
         tabIndex={0}
         aria-label="Open invitation"
-        onClick={handleClick}
+        onClick={handleOpen}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            handleClick();
+            handleOpen();
           }
         }}
         exit={{ opacity: 0, transition: { duration: 0.6, delay: 1.0 } }}
@@ -142,15 +197,15 @@ export default function BoardingPassSplash({ onDismiss }) {
           </motion.div>
         )}
 
-        {/* Tap hint — bottom center */}
+        {/* Auto-open status - bottom center */}
         {!dismissed && (
           <motion.p
-            className="inv-splash-tap-hint"
+            className="inv-splash-status"
             initial={{ opacity: 0 }}
             animate={{ opacity: [0.2, 0.8, 0.2] }}
             transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
           >
-            tap to open your invitation
+            opening your invitation
           </motion.p>
         )}
       </motion.div>

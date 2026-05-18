@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* is used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import closedDoor from '../../assets/coastal/coastal-closed-door.webp';
@@ -10,17 +10,72 @@ const BIRDS = [
   { id: 2, top: 40, delay: 10, duration: 19, scale: 0.8 },
 ];
 
+const AUTO_OPEN_MIN_MS = 1400;
+const AUTO_OPEN_FALLBACK_MS = 2800;
+
 export default function CoastalSplash({ onDismiss }) {
   const [opening, setOpening] = useState(false);
   const [fading, setFading] = useState(false);
+  const openingRef = useRef(false);
+  const onDismissRef = useRef(onDismiss);
 
-  const handleOpen = () => {
-    if (opening) return;
+  useEffect(() => {
+    onDismissRef.current = onDismiss;
+  }, [onDismiss]);
+
+  const handleOpen = useCallback(() => {
+    if (openingRef.current) return;
+    openingRef.current = true;
     setOpening(true);
     // Let the opened door settle, then dissolve promptly over the invitation below.
     setTimeout(() => setFading(true), 4450);
-    setTimeout(onDismiss, 5150);
-  };
+    setTimeout(() => onDismissRef.current(), 5150);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    let openTimer = null;
+    let fallbackTimer = null;
+    let openScheduled = false;
+    const startedAt = performance.now();
+
+    const scheduleOpen = () => {
+      if (cancelled || openScheduled) return;
+      openScheduled = true;
+      const elapsed = performance.now() - startedAt;
+      const delay = Math.max(AUTO_OPEN_MIN_MS - elapsed, 0);
+      openTimer = window.setTimeout(() => {
+        if (!cancelled) handleOpen();
+      }, delay);
+    };
+
+    const image = new Image();
+    image.src = closedDoor;
+    fallbackTimer = window.setTimeout(scheduleOpen, AUTO_OPEN_FALLBACK_MS);
+
+    if (image.decode) {
+      image.decode()
+        .catch(() => undefined)
+        .then(() => {
+          window.clearTimeout(fallbackTimer);
+          scheduleOpen();
+        });
+    } else {
+      image.onload = () => {
+        window.clearTimeout(fallbackTimer);
+        scheduleOpen();
+      };
+      image.onerror = scheduleOpen;
+    }
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(openTimer);
+      window.clearTimeout(fallbackTimer);
+      image.onload = null;
+      image.onerror = null;
+    };
+  }, [handleOpen]);
 
   const swingDuration = 4.25;
   const swingEase = [0.45, 0, 0.2, 1];
@@ -121,7 +176,7 @@ export default function CoastalSplash({ onDismiss }) {
         >
           <span className="coastal-splash-eyebrow">You are invited to</span>
           <p className="coastal-splash-script">the wedding</p>
-          <span className="coastal-splash-hint">Tap to open the doors</span>
+          <span className="coastal-splash-hint">Opening the doors</span>
         </motion.div>
       </motion.div>
     </AnimatePresence>

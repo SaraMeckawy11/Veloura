@@ -135,8 +135,8 @@
   margin: 0;
 }
 
-/* "Tap to open" hint */
-.inv-splash-tap-hint {
+/* Auto-open status */
+.inv-splash-status {
   position: absolute;
   bottom: 40px;
   left: 0;
