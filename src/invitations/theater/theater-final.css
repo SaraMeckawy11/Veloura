@@ -251,9 +251,15 @@ body:has(.theater-theme),
 
 .theater-asset-title {
   position: relative;
-  width: min(520px, 86vw);
-  aspect-ratio: 1448 / 1086;
-  margin: 0 auto clamp(-6px, -0.4vw, 0px);
+  width: min(440px, 78vw);
+  aspect-ratio: 1448 / 720;
+  margin: 0 auto clamp(6px, 1.2vw, 16px);
+  overflow: hidden;
+}
+
+.theater-story-title .theater-title-art {
+  height: 150%;
+  object-position: center;
 }
 
 .theater-asset-title h2 {
@@ -275,10 +281,37 @@ body:has(.theater-theme),
 
 .theater-story,
 .theater-memories {
+  position: relative;
   width: 100%;
-  padding: 0;
-  margin-top: clamp(18px, 3vw, 36px);
-  overflow: hidden;
+  padding: clamp(28px, 4.5vw, 56px) 0 0;
+  margin-top: clamp(8px, 1.6vw, 20px);
+  overflow: visible;
+}
+
+.theater-story::before,
+.theater-memories::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: clamp(120px, 28vw, 220px);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, transparent, rgba(184, 134, 42, 0.65), transparent);
+}
+
+.theater-story::after,
+.theater-memories::after {
+  content: "✦";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -52%);
+  padding: 0 0.5em;
+  background: var(--theater-paper);
+  color: rgba(184, 134, 42, 0.9);
+  font-size: clamp(0.7rem, 1.4vw, 0.95rem);
+  line-height: 1;
 }
 
 .theater-story-list {
