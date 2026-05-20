@@ -4,7 +4,6 @@ import './theater-final.css';
 import { formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
-import memoriesContainer from '../../assets/theater/memories/emptyContainer_transparent.png';
 import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
 import storyTitle from '../../assets/theater/story/title7_transparent.png';
@@ -453,14 +452,16 @@ function MemoriesSection({ images }) {
   const uniqueImages = useMemo(() => images.filter(byUniquePhoto), [images]);
   const memoryImageKey = uniqueImages.map(getInvitationPhotoSrc).join('|');
   const trackRef = useRef(null);
-  const unitRefs = useRef([]);
+  const unitRef = useRef(null);
+  const unitRepeatCount = uniqueImages.length ? Math.max(1, Math.ceil(4 / uniqueImages.length)) : 0;
   const repeatedImages = uniqueImages.length
-    ? Array.from({ length: Math.max(2, Math.ceil(8 / uniqueImages.length)) }, () => uniqueImages).flat()
+    ? Array.from({ length: unitRepeatCount }, () => uniqueImages).flat()
     : [];
 
   useEffect(() => {
     const track = trackRef.current;
-    if (!track || !repeatedImages.length || typeof window === 'undefined') return undefined;
+    const unit = unitRef.current;
+    if (!track || !unit || !repeatedImages.length || typeof window === 'undefined') return undefined;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let animationFrame = 0;
@@ -470,8 +471,7 @@ function MemoriesSection({ images }) {
     let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
 
     const updateDistance = () => {
-      const firstUnit = unitRefs.current[0];
-      distance = firstUnit ? firstUnit.scrollWidth : 0;
+      distance = unit.scrollWidth;
       offset = distance ? offset % distance : 0;
       track.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
@@ -512,7 +512,7 @@ function MemoriesSection({ images }) {
       ? new ResizeObserver(updateDistance)
       : null;
 
-    unitRefs.current.filter(Boolean).forEach(unit => resizeObserver?.observe(unit));
+    resizeObserver?.observe(unit);
     if (reducedMotion.addEventListener) {
       reducedMotion.addEventListener('change', startAnimation);
     } else {
@@ -541,7 +541,6 @@ function MemoriesSection({ images }) {
     const imageSrc = getInvitationPhotoSrc(image);
     return (
       <li className="theater-memory-card" key={`${groupIndex}-${imageSrc}-${index}`}>
-        <img className="theater-memory-frame" src={memoriesContainer} alt="" aria-hidden="true" />
         <div className="theater-memory-photo">
           <InvitationPhoto
             src={image}
@@ -565,12 +564,10 @@ function MemoriesSection({ images }) {
       />
       <div className="theater-memories-viewport">
         <div className="theater-memories-track" ref={trackRef}>
-          {[0, 1, 2].map((groupIndex) => (
+          {[0, 1, 2, 3].map((groupIndex) => (
             <ul
               key={groupIndex}
-              ref={element => {
-                unitRefs.current[groupIndex] = element;
-              }}
+              ref={groupIndex === 0 ? unitRef : null}
               className="theater-memories-list"
               aria-hidden={groupIndex > 0 ? 'true' : undefined}
             >
