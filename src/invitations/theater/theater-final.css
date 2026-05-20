@@ -1,0 +1,695 @@
+/* ============================================================================
+   THEATER INVITATION - FINAL OVERRIDES
+   Each section renders the supplied PNG plate from /assets/theater/*.png as the
+   complete visual, with dynamic text positioned over it. All white card
+   backgrounds, paper textures, and decorative pseudo-elements from earlier
+   stylesheets are wiped here so the underlying artwork is the only chrome.
+   Imported last so it wins specificity battles via :where() resets + !important.
+   ============================================================================ */
+
+/* ----- shared paper backdrop, no white cards anywhere --------------------- */
+.theater-theme,
+.theater-ref-experience {
+  background: linear-gradient(180deg, #f3deb6 0%, #ead2a4 50%, #f3deb6 100%) !important;
+  color: #2a0d08 !important;
+  padding-bottom: 4rem !important;
+}
+
+.theater-ref-experience {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: clamp(20px, 4vw, 48px) !important;
+  padding-top: 0 !important;
+  width: 100% !important;
+}
+
+/* ----- horizontal-scrolling story + memories: theater paper styling ------- */
+.theater-ref-experience .theater-story-section,
+.theater-ref-experience .theater-gallery-section {
+  width: 100% !important;
+  background: transparent !important;
+  padding: clamp(28px, 6vw, 56px) 0 !important;
+  overflow: hidden !important;
+}
+
+.theater-ref-experience .theater-story-section .theater-section-title h2,
+.theater-ref-experience .theater-gallery-section .theater-gallery-header h2 {
+  color: #4a1810 !important;
+  font-family: 'Playfair Display', Georgia, serif !important;
+}
+
+.theater-ref-experience .theater-story-list {
+  width: min(640px, 92vw) !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  gap: clamp(18px, 3vw, 28px) !important;
+}
+
+.theater-ref-experience .theater-story-item {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  display: grid !important;
+  gap: 0.75rem !important;
+}
+
+.theater-ref-experience .theater-story-item .theater-photo-frame {
+  background: transparent !important;
+  border: 2px solid #6e1414 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 30px -16px rgba(74, 24, 16, 0.4) !important;
+  overflow: hidden !important;
+}
+
+.theater-ref-experience .theater-story-item h3 {
+  color: #4a1810 !important;
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  font-size: clamp(1rem, 3vw, 1.25rem) !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  margin: 0.25rem 0 !important;
+}
+
+.theater-ref-experience .theater-story-item span {
+  color: #b8862a !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.2em !important;
+}
+
+.theater-ref-experience .theater-story-item p {
+  color: #4a1810 !important;
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  font-size: clamp(0.9rem, 2.4vw, 1.05rem) !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+/* memories horizontal scroll – ditch white cards */
+.theater-ref-experience .theater-gallery-card {
+  background: transparent !important;
+  border: 2px solid #6e1414 !important;
+  border-radius: 8px !important;
+  box-shadow:
+    0 14px 32px -18px rgba(74, 24, 16, 0.45),
+    inset 0 0 0 2px rgba(184, 134, 42, 0.35) !important;
+}
+
+.theater-ref-experience .theater-gallery-section .theater-gallery-card .invitation-photo {
+  --invitation-photo-surface: linear-gradient(180deg, #f5e1bc, #efd5a8) !important;
+  --invitation-photo-overlay-top: rgba(255, 248, 226, 0.05) !important;
+  --invitation-photo-overlay-bottom: rgba(74, 24, 16, 0.05) !important;
+}
+
+/* ----- nuke all stray decorations from earlier CSS files ------------------ */
+.theater-ref-experience .theater-ref-paper-texture,
+.theater-ref-experience .theater-ref-ticket-corners,
+.theater-ref-experience .theater-ref-ornament,
+.theater-ref-experience .theater-ref-bottom-stars,
+.theater-ref-experience .theater-ref-marquee-bulbs,
+.theater-ref-experience .theater-ref-marquee-crest,
+.theater-ref-experience .theater-ref-photo-placeholder,
+.theater-ref-experience .theater-ref-stage,
+.theater-ref-experience .theater-ref-stage-arch,
+.theater-ref-experience .theater-ref-chandelier,
+.theater-ref-experience .theater-ref-chandelier-glow,
+.theater-ref-experience .theater-ref-rose,
+.theater-ref-experience .theater-ref-curtain,
+.theater-ref-experience .theater-ref-footlights,
+.theater-ref-experience .theater-ref-section-lead,
+.theater-ref-experience .theater-ref-soon,
+.theater-ref-experience .theater-ref-script-lead,
+.theater-ref-experience .theater-ref-mask,
+.theater-ref-experience .theater-ref-stars,
+.theater-ref-experience .theater-ref-countdown .theater-ref-soon,
+.theater-ref-experience .theater-ref-countdown .theater-ref-section-lead,
+.theater-ref-experience .theater-ref-countdown .theater-ref-ornament,
+.theater-ref-experience .theater-ref-countdown .theater-ref-marquee-title,
+.theater-ref-experience .theater-ref-countdown .theater-ref-paper-texture,
+.theater-ref-experience .theater-ref-countdown .theater-ref-ticket-corners,
+.theater-ref-experience .theater-ref-story .theater-ref-paper-texture,
+.theater-ref-experience .theater-ref-story .theater-ref-ticket-corners,
+.theater-ref-experience .theater-ref-story .theater-ref-marquee-title,
+.theater-ref-experience .theater-ref-story .theater-ref-section-lead,
+.theater-ref-experience .theater-ref-story .theater-ref-story-scene,
+.theater-ref-experience .theater-ref-details .theater-ref-paper-texture,
+.theater-ref-experience .theater-ref-details .theater-ref-ticket-corners,
+.theater-ref-experience .theater-ref-details .theater-ref-marquee-title,
+.theater-ref-experience .theater-ref-details .theater-ref-section-lead,
+.theater-ref-experience .theater-ref-details .theater-ref-ornament,
+.theater-ref-experience .theater-ref-details .theater-ref-details-venue,
+.theater-ref-experience .theater-ref-details .theater-ref-detail-row,
+.theater-ref-experience .theater-ref-details .theater-ref-dress,
+.theater-ref-experience .theater-ref-memories .theater-ref-paper-texture,
+.theater-ref-experience .theater-ref-memories .theater-ref-ticket-corners,
+.theater-ref-experience .theater-ref-memories .theater-ref-marquee-title,
+.theater-ref-experience .theater-ref-memories .theater-ref-section-lead,
+.theater-ref-experience .theater-ref-memories .theater-ref-script-lead,
+.theater-ref-experience .theater-ref-memories .theater-ref-ornament,
+.theater-ref-experience .theater-ref-memories .theater-ref-film,
+.theater-ref-experience .theater-ref-memories .theater-ref-bottom-stars,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-paper-texture,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-ticket-corners,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-marquee-title,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-section-lead,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-rsvp-date,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-ornament {
+  display: none !important;
+}
+
+.theater-ref-experience::before,
+.theater-ref-experience::after,
+.theater-ref-hero::before,
+.theater-ref-hero::after,
+.theater-ref-ticket::before,
+.theater-ref-ticket::after,
+.theater-ref-poster::before,
+.theater-ref-poster::after,
+.theater-ref-rsvp::before,
+.theater-ref-rsvp::after,
+.theater-ref-rsvp-card::before,
+.theater-ref-rsvp-card::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+/* ============================================================================
+   HERO – uses hero.png as the full backdrop
+   ============================================================================ */
+.theater-ref-experience .theater-ref-hero {
+  position: relative !important;
+  width: min(640px, 100vw) !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  aspect-ratio: 936 / 1664 !important;
+  min-height: 0 !important;
+  background: url("../../assets/theater/hero.png") center / 100% 100% no-repeat !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.theater-ref-experience .theater-ref-hero-ticket {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: #4a1810 !important;
+  display: block !important;
+}
+
+/* hide ALL hero ticket content - the hero.png image already contains
+   the full composition (names, date, venue, admit ticket, etc.) */
+.theater-ref-experience .theater-ref-hero-ticket > *,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-eyebrow,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-request,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-doors,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-message,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-admit,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-stars,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-mask,
+.theater-ref-experience .theater-ref-hero-ticket h1,
+.theater-ref-experience .theater-ref-hero-ticket h2,
+.theater-ref-experience .theater-ref-hero-ticket p,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-hero-date,
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-hero-address {
+  display: none !important;
+}
+
+/* COUPLE NAMES - positioned over the cream invitation card */
+.theater-ref-experience .theater-ref-hero-ticket h1 {
+  position: absolute !important;
+  top: 30% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 70% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.1em !important;
+  font-family: 'Great Vibes', cursive !important;
+  font-size: clamp(2.2rem, 9vw, 3.6rem) !important;
+  font-weight: 400 !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0 !important;
+  color: #b8862a !important;
+  text-shadow: 0 1px 0 rgba(74, 24, 16, 0.18) !important;
+  text-align: center !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.theater-ref-experience .theater-ref-hero-ticket h1 > span {
+  display: block !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  white-space: nowrap !important;
+}
+
+.theater-ref-experience .theater-ref-hero-ticket h1 > em {
+  font-style: italic !important;
+  font-size: 0.55em !important;
+  color: #b8862a !important;
+  font-family: 'Great Vibes', cursive !important;
+}
+
+/* DATE STRIP */
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-hero-date {
+  position: absolute !important;
+  top: 58% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 70% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0.5em !important;
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  color: #4a1810 !important;
+}
+
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-hero-date > span {
+  font-size: clamp(0.65rem, 2.4vw, 0.95rem) !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  font-weight: 600 !important;
+}
+
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-hero-date > strong {
+  font-family: 'Playfair Display', serif !important;
+  font-size: clamp(1.6rem, 6vw, 2.4rem) !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+/* VENUE NAME */
+.theater-ref-experience .theater-ref-hero-ticket h2 {
+  position: absolute !important;
+  top: 70% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 70% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  font-size: clamp(0.85rem, 3vw, 1.2rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  color: #4a1810 !important;
+  text-align: center !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* VENUE ADDRESS */
+.theater-ref-experience .theater-ref-hero-ticket .theater-ref-hero-address {
+  position: absolute !important;
+  top: 74% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 70% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  font-size: clamp(0.7rem, 2.2vw, 0.92rem) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: #6e1414 !important;
+  text-align: center !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* ============================================================================
+   GENERIC POSTER - lets the section PNG be the only visual
+   ============================================================================ */
+.theater-ref-experience .theater-ref-poster,
+.theater-ref-experience .theater-ref-rsvp,
+.theater-ref-experience .theater-ref-rsvp-card {
+  position: relative !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: min(640px, 100vw) !important;
+  isolation: isolate !important;
+}
+
+/* hide the marquee title block in each poster - title is in the PNG */
+.theater-ref-experience .theater-ref-poster .theater-ref-marquee-title,
+.theater-ref-experience .theater-ref-rsvp-card .theater-ref-marquee-title {
+  display: none !important;
+}
+
+/* ============================================================================
+   COUNTDOWN – countdown1.png landscape (3:2)
+   ============================================================================ */
+.theater-ref-experience .theater-ref-countdown {
+  width: min(640px, 100vw) !important;
+  aspect-ratio: 600 / 400 !important;
+  background: url("../../assets/theater/countdown1.png") center / 100% 100% no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-countdown > *,
+.theater-ref-experience .theater-ref-countdown .theater-ref-count-grid,
+.theater-ref-experience .theater-ref-countdown .theater-ref-count-card,
+.theater-ref-experience .theater-ref-countdown .theater-ref-soon,
+.theater-ref-experience .theater-ref-countdown .theater-ref-section-lead,
+.theater-ref-experience .theater-ref-countdown .theater-ref-ornament,
+.theater-ref-experience .theater-ref-countdown .theater-ref-marquee-title,
+.theater-ref-experience .theater-ref-countdown header,
+.theater-ref-experience .theater-ref-countdown p,
+.theater-ref-experience .theater-ref-countdown div {
+  display: none !important;
+}
+
+.theater-ref-experience .theater-ref-countdown .theater-ref-count-card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  color: #4a1810 !important;
+  font-family: 'Playfair Display', serif !important;
+  text-align: center !important;
+  aspect-ratio: 1 / 1.35 !important;
+}
+
+.theater-ref-experience .theater-ref-countdown .theater-ref-count-card span {
+  order: -1 !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: clamp(0.55rem, 1.8vw, 0.85rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  margin-top: 8% !important;
+  color: #4a1810 !important;
+}
+
+.theater-ref-experience .theater-ref-countdown .theater-ref-count-card strong {
+  font-size: clamp(1.6rem, 6.5vw, 2.6rem) !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  color: #4a1810 !important;
+  margin: 5% 0 !important;
+}
+
+.theater-ref-experience .theater-ref-countdown .theater-ref-count-card .theater-ref-count-icon,
+.theater-ref-experience .theater-ref-countdown .theater-ref-count-card i {
+  width: 18% !important;
+  height: 18% !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* ============================================================================
+   STORY – uses story.png / story2.png / story3.png / story4.png as the
+   FULL background for the entire poster.
+   ============================================================================ */
+.theater-ref-experience .theater-ref-story {
+  width: min(640px, 100vw) !important;
+  background-size: 100% 100% !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-story.theater-ref-story-1 {
+  aspect-ratio: 480 / 600 !important;
+  background-image: url("../../assets/theater/story.png") !important;
+}
+.theater-ref-experience .theater-ref-story.theater-ref-story-2 {
+  aspect-ratio: 360 / 640 !important;
+  background-image: url("../../assets/theater/story2.png") !important;
+}
+.theater-ref-experience .theater-ref-story.theater-ref-story-3 {
+  aspect-ratio: 360 / 720 !important;
+  background-image: url("../../assets/theater/story3.png") !important;
+}
+.theater-ref-experience .theater-ref-story.theater-ref-story-4 {
+  aspect-ratio: 360 / 800 !important;
+  background-image: url("../../assets/theater/story4.png") !important;
+}
+
+.theater-ref-experience .theater-ref-story > * {
+  display: none !important;
+}
+
+/* ============================================================================
+   DETAILS – details.png portrait
+   ============================================================================ */
+.theater-ref-experience .theater-ref-details {
+  width: min(640px, 100vw) !important;
+  aspect-ratio: 400 / 600 !important;
+  background: url("../../assets/theater/details.png") center / 100% 100% no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-details > * {
+  display: none !important;
+}
+
+/* map overlay - this is the only dynamic piece; keep it positioned over map */
+.theater-ref-experience .theater-ref-details .theater-ref-map-card {
+  display: block !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 10% !important;
+  right: 10% !important;
+  height: 25% !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  z-index: 2 !important;
+  opacity: 0.001 !important; /* keep it interactive but invisible so PNG map shows */
+  pointer-events: auto !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-map-card iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-map-card a {
+  position: absolute !important;
+  inset: 0 !important;
+  opacity: 0 !important;
+}
+
+/* ============================================================================
+   MEMORIES – memories1..6.png portrait, chosen by image count
+   ============================================================================ */
+.theater-ref-experience .theater-ref-memories {
+  width: min(640px, 100vw) !important;
+  background-size: 100% 100% !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+}
+
+.theater-ref-experience .theater-ref-memories.theater-ref-memories-1 {
+  aspect-ratio: 400 / 600 !important;
+  background-image: url("../../assets/theater/memories1.png") !important;
+}
+.theater-ref-experience .theater-ref-memories.theater-ref-memories-2 {
+  aspect-ratio: 400 / 600 !important;
+  background-image: url("../../assets/theater/memories2.png") !important;
+}
+.theater-ref-experience .theater-ref-memories.theater-ref-memories-3 {
+  aspect-ratio: 400 / 600 !important;
+  background-image: url("../../assets/theater/memories3.png") !important;
+}
+.theater-ref-experience .theater-ref-memories.theater-ref-memories-4 {
+  aspect-ratio: 400 / 600 !important;
+  background-image: url("../../assets/theater/memories4.png") !important;
+}
+.theater-ref-experience .theater-ref-memories.theater-ref-memories-5 {
+  aspect-ratio: 400 / 600 !important;
+  background-image: url("../../assets/theater/memories5.png") !important;
+}
+.theater-ref-experience .theater-ref-memories.theater-ref-memories-6 {
+  aspect-ratio: 360 / 640 !important;
+  background-image: url("../../assets/theater/memories6.png") !important;
+}
+
+.theater-ref-experience .theater-ref-memories > * {
+  display: none !important;
+}
+
+/* ============================================================================
+   RSVP – rsvp.png portrait. The form is the only dynamic piece.
+   ============================================================================ */
+.theater-ref-experience .theater-ref-rsvp {
+  width: min(640px, 100vw) !important;
+  aspect-ratio: 400 / 600 !important;
+  background: url("../../assets/theater/rsvp.png") center / 100% 100% no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp > .theater-ref-rsvp-card,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-rsvp-card,
+.theater-ref-experience .theater-ref-rsvp form,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-rsvp-form,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-rsvp-success {
+  display: none !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form {
+  position: absolute !important;
+  top: 35% !important;
+  left: 12% !important;
+  right: 12% !important;
+  bottom: 18% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.6rem !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  color: #4a1810 !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form label,
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-line-field,
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-guests,
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-message-field {
+  background: transparent !important;
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #4a1810 !important;
+  font-family: inherit !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form input,
+.theater-ref-experience .theater-ref-rsvp-form textarea {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(74, 24, 16, 0.6) !important;
+  border-radius: 0 !important;
+  color: #4a1810 !important;
+  font-family: inherit !important;
+  font-size: clamp(0.7rem, 2.2vw, 0.95rem) !important;
+  padding: 0.2em 0.4em !important;
+  outline: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form textarea {
+  border: 1px solid rgba(74, 24, 16, 0.45) !important;
+  resize: none !important;
+  min-height: 3em !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice {
+  display: flex !important;
+  gap: 1rem !important;
+  justify-content: center !important;
+  background: transparent !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice button {
+  background: transparent !important;
+  border: 0 !important;
+  color: #4a1810 !important;
+  font-family: inherit !important;
+  font-size: clamp(0.65rem, 2vw, 0.85rem) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  padding: 0.2em 0.4em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35em !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice button span {
+  width: 0.8em !important;
+  height: 0.8em !important;
+  border: 1.5px solid #4a1810 !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  background: transparent !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice button.active span {
+  background: #6e1414 !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice button small {
+  display: block !important;
+  width: 100% !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+  font-size: 0.75em !important;
+  opacity: 0.75 !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-ticket-submit {
+  display: none !important; /* "Confirm your seat" already drawn on rsvp.png */
+}
+
+/* ============================================================================
+   FINALE FOOTER – simple cream text on paper
+   ============================================================================ */
+.theater-ref-experience .theater-ref-footer {
+  background: transparent !important;
+  border: 0 !important;
+  margin: 1rem auto 0 !important;
+  padding: 1rem !important;
+  text-align: center !important;
+  color: #4a1810 !important;
+  font-family: 'Playfair Display', serif !important;
+}
+
+.theater-ref-experience .theater-ref-footer p {
+  font-family: 'Cinzel', serif !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  margin: 0 0 0.4rem !important;
+}
+
+.theater-ref-experience .theater-ref-footer h2 {
+  font-family: 'Great Vibes', cursive !important;
+  color: #b8862a !important;
+  font-size: clamp(1.8rem, 6vw, 2.6rem) !important;
+  font-weight: 400 !important;
+  margin: 0 0 0.4rem !important;
+}
+
+.theater-ref-experience .theater-ref-footer small {
+  font-family: 'Cinzel', serif !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  font-size: 0.65rem !important;
+  opacity: 0.75 !important;
+}

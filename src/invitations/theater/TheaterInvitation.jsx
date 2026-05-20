@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TheaterSplash from './TheaterSplash';
 import './theater.css';
+import './theater-components.css';
+import './theater-final.css';
 import { buildInvitationImageSources, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 
@@ -81,6 +83,9 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const monthStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
     : '';
+  const monthYearStr = weddingDate
+    ? weddingDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase()
+    : '';
   const dayOfMonth = weddingDate ? weddingDate.getDate() : '';
   const fullDateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
@@ -95,10 +100,8 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const pad = (n) => n.toString().padStart(2, '0');
 
   const allPhotos = order.photos || [];
-  const couplePhotos = allPhotos.filter(p => p.label === 'couple');
   const storyPhotos = allPhotos.filter(p => p.label === 'story');
   const galleryPhotos = allPhotos.filter(p => p.label === 'gallery');
-  const venuePhotos = allPhotos.filter(p => p.label === 'venue');
   const uncategorized = allPhotos.filter(p => !p.label || !['couple', 'story', 'gallery', 'venue'].includes(p.label));
   const allGallery = [...galleryPhotos, ...uncategorized];
 
@@ -198,6 +201,14 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const openMapHref = wd.venueMapUrl
     ? wd.venueMapUrl
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
+  const gallerySources = isReferenceDemo && order.galleryImages?.length ? order.galleryImages : allGallery;
+  const storySources = isReferenceDemo && order.storyImages?.length ? order.storyImages : storyPhotos;
+  const storyMilestones = isReferenceDemo && order.storyMilestones?.length ? order.storyMilestones : (order.storyMilestones || []);
+  const storyItemCount = Math.min(4, Math.max(storySources.length, storyMilestones.length));
+  const storyItems = Array.from({ length: storyItemCount }, (_, index) => ({
+    image: storySources[index],
+    ...(storyMilestones[index] || {}),
+  })).filter(item => item.image || item.date || item.title || item.description || item.body);
 
   return (
     <div className="theater-theme">
@@ -208,291 +219,432 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
         <TheaterSplash onDismiss={handleSplashDismiss} />
       )}
 
-      <section className="theater-hero">
-        <span className="theater-hero-curtain theater-hero-curtain-left" aria-hidden />
-        <span className="theater-hero-curtain theater-hero-curtain-right" aria-hidden />
-        <div className="theater-hero-marquee" aria-hidden>
-          <span>Velvet House</span>
-          <span>Main Stage</span>
-          <span>One Night Only</span>
-        </div>
-        <div className="theater-hero-spotlight" aria-hidden />
-        <div className="theater-hero-sparks" aria-hidden>
-          <span /><span /><span /><span /><span />
-        </div>
+      <TheaterReferenceExperience
+        name1={name1}
+        name2={name2}
+        dayStr={dayStr}
+        monthStr={monthStr}
+        monthYearStr={monthYearStr}
+        dayOfMonth={dayOfMonth}
+        fullDateStr={fullDateStr}
+        timeStr={timeStr}
+        venue={venue}
+        venueAddress={venueAddress}
+        message={message}
+        weddingDate={weddingDate}
+        billingCode={billingCode}
+        embedSrc={embedSrc}
+        openMapHref={openMapHref}
+        storyItems={storyItems}
+        gallerySources={gallerySources}
+        timeLeft={timeLeft}
+        pad={pad}
+        rsvpEnabled={rsvpEnabled}
+        rsvpForm={rsvpForm}
+        setRsvpForm={setRsvpForm}
+        rsvpSubmitted={rsvpSubmitted}
+        rsvpError={rsvpError}
+        handleRsvp={handleRsvp}
+      />
+    </div>
+  );
+}
 
-        <motion.article
-          className="theater-hero-card"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-        >
-          <span className="theater-kicker">Tonight's Performance</span>
-          <span className="theater-kicker theater-kicker-thin">A wedding in one act</span>
+function TheaterReferenceExperience({
+  name1,
+  name2,
+  dayStr,
+  monthStr,
+  monthYearStr,
+  dayOfMonth,
+  fullDateStr,
+  timeStr,
+  venue,
+  venueAddress,
+  message,
+  weddingDate,
+  billingCode,
+  embedSrc,
+  openMapHref,
+  storyItems,
+  gallerySources,
+  timeLeft,
+  pad,
+  rsvpEnabled,
+  rsvpForm,
+  setRsvpForm,
+  rsvpSubmitted,
+  rsvpError,
+  handleRsvp,
+}) {
+  const countdown = [
+    { label: 'Days', value: pad(timeLeft.days), icon: 'calendar' },
+    { label: 'Hours', value: pad(timeLeft.hours), icon: 'clock' },
+    { label: 'Minutes', value: pad(timeLeft.minutes), icon: 'hourglass' },
+    { label: 'Seconds', value: pad(timeLeft.seconds), icon: 'stopwatch' },
+  ];
+  const ticketSerial = weddingDate
+    ? `${String(weddingDate.getMonth() + 1).padStart(2, '0')}${String(weddingDate.getDate()).padStart(2, '0')}${weddingDate.getFullYear()}`
+    : billingCode;
 
-          <MarqueeBulbs count={5} />
-          <StarMark className="theater-hero-stage-mark" />
+  return (
+    <div className="theater-ref-experience">
+      <ReferenceHero
+        name1={name1}
+        name2={name2}
+        dayStr={dayStr}
+        monthStr={monthStr}
+        monthYearStr={monthYearStr}
+        dayOfMonth={dayOfMonth}
+        timeStr={timeStr}
+        venue={venue}
+        venueAddress={venueAddress}
+        message={message}
+        weddingDate={weddingDate}
+        billingCode={billingCode}
+        ticketSerial={ticketSerial}
+      />
 
-          <h1>
-            <span className="theater-hero-name">{name1}</span>
-            <span className="theater-hero-amp">&amp;</span>
-            <span className="theater-hero-name">{name2}</span>
-          </h1>
+      {weddingDate && <ReferenceCountdown countdown={countdown} />}
 
-          <FlourishSvg className="theater-hero-flourish" />
-
-          {weddingDate ? (
-            <div className="theater-hero-datepill">
-              <div>
-                <small>{dayStr ? dayStr.slice(0, 3).toUpperCase() : 'Day'}</small>
-              </div>
-              <span aria-hidden />
-              <div className="theater-hero-datepill-month">
-                <small>{monthStr || 'Month'}</small>
-                <strong>{dayOfMonth || '—'}</strong>
-              </div>
-              <span aria-hidden />
-              <div>
-                <small>{timeStr || 'Curtain'}</small>
-              </div>
-            </div>
-          ) : null}
-
-          <p className="theater-hero-venue">{venue || 'On The Velvet Stage'}</p>
-          {venueAddress && <p className="theater-hero-address">{venueAddress}</p>}
-
-          {message && <p className="theater-hero-message">{message}</p>}
-        </motion.article>
-      </section>
-
-      {weddingDate && (
-        <section className="theater-countdown theater-section-denim">
-          <div className="theater-countdown-proscenium" aria-hidden />
-          <SectionTitle eyebrow="Save The Date" title="Counting The Moments" light />
-          <div className="theater-count-grid">
-            <CountdownUnit value={pad(timeLeft.days)} label="Days" />
-            <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
-            <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
-            <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />
-          </div>
-          <StageMarquee />
-        </section>
+      {storyItems.length > 0 && (
+        <StorySection milestones={storyItems.map(item => ({ date: item.date, title: item.title, description: item.description || item.body }))} images={storyItems.map(item => item.image).filter(Boolean)} />
       )}
 
-      {!isReferenceDemo && couplePhotos.length > 0 && (
-        <section className="theater-section theater-couple-section">
-          <SectionTitle eyebrow="The couple" title="A Love" script="Behind The Curtain" />
-          <div className="theater-couple-grid">
-            {couplePhotos.map((photo, index) => (
-              <motion.figure
-                key={index}
-                className="theater-photo-frame theater-couple-photo"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55, delay: index * 0.08 }}
-              >
-                <InvitationPhoto src={photo} alt={`Couple ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
-              </motion.figure>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {isReferenceDemo && order.storyMilestones?.length ? (
-        <StorySection milestones={order.storyMilestones} images={order.storyImages || []} />
-      ) : storyPhotos.length > 0 ? (
-        <StorySection milestones={order.storyMilestones || []} images={storyPhotos} />
-      ) : null}
-
-      <section className="theater-section theater-event-section">
-        <SectionTitle eyebrow="The Big Day" title="Ceremony" script="& Reception" />
-        <div className="theater-event-layout theater-event-layout-single">
-          <motion.div
-            className="theater-event-card"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="theater-kicker">{billingCode}</span>
-            <h3>{venue || 'The Velvet Stage'}</h3>
-            <dl>
-              <div>
-                <dt>Date</dt>
-                <dd>{fullDateStr || 'To be announced'}</dd>
-              </div>
-              {timeStr && (
-                <div>
-                  <dt>Curtain</dt>
-                  <dd>{timeStr}</dd>
-                </div>
-              )}
-              {venueAddress && (
-                <div>
-                  <dt>Address</dt>
-                  <dd>{venueAddress}</dd>
-                </div>
-              )}
-            </dl>
-            {embedSrc && (
-              <div className="theater-map">
-                <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-                <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
-              </div>
-            )}
-          </motion.div>
-        </div>
-
-        {!isReferenceDemo && venuePhotos.length > 0 && (
-          <div className="theater-venue-grid">
-            {venuePhotos.map((photo, index) => (
-              <figure key={index} className="theater-photo-frame">
-                <InvitationPhoto src={photo} alt={`Venue ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
-              </figure>
-            ))}
-          </div>
-        )}
-      </section>
+      <ReferenceDetails
+        billingCode={billingCode}
+        fullDateStr={fullDateStr}
+        dayStr={dayStr}
+        monthStr={monthStr}
+        dayOfMonth={dayOfMonth}
+        timeStr={timeStr}
+        venue={venue}
+        venueAddress={venueAddress}
+        embedSrc={embedSrc}
+        openMapHref={openMapHref}
+      />
 
       {rsvpEnabled && (
-      <section className="theater-rsvp-section">
-        <div className="theater-rsvp-ocean" aria-hidden>
-          <span className="theater-rsvp-foam theater-rsvp-foam-one" />
-          <span className="theater-rsvp-foam theater-rsvp-foam-two" />
-        </div>
-        <div className="theater-rsvp-inner">
-          <div className="theater-rsvp-intro">
-            <MarqueeBulbs count={5} />
-            <span className="theater-rsvp-eyebrow">RSVP</span>
-            <h2 className="theater-rsvp-title">Take Your Seat</h2>
-            <p className="theater-rsvp-lead">
-              The stage is set and the curtain awaits - please let us know you'll be there.
-            </p>
-            <div className="theater-rsvp-tide-card" aria-label="Wedding details">
-              <span>{fullDateStr || 'Date to be announced'}</span>
-              <strong>{venue || 'On The Velvet Stage'}</strong>
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {!rsvpSubmitted ? (
-              <motion.form
-                key="rsvp-form"
-                onSubmit={handleRsvp}
-                className="theater-rsvp-card"
-                exit={{ opacity: 0, y: -20 }}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55 }}
-              >
-                <div className="theater-rsvp-grid">
-                  <div className="theater-field theater-field-full">
-                    <label htmlFor="rsvp-name">Full name</label>
-                    <input
-                      id="rsvp-name"
-                      type="text"
-                      required
-                      value={rsvpForm.guestName}
-                      onChange={event => setRsvpForm({ ...rsvpForm, guestName: event.target.value })}
-                      placeholder="Your full name"
-                    />
-                  </div>
-
-                  <div className="theater-field">
-                    <label htmlFor="rsvp-guests">Guests</label>
-                    <input
-                      id="rsvp-guests"
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={rsvpForm.guestCount}
-                      onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value) || 1 })}
-                    />
-                  </div>
-
-                  <div className="theater-field theater-field-attending">
-                    <label>Will you attend?</label>
-                    <div className="theater-rsvp-toggle" role="radiogroup" aria-label="Will you attend?">
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={rsvpForm.attending === 'yes'}
-                        className={rsvpForm.attending === 'yes' ? 'active' : ''}
-                        onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
-                      >
-                        Joyfully accept
-                      </button>
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={rsvpForm.attending === 'no'}
-                        className={rsvpForm.attending === 'no' ? 'active' : ''}
-                        onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
-                      >
-                        Regretfully decline
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="theater-field theater-field-full">
-                    <label htmlFor="rsvp-message">Message <span className="theater-field-optional">(optional)</span></label>
-                    <textarea
-                      id="rsvp-message"
-                      rows={4}
-                      value={rsvpForm.message}
-                      onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
-                      placeholder="Share a wish, a memory, or a song request..."
-                    />
-                  </div>
-                </div>
-
-                {rsvpError && <p className="theater-rsvp-error">{rsvpError}</p>}
-                <button type="submit" className="theater-submit">
-                  <span>Send Response</span>
-                </button>
-              </motion.form>
-            ) : (
-              <motion.div
-                key="rsvp-success"
-                className="theater-rsvp-card theater-rsvp-success"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.45 }}
-              >
-                <MarqueeBulbs count={5} />
-                <span>Response received</span>
-                <h3>Thank you, {rsvpForm.guestName}</h3>
-                <p>Your reply has been sent to the couple. The spotlight will be waiting.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
+        <ReferenceRsvp
+          fullDateStr={fullDateStr}
+          venue={venue}
+          rsvpForm={rsvpForm}
+          setRsvpForm={setRsvpForm}
+          rsvpSubmitted={rsvpSubmitted}
+          rsvpError={rsvpError}
+          handleRsvp={handleRsvp}
+        />
       )}
 
-      {isReferenceDemo && order.galleryImages?.length ? (
-        <GallerySection images={order.galleryImages} />
-      ) : allGallery.length > 0 ? (
-        <GallerySection images={allGallery} />
-      ) : null}
+      {gallerySources.length > 0 && <GallerySection images={gallerySources} />}
 
-      <footer className="theater-footer">
-        <div className="theater-footer-foam" aria-hidden />
-        <div className="theater-footer-inner">
-          <FlourishSvg className="theater-footer-shell" />
-          <p className="theater-footer-script">with love</p>
-          <h2 className="theater-footer-names">
-            {name1} <span className="theater-footer-amp">&amp;</span> {name2}
-          </h2>
-          <div className="theater-footer-rule" aria-hidden />
-          <p className="theater-footer-meta-line">
-            Thank you for being part of our opening night
-          </p>
-        </div>
-      </footer>
+      <ReferenceFinale name1={name1} name2={name2} />
     </div>
+  );
+}
+
+function ReferenceHero({
+  name1,
+  name2,
+  dayStr,
+  monthYearStr,
+  dayOfMonth,
+  timeStr,
+  venue,
+  venueAddress,
+  message,
+  weddingDate,
+  billingCode,
+  ticketSerial,
+}) {
+  return (
+    <section className="theater-ref-hero">
+      <div className="theater-ref-stage" aria-hidden>
+        <span className="theater-ref-stage-arch" />
+        <span className="theater-ref-chandelier" />
+        <span className="theater-ref-chandelier-glow" />
+        <span className="theater-ref-rose theater-ref-rose-left" />
+        <span className="theater-ref-rose theater-ref-rose-right" />
+        <span className="theater-ref-curtain theater-ref-curtain-left" />
+        <span className="theater-ref-curtain theater-ref-curtain-right" />
+        <span className="theater-ref-footlights" />
+      </div>
+      <motion.article
+        className="theater-ref-ticket theater-ref-hero-ticket"
+        initial={{ opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+      >
+        <TicketCorners />
+        <div className="theater-ref-mask" aria-hidden>
+          <span />
+          <span />
+        </div>
+        <p className="theater-ref-eyebrow">Together with their families</p>
+        <div className="theater-ref-stars" aria-hidden>★ ★ ★</div>
+        <h1>
+          <span>{name1}</span>
+          <em>&amp;</em>
+          <span>{name2}</span>
+        </h1>
+        <p className="theater-ref-request">Request the honor of your presence at the premiere of their forever</p>
+        {weddingDate && (
+          <div className="theater-ref-hero-date">
+            <span>{dayStr || 'Wedding Day'}</span>
+            <strong>{dayOfMonth || ''}</strong>
+            <span>{monthYearStr || ''}</span>
+          </div>
+        )}
+        {timeStr && (
+          <p className="theater-ref-doors">
+            <span>{timeStr}</span>
+          </p>
+        )}
+        <h2>{venue || 'The Royale Grand Theatre'}</h2>
+        {venueAddress && <p className="theater-ref-hero-address">{venueAddress}</p>}
+        {message && <p className="theater-ref-message">{message}</p>}
+        <div className="theater-ref-admit">
+          <small>{billingCode}</small>
+          <span>Admit Two</span>
+          <small>{ticketSerial || 'To a lifetime of encores'}</small>
+        </div>
+      </motion.article>
+    </section>
+  );
+}
+
+function ReferenceCountdown({ countdown }) {
+  return (
+    <ReferencePoster className="theater-ref-countdown" title="Countdown" subtitle="To the big day">
+      <p className="theater-ref-section-lead">We can't wait to celebrate with you!</p>
+      <Ornament />
+      <div className="theater-ref-count-grid">
+        {countdown.map(item => (
+          <div className="theater-ref-count-card" key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <i className={`theater-ref-count-icon theater-ref-count-icon-${item.icon}`} aria-hidden />
+          </div>
+        ))}
+      </div>
+      <p className="theater-ref-soon">See you soon!</p>
+    </ReferencePoster>
+  );
+}
+
+function ReferenceDetails({
+  billingCode,
+  fullDateStr,
+  dayStr,
+  monthStr,
+  dayOfMonth,
+  timeStr,
+  venue,
+  venueAddress,
+  embedSrc,
+  openMapHref,
+}) {
+  return (
+    <ReferencePoster className="theater-ref-details" title="Details">
+      <p className="theater-ref-section-lead">Here's everything you need to know to join us on our special day!</p>
+      <Ornament />
+      <div className="theater-ref-details-venue">
+        <div className="theater-ref-round-icon theater-ref-round-icon-venue" aria-hidden />
+        <div>
+          <span>Venue</span>
+          <h3>{venue || 'The Royale Grand Theatre'}</h3>
+          {venueAddress && <p>{venueAddress}</p>}
+        </div>
+      </div>
+      <div className="theater-ref-detail-row">
+        <div className="theater-ref-detail-item">
+          <i className="theater-ref-detail-icon-date" aria-hidden />
+          <div>
+            <span>Date</span>
+            <strong>{dayStr || fullDateStr || 'To be announced'}</strong>
+            <small>{dayOfMonth && monthStr ? `${dayOfMonth} ${monthStr}` : fullDateStr}</small>
+          </div>
+        </div>
+        <div className="theater-ref-detail-item">
+          <i className="theater-ref-detail-icon-time" aria-hidden />
+          <div>
+            <span>Time</span>
+            <strong>{timeStr || 'To be announced'}</strong>
+            <small>{billingCode}</small>
+          </div>
+        </div>
+      </div>
+      <div className="theater-ref-map-card">
+        {embedSrc ? (
+          <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+        ) : (
+          <div className="theater-ref-map-fallback" aria-hidden />
+        )}
+        <div className="theater-ref-map-pin"><span>{venue || 'Venue'}</span></div>
+        <a href={openMapHref} target="_blank" rel="noopener noreferrer">Open in maps</a>
+      </div>
+      <div className="theater-ref-dress">
+        <span className="theater-ref-dress-masks" aria-hidden />
+        <div>
+          <strong>Dress Code</strong>
+          <p>Black tie optional. Dress to impress.</p>
+        </div>
+        <em>Admit Two</em>
+      </div>
+    </ReferencePoster>
+  );
+}
+
+function ReferenceRsvp({
+  fullDateStr,
+  venue,
+  rsvpForm,
+  setRsvpForm,
+  rsvpSubmitted,
+  rsvpError,
+  handleRsvp,
+}) {
+  return (
+    <section className="theater-ref-rsvp">
+      <div className="theater-ref-rsvp-card">
+        <MarqueeTitle title="RSVP" subtitle={`Kindly reply by ${fullDateStr || 'the wedding day'}`} />
+        <p className="theater-ref-rsvp-date">
+          <span>{fullDateStr || 'the wedding day'}</span>
+        </p>
+        <p className="theater-ref-section-lead">We can't wait to celebrate this special day with you!</p>
+        <Ornament />
+        <AnimatePresence mode="wait">
+          {!rsvpSubmitted ? (
+            <motion.form
+              key="reference-rsvp-form"
+              onSubmit={handleRsvp}
+              className="theater-ref-rsvp-form"
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              exit={{ opacity: 0, y: -18 }}
+              transition={{ duration: 0.45 }}
+            >
+              <label className="theater-ref-line-field">
+                <span>Name</span>
+                <input
+                  type="text"
+                  required
+                  value={rsvpForm.guestName}
+                  onChange={event => setRsvpForm({ ...rsvpForm, guestName: event.target.value })}
+                />
+              </label>
+              <div className="theater-ref-rsvp-choice" role="radiogroup" aria-label="Will you attend?">
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={rsvpForm.attending === 'yes'}
+                  className={rsvpForm.attending === 'yes' ? 'active' : ''}
+                  onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
+                >
+                  <span />Accepts<small>with pleasure</small>
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={rsvpForm.attending === 'no'}
+                  className={rsvpForm.attending === 'no' ? 'active' : ''}
+                  onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
+                >
+                  <span />Declines<small>with regret</small>
+                </button>
+              </div>
+              <label className="theater-ref-guests">
+                <span>Number of guests attending</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={rsvpForm.guestCount}
+                  onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value) || 1 })}
+                />
+              </label>
+              <label className="theater-ref-message-field">
+                <strong>Song request</strong>
+                <small>Share a song that will get you on the dance floor.</small>
+                <textarea
+                  rows={3}
+                  value={rsvpForm.message}
+                  onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
+                />
+              </label>
+              {rsvpError && <p className="theater-rsvp-error">{rsvpError}</p>}
+              <button className="theater-ref-ticket-submit" type="submit">
+                <span>Confirm your seat</span>
+                <small>{venue || 'Through our wedding website'}</small>
+              </button>
+            </motion.form>
+          ) : (
+            <motion.div
+              key="reference-rsvp-success"
+              className="theater-ref-rsvp-success"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.45 }}
+            >
+              <h3>Response received</h3>
+              <p>Thank you, {rsvpForm.guestName}. Your seat is confirmed.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+}
+
+function ReferenceFinale({ name1, name2 }) {
+  return (
+    <footer className="theater-ref-footer">
+      <Ornament />
+      <p>With love</p>
+      <h2>{name1} <span>&amp;</span> {name2}</h2>
+      <small>Thank you for being part of our opening night</small>
+    </footer>
+  );
+}
+
+function ReferencePoster({ className = '', title, subtitle, children }) {
+  return (
+    <section className={`theater-ref-poster ${className}`}>
+      <span className="theater-ref-paper-texture" aria-hidden />
+      <TicketCorners />
+      <MarqueeTitle title={title} subtitle={subtitle} />
+      {children}
+    </section>
+  );
+}
+
+function MarqueeTitle({ title, subtitle }) {
+  return (
+    <header className="theater-ref-marquee-title">
+      <span className="theater-ref-marquee-crest" aria-hidden />
+      <MarqueeBulbs count={13} />
+      <h2>{title}</h2>
+      {subtitle && <p>{subtitle}</p>}
+    </header>
+  );
+}
+
+function Ornament() {
+  return (
+    <div className="theater-ref-ornament" aria-hidden>
+      <span />
+      <strong>★</strong>
+      <span />
+    </div>
+  );
+}
+
+function TicketCorners() {
+  return (
+    <span className="theater-ref-ticket-corners" aria-hidden>
+      <i /><i /><i /><i />
+    </span>
   );
 }
 
@@ -505,15 +657,6 @@ function SectionTitle({ eyebrow, title, script, light = false }) {
         {script && <span className="script">{script}</span>}
       </h2>
       <FlourishSvg className="theater-section-divider" />
-    </div>
-  );
-}
-
-function CountdownUnit({ value, label }) {
-  return (
-    <div className="theater-count-unit">
-      <strong>{value}</strong>
-      <span>{label}</span>
     </div>
   );
 }
@@ -697,12 +840,3 @@ function GallerySection({ images }) {
   );
 }
 
-function StageMarquee() {
-  return (
-    <div className="theater-marquee-wrap" aria-hidden>
-      <span className="theater-marquee-rule" />
-      <MarqueeBulbs count={9} />
-      <span className="theater-marquee-rule" />
-    </div>
-  );
-}
