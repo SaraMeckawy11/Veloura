@@ -546,7 +546,7 @@ function MemoriesSection({ images }) {
             src={image}
             sizes="(max-width: 720px) 200px, 260px"
             alt={`Memory ${imageNumber}`}
-            loading="eager"
+            loading={groupIndex === 0 ? 'eager' : 'lazy'}
             fetchPriority={groupIndex === 0 && index < uniqueImages.length ? 'high' : 'auto'}
           />
         </div>
@@ -564,7 +564,7 @@ function MemoriesSection({ images }) {
       />
       <div className="theater-memories-viewport">
         <div className="theater-memories-track" ref={trackRef}>
-          {[0, 1, 2, 3].map((groupIndex) => (
+          {[0, 1].map((groupIndex) => (
             <ul
               key={groupIndex}
               ref={groupIndex === 0 ? unitRef : null}

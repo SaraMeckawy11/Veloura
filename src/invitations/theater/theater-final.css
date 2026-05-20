@@ -103,7 +103,7 @@ body:has(.theater-theme),
 
 .theater-hero-date {
   left: 18%;
-  top: 53.6%;
+  top: 54.25%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -157,7 +157,7 @@ body:has(.theater-theme),
 
 .theater-hero-time {
   left: 27%;
-  top: 65.2%;
+  top: 64.9%;
   width: 46%;
   color: #65150f;
   font-family: var(--font-marquee);
@@ -170,7 +170,7 @@ body:has(.theater-theme),
 
 .theater-hero h2 {
   left: 14%;
-  top: 70.2%;
+  top: 69.25%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -231,6 +231,10 @@ body:has(.theater-theme),
   font-weight: 700;
   line-height: 1;
   text-shadow: 0 1px 0 rgba(255, 245, 218, 0.9), 0 2px 2px rgba(92, 38, 16, 0.18);
+}
+
+.theater-count-card:nth-child(2) strong {
+  transform: translate(5%, 8%);
 }
 
 .theater-count-card span {
@@ -453,12 +457,12 @@ body:has(.theater-theme),
 }
 
 .theater-details-date {
-  left: 25.8%;
+  left: 24.6%;
   top: 44.5%;
 }
 
 .theater-details-time {
-  left: 64.8%;
+  left: 63.6%;
   top: 44.5%;
 }
 
@@ -770,6 +774,7 @@ body:has(.theater-theme),
   width: 100%;
   overflow: hidden;
   contain: layout paint;
+  overflow-clip-margin: 0;
   padding-block: clamp(8px, 2vw, 16px);
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
@@ -782,6 +787,7 @@ body:has(.theater-theme),
   will-change: transform;
   backface-visibility: hidden;
   pointer-events: none;
+  transform-style: flat;
 }
 
 .theater-memories-list {
@@ -801,6 +807,7 @@ body:has(.theater-theme),
   margin: 0;
   padding: 0;
   background: url("../../assets/theater/memories/emptyContainer_transparent.png") center / contain no-repeat;
+  contain: layout paint;
   list-style: none;
 }
 
