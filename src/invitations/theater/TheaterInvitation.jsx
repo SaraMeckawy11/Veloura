@@ -62,7 +62,8 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 
   const dayStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' }) : '';
   const monthStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() : '';
-  const monthYearStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }).toUpperCase() : '';
+  const heroMonthStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { month: 'long' }).toUpperCase() : '';
+  const yearStr = weddingDate ? String(weddingDate.getFullYear()) : '';
   const dayOfMonth = weddingDate ? weddingDate.getDate() : '';
   const fullDateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
@@ -166,7 +167,8 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           name1={heroName1}
           name2={heroName2}
           dayStr={dayStr}
-          monthYearStr={monthYearStr}
+          heroMonthStr={heroMonthStr}
+          yearStr={yearStr}
           dayOfMonth={dayOfMonth}
           timeStr={timeStr}
           venue={venue}
@@ -218,7 +220,8 @@ function HeroSection({
   name1,
   name2,
   dayStr,
-  monthYearStr,
+  heroMonthStr,
+  yearStr,
   dayOfMonth,
   timeStr,
   venue,
@@ -236,7 +239,8 @@ function HeroSection({
           <span className="theater-hero-weekday">{dayStr}</span>
           <div className="theater-hero-date-row">
             <strong>{dayOfMonth}</strong>
-            <span>{monthYearStr}</span>
+            <span className="theater-hero-month">{heroMonthStr}</span>
+            <span className="theater-hero-year">{yearStr}</span>
           </div>
         </div>
       )}
@@ -435,13 +439,110 @@ function RsvpChoice({ active, onClick, title, subtitle }) {
 
 function MemoriesSection({ images }) {
   const uniqueImages = useMemo(() => images.filter(byUniquePhoto), [images]);
+  const memoryImageKey = uniqueImages.map(getInvitationPhotoSrc).join('|');
+  const trackRef = useRef(null);
+  const unitRef = useRef(null);
+  const unitRepeatCount = uniqueImages.length ? Math.max(3, Math.ceil(12 / uniqueImages.length)) : 0;
+  const unitImages = uniqueImages.length
+    ? Array.from({ length: unitRepeatCount }, () => uniqueImages).flat()
+    : [];
+
+  useEffect(() => {
+    const track = trackRef.current;
+    const unit = unitRef.current;
+    if (!track || !unit || !unitImages.length || typeof window === 'undefined') return undefined;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let animationFrame = 0;
+    let distance = 0;
+    let offset = 0;
+    let previousTime = 0;
+    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
+
+    const updateDistance = () => {
+      distance = unit.scrollWidth;
+      offset = distance ? offset % distance : 0;
+      track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+    };
+
+    const updateSpeed = () => {
+      pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
+    };
+
+    const animate = (time) => {
+      if (!previousTime) previousTime = time;
+      const elapsedSeconds = Math.min((time - previousTime) / 1000, 0.04);
+      previousTime = time;
+
+      if (distance > 0) {
+        offset += pixelsPerSecond * elapsedSeconds;
+        if (offset >= distance - 1) offset = 0;
+        track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      }
+
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    const startAnimation = () => {
+      window.cancelAnimationFrame(animationFrame);
+      previousTime = 0;
+      if (reducedMotion.matches) {
+        track.style.transform = 'translate3d(0, 0, 0)';
+        return;
+      }
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    updateDistance();
+    updateSpeed();
+    startAnimation();
+
+    const resizeObserver = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(updateDistance)
+      : null;
+
+    resizeObserver?.observe(unit);
+    if (reducedMotion.addEventListener) {
+      reducedMotion.addEventListener('change', startAnimation);
+    } else {
+      reducedMotion.addListener(startAnimation);
+    }
+    window.addEventListener('resize', updateDistance);
+    window.addEventListener('resize', updateSpeed);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      resizeObserver?.disconnect();
+      if (reducedMotion.removeEventListener) {
+        reducedMotion.removeEventListener('change', startAnimation);
+      } else {
+        reducedMotion.removeListener(startAnimation);
+      }
+      window.removeEventListener('resize', updateDistance);
+      window.removeEventListener('resize', updateSpeed);
+    };
+  }, [unitImages.length, memoryImageKey]);
 
   if (!uniqueImages.length) return null;
 
-  const tracks = [
-    { key: 'a', images: uniqueImages, hidden: false },
-    { key: 'b', images: uniqueImages, hidden: true },
-  ];
+  const renderGroup = (groupIndex) => unitImages.map((image, index) => {
+    const imageNumber = (index % uniqueImages.length) + 1;
+    const imageSrc = getInvitationPhotoSrc(image);
+    return (
+      <li className="theater-memory-card" key={`${groupIndex}-${imageSrc}-${index}`}>
+        <img className="theater-memory-frame" src={memoriesContainer} alt="" aria-hidden="true" />
+        <div className="theater-memory-photo">
+          <InvitationPhoto
+            src={image}
+            sizes="(max-width: 720px) 200px, 260px"
+            alt={`Memory ${imageNumber}`}
+            loading="eager"
+            fetchPriority={groupIndex === 0 && index < uniqueImages.length ? 'high' : 'auto'}
+          />
+        </div>
+      </li>
+    );
+  });
 
   return (
     <section className="theater-memories" aria-labelledby="theater-memories-title">
@@ -452,27 +553,15 @@ function MemoriesSection({ images }) {
         label="Memories"
       />
       <div className="theater-memories-viewport">
-        <div className="theater-memories-track">
-          {tracks.map(track => (
+        <div className="theater-memories-track" ref={trackRef}>
+          {[0, 1, 2, 3].map((groupIndex) => (
             <ul
+              key={groupIndex}
+              ref={groupIndex === 0 ? unitRef : null}
               className="theater-memories-list"
-              key={track.key}
-              aria-hidden={track.hidden ? 'true' : undefined}
+              aria-hidden={groupIndex > 0 ? 'true' : undefined}
             >
-              {track.images.map((image, index) => (
-                <li className="theater-memory-card" key={`${track.key}-${getInvitationPhotoSrc(image)}`}>
-                  <img className="theater-memory-frame" src={memoriesContainer} alt="" aria-hidden="true" />
-                  <div className="theater-memory-photo">
-                    <InvitationPhoto
-                      src={image}
-                      sizes="(max-width: 720px) 200px, 260px"
-                      alt={`Memory ${index + 1}`}
-                      loading={track.hidden ? 'lazy' : 'eager'}
-                      fetchPriority={track.hidden ? 'auto' : 'high'}
-                    />
-                  </div>
-                </li>
-              ))}
+              {renderGroup(groupIndex)}
             </ul>
           ))}
         </div>
