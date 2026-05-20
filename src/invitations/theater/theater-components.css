@@ -29,6 +29,8 @@
 .theater-ref-experience .theater-ref-marquee-bulbs,
 .theater-ref-experience .theater-ref-marquee-crest,
 .theater-ref-experience .theater-ref-photo-placeholder,
+.theater-ref-experience .theater-ref-admit,
+.theater-ref-experience .theater-ref-admit *,
 .theater-ref-experience .theater-ref-rsvp-date {
   display: none !important;
 }
@@ -99,31 +101,124 @@
   aspect-ratio: 941 / 1672;
   margin: 0 auto !important;
   overflow: hidden;
-  background: url("../../assets/theater/heroEmpty.png") center / 100% 100% no-repeat !important;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(249, 206, 101, 0.22), transparent 32%),
+    linear-gradient(180deg, #0a0102 0%, #28050a 38%, #170305 78%, #050102 100%) !important;
 }
 
-/* Hide the layered stage components – the artwork is baked into heroEmpty.png. */
 .theater-ref-experience .theater-ref-stage,
 .theater-ref-experience .theater-ref-stage * {
-  display: none !important;
+  display: block !important;
 }
 
-/* The text content sits on top of the printed ticket area in heroEmpty.png. */
+.theater-ref-experience .theater-ref-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.theater-ref-experience .theater-ref-stage span {
+  position: absolute;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* Curtain arch with bulbs across the top. */
+.theater-ref-experience .theater-ref-stage-arch {
+  left: -4%;
+  top: -1%;
+  width: 108%;
+  height: 30%;
+  background-image: url("../../assets/theater/hero-clean/curtainUp.png");
+  background-position: top center;
+}
+
+/* Big chandelier hanging from the center of the arch. */
+.theater-ref-experience .theater-ref-chandelier {
+  left: 50%;
+  top: -1%;
+  width: 44%;
+  height: 32%;
+  transform: translateX(-50%);
+  background-image: url("../../assets/theater/hero-clean/chandelier.png");
+  background-position: top center;
+}
+
+.theater-ref-experience .theater-ref-chandelier-glow {
+  left: 30%;
+  top: 4%;
+  width: 40%;
+  height: 20%;
+  background: radial-gradient(circle, rgba(247, 206, 104, 0.4), transparent 65%);
+  filter: blur(14px);
+}
+
+/* Velvet curtains streaming down on each side. */
+.theater-ref-experience .theater-ref-curtain-left {
+  left: -4%;
+  top: 2%;
+  width: 44%;
+  height: 78%;
+  background-image: url("../../assets/theater/hero-clean/curtainLeft.png");
+  background-position: left top;
+}
+
+.theater-ref-experience .theater-ref-curtain-right {
+  right: -4%;
+  top: 2%;
+  width: 44%;
+  height: 78%;
+  background-image: url("../../assets/theater/hero-clean/curtainRight.png");
+  background-position: right top;
+}
+
+/* Rose bouquets at the bottom corners. */
+.theater-ref-experience .theater-ref-rose-left {
+  left: -6%;
+  bottom: 1%;
+  width: 42%;
+  height: 36%;
+  background-image: url("../../assets/theater/hero-clean/flowerLeft.png");
+  background-position: left bottom;
+}
+
+.theater-ref-experience .theater-ref-rose-right {
+  right: -6%;
+  bottom: 1%;
+  width: 42%;
+  height: 36%;
+  background-image: url("../../assets/theater/hero-clean/flowerRight.png");
+  background-position: right bottom;
+}
+
+/* Admit ticket image at the very bottom of the hero. */
+.theater-ref-experience .theater-ref-footlights {
+  left: 18%;
+  bottom: 4%;
+  width: 64%;
+  height: 11%;
+  background-image: url("../../assets/theater/hero-clean/admitTicket.png");
+  background-position: center;
+}
+
+/* The empty details ticket – holds all hero text. */
 .theater-ref-experience .theater-ref-hero-ticket {
   position: absolute !important;
   left: 14% !important;
-  top: 19% !important;
+  top: 16% !important;
   z-index: 3;
   width: 72% !important;
-  height: 53% !important;
+  height: 64% !important;
   min-height: 0 !important;
   margin: 0 !important;
-  padding: 0 6% !important;
+  padding: 5% 7% !important;
   display: flex !important;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background: transparent !important;
+  background: url("../../assets/theater/hero-clean/detailsTicket.png") center / 100% 100% no-repeat !important;
   border: 0 !important;
   box-shadow: none !important;
   color: var(--ticket-red);
@@ -135,27 +230,39 @@
   content: none !important;
 }
 
-/* The masks + three stars are baked into heroEmpty.png, hide the JSX placeholders. */
-.theater-ref-experience .theater-ref-hero .theater-ref-mask,
+.theater-ref-experience .theater-ref-hero .theater-ref-mask {
+  display: block !important;
+  width: 36%;
+  aspect-ratio: 3 / 1.4;
+  margin: 0 auto;
+  background: url("../../assets/theater/hero-clean/mask.png") center / contain no-repeat;
+}
+
+.theater-ref-experience .theater-ref-hero .theater-ref-mask span,
 .theater-ref-experience .theater-ref-hero .theater-ref-stars {
   display: none !important;
 }
 
 .theater-ref-experience .theater-ref-hero .theater-ref-eyebrow {
   display: block !important;
-  margin: 0 0 6% !important;
+  margin: 1.4% 0 1% !important;
   color: var(--ticket-red-deep) !important;
   font-family: var(--font-marquee);
   font-size: clamp(0.5rem, 1.65vw, 0.74rem);
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   text-align: center;
   white-space: nowrap;
 }
 
 .theater-ref-experience .theater-ref-hero .theater-ref-eyebrow::after {
-  content: none !important;
+  content: "★ ★ ★ ★ ★";
+  display: block;
+  margin: 6px auto 0;
+  color: var(--ticket-red);
+  font-size: 0.62em;
+  letter-spacing: 0.45em;
 }
 
 .theater-ref-experience .theater-ref-hero h1 {
@@ -196,7 +303,27 @@
 
 .theater-ref-experience .theater-ref-hero h1 em::before,
 .theater-ref-experience .theater-ref-hero h1 em::after {
-  content: none !important;
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 22%;
+  height: 1.3em;
+  transform: translateY(-50%);
+  background-image: url("../../assets/theater/hero-clean/seperators.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% auto;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.theater-ref-experience .theater-ref-hero h1 em::before {
+  right: 60%;
+  transform: translateY(-50%) scaleX(-1);
+}
+
+.theater-ref-experience .theater-ref-hero h1 em::after {
+  left: 60%;
 }
 
 .theater-ref-experience .theater-ref-request {
@@ -214,7 +341,13 @@
 }
 
 .theater-ref-experience .theater-ref-request::after {
-  content: none !important;
+  content: "♥";
+  display: block;
+  margin: 1.2% auto 0;
+  color: var(--ticket-red);
+  font-size: 0.62em;
+  letter-spacing: 0.4em;
+  text-align: center;
 }
 
 .theater-ref-experience .theater-ref-hero-date {
@@ -268,7 +401,11 @@
 }
 
 .theater-ref-experience .theater-ref-doors::after {
-  content: none !important;
+  content: "";
+  display: block;
+  width: 60%;
+  margin: 1.4% auto 0;
+  border-bottom: 1px dashed rgba(108, 19, 15, 0.55);
 }
 
 .theater-ref-experience .theater-ref-hero h2 {
@@ -320,93 +457,6 @@
   line-height: 1.25;
   text-align: center;
   text-transform: uppercase;
-}
-
-/* Admit ticket strip – text overlay on the printed ticket at the bottom of heroEmpty.png. */
-.theater-ref-experience .theater-ref-hero .theater-ref-admit {
-  position: absolute !important;
-  left: 12% !important;
-  right: 12% !important;
-  bottom: 9.5% !important;
-  z-index: 3;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0.4% !important;
-  padding: 1.4% 11% !important;
-  background: transparent !important;
-  border: 0 !important;
-  color: var(--ticket-red-deep) !important;
-  text-align: center;
-}
-
-.theater-ref-experience .theater-ref-hero .theater-ref-admit > * {
-  display: block !important;
-  background: transparent !important;
-  color: inherit !important;
-}
-
-.theater-ref-experience .theater-ref-admit-top {
-  font-family: var(--font-marquee);
-  font-size: clamp(0.45rem, 1.4vw, 0.7rem) !important;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  margin-bottom: 1% !important;
-}
-
-.theater-ref-experience .theater-ref-admit-headline {
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 5.8vw, 2.6rem) !important;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  line-height: 1;
-  color: var(--ticket-red) !important;
-  text-transform: uppercase;
-}
-
-.theater-ref-experience .theater-ref-admit-sub {
-  font-family: var(--font-marquee);
-  font-size: clamp(0.45rem, 1.4vw, 0.68rem) !important;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  margin-top: 1% !important;
-}
-
-.theater-ref-experience .theater-ref-admit-serial {
-  font-family: var(--font-marquee);
-  font-size: clamp(0.5rem, 1.6vw, 0.78rem) !important;
-  font-weight: 700;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  margin-top: 1.4% !important;
-  color: var(--ticket-red) !important;
-}
-
-.theater-ref-experience .theater-ref-admit-side {
-  position: absolute !important;
-  top: 50% !important;
-  font-family: var(--font-marquee);
-  font-size: clamp(0.4rem, 1.2vw, 0.6rem) !important;
-  font-weight: 700;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--ticket-red-deep) !important;
-  white-space: nowrap;
-}
-
-.theater-ref-experience .theater-ref-admit-side-left {
-  left: 2.5% !important;
-  transform: translateY(-50%) rotate(-90deg);
-  transform-origin: center;
-}
-
-.theater-ref-experience .theater-ref-admit-side-right {
-  right: 2.5% !important;
-  transform: translateY(-50%) rotate(90deg);
-  transform-origin: center;
 }
 
 /* =====================================================================
@@ -1407,12 +1457,12 @@
   min-height: 0 !important;
   aspect-ratio: 941 / 1672 !important;
   margin: 0 auto !important;
-  background-image: url("../../assets/theater/heroEmpty.png") !important;
+  background-image: url("../../assets/theater/hero.png") !important;
 }
 
 .theater-ref-experience .theater-ref-hero-ticket {
-  opacity: 1 !important;
-  pointer-events: auto !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .theater-ref-experience .theater-ref-countdown {

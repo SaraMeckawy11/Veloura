@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TheaterSplash from './TheaterSplash';
 import './theater.css';
 import './theater-components.css';
+import './theater-final.css';
 import { buildInvitationImageSources, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 
@@ -99,10 +100,8 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const pad = (n) => n.toString().padStart(2, '0');
 
   const allPhotos = order.photos || [];
-  const couplePhotos = allPhotos.filter(p => p.label === 'couple');
   const storyPhotos = allPhotos.filter(p => p.label === 'story');
   const galleryPhotos = allPhotos.filter(p => p.label === 'gallery');
-  const venuePhotos = allPhotos.filter(p => p.label === 'venue');
   const uncategorized = allPhotos.filter(p => !p.label || !['couple', 'story', 'gallery', 'venue'].includes(p.label));
   const allGallery = [...galleryPhotos, ...uncategorized];
 
@@ -251,298 +250,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   );
 }
 
-// eslint-disable-next-line no-unused-vars -- legacy section markup retained for reference; not rendered.
-function _LegacyOriginal() {
-  return (
-    <>
-      <section className="theater-hero">
-        <span className="theater-hero-curtain theater-hero-curtain-left" aria-hidden />
-        <span className="theater-hero-curtain theater-hero-curtain-right" aria-hidden />
-        <div className="theater-hero-marquee" aria-hidden>
-          <span>Velvet House</span>
-          <span>Main Stage</span>
-          <span>One Night Only</span>
-        </div>
-        <div className="theater-hero-spotlight" aria-hidden />
-        <div className="theater-hero-sparks" aria-hidden>
-          <span /><span /><span /><span /><span />
-        </div>
-
-        <motion.article
-          className="theater-hero-card"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-        >
-          <span className="theater-kicker">Tonight's Performance</span>
-          <span className="theater-kicker theater-kicker-thin">A wedding in one act</span>
-
-          <MarqueeBulbs count={5} />
-          <StarMark className="theater-hero-stage-mark" />
-
-          <h1>
-            <span className="theater-hero-name">{name1}</span>
-            <span className="theater-hero-amp">&amp;</span>
-            <span className="theater-hero-name">{name2}</span>
-          </h1>
-
-          <FlourishSvg className="theater-hero-flourish" />
-
-          {weddingDate ? (
-            <div className="theater-hero-datepill">
-              <div>
-                <small>{dayStr ? dayStr.slice(0, 3).toUpperCase() : 'Day'}</small>
-              </div>
-              <span aria-hidden />
-              <div className="theater-hero-datepill-month">
-                <small>{monthStr || 'Month'}</small>
-                <strong>{dayOfMonth || '—'}</strong>
-              </div>
-              <span aria-hidden />
-              <div>
-                <small>{timeStr || 'Curtain'}</small>
-              </div>
-            </div>
-          ) : null}
-
-          <p className="theater-hero-venue">{venue || 'On The Velvet Stage'}</p>
-          {venueAddress && <p className="theater-hero-address">{venueAddress}</p>}
-
-          {message && <p className="theater-hero-message">{message}</p>}
-        </motion.article>
-      </section>
-
-      {weddingDate && (
-        <section className="theater-countdown theater-section-denim">
-          <div className="theater-countdown-proscenium" aria-hidden />
-          <SectionTitle eyebrow="Save The Date" title="Counting The Moments" light />
-          <div className="theater-count-grid">
-            <CountdownUnit value={pad(timeLeft.days)} label="Days" />
-            <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
-            <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
-            <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />
-          </div>
-          <StageMarquee />
-        </section>
-      )}
-
-      {!isReferenceDemo && couplePhotos.length > 0 && (
-        <section className="theater-section theater-couple-section">
-          <SectionTitle eyebrow="The couple" title="A Love" script="Behind The Curtain" />
-          <div className="theater-couple-grid">
-            {couplePhotos.map((photo, index) => (
-              <motion.figure
-                key={index}
-                className="theater-photo-frame theater-couple-photo"
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55, delay: index * 0.08 }}
-              >
-                <InvitationPhoto src={photo} alt={`Couple ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
-              </motion.figure>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {isReferenceDemo && order.storyMilestones?.length ? (
-        <StorySection milestones={order.storyMilestones} images={order.storyImages || []} />
-      ) : storyPhotos.length > 0 ? (
-        <StorySection milestones={order.storyMilestones || []} images={storyPhotos} />
-      ) : null}
-
-      <section className="theater-section theater-event-section">
-        <SectionTitle eyebrow="The Big Day" title="Ceremony" script="& Reception" />
-        <div className="theater-event-layout theater-event-layout-single">
-          <motion.div
-            className="theater-event-card"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="theater-kicker">{billingCode}</span>
-            <h3>{venue || 'The Velvet Stage'}</h3>
-            <dl>
-              <div>
-                <dt>Date</dt>
-                <dd>{fullDateStr || 'To be announced'}</dd>
-              </div>
-              {timeStr && (
-                <div>
-                  <dt>Curtain</dt>
-                  <dd>{timeStr}</dd>
-                </div>
-              )}
-              {venueAddress && (
-                <div>
-                  <dt>Address</dt>
-                  <dd>{venueAddress}</dd>
-                </div>
-              )}
-            </dl>
-            {embedSrc && (
-              <div className="theater-map">
-                <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-                <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
-              </div>
-            )}
-          </motion.div>
-        </div>
-
-        {!isReferenceDemo && venuePhotos.length > 0 && (
-          <div className="theater-venue-grid">
-            {venuePhotos.map((photo, index) => (
-              <figure key={index} className="theater-photo-frame">
-                <InvitationPhoto src={photo} alt={`Venue ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
-              </figure>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {rsvpEnabled && (
-      <section className="theater-rsvp-section">
-        <div className="theater-rsvp-ocean" aria-hidden>
-          <span className="theater-rsvp-foam theater-rsvp-foam-one" />
-          <span className="theater-rsvp-foam theater-rsvp-foam-two" />
-        </div>
-        <div className="theater-rsvp-inner">
-          <div className="theater-rsvp-intro">
-            <MarqueeBulbs count={5} />
-            <span className="theater-rsvp-eyebrow">RSVP</span>
-            <h2 className="theater-rsvp-title">Take Your Seat</h2>
-            <p className="theater-rsvp-lead">
-              The stage is set and the curtain awaits - please let us know you'll be there.
-            </p>
-            <div className="theater-rsvp-tide-card" aria-label="Wedding details">
-              <span>{fullDateStr || 'Date to be announced'}</span>
-              <strong>{venue || 'On The Velvet Stage'}</strong>
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {!rsvpSubmitted ? (
-              <motion.form
-                key="rsvp-form"
-                onSubmit={handleRsvp}
-                className="theater-rsvp-card"
-                exit={{ opacity: 0, y: -20 }}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55 }}
-              >
-                <div className="theater-rsvp-grid">
-                  <div className="theater-field theater-field-full">
-                    <label htmlFor="rsvp-name">Full name</label>
-                    <input
-                      id="rsvp-name"
-                      type="text"
-                      required
-                      value={rsvpForm.guestName}
-                      onChange={event => setRsvpForm({ ...rsvpForm, guestName: event.target.value })}
-                      placeholder="Your full name"
-                    />
-                  </div>
-
-                  <div className="theater-field">
-                    <label htmlFor="rsvp-guests">Guests</label>
-                    <input
-                      id="rsvp-guests"
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={rsvpForm.guestCount}
-                      onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value) || 1 })}
-                    />
-                  </div>
-
-                  <div className="theater-field theater-field-attending">
-                    <label>Will you attend?</label>
-                    <div className="theater-rsvp-toggle" role="radiogroup" aria-label="Will you attend?">
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={rsvpForm.attending === 'yes'}
-                        className={rsvpForm.attending === 'yes' ? 'active' : ''}
-                        onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
-                      >
-                        Joyfully accept
-                      </button>
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={rsvpForm.attending === 'no'}
-                        className={rsvpForm.attending === 'no' ? 'active' : ''}
-                        onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
-                      >
-                        Regretfully decline
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="theater-field theater-field-full">
-                    <label htmlFor="rsvp-message">Message <span className="theater-field-optional">(optional)</span></label>
-                    <textarea
-                      id="rsvp-message"
-                      rows={4}
-                      value={rsvpForm.message}
-                      onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
-                      placeholder="Share a wish, a memory, or a song request..."
-                    />
-                  </div>
-                </div>
-
-                {rsvpError && <p className="theater-rsvp-error">{rsvpError}</p>}
-                <button type="submit" className="theater-submit">
-                  <span>Send Response</span>
-                </button>
-              </motion.form>
-            ) : (
-              <motion.div
-                key="rsvp-success"
-                className="theater-rsvp-card theater-rsvp-success"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.45 }}
-              >
-                <MarqueeBulbs count={5} />
-                <span>Response received</span>
-                <h3>Thank you, {rsvpForm.guestName}</h3>
-                <p>Your reply has been sent to the couple. The spotlight will be waiting.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
-      )}
-
-      {isReferenceDemo && order.galleryImages?.length ? (
-        <GallerySection images={order.galleryImages} />
-      ) : allGallery.length > 0 ? (
-        <GallerySection images={allGallery} />
-      ) : null}
-
-      <footer className="theater-footer">
-        <div className="theater-footer-foam" aria-hidden />
-        <div className="theater-footer-inner">
-          <FlourishSvg className="theater-footer-shell" />
-          <p className="theater-footer-script">with love</p>
-          <h2 className="theater-footer-names">
-            {name1} <span className="theater-footer-amp">&amp;</span> {name2}
-          </h2>
-          <div className="theater-footer-rule" aria-hidden />
-          <p className="theater-footer-meta-line">
-            Thank you for being part of our opening night
-          </p>
-        </div>
-      </footer>
-    </>
-  );
-}
-
 function TheaterReferenceExperience({
   name1,
   name2,
@@ -600,7 +307,9 @@ function TheaterReferenceExperience({
 
       {weddingDate && <ReferenceCountdown countdown={countdown} />}
 
-      {storyItems.length > 0 && <ReferenceStory items={storyItems} />}
+      {storyItems.length > 0 && (
+        <StorySection milestones={storyItems.map(item => ({ date: item.date, title: item.title, description: item.description || item.body }))} images={storyItems.map(item => item.image).filter(Boolean)} />
+      )}
 
       <ReferenceDetails
         billingCode={billingCode}
@@ -627,7 +336,7 @@ function TheaterReferenceExperience({
         />
       )}
 
-      {gallerySources.length > 0 && <ReferenceMemories images={gallerySources} />}
+      {gallerySources.length > 0 && <GallerySection images={gallerySources} />}
 
       <ReferenceFinale name1={name1} name2={name2} />
     </div>
@@ -694,15 +403,15 @@ function ReferenceHero({
         <h2>{venue || 'The Royale Grand Theatre'}</h2>
         {venueAddress && <p className="theater-ref-hero-address">{venueAddress}</p>}
         {message && <p className="theater-ref-message">{message}</p>}
+        <div className="theater-ref-admit" aria-hidden>
+          <span className="theater-ref-admit-side theater-ref-admit-side-left">VIP Entrance</span>
+          <span className="theater-ref-admit-side theater-ref-admit-side-right">Love Story</span>
+          <small className="theater-ref-admit-top">* You are cordially invited *</small>
+          <span className="theater-ref-admit-headline">Admit Two</span>
+          <small className="theater-ref-admit-sub">To a lifetime of encores</small>
+          <small className="theater-ref-admit-serial">* {ticketSerial || billingCode} *</small>
+        </div>
       </motion.article>
-      <div className="theater-ref-admit" aria-hidden>
-        <span className="theater-ref-admit-side theater-ref-admit-side-left">VIP Entrance</span>
-        <span className="theater-ref-admit-side theater-ref-admit-side-right">Love Story</span>
-        <small className="theater-ref-admit-top">★ You are cordially invited ★</small>
-        <span className="theater-ref-admit-headline">Admit Two</span>
-        <small className="theater-ref-admit-sub">To a lifetime of encores</small>
-        <small className="theater-ref-admit-serial">★ {ticketSerial || billingCode} ★</small>
-      </div>
     </section>
   );
 }
@@ -722,42 +431,6 @@ function ReferenceCountdown({ countdown }) {
         ))}
       </div>
       <p className="theater-ref-soon">See you soon!</p>
-    </ReferencePoster>
-  );
-}
-
-function ReferenceStory({ items }) {
-  const visibleItems = items.slice(0, 4);
-  const count = visibleItems.length;
-
-  return (
-    <ReferencePoster className={`theater-ref-story theater-ref-story-${count}`} title="Our Story">
-      {visibleItems.map((item, index) => {
-        const title = item.title || `Scene ${index + 1}`;
-        const year = item.date || '';
-        const description = item.description || item.body || '';
-
-        return (
-          <article className="theater-ref-story-scene" key={`${getInvitationPhotoSrc(item.image)}-${index}`}>
-            <figure className="theater-ref-story-photo">
-              {item.image ? (
-                <InvitationPhoto src={item.image} alt={title} sizes="(max-width: 760px) 86vw, 760px" />
-              ) : (
-                <div className="theater-ref-photo-placeholder" aria-hidden>
-                  <span />
-                </div>
-              )}
-            </figure>
-            {(year || title || description) && (
-              <div className="theater-ref-story-copy">
-                {year && <span>{year}</span>}
-                {title && <h3>{title}</h3>}
-                {description && <p>{description}</p>}
-              </div>
-            )}
-          </article>
-        );
-      })}
     </ReferencePoster>
   );
 }
@@ -821,45 +494,6 @@ function ReferenceDetails({
         </div>
         <em>Admit Two</em>
       </div>
-    </ReferencePoster>
-  );
-}
-
-function ReferenceMemories({ images }) {
-  const uniqueImages = images
-    .filter((image, index, allImages) => {
-      const src = getInvitationPhotoSrc(image);
-      return src && allImages.findIndex(candidate => getInvitationPhotoSrc(candidate) === src) === index;
-    })
-    .slice(0, 6);
-  const count = uniqueImages.length;
-  const captions = ['First Scene', 'Laughs & Us', 'Forever Starts Here', 'City Stroll', 'Dinner Date', 'My Favorite Place'];
-  const lead = [
-    '',
-    'A glimpse into our beautiful journey',
-    'Six scenes from our love story',
-    'A reel of moments, a lifetime of love',
-    'A love story worth remembering',
-    'Five moments. Endless memories.',
-    'Six scenes from our love story',
-  ][count] || 'A reel of moments, a lifetime of love';
-
-  if (!count) return null;
-
-  return (
-    <ReferencePoster className={`theater-ref-memories theater-ref-memories-${count}`} title="Memories Reel">
-      <p className="theater-ref-script-lead">{lead}</p>
-      <Ornament />
-      <div className="theater-ref-film">
-        {uniqueImages.map((image, index) => (
-          <figure className="theater-ref-film-frame" key={`${getInvitationPhotoSrc(image)}-${index}`}>
-            <span className="theater-ref-scene-number">{String(index + 1).padStart(2, '0')}</span>
-            <InvitationPhoto src={image} alt={`Memory ${index + 1}`} sizes="(max-width: 760px) 82vw, 420px" />
-            <figcaption>{captions[index]}</figcaption>
-          </figure>
-        ))}
-      </div>
-      <div className="theater-ref-bottom-stars" aria-hidden>★ ★ ★</div>
     </ReferencePoster>
   );
 }
@@ -1026,15 +660,6 @@ function SectionTitle({ eyebrow, title, script, light = false }) {
         {script && <span className="script">{script}</span>}
       </h2>
       <FlourishSvg className="theater-section-divider" />
-    </div>
-  );
-}
-
-function CountdownUnit({ value, label }) {
-  return (
-    <div className="theater-count-unit">
-      <strong>{value}</strong>
-      <span>{label}</span>
     </div>
   );
 }
@@ -1215,15 +840,5 @@ function GallerySection({ images }) {
         </div>
       </div>
     </section>
-  );
-}
-
-function StageMarquee() {
-  return (
-    <div className="theater-marquee-wrap" aria-hidden>
-      <span className="theater-marquee-rule" />
-      <MarqueeBulbs count={9} />
-      <span className="theater-marquee-rule" />
-    </div>
   );
 }
