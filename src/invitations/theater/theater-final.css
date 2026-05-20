@@ -161,7 +161,7 @@ body:has(.theater-theme),
 
 .theater-hero-time {
   left: 27%;
-  top: 67%;
+  top: 65.4%;
   width: 46%;
   color: #65150f;
   font-family: var(--font-marquee);
@@ -174,7 +174,7 @@ body:has(.theater-theme),
 
 .theater-hero h2 {
   left: 14%;
-  top: 71%;
+  top: 69%;
   display: flex;
   flex-direction: column;
   align-items: center;
