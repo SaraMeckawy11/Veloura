@@ -233,9 +233,11 @@ function HeroSection({
       </h1>
       {weddingDate && (
         <div className="theater-hero-date">
-          <span>{dayStr}</span>
-          <strong>{dayOfMonth}</strong>
-          <span>{monthYearStr}</span>
+          <span className="theater-hero-weekday">{dayStr}</span>
+          <div className="theater-hero-date-row">
+            <strong>{dayOfMonth}</strong>
+            <span>{monthYearStr}</span>
+          </div>
         </div>
       )}
       {timeStr && <p className="theater-hero-time">Doors open at {timeStr}</p>}
@@ -436,6 +438,11 @@ function MemoriesSection({ images }) {
 
   if (!uniqueImages.length) return null;
 
+  const tracks = [
+    { key: 'a', images: uniqueImages, hidden: false },
+    { key: 'b', images: uniqueImages, hidden: true },
+  ];
+
   return (
     <section className="theater-memories" aria-labelledby="theater-memories-title">
       <TheaterAssetTitle
@@ -444,25 +451,31 @@ function MemoriesSection({ images }) {
         artSrc={memoriesTitle}
         label="Memories"
       />
-      <div className="theater-memories-track">
-        {[0, 1].map(group => (
-          <div className="theater-memories-group" key={group} aria-hidden={group > 0 ? 'true' : undefined}>
-            {uniqueImages.map((image, index) => (
-              <figure className="theater-memory-card" key={`${group}-${getInvitationPhotoSrc(image)}`}>
-                <img className="theater-memory-frame" src={memoriesContainer} alt="" aria-hidden="true" />
-                <div className="theater-memory-photo">
-                  <InvitationPhoto
-                    src={image}
-                    sizes="(max-width: 720px) 220px, 300px"
-                    alt={`Memory ${index + 1}`}
-                    loading={group === 0 ? 'eager' : 'lazy'}
-                    fetchPriority={group === 0 ? 'high' : 'auto'}
-                  />
-                </div>
-              </figure>
-            ))}
-          </div>
-        ))}
+      <div className="theater-memories-viewport">
+        <div className="theater-memories-track">
+          {tracks.map(track => (
+            <ul
+              className="theater-memories-list"
+              key={track.key}
+              aria-hidden={track.hidden ? 'true' : undefined}
+            >
+              {track.images.map((image, index) => (
+                <li className="theater-memory-card" key={`${track.key}-${getInvitationPhotoSrc(image)}`}>
+                  <img className="theater-memory-frame" src={memoriesContainer} alt="" aria-hidden="true" />
+                  <div className="theater-memory-photo">
+                    <InvitationPhoto
+                      src={image}
+                      sizes="(max-width: 720px) 200px, 260px"
+                      alt={`Memory ${index + 1}`}
+                      loading={track.hidden ? 'lazy' : 'eager'}
+                      fetchPriority={track.hidden ? 'auto' : 'high'}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
       </div>
     </section>
   );
