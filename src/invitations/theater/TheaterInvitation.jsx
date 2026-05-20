@@ -185,7 +185,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           fullDateStr={fullDateStr}
           timeStr={timeStr}
           venue={venue}
-          venueAddress={venueAddress}
           embedSrc={embedSrc}
         />
 
@@ -227,6 +226,8 @@ function HeroSection({
   venue,
   weddingDate,
 }) {
+  const venueLines = splitVenueLines(venue || 'The Royale Grand Theatre');
+
   return (
     <section className="theater-hero" aria-label="Wedding invitation">
       <h1>
@@ -245,9 +246,22 @@ function HeroSection({
         </div>
       )}
       {timeStr && <p className="theater-hero-time">Doors open at {timeStr}</p>}
-      <h2>{venue || 'The Royale Grand Theatre'}</h2>
+      <h2>
+        {venueLines.map(line => <span key={line}>{line}</span>)}
+      </h2>
     </section>
   );
+}
+
+function splitVenueLines(text) {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= 2) return [text];
+
+  const midpoint = Math.ceil(words.length / 2);
+  return [
+    words.slice(0, midpoint).join(' '),
+    words.slice(midpoint).join(' '),
+  ].filter(Boolean);
 }
 
 function CountdownSection({ timeLeft }) {
@@ -312,7 +326,6 @@ function DetailsSection({
   fullDateStr,
   timeStr,
   venue,
-  venueAddress,
   embedSrc,
 }) {
   return (
@@ -320,7 +333,6 @@ function DetailsSection({
       <div className="theater-details-plate" aria-hidden="true" />
       <div className="theater-details-venue">
         <h2>{venue || 'The Royale Grand Theatre'}</h2>
-        {venueAddress && <p>{venueAddress}</p>}
       </div>
       <div className="theater-details-date">
         <strong>{dayStr || fullDateStr || 'To be announced'}</strong>
@@ -441,16 +453,14 @@ function MemoriesSection({ images }) {
   const uniqueImages = useMemo(() => images.filter(byUniquePhoto), [images]);
   const memoryImageKey = uniqueImages.map(getInvitationPhotoSrc).join('|');
   const trackRef = useRef(null);
-  const unitRef = useRef(null);
-  const unitRepeatCount = uniqueImages.length ? Math.max(3, Math.ceil(12 / uniqueImages.length)) : 0;
-  const unitImages = uniqueImages.length
-    ? Array.from({ length: unitRepeatCount }, () => uniqueImages).flat()
+  const unitRefs = useRef([]);
+  const repeatedImages = uniqueImages.length
+    ? Array.from({ length: Math.max(2, Math.ceil(8 / uniqueImages.length)) }, () => uniqueImages).flat()
     : [];
 
   useEffect(() => {
     const track = trackRef.current;
-    const unit = unitRef.current;
-    if (!track || !unit || !unitImages.length || typeof window === 'undefined') return undefined;
+    if (!track || !repeatedImages.length || typeof window === 'undefined') return undefined;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let animationFrame = 0;
@@ -460,7 +470,8 @@ function MemoriesSection({ images }) {
     let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
 
     const updateDistance = () => {
-      distance = unit.scrollWidth;
+      const firstUnit = unitRefs.current[0];
+      distance = firstUnit ? firstUnit.scrollWidth : 0;
       offset = distance ? offset % distance : 0;
       track.style.transform = `translate3d(${-offset}px, 0, 0)`;
     };
@@ -501,7 +512,7 @@ function MemoriesSection({ images }) {
       ? new ResizeObserver(updateDistance)
       : null;
 
-    resizeObserver?.observe(unit);
+    unitRefs.current.filter(Boolean).forEach(unit => resizeObserver?.observe(unit));
     if (reducedMotion.addEventListener) {
       reducedMotion.addEventListener('change', startAnimation);
     } else {
@@ -521,11 +532,11 @@ function MemoriesSection({ images }) {
       window.removeEventListener('resize', updateDistance);
       window.removeEventListener('resize', updateSpeed);
     };
-  }, [unitImages.length, memoryImageKey]);
+  }, [repeatedImages.length, memoryImageKey]);
 
   if (!uniqueImages.length) return null;
 
-  const renderGroup = (groupIndex) => unitImages.map((image, index) => {
+  const renderGroup = (groupIndex) => repeatedImages.map((image, index) => {
     const imageNumber = (index % uniqueImages.length) + 1;
     const imageSrc = getInvitationPhotoSrc(image);
     return (
@@ -554,10 +565,12 @@ function MemoriesSection({ images }) {
       />
       <div className="theater-memories-viewport">
         <div className="theater-memories-track" ref={trackRef}>
-          {[0, 1, 2, 3].map((groupIndex) => (
+          {[0, 1, 2].map((groupIndex) => (
             <ul
               key={groupIndex}
-              ref={groupIndex === 0 ? unitRef : null}
+              ref={element => {
+                unitRefs.current[groupIndex] = element;
+              }}
               className="theater-memories-list"
               aria-hidden={groupIndex > 0 ? 'true' : undefined}
             >

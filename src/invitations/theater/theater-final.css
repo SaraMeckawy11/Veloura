@@ -103,11 +103,11 @@ body:has(.theater-theme),
 
 .theater-hero-date {
   left: 18%;
-  top: 52%;
+  top: 54%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.28em;
+  gap: 0.34em;
   width: 64%;
   color: var(--theater-red);
   font-family: var(--font-marquee);
@@ -126,33 +126,32 @@ body:has(.theater-theme),
 
 .theater-hero-date-row {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.18em;
+  gap: clamp(0.34rem, 1.2vw, 0.82rem);
   color: var(--theater-red);
 }
 
 .theater-hero-date-row strong {
   color: #85120f;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(1.9rem, 5.4vw, 3.6rem);
+  font-size: clamp(1.7rem, 4.6vw, 3.2rem);
   font-weight: 800;
   line-height: 0.9;
 }
 
 .theater-hero-date-row span {
   color: #331d15;
-  font-size: clamp(0.62rem, 1.55vw, 0.98rem);
+  font-size: clamp(0.56rem, 1.42vw, 0.9rem);
   font-weight: 800;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.14em;
   line-height: 1;
   text-align: center;
   white-space: nowrap;
 }
 
 .theater-hero-month {
-  margin-top: 0.18em;
+  margin-top: 0;
 }
 
 .theater-hero-time {
@@ -170,22 +169,28 @@ body:has(.theater-theme),
 
 .theater-hero h2 {
   left: 14%;
-  top: 71.5%;
+  top: 69.5%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 72%;
-  min-height: 2.6em;
+  min-height: 3.15em;
   color: #74170f;
   font-family: var(--font-marquee);
-  font-size: clamp(0.72rem, 1.85vw, 1.18rem);
+  font-size: clamp(0.66rem, 1.68vw, 1.08rem);
   font-weight: 800;
-  letter-spacing: 0.1em;
-  line-height: 1.22;
+  letter-spacing: 0.08em;
+  line-height: 1.18;
   text-transform: uppercase;
-  text-wrap: balance;
   word-break: break-word;
   hyphens: auto;
+}
+
+.theater-hero h2 span {
+  display: block;
+  max-width: 100%;
+  text-wrap: balance;
 }
 
 .theater-countdown {
@@ -278,7 +283,8 @@ body:has(.theater-theme),
   justify-items: center;
   gap: 0;
   width: 100%;
-  padding: clamp(10px, 2.2vw, 16px) clamp(12px, 2.6vw, 18px) clamp(14px, 3vw, 22px);
+  min-height: clamp(430px, 76vw, 540px);
+  padding: clamp(14px, 2.8vw, 22px) clamp(12px, 2.6vw, 18px) clamp(22px, 4vw, 34px);
   border: 1px solid rgba(184, 134, 42, 0.45);
   border-radius: 8px;
   background: #f6e7c8;
@@ -414,9 +420,9 @@ body:has(.theater-theme),
 }
 
 .theater-details-venue {
-  left: 41%;
-  top: 33%;
-  width: 50%;
+  left: 37%;
+  top: 31.5%;
+  width: 55%;
   text-align: left;
 }
 
@@ -442,16 +448,16 @@ body:has(.theater-theme),
 .theater-details-date,
 .theater-details-time {
   width: 26%;
-  text-align: left;
+  text-align: center;
 }
 
 .theater-details-date {
-  left: 30%;
+  left: 27.5%;
   top: 44.5%;
 }
 
 .theater-details-time {
-  left: 64%;
+  left: 66.5%;
   top: 44.5%;
 }
 
@@ -521,7 +527,7 @@ body:has(.theater-theme),
 
 .theater-rsvp-form {
   left: 13%;
-  top: 22%;
+  top: 24%;
   width: 74%;
   height: 60%;
   overflow: visible;
@@ -671,14 +677,7 @@ body:has(.theater-theme),
 }
 
 .theater-message-field::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -22%;
-  width: 62%;
-  aspect-ratio: 2048 / 512;
-  transform: translateX(-50%);
-  background: url("../../assets/theater/rsvp/horizontalSeparator_transparent.png") center / contain no-repeat;
+  content: none;
 }
 
 .theater-message-field textarea {
@@ -767,7 +766,8 @@ body:has(.theater-theme),
 }
 
 .theater-memories-viewport {
-  width: 100%;
+  width: 100vw;
+  max-width: 100%;
   overflow: hidden;
   padding-block: clamp(8px, 2vw, 16px);
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
@@ -794,7 +794,7 @@ body:has(.theater-theme),
 
 .theater-memory-card {
   position: relative;
-  flex: 0 0 clamp(190px, 38vw, 260px);
+  flex: 0 0 clamp(168px, 54vw, 260px);
   aspect-ratio: 268 / 404;
   margin: 0;
   padding: 0;
@@ -907,7 +907,7 @@ body:has(.theater-theme),
   }
 
   .theater-rsvp-form {
-    top: 26%;
+    top: 28%;
   }
 
   .theater-rsvp-choice {
