@@ -4,12 +4,10 @@ import './theater-final.css';
 import { formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
-import memoriesTitleEmpty from '../../assets/theater/memories/titleEmpty(4)_transparent.png';
+import memoriesContainer from '../../assets/theater/memories/emptyContainer_transparent.png';
 import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
-import storyBlankContainer from '../../assets/theater/story/blankContainer_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
 import storyTitle from '../../assets/theater/story/title7_transparent.png';
-import storyTitleEmpty from '../../assets/theater/story/titleEmpty7_transparent.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -206,7 +204,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           <div className="theater-finale-inner">
             <p className="theater-finale-script">with love</p>
             <h2 className="theater-finale-names">
-              {name1} <span className="theater-finale-amp">&amp;</span> {name2}
+              {heroName1} <span className="theater-finale-amp">&amp;</span> {heroName2}
             </h2>
             <div className="theater-finale-rule" aria-hidden="true" />
             <p className="theater-finale-thanks">Thank you for being part of our beginning</p>
@@ -278,14 +276,12 @@ function StorySection({ items }) {
       <TheaterAssetTitle
         className="theater-story-title"
         titleId="theater-story-title"
-        emptySrc={storyTitleEmpty}
         artSrc={storyTitle}
         label="Our story"
       />
       <div className="theater-story-list">
         {items.map((item, index) => (
           <article className="theater-story-card" key={`${item.title || 'story'}-${index}`}>
-            <img className="theater-story-card-shell" src={storyBlankContainer} alt="" aria-hidden="true" />
             <div className="theater-story-photo">
               {item.image ? (
                 <InvitationPhoto src={item.image} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 720px) 76vw, 420px" />
@@ -447,7 +443,6 @@ function MemoriesSection({ images }) {
       <TheaterAssetTitle
         className="theater-memories-title"
         titleId="theater-memories-title"
-        emptySrc={memoriesTitleEmpty}
         artSrc={memoriesTitle}
         label="Memories"
       />
@@ -456,13 +451,16 @@ function MemoriesSection({ images }) {
           <div className="theater-memories-group" key={group} aria-hidden={group > 0 ? 'true' : undefined}>
             {loopImages.map((image, index) => (
               <figure className="theater-memory-card" key={`${group}-${getInvitationPhotoSrc(image)}-${index}`}>
-                <InvitationPhoto
-                  src={image}
-                  sizes="(max-width: 720px) 220px, 300px"
-                  alt={`Memory ${(index % uniqueImages.length) + 1}`}
-                  loading={group === 0 ? 'eager' : 'lazy'}
-                  fetchPriority={group === 0 && index < uniqueImages.length ? 'high' : 'auto'}
-                />
+                <img className="theater-memory-frame" src={memoriesContainer} alt="" aria-hidden="true" />
+                <div className="theater-memory-photo">
+                  <InvitationPhoto
+                    src={image}
+                    sizes="(max-width: 720px) 220px, 300px"
+                    alt={`Memory ${(index % uniqueImages.length) + 1}`}
+                    loading={group === 0 ? 'eager' : 'lazy'}
+                    fetchPriority={group === 0 && index < uniqueImages.length ? 'high' : 'auto'}
+                  />
+                </div>
               </figure>
             ))}
           </div>
@@ -472,11 +470,10 @@ function MemoriesSection({ images }) {
   );
 }
 
-function TheaterAssetTitle({ className, titleId, emptySrc, artSrc, label }) {
+function TheaterAssetTitle({ className, titleId, artSrc, label }) {
   return (
     <header className={`theater-asset-title ${className}`}>
       <h2 id={titleId}>{label}</h2>
-      <img className="theater-title-empty" src={emptySrc} alt="" aria-hidden="true" />
       <img className="theater-title-art" src={artSrc} alt="" aria-hidden="true" />
     </header>
   );

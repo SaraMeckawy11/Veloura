@@ -63,11 +63,11 @@ body:has(.theater-theme),
 
 .theater-hero h1 {
   left: 18%;
-  top: 30%;
+  top: 33.5%;
   width: 64%;
   color: #8a5d1a;
   font-family: var(--font-script);
-  font-size: clamp(2.2rem, 6vw, 4.6rem);
+  font-size: clamp(2.1rem, 5.8vw, 4.4rem);
   font-weight: 400;
   line-height: 0.95;
   text-shadow: 0 1px 0 rgba(255, 244, 215, 0.95), 0 2px 2px rgba(76, 35, 12, 0.2);
@@ -153,27 +153,27 @@ body:has(.theater-theme),
 }
 
 .theater-hero h2 {
-  left: 18%;
-  top: 67%;
-  width: 64%;
+  left: 16%;
+  top: 67.4%;
+  width: 68%;
   color: #74170f;
   font-family: var(--font-marquee);
-  font-size: clamp(0.84rem, 2.1vw, 1.42rem);
+  font-size: clamp(0.66rem, 1.65vw, 1.08rem);
   font-weight: 800;
-  letter-spacing: 0.12em;
-  line-height: 1.15;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
   text-transform: uppercase;
 }
 
 .theater-hero-address {
   left: 24%;
-  top: 70.6%;
+  top: 70.9%;
   width: 52%;
   color: #4b2318;
   font-family: var(--font-marquee);
-  font-size: clamp(0.55rem, 1.4vw, 0.92rem);
+  font-size: clamp(0.5rem, 1.2vw, 0.82rem);
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   line-height: 1.15;
   text-transform: uppercase;
 }
@@ -186,7 +186,7 @@ body:has(.theater-theme),
 .theater-count-grid {
   position: absolute;
   left: 7.5%;
-  top: 35%;
+  top: 36.5%;
   z-index: 2;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -207,7 +207,7 @@ body:has(.theater-theme),
 
 .theater-count-card strong {
   display: block;
-  transform: translateY(-12%);
+  transform: translateY(8%);
   color: #78160f;
   font-family: 'Playfair Display', Georgia, serif;
   font-size: clamp(1.85rem, 6.4vw, 3.4rem);
@@ -240,7 +240,6 @@ body:has(.theater-theme),
   clip: rect(0 0 0 0);
 }
 
-.theater-title-empty,
 .theater-title-art {
   position: absolute;
   inset: 0;
@@ -259,119 +258,101 @@ body:has(.theater-theme),
 
 .theater-story-list {
   display: grid;
-  gap: clamp(18px, 4vw, 32px);
-  width: min(640px, 100vw);
+  gap: clamp(28px, 5vw, 48px);
+  width: min(560px, calc(100vw - 32px));
   margin: 0 auto;
 }
 
 .theater-story-card {
-  position: relative;
-  aspect-ratio: 1086 / 1448;
+  display: grid;
+  justify-items: center;
+  gap: clamp(10px, 2vw, 18px);
   width: 100%;
-  overflow: hidden;
-}
-
-.theater-story-card-shell,
-.theater-story-film {
-  position: absolute;
-  pointer-events: none;
-}
-
-.theater-story-card-shell {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
+  padding: clamp(14px, 3vw, 22px) clamp(14px, 3vw, 22px) clamp(18px, 3.5vw, 26px);
+  border: 1px solid rgba(184, 134, 42, 0.45);
+  border-radius: 8px;
+  background: #f6e7c8;
+  box-shadow: 0 6px 18px rgba(76, 35, 12, 0.08);
 }
 
 .theater-story-photo {
-  position: absolute;
-  left: 13.5%;
-  top: 19.7%;
-  width: 73%;
-  aspect-ratio: 1448 / 1086;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   padding: 2.4%;
   border: 1.5px solid rgba(184, 134, 42, 0.65);
   border-radius: 6px;
-  background: #f6e7c8;
-  box-shadow: 0 0 0 3px rgba(245, 226, 192, 0.6) inset, 0 2px 6px rgba(76, 35, 12, 0.12);
+  background: #f0dcb1;
+  box-shadow: 0 0 0 3px rgba(245, 226, 192, 0.55) inset;
 }
 
 .theater-story-photo .invitation-photo,
 .theater-story-photo img {
   position: absolute;
-  left: 4%;
-  top: 4%;
-  z-index: 2;
-  width: 92%;
-  height: 92%;
-  object-fit: cover;
-  border-radius: 2px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+  background: #2a1810;
 }
 
 .theater-story-photo-empty {
   position: absolute;
-  left: 4%;
-  top: 4%;
-  z-index: 1;
-  width: 92%;
-  height: 92%;
+  inset: 0;
   background: linear-gradient(135deg, #ead3a8 0%, #e0c693 100%);
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .theater-story-film {
-  left: 24%;
-  top: 51.6%;
-  width: 52%;
-  height: 10%;
+  width: 60%;
+  max-width: 320px;
+  height: auto;
   object-fit: contain;
+  pointer-events: none;
 }
 
 .theater-story-copy {
-  position: absolute;
-  left: 17.5%;
-  top: 62.4%;
-  z-index: 4;
-  width: 65%;
+  width: 100%;
   color: var(--theater-ink);
   text-align: center;
 }
 
 .theater-story-copy span {
   display: inline-block;
-  min-width: 42%;
-  margin-bottom: 0.35em;
-  padding: 0.15em 0.45em;
+  margin-bottom: 0.45em;
+  padding: 0.1em 0.7em;
   color: var(--theater-red);
   font-family: var(--font-marquee);
-  font-size: clamp(0.9rem, 3.3vw, 1.95rem);
+  font-size: clamp(0.8rem, 2.4vw, 1.05rem);
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   line-height: 1;
   text-transform: uppercase;
+  border-top: 1px solid rgba(184, 134, 42, 0.5);
+  border-bottom: 1px solid rgba(184, 134, 42, 0.5);
 }
 
 .theater-story-copy h3 {
-  margin: 0 0 0.28em;
+  margin: 0 0 0.5em;
   color: var(--theater-red);
   font-family: var(--font-marquee);
-  font-size: clamp(1rem, 4vw, 2.45rem);
+  font-size: clamp(1rem, 3vw, 1.5rem);
   font-weight: 800;
-  letter-spacing: 0.1em;
-  line-height: 1;
+  letter-spacing: 0.12em;
+  line-height: 1.1;
   text-transform: uppercase;
 }
 
 .theater-story-copy p {
-  width: 90%;
+  width: 92%;
   margin: 0 auto;
   color: #2d1c16;
   font-family: var(--font-soft);
-  font-size: clamp(0.78rem, 2.7vw, 1.54rem);
+  font-size: clamp(0.84rem, 2.2vw, 1.08rem);
   font-style: italic;
   font-weight: 600;
-  line-height: 1.28;
+  line-height: 1.4;
 }
 
 .theater-details {
@@ -389,11 +370,11 @@ body:has(.theater-theme),
 
 .theater-details-map {
   position: absolute;
-  left: 8%;
-  top: 55%;
+  left: 8.5%;
+  top: 49%;
   z-index: 1;
-  width: 84%;
-  height: 28%;
+  width: 83%;
+  height: 31%;
   overflow: hidden;
   border-radius: 4px;
   background: #e1d1b4;
@@ -420,18 +401,18 @@ body:has(.theater-theme),
 }
 
 .theater-details-venue {
-  left: 32%;
-  top: 25.2%;
+  left: 33%;
+  top: 27%;
   width: 56%;
   text-align: left;
 }
 
 .theater-details-venue h2 {
-  margin: 0 0 0.2em;
+  margin: 0 0 0.25em;
   color: var(--theater-red);
   font-weight: 800;
   line-height: 1.1;
-  font-size: clamp(1rem, 3vw, 1.7rem);
+  font-size: clamp(0.92rem, 2.6vw, 1.45rem);
   letter-spacing: 0.06em;
 }
 
@@ -439,26 +420,26 @@ body:has(.theater-theme),
   display: block;
   margin: 0;
   color: #4b2414;
-  font-size: clamp(0.6rem, 1.65vw, 0.95rem);
+  font-size: clamp(0.58rem, 1.55vw, 0.9rem);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   line-height: 1.3;
 }
 
 .theater-details-date,
 .theater-details-time {
-  width: 28%;
-  text-align: center;
+  width: 26%;
+  text-align: left;
 }
 
 .theater-details-date {
-  left: 16%;
-  top: 41.8%;
+  left: 21%;
+  top: 38.2%;
 }
 
 .theater-details-time {
-  left: 56%;
-  top: 41.8%;
+  left: 58%;
+  top: 38.2%;
 }
 
 .theater-details-date strong,
@@ -468,7 +449,7 @@ body:has(.theater-theme),
   color: var(--theater-red);
   font-weight: 800;
   line-height: 1.1;
-  font-size: clamp(0.82rem, 2.3vw, 1.3rem);
+  font-size: clamp(0.78rem, 2.1vw, 1.18rem);
   letter-spacing: 0.06em;
 }
 
@@ -477,16 +458,16 @@ body:has(.theater-theme),
   display: block;
   margin: 0;
   color: #4b2414;
-  font-size: clamp(0.56rem, 1.5vw, 0.86rem);
+  font-size: clamp(0.54rem, 1.42vw, 0.82rem);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   line-height: 1.25;
 }
 
 .theater-details-invite {
   left: 21%;
-  top: 89%;
-  width: 44%;
+  top: 87%;
+  width: 58%;
   text-align: center;
 }
 
@@ -635,12 +616,12 @@ body:has(.theater-theme),
 
 .theater-guests-field {
   position: absolute;
-  left: 4%;
-  top: 38.5%;
+  left: 6%;
+  top: 42%;
   display: grid;
-  grid-template-columns: 14% minmax(0, 1fr) 22%;
+  grid-template-columns: 11% minmax(0, 1fr) 20%;
   align-items: center;
-  gap: 3%;
+  gap: 4%;
   width: 88%;
 }
 
@@ -651,21 +632,26 @@ body:has(.theater-theme),
 
 .theater-guests-field span,
 .theater-message-field span {
+  align-self: center;
   color: var(--theater-ink);
   font-family: var(--font-marquee);
-  font-size: clamp(0.58rem, 1.72vw, 1.04rem);
+  font-size: clamp(0.56rem, 1.62vw, 0.98rem);
   font-weight: 800;
   letter-spacing: 0.08em;
   line-height: 1.18;
   text-transform: uppercase;
 }
 
+.theater-guests-field input {
+  text-align: center;
+}
+
 .theater-message-field {
   position: absolute;
   left: 7.5%;
-  top: 57%;
+  top: 60%;
   display: grid;
-  gap: 0.55em;
+  gap: 0.5em;
   width: 85%;
   text-align: center;
 }
@@ -674,7 +660,7 @@ body:has(.theater-theme),
   content: "";
   position: absolute;
   left: 50%;
-  top: -34%;
+  top: -22%;
   width: 62%;
   aspect-ratio: 2048 / 512;
   transform: translateX(-50%);
@@ -682,10 +668,20 @@ body:has(.theater-theme),
 }
 
 .theater-message-field textarea {
-  min-height: clamp(58px, 13vw, 92px);
-  padding: 0.4em 0.3em;
+  min-height: clamp(62px, 14vw, 96px);
+  padding: 0.55em 0.7em;
+  border: 1px solid rgba(47, 27, 19, 0.4);
+  border-radius: 4px;
+  background: rgba(255, 248, 230, 0.55);
   resize: none;
-  line-height: 1.35;
+  line-height: 1.4;
+  text-align: left;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.theater-message-field textarea:focus {
+  border-color: var(--theater-red);
+  background: rgba(255, 248, 230, 0.85);
 }
 
 .theater-rsvp-error {
@@ -764,25 +760,38 @@ body:has(.theater-theme),
 .theater-memory-card {
   position: relative;
   flex: 0 0 clamp(210px, 42vw, 300px);
-  aspect-ratio: 1402 / 1122;
+  aspect-ratio: 3 / 4;
   margin: 0;
-  padding: 4%;
-  border: 1.5px solid rgba(184, 134, 42, 0.65);
-  border-radius: 6px;
-  background: #f6e7c8;
-  box-shadow: 0 0 0 3px rgba(245, 226, 192, 0.6) inset, 0 2px 6px rgba(76, 35, 12, 0.12);
+  padding: 0;
+}
+
+.theater-memory-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.theater-memory-photo {
+  position: absolute;
+  left: 9%;
+  top: 9%;
+  z-index: 2;
+  width: 82%;
+  height: 82%;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #2a1810;
 }
 
 .theater-memory-card .invitation-photo,
-.theater-memory-card img {
-  position: absolute;
-  left: 4%;
-  top: 4%;
-  z-index: 2;
-  width: 92%;
-  height: 92%;
+.theater-memory-photo img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 2px;
 }
 
 .theater-finale {
@@ -870,14 +879,6 @@ body:has(.theater-theme),
 
   .theater-count-card strong {
     font-size: clamp(1.34rem, 6.2vw, 2.2rem);
-  }
-
-  .theater-story-copy {
-    top: 60.8%;
-  }
-
-  .theater-story-copy p {
-    width: 94%;
   }
 
   .theater-rsvp-form {
