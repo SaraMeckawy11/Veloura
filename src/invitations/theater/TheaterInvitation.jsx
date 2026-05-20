@@ -390,7 +390,7 @@ function ReferenceHero({
         <p className="theater-ref-request">Request the honor of your presence at the premiere of their forever</p>
         {weddingDate && (
           <div className="theater-ref-hero-date">
-            <span>{dayStr ? `${dayStr},` : 'Wedding Day'}</span>
+            <span>{dayStr || 'Wedding Day'}</span>
             <strong>{dayOfMonth || ''}</strong>
             <span>{monthYearStr || ''}</span>
           </div>
@@ -493,6 +493,10 @@ function ReferenceDetails({
           <p>Black tie optional. Dress to impress.</p>
         </div>
         <em>Admit Two</em>
+      </div>
+      <div className="theater-ref-details-invite" aria-hidden>
+        <strong>Join the Show</strong>
+        <p>An evening of love, laughter &amp; lifelong memories</p>
       </div>
     </ReferencePoster>
   );
