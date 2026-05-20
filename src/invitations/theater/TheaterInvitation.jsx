@@ -3,13 +3,11 @@ import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
 import { formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
-import memoriesImageFrame from '../../assets/theater/memories/imagePlaceholder_transparent.png';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import memoriesTitleEmpty from '../../assets/theater/memories/titleEmpty(4)_transparent.png';
 import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
 import storyBlankContainer from '../../assets/theater/story/blankContainer_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
-import storyImageFrame from '../../assets/theater/story/imagePlaceholder1_transparent.png';
 import storyTitle from '../../assets/theater/story/title7_transparent.png';
 import storyTitleEmpty from '../../assets/theater/story/titleEmpty7_transparent.png';
 
@@ -74,10 +72,12 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 
   const name1 = weddingDetails.brideName || weddingDetails.groomName || 'Partner 1';
   const name2 = weddingDetails.groomName || weddingDetails.brideName || 'Partner 2';
+  const firstName = (full) => (full || '').trim().split(/\s+/)[0] || full || '';
+  const heroName1 = firstName(name1);
+  const heroName2 = firstName(name2);
   const venue = weddingDetails.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (weddingDetails.venueAddress || '') : '';
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(weddingDetails.weddingTime) : '';
-  const message = fieldEnabled('message') ? (weddingDetails.message || 'Tonight, the curtain rises on forever.') : '';
 
   const storyPhotos = (order.photos || []).filter(photo => photo.label === 'story');
   const galleryPhotos = (order.photos || []).filter(photo => photo.label === 'gallery');
@@ -165,15 +165,14 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 
       <main className="theater-invitation">
         <HeroSection
-          name1={name1}
-          name2={name2}
+          name1={heroName1}
+          name2={heroName2}
           dayStr={dayStr}
           monthYearStr={monthYearStr}
           dayOfMonth={dayOfMonth}
           timeStr={timeStr}
           venue={venue}
           venueAddress={venueAddress}
-          message={message}
           weddingDate={weddingDate}
         />
 
@@ -193,7 +192,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 
         {fieldEnabled('rsvp') && (
           <RsvpSection
-            venue={venue}
             rsvpForm={rsvpForm}
             setRsvpForm={setRsvpForm}
             rsvpSubmitted={rsvpSubmitted}
@@ -205,8 +203,14 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
         {galleryImages.length > 0 && <MemoriesSection images={galleryImages} />}
 
         <footer className="theater-finale">
-          <p>With love</p>
-          <h2>{name1} <span>&amp;</span> {name2}</h2>
+          <div className="theater-finale-inner">
+            <p className="theater-finale-script">with love</p>
+            <h2 className="theater-finale-names">
+              {name1} <span className="theater-finale-amp">&amp;</span> {name2}
+            </h2>
+            <div className="theater-finale-rule" aria-hidden="true" />
+            <p className="theater-finale-thanks">Thank you for being part of our beginning</p>
+          </div>
         </footer>
       </main>
     </div>
@@ -222,7 +226,6 @@ function HeroSection({
   timeStr,
   venue,
   venueAddress,
-  message,
   weddingDate,
 }) {
   return (
@@ -242,7 +245,6 @@ function HeroSection({
       {timeStr && <p className="theater-hero-time">Doors open at {timeStr}</p>}
       <h2>{venue || 'The Royale Grand Theatre'}</h2>
       {venueAddress && <p className="theater-hero-address">{venueAddress}</p>}
-      {message && <p className="theater-hero-note">{message}</p>}
     </section>
   );
 }
@@ -285,7 +287,6 @@ function StorySection({ items }) {
           <article className="theater-story-card" key={`${item.title || 'story'}-${index}`}>
             <img className="theater-story-card-shell" src={storyBlankContainer} alt="" aria-hidden="true" />
             <div className="theater-story-photo">
-              <img className="theater-story-photo-frame" src={storyImageFrame} alt="" aria-hidden="true" />
               {item.image ? (
                 <InvitationPhoto src={item.image} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 720px) 76vw, 420px" />
               ) : (
@@ -317,6 +318,19 @@ function DetailsSection({
 }) {
   return (
     <section className="theater-details" aria-label="Wedding details">
+      <div className="theater-details-plate" aria-hidden="true" />
+      <div className="theater-details-venue">
+        <h2>{venue || 'The Royale Grand Theatre'}</h2>
+        {venueAddress && <p>{venueAddress}</p>}
+      </div>
+      <div className="theater-details-date">
+        <strong>{dayStr || fullDateStr || 'To be announced'}</strong>
+        <span>{dayOfMonth && monthStr ? `${dayOfMonth} ${monthStr}` : fullDateStr}</span>
+      </div>
+      <div className="theater-details-time">
+        <strong>{timeStr || 'To be announced'}</strong>
+        <span>Doors open</span>
+      </div>
       <div className="theater-details-map" aria-hidden={!embedSrc}>
         {embedSrc ? (
           <iframe
@@ -328,29 +342,14 @@ function DetailsSection({
           />
         ) : null}
       </div>
-      <div className="theater-details-plate">
-        <div className="theater-details-venue">
-          <h2>{venue || 'The Royale Grand Theatre'}</h2>
-          {venueAddress && <p>{venueAddress}</p>}
-        </div>
-        <div className="theater-details-date">
-          <strong>{dayStr || fullDateStr || 'To be announced'}</strong>
-          <span>{dayOfMonth && monthStr ? `${dayOfMonth} ${monthStr}` : fullDateStr}</span>
-        </div>
-        <div className="theater-details-time">
-          <strong>{timeStr || 'To be announced'}</strong>
-          <span>Doors open</span>
-        </div>
-        <div className="theater-details-invite">
-          <p>Arrive ready to celebrate with us.</p>
-        </div>
+      <div className="theater-details-invite">
+        <p>Join us for an evening of love, light, and unforgettable moments.</p>
       </div>
     </section>
   );
 }
 
 function RsvpSection({
-  venue,
   rsvpForm,
   setRsvpForm,
   rsvpSubmitted,
@@ -359,7 +358,7 @@ function RsvpSection({
 }) {
   return (
     <section className="theater-rsvp" aria-labelledby="theater-rsvp-title">
-      <h2 id="theater-rsvp-title" className="theater-rsvp-title">RSVP</h2>
+      <h2 id="theater-rsvp-title" className="visually-hidden">RSVP</h2>
 
       {!rsvpSubmitted ? (
         <form className="theater-rsvp-form" onSubmit={handleRsvp}>
@@ -410,10 +409,7 @@ function RsvpSection({
           </label>
 
           {rsvpError && <p className="theater-rsvp-error">{rsvpError}</p>}
-          <button className="theater-rsvp-submit" type="submit">
-            <span>Confirm your seat</span>
-            <small>{venue || 'Through our wedding website'}</small>
-          </button>
+          <button className="theater-rsvp-submit" type="submit" aria-label="Confirm your seat" />
         </form>
       ) : (
         <div className="theater-rsvp-success">
@@ -460,7 +456,6 @@ function MemoriesSection({ images }) {
           <div className="theater-memories-group" key={group} aria-hidden={group > 0 ? 'true' : undefined}>
             {loopImages.map((image, index) => (
               <figure className="theater-memory-card" key={`${group}-${getInvitationPhotoSrc(image)}-${index}`}>
-                <img className="theater-memory-frame" src={memoriesImageFrame} alt="" aria-hidden="true" />
                 <InvitationPhoto
                   src={image}
                   sizes="(max-width: 720px) 220px, 300px"

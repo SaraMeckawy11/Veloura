@@ -62,14 +62,14 @@ body:has(.theater-theme),
 }
 
 .theater-hero h1 {
-  left: 20.8%;
-  top: 32.35%;
-  width: 58.4%;
-  color: #8f641b;
+  left: 18%;
+  top: 30%;
+  width: 64%;
+  color: #8a5d1a;
   font-family: var(--font-script);
-  font-size: clamp(2.8rem, 7.55vw, 5.9rem);
+  font-size: clamp(2.2rem, 6vw, 4.6rem);
   font-weight: 400;
-  line-height: 0.9;
+  line-height: 0.95;
   text-shadow: 0 1px 0 rgba(255, 244, 215, 0.95), 0 2px 2px rgba(76, 35, 12, 0.2);
 }
 
@@ -83,7 +83,7 @@ body:has(.theater-theme),
 }
 
 .theater-hero h1 em {
-  margin: 0.08em 0 0.1em;
+  margin: 0.04em 0 0.04em;
   color: var(--theater-red);
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 0.34em;
@@ -94,13 +94,13 @@ body:has(.theater-theme),
 }
 
 .theater-hero-date {
-  left: 25.1%;
-  top: 56.15%;
+  left: 21%;
+  top: 55.4%;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 2.8%;
-  width: 49.8%;
+  gap: 3%;
+  width: 58%;
   color: var(--theater-red);
   font-family: var(--font-marquee);
   text-transform: uppercase;
@@ -108,76 +108,73 @@ body:has(.theater-theme),
 
 .theater-hero-date span {
   color: #331d15;
-  font-size: clamp(0.54rem, 1.48vw, 0.94rem);
+  font-size: clamp(0.58rem, 1.55vw, 1rem);
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   line-height: 1.05;
+  text-align: center;
 }
 
-.theater-hero-date span:first-child::before,
-.theater-hero-date span:last-child::after {
+.theater-hero-date span:first-child {
+  text-align: right;
+}
+
+.theater-hero-date span:last-child {
+  text-align: left;
+}
+
+.theater-hero-date span:first-child::after,
+.theater-hero-date span:last-child::before {
   content: "*";
-  padding: 0 0.48em;
+  padding: 0 0.55em;
   color: var(--theater-gold);
 }
 
 .theater-hero-date strong {
   color: #85120f;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.5rem, 7.25vw, 5.2rem);
+  font-size: clamp(2.4rem, 6.8vw, 4.8rem);
   font-weight: 800;
-  line-height: 0.76;
+  line-height: 0.78;
+  text-align: center;
 }
 
 .theater-hero-time {
-  left: 31.1%;
-  top: 60.74%;
-  width: 37.8%;
+  left: 27%;
+  top: 62.5%;
+  width: 46%;
   color: #65150f;
   font-family: var(--font-marquee);
-  font-size: clamp(0.48rem, 1.27vw, 0.82rem);
-  font-weight: 800;
-  letter-spacing: 0.11em;
+  font-size: clamp(0.5rem, 1.3vw, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
   line-height: 1.1;
   text-transform: uppercase;
 }
 
 .theater-hero h2 {
-  left: 24.5%;
-  top: 63.9%;
-  width: 51%;
-  color: #75150f;
+  left: 18%;
+  top: 67%;
+  width: 64%;
+  color: #74170f;
   font-family: var(--font-marquee);
-  font-size: clamp(0.76rem, 1.98vw, 1.32rem);
+  font-size: clamp(0.84rem, 2.1vw, 1.42rem);
   font-weight: 800;
-  letter-spacing: 0.09em;
-  line-height: 1.12;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
   text-transform: uppercase;
 }
 
 .theater-hero-address {
-  left: 29.5%;
-  top: 66.6%;
-  width: 41%;
+  left: 24%;
+  top: 70.6%;
+  width: 52%;
   color: #4b2318;
   font-family: var(--font-marquee);
-  font-size: clamp(0.48rem, 1.32vw, 0.86rem);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  line-height: 1.12;
-  text-transform: uppercase;
-}
-
-.theater-hero-note {
-  left: 24%;
-  top: 70.35%;
-  width: 52%;
-  color: #2f1a12;
-  font-family: var(--font-marquee);
-  font-size: clamp(0.42rem, 1.05vw, 0.7rem);
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
+  font-size: clamp(0.55rem, 1.4vw, 0.92rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.15;
   text-transform: uppercase;
 }
 
@@ -188,30 +185,32 @@ body:has(.theater-theme),
 
 .theater-count-grid {
   position: absolute;
-  left: 9.1%;
-  top: 46%;
+  left: 7.5%;
+  top: 35%;
   z-index: 2;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4.75%;
-  width: 81.8%;
-  height: 33.8%;
+  gap: 3.6%;
+  width: 85%;
+  height: 43%;
 }
 
 .theater-count-card {
   position: relative;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 0;
   color: var(--theater-red);
   text-align: center;
 }
 
 .theater-count-card strong {
-  transform: translateY(-8%);
+  display: block;
+  transform: translateY(-12%);
   color: #78160f;
   font-family: 'Playfair Display', Georgia, serif;
-  font-size: clamp(2.05rem, 8.15vw, 4.05rem);
+  font-size: clamp(1.85rem, 6.4vw, 3.4rem);
   font-variant-numeric: tabular-nums;
   font-weight: 700;
   line-height: 1;
@@ -291,37 +290,34 @@ body:has(.theater-theme),
   top: 19.7%;
   width: 73%;
   aspect-ratio: 1448 / 1086;
-}
-
-.theater-story-photo-frame {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  pointer-events: none;
+  padding: 2.4%;
+  border: 1.5px solid rgba(184, 134, 42, 0.65);
+  border-radius: 6px;
+  background: #f6e7c8;
+  box-shadow: 0 0 0 3px rgba(245, 226, 192, 0.6) inset, 0 2px 6px rgba(76, 35, 12, 0.12);
 }
 
 .theater-story-photo .invitation-photo,
-.theater-story-photo img:not(.theater-story-photo-frame) {
+.theater-story-photo img {
   position: absolute;
-  left: 7.4%;
-  top: 9.5%;
+  left: 4%;
+  top: 4%;
   z-index: 2;
-  width: 85.2%;
-  height: 78.5%;
+  width: 92%;
+  height: 92%;
   object-fit: cover;
+  border-radius: 2px;
 }
 
 .theater-story-photo-empty {
   position: absolute;
-  left: 7.4%;
-  top: 9.5%;
+  left: 4%;
+  top: 4%;
   z-index: 1;
-  width: 85.2%;
-  height: 78.5%;
-  background: #ead3a8;
+  width: 92%;
+  height: 92%;
+  background: linear-gradient(135deg, #ead3a8 0%, #e0c693 100%);
+  border-radius: 2px;
 }
 
 .theater-story-film {
@@ -383,25 +379,6 @@ body:has(.theater-theme),
   background: #f0e1c9;
 }
 
-.theater-details-map {
-  position: absolute;
-  left: 7.4%;
-  top: 51.1%;
-  z-index: 1;
-  width: 85.2%;
-  height: 32%;
-  overflow: hidden;
-  background: #e1d1b4;
-}
-
-.theater-details-map iframe {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  filter: sepia(0.35) saturate(0.8) contrast(0.9);
-}
-
 .theater-details-plate {
   position: absolute;
   inset: 0;
@@ -410,103 +387,133 @@ body:has(.theater-theme),
   pointer-events: none;
 }
 
+.theater-details-map {
+  position: absolute;
+  left: 8%;
+  top: 55%;
+  z-index: 1;
+  width: 84%;
+  height: 28%;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #e1d1b4;
+}
+
+.theater-details-map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  filter: sepia(0.3) saturate(0.85) contrast(0.92);
+}
+
 .theater-details-venue,
 .theater-details-date,
 .theater-details-time,
 .theater-details-invite {
   position: absolute;
+  z-index: 3;
   color: var(--theater-ink);
   font-family: var(--font-marquee);
   text-transform: uppercase;
+  text-align: left;
 }
 
 .theater-details-venue {
-  left: 35.6%;
-  top: 31%;
-  width: 48%;
-}
-
-.theater-details-venue h2,
-.theater-details-date strong,
-.theater-details-time strong {
-  display: block;
-  margin: 0 0 0.24em;
-  color: var(--theater-red);
-  font-weight: 800;
-  line-height: 1.12;
+  left: 32%;
+  top: 25.2%;
+  width: 56%;
+  text-align: left;
 }
 
 .theater-details-venue h2 {
-  font-size: clamp(0.92rem, 2.85vw, 1.7rem);
+  margin: 0 0 0.2em;
+  color: var(--theater-red);
+  font-weight: 800;
+  line-height: 1.1;
+  font-size: clamp(1rem, 3vw, 1.7rem);
   letter-spacing: 0.06em;
 }
 
-.theater-details-venue p,
+.theater-details-venue p {
+  display: block;
+  margin: 0;
+  color: #4b2414;
+  font-size: clamp(0.6rem, 1.65vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+}
+
+.theater-details-date,
+.theater-details-time {
+  width: 28%;
+  text-align: center;
+}
+
+.theater-details-date {
+  left: 16%;
+  top: 41.8%;
+}
+
+.theater-details-time {
+  left: 56%;
+  top: 41.8%;
+}
+
+.theater-details-date strong,
+.theater-details-time strong {
+  display: block;
+  margin: 0 0 0.18em;
+  color: var(--theater-red);
+  font-weight: 800;
+  line-height: 1.1;
+  font-size: clamp(0.82rem, 2.3vw, 1.3rem);
+  letter-spacing: 0.06em;
+}
+
 .theater-details-date span,
 .theater-details-time span {
   display: block;
   margin: 0;
   color: #4b2414;
-  font-size: clamp(0.52rem, 1.62vw, 0.94rem);
+  font-size: clamp(0.56rem, 1.5vw, 0.86rem);
   font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1.24;
-}
-
-.theater-details-date {
-  left: 24.6%;
-  top: 45.55%;
-  width: 25.8%;
-}
-
-.theater-details-time {
-  left: 65%;
-  top: 45.55%;
-  width: 27.2%;
-}
-
-.theater-details-date strong,
-.theater-details-time strong {
-  font-size: clamp(0.78rem, 2.38vw, 1.34rem);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
 }
 
 .theater-details-invite {
-  left: 35.1%;
-  top: 88.6%;
-  width: 35%;
+  left: 21%;
+  top: 89%;
+  width: 44%;
   text-align: center;
 }
 
 .theater-details-invite p {
   margin: 0;
   color: #2f1b13;
-  font-size: clamp(0.55rem, 1.5vw, 0.88rem);
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  line-height: 1.32;
+  font-family: var(--font-soft);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(0.62rem, 1.55vw, 0.92rem);
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  text-transform: none;
 }
 
 .theater-rsvp {
-  aspect-ratio: 1086 / 1448;
-  background-image: url("../../assets/theater/rsvp/emptyContainer_transparent.png");
+  aspect-ratio: 268 / 386;
+  background-image: url("../../assets/theater/rsvoEmpty.png");
+  overflow: visible;
 }
 
-.theater-rsvp-title {
+.visually-hidden {
   position: absolute;
-  left: 18%;
-  top: 9.4%;
-  z-index: 2;
-  width: 64%;
-  margin: 0;
-  color: var(--theater-red);
-  font-family: var(--font-marquee);
-  font-size: clamp(2.1rem, 8.5vw, 4.8rem);
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  line-height: 1;
-  text-align: center;
-  text-transform: uppercase;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
 }
 
 .theater-rsvp-form,
@@ -518,10 +525,11 @@ body:has(.theater-theme),
 }
 
 .theater-rsvp-form {
-  left: 14.2%;
-  top: 27%;
-  width: 71.6%;
-  height: 63%;
+  left: 13%;
+  top: 22%;
+  width: 74%;
+  height: 60%;
+  overflow: visible;
 }
 
 .theater-rsvp-form label,
@@ -693,29 +701,20 @@ body:has(.theater-theme),
 
 .theater-rsvp-submit {
   position: absolute;
-  left: 11.5%;
-  top: 84%;
-  display: grid;
-  place-items: center;
-  width: 77%;
-  aspect-ratio: 2048 / 512;
+  left: -10%;
+  top: 100%;
+  width: 70%;
+  height: 22%;
   padding: 0;
   border: 0;
-  background: url("../../assets/theater/rsvp/confirmEmptyButton_transparent.png") center / contain no-repeat;
-  color: var(--theater-red);
-  font-family: var(--font-marquee);
-  text-transform: uppercase;
+  background: transparent;
   cursor: pointer;
 }
 
-.theater-rsvp-submit span {
-  font-size: clamp(0.7rem, 2vw, 1.18rem);
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.theater-rsvp-submit small {
-  display: none;
+.theater-rsvp-submit:hover,
+.theater-rsvp-submit:focus-visible {
+  outline: 2px solid rgba(116, 23, 15, 0.4);
+  outline-offset: 2px;
 }
 
 .theater-rsvp-success {
@@ -767,58 +766,80 @@ body:has(.theater-theme),
   flex: 0 0 clamp(210px, 42vw, 300px);
   aspect-ratio: 1402 / 1122;
   margin: 0;
-}
-
-.theater-memory-frame {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  pointer-events: none;
+  padding: 4%;
+  border: 1.5px solid rgba(184, 134, 42, 0.65);
+  border-radius: 6px;
+  background: #f6e7c8;
+  box-shadow: 0 0 0 3px rgba(245, 226, 192, 0.6) inset, 0 2px 6px rgba(76, 35, 12, 0.12);
 }
 
 .theater-memory-card .invitation-photo,
-.theater-memory-card img:not(.theater-memory-frame) {
+.theater-memory-card img {
   position: absolute;
-  left: 8.4%;
-  top: 10.2%;
+  left: 4%;
+  top: 4%;
   z-index: 2;
-  width: 83.2%;
-  height: 75.5%;
+  width: 92%;
+  height: 92%;
   object-fit: cover;
+  border-radius: 2px;
 }
 
 .theater-finale {
   width: min(640px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: clamp(28px, 6vw, 56px) clamp(20px, 4vw, 36px);
+  border-top: 1px solid rgba(184, 134, 42, 0.5);
   color: var(--theater-red-dark);
   text-align: center;
 }
 
-.theater-finale p,
-.theater-finale h2 {
+.theater-finale-inner {
+  display: grid;
+  justify-items: center;
+  gap: clamp(8px, 1.4vw, 14px);
+}
+
+.theater-finale-script {
   margin: 0;
+  color: var(--theater-red-dark);
+  font-family: var(--font-script);
+  font-size: clamp(1.4rem, 4vw, 2.1rem);
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: 0.02em;
 }
 
-.theater-finale p {
-  font-family: var(--font-soft);
-  font-size: clamp(1rem, 3vw, 1.3rem);
-  font-style: italic;
-}
-
-.theater-finale h2 {
-  margin-top: 0.2em;
+.theater-finale-names {
+  margin: 0;
   color: var(--theater-red);
   font-family: var(--font-script);
-  font-size: clamp(2.4rem, 9vw, 4.8rem);
+  font-size: clamp(2.2rem, 7.5vw, 4rem);
   font-weight: 400;
   line-height: 1;
 }
 
-.theater-finale span {
+.theater-finale-amp {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 0.45em;
+  font-style: italic;
+}
+
+.theater-finale-rule {
+  width: clamp(70px, 16vw, 140px);
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(184, 134, 42, 0.7), transparent);
+}
+
+.theater-finale-thanks {
+  margin: 0;
+  color: var(--theater-ink);
+  font-family: var(--font-marquee);
+  font-size: clamp(0.66rem, 1.55vw, 0.92rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.3;
+  text-transform: uppercase;
 }
 
 @keyframes theater-memories-scroll {
@@ -842,13 +863,13 @@ body:has(.theater-theme),
   }
 
   .theater-count-grid {
-    left: 8.95%;
-    gap: 4.4%;
-    width: 82.1%;
+    left: 7.3%;
+    gap: 3.5%;
+    width: 85.4%;
   }
 
   .theater-count-card strong {
-    font-size: clamp(1.34rem, 7.5vw, 2.2rem);
+    font-size: clamp(1.34rem, 6.2vw, 2.2rem);
   }
 
   .theater-story-copy {
