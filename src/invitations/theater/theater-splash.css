@@ -158,3 +158,24 @@
   }
 
 }
+
+/* Reveal the rendered hero itself as the curtains open. */
+.theater-splash {
+  background: transparent;
+}
+
+.theater-splash-stage {
+  background: transparent;
+}
+
+.theater-splash-stage::before,
+.theater-splash-stage::after,
+.theater-splash-footlights {
+  display: none;
+}
+
+.theater-splash-vignette {
+  background:
+    radial-gradient(ellipse at 50% 48%, transparent 0 42%, rgba(24, 4, 8, 0.08) 78%, rgba(24, 4, 8, 0.22) 100%),
+    linear-gradient(180deg, rgba(24, 4, 8, 0.16) 0%, transparent 30%, transparent 72%, rgba(24, 4, 8, 0.18) 100%);
+}
