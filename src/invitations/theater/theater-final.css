@@ -8,9 +8,16 @@
    ============================================================================ */
 
 /* ----- shared paper backdrop, no white cards anywhere --------------------- */
+:root:has(.theater-theme),
+html:has(.theater-theme),
+body:has(.theater-theme),
+#root:has(.theater-theme) {
+  background: #f0e1c9 !important;
+}
+
 .theater-theme,
 .theater-ref-experience {
-  background: linear-gradient(180deg, #f3deb6 0%, #ead2a4 50%, #f3deb6 100%) !important;
+  background: #f0e1c9 !important;
   color: #2a0d08 !important;
   padding-bottom: 4rem !important;
 }
@@ -19,7 +26,7 @@
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: clamp(20px, 4vw, 48px) !important;
+  gap: clamp(28px, 5vw, 62px) !important;
   padding-top: 0 !important;
   width: 100% !important;
 }
@@ -383,7 +390,7 @@
 }
 
 /* ============================================================================
-   COUNTDOWN – countdown1.png landscape (3:2)
+   COUNTDOWN – countdownEmpty.png landscape (3:2)
    ============================================================================ */
 .theater-ref-experience .theater-ref-countdown {
   position: relative !important;
@@ -407,13 +414,13 @@
 
 .theater-ref-experience .theater-ref-countdown .theater-ref-count-grid {
   position: absolute !important;
-  left: 9.1% !important;
-  top: 46.2% !important;
-  width: 81.9% !important;
-  height: 33.9% !important;
+  left: 9.12% !important;
+  top: 46.05% !important;
+  width: 81.76% !important;
+  height: 33.78% !important;
   display: grid !important;
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 4.7% !important;
+  gap: 4.76% !important;
   margin: 0 !important;
   padding: 0 !important;
   z-index: 3 !important;
@@ -424,6 +431,7 @@
   border: 0 !important;
   box-shadow: none !important;
   display: flex !important;
+  position: relative !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
@@ -441,12 +449,20 @@
 }
 
 .theater-ref-experience .theater-ref-countdown .theater-ref-count-card strong {
+  position: absolute !important;
+  left: 50% !important;
+  top: 45.35% !important;
   display: block !important;
-  font-size: clamp(2rem, 8.4vw, 4.2rem) !important;
+  width: max-content !important;
+  max-width: 96% !important;
+  transform: translate(-50%, -50%) !important;
+  font-size: clamp(2.05rem, 8.15vw, 4.05rem) !important;
   font-weight: 700 !important;
   line-height: 1 !important;
   color: #78160f !important;
-  margin: 0 0 9% !important;
+  margin: 0 !important;
+  text-align: center !important;
+  font-variant-numeric: tabular-nums !important;
   text-shadow: 0 1px 0 rgba(255, 245, 218, 0.9), 0 2px 2px rgba(92, 38, 16, 0.18) !important;
 }
 
@@ -456,7 +472,7 @@
 }
 
 /* ============================================================================
-   STORY – uses story.png / story2.png / story3.png / story4.png as the
+   STORY – uses story.png / story.png / story.png / story.png as the
    FULL background for the entire poster.
    ============================================================================ */
 .theater-ref-experience .theater-ref-story {
@@ -472,15 +488,15 @@
 }
 .theater-ref-experience .theater-ref-story.theater-ref-story-2 {
   aspect-ratio: 360 / 640 !important;
-  background-image: url("../../assets/theater/story2.png") !important;
+  background-image: url("../../assets/theater/story.png") !important;
 }
 .theater-ref-experience .theater-ref-story.theater-ref-story-3 {
   aspect-ratio: 360 / 720 !important;
-  background-image: url("../../assets/theater/story3.png") !important;
+  background-image: url("../../assets/theater/story.png") !important;
 }
 .theater-ref-experience .theater-ref-story.theater-ref-story-4 {
   aspect-ratio: 360 / 800 !important;
-  background-image: url("../../assets/theater/story4.png") !important;
+  background-image: url("../../assets/theater/story.png") !important;
 }
 
 .theater-ref-experience .theater-ref-story > * {
@@ -494,7 +510,11 @@
   position: relative !important;
   width: min(640px, 100vw) !important;
   aspect-ratio: 1024 / 1536 !important;
-  background: url("../../assets/theater/details_transparent.png") center / 100% 100% no-repeat !important;
+  background-color: #f0e1c9 !important;
+  background-image: url("../../assets/theater/details_transparent.png") !important;
+  background-position: center !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
   overflow: hidden !important;
 }
 
@@ -504,9 +524,9 @@
 
 .theater-ref-experience .theater-ref-details .theater-ref-details-venue {
   position: absolute !important;
-  left: 35.8% !important;
-  top: 31.1% !important;
-  width: 48% !important;
+  left: 35.65% !important;
+  top: 31% !important;
+  width: 48.2% !important;
   display: block !important;
   z-index: 3 !important;
   margin: 0 !important;
@@ -522,10 +542,10 @@
 
 .theater-ref-experience .theater-ref-details .theater-ref-details-venue h3 {
   display: block !important;
-  margin: 0 0 0.35em !important;
+  margin: 0 0 0.24em !important;
   color: #70150f !important;
   font-family: 'Cinzel', 'Trajan Pro', serif !important;
-  font-size: clamp(0.84rem, 2.55vw, 1.54rem) !important;
+  font-size: clamp(0.92rem, 2.85vw, 1.7rem) !important;
   font-weight: 800 !important;
   letter-spacing: 0.06em !important;
   line-height: 1.12 !important;
@@ -546,12 +566,9 @@
 
 .theater-ref-experience .theater-ref-details .theater-ref-detail-row {
   position: absolute !important;
-  left: 23.9% !important;
-  top: 45.6% !important;
-  width: 61% !important;
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 19% !important;
+  inset: 0 !important;
+  display: block !important;
+  width: auto !important;
   z-index: 3 !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -560,11 +577,23 @@
 }
 
 .theater-ref-experience .theater-ref-details .theater-ref-detail-item {
+  position: absolute !important;
   display: block !important;
-  min-width: 0 !important;
   padding: 0 !important;
   background: transparent !important;
   text-align: left !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-detail-item:first-child {
+  left: 24.62% !important;
+  top: 45.55% !important;
+  width: 25.8% !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-detail-item:nth-child(2) {
+  left: 65% !important;
+  top: 45.55% !important;
+  width: 27.2% !important;
 }
 
 .theater-ref-experience .theater-ref-details .theater-ref-detail-item i,
@@ -574,10 +603,10 @@
 
 .theater-ref-experience .theater-ref-details .theater-ref-detail-item strong {
   display: block !important;
-  margin: 0 0 0.25em !important;
+  margin: 0 0 0.18em !important;
   color: #70150f !important;
   font-family: 'Cinzel', 'Trajan Pro', serif !important;
-  font-size: clamp(0.72rem, 2.15vw, 1.2rem) !important;
+  font-size: clamp(0.78rem, 2.38vw, 1.34rem) !important;
   font-weight: 800 !important;
   letter-spacing: 0.06em !important;
   line-height: 1.12 !important;
@@ -588,7 +617,7 @@
   display: block !important;
   color: #4b2414 !important;
   font-family: 'Cinzel', 'Trajan Pro', serif !important;
-  font-size: clamp(0.5rem, 1.5vw, 0.82rem) !important;
+  font-size: clamp(0.52rem, 1.62vw, 0.9rem) !important;
   font-weight: 700 !important;
   letter-spacing: 0.06em !important;
   line-height: 1.2 !important;
@@ -598,11 +627,11 @@
 .theater-ref-experience .theater-ref-details .theater-ref-map-card {
   display: block !important;
   position: absolute !important;
-  top: 51.2% !important;
-  left: 8.25% !important;
+  top: 51.02% !important;
+  left: 7.55% !important;
   right: auto !important;
-  width: 83.6% !important;
-  height: 31.7% !important;
+  width: 84.9% !important;
+  height: 32.12% !important;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
@@ -615,23 +644,17 @@
 
 .theater-ref-experience .theater-ref-details .theater-ref-map-card iframe {
   display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
   border: 0 !important;
-  opacity: 0.74 !important;
+  opacity: 0.92 !important;
   filter: sepia(0.35) saturate(0.8) contrast(0.9) !important;
 }
 
 .theater-ref-experience .theater-ref-details .theater-ref-map-pin {
-  position: absolute !important;
-  left: 50% !important;
-  top: 53% !important;
-  z-index: 5 !important;
-  display: block !important;
-  width: clamp(28px, 9vw, 54px) !important;
-  aspect-ratio: 1 !important;
-  transform: translate(-50%, -100%) !important;
-  background: url("../../assets/theater/details/mapPointer_transparent.png") center / contain no-repeat !important;
+  display: none !important;
 }
 
 .theater-ref-experience .theater-ref-details .theater-ref-map-pin span {
@@ -642,10 +665,10 @@
   content: "" !important;
   position: absolute !important;
   left: 50% !important;
-  top: -11% !important;
+  top: 1.15% !important;
   z-index: 6 !important;
   display: block !important;
-  width: 54% !important;
+  width: 44.6% !important;
   aspect-ratio: 1830 / 698 !important;
   transform: translateX(-50%) !important;
   background: url("../../assets/theater/details/findYourWay_transparent.png") center / contain no-repeat !important;
@@ -655,11 +678,11 @@
 .theater-ref-experience .theater-ref-details .theater-ref-map-card::after {
   content: "" !important;
   position: absolute !important;
-  right: 5.5% !important;
-  top: 9% !important;
+  right: 10.9% !important;
+  top: 6.85% !important;
   z-index: 6 !important;
   display: block !important;
-  width: clamp(28px, 8vw, 52px) !important;
+  width: clamp(48px, 15vw, 88px) !important;
   aspect-ratio: 1 !important;
   background: url("../../assets/theater/details/northNavIcon_transparent.png") center / contain no-repeat !important;
   pointer-events: none !important;
@@ -667,12 +690,12 @@
 
 .theater-ref-experience .theater-ref-details .theater-ref-map-card a {
   position: absolute !important;
-  right: 3.5% !important;
-  bottom: 4% !important;
+  right: 5.8% !important;
+  bottom: 5.05% !important;
   z-index: 7 !important;
   display: block !important;
-  width: 26% !important;
-  min-width: 92px !important;
+  width: 28.6% !important;
+  min-width: 118px !important;
   aspect-ratio: 1849 / 698 !important;
   height: auto !important;
   overflow: hidden !important;
@@ -680,6 +703,52 @@
   background: url("../../assets/theater/details/openInMaps_transparent.png") center / contain no-repeat !important;
   border: 0 !important;
   opacity: 1 !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-dress {
+  position: absolute !important;
+  left: 34.6% !important;
+  top: 88.42% !important;
+  z-index: 3 !important;
+  display: block !important;
+  width: 35.6% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  text-align: center !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-dress .theater-ref-dress-masks,
+.theater-ref-experience .theater-ref-details .theater-ref-dress em {
+  display: none !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-dress > div {
+  display: block !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-dress strong {
+  display: block !important;
+  margin: 0 0 0.32em !important;
+  color: #70150f !important;
+  font-family: 'Cinzel', 'Trajan Pro', serif !important;
+  font-size: clamp(0.76rem, 2.25vw, 1.3rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.16em !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+}
+
+.theater-ref-experience .theater-ref-details .theater-ref-dress p {
+  display: block !important;
+  margin: 0 !important;
+  color: #2f1b13 !important;
+  font-family: 'Cinzel', 'Trajan Pro', serif !important;
+  font-size: clamp(0.5rem, 1.44vw, 0.82rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.065em !important;
+  line-height: 1.28 !important;
+  text-transform: uppercase !important;
 }
 
 /* ============================================================================
@@ -699,23 +768,23 @@
 }
 .theater-ref-experience .theater-ref-memories.theater-ref-memories-2 {
   aspect-ratio: 400 / 600 !important;
-  background-image: url("../../assets/theater/memories2.png") !important;
+  background-image: url("../../assets/theater/memories1.png") !important;
 }
 .theater-ref-experience .theater-ref-memories.theater-ref-memories-3 {
   aspect-ratio: 400 / 600 !important;
-  background-image: url("../../assets/theater/memories3.png") !important;
+  background-image: url("../../assets/theater/memories1.png") !important;
 }
 .theater-ref-experience .theater-ref-memories.theater-ref-memories-4 {
   aspect-ratio: 400 / 600 !important;
-  background-image: url("../../assets/theater/memories4.png") !important;
+  background-image: url("../../assets/theater/memories1.png") !important;
 }
 .theater-ref-experience .theater-ref-memories.theater-ref-memories-5 {
   aspect-ratio: 400 / 600 !important;
-  background-image: url("../../assets/theater/memories5.png") !important;
+  background-image: url("../../assets/theater/memories1.png") !important;
 }
 .theater-ref-experience .theater-ref-memories.theater-ref-memories-6 {
   aspect-ratio: 360 / 640 !important;
-  background-image: url("../../assets/theater/memories6.png") !important;
+  background-image: url("../../assets/theater/memories1.png") !important;
 }
 
 .theater-ref-experience .theater-ref-memories > * {
@@ -921,25 +990,25 @@
 }
 
 .theater-ref-experience .theater-ref-hero-ticket .theater-ref-eyebrow {
-  left: 27.5% !important;
-  top: 28.35% !important;
-  width: 45% !important;
+  left: 27.2% !important;
+  top: 28.45% !important;
+  width: 45.6% !important;
   color: #74170f !important;
   font-family: 'Cinzel', 'Trajan Pro', serif !important;
-  font-size: clamp(0.58rem, 1.58vw, 1.02rem) !important;
+  font-size: clamp(0.58rem, 1.56vw, 1rem) !important;
   font-weight: 800 !important;
   letter-spacing: 0.105em !important;
   line-height: 1.15 !important;
 }
 
 .theater-ref-experience .theater-ref-hero-ticket h1 {
-  left: 21.6% !important;
-  top: 32.55% !important;
-  width: 56.8% !important;
+  left: 20.6% !important;
+  top: 32.65% !important;
+  width: 58.8% !important;
   display: block !important;
   color: #8f641b !important;
   font-family: 'Great Vibes', cursive !important;
-  font-size: clamp(2.65rem, 7.45vw, 5.95rem) !important;
+  font-size: clamp(2.85rem, 7.65vw, 6.08rem) !important;
   font-weight: 400 !important;
   letter-spacing: 0 !important;
   line-height: 0.9 !important;
@@ -968,7 +1037,7 @@
 
 .theater-ref-experience .theater-ref-hero-ticket .theater-ref-request {
   left: 25.5% !important;
-  top: 50.15% !important;
+  top: 50.05% !important;
   width: 49% !important;
   color: #671610 !important;
   font-family: 'Cinzel', 'Trajan Pro', serif !important;
@@ -979,8 +1048,8 @@
 }
 
 .theater-ref-experience .theater-ref-hero-ticket .theater-ref-hero-date {
-  left: 25.3% !important;
-  top: 56.15% !important;
+  left: 25.15% !important;
+  top: 56.22% !important;
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
   align-items: center !important;
@@ -1015,7 +1084,7 @@
 
 .theater-ref-experience .theater-ref-hero-ticket .theater-ref-doors {
   left: 31.1% !important;
-  top: 60.62% !important;
+  top: 60.74% !important;
   width: 37.8% !important;
   color: #65150f !important;
   font-family: 'Cinzel', 'Trajan Pro', serif !important;
@@ -1031,7 +1100,7 @@
 
 .theater-ref-experience .theater-ref-hero-ticket h2 {
   left: 24.6% !important;
-  top: 64.05% !important;
+  top: 63.98% !important;
   width: 50.8% !important;
   color: #75150f !important;
   font-family: 'Cinzel', 'Trajan Pro', serif !important;
@@ -1055,7 +1124,7 @@
 
 .theater-ref-experience .theater-ref-hero-ticket .theater-ref-message {
   left: 24% !important;
-  top: 70.75% !important;
+  top: 70.45% !important;
   width: 52% !important;
   color: #2f1a12 !important;
   font-family: 'Cinzel', 'Trajan Pro', serif !important;
@@ -1068,7 +1137,7 @@
 
 .theater-ref-experience .theater-ref-hero-ticket .theater-ref-admit {
   left: 22.9% !important;
-  top: 77.9% !important;
+  top: 77.55% !important;
   display: block !important;
   width: 54.2% !important;
   height: 10.8% !important;
@@ -1148,4 +1217,363 @@
 
 .theater-ref-experience .theater-ref-admit-side-right {
   right: 5.5% !important;
+}
+
+/* RSVP rebuild: rsvoEmpty.png base with transparent component overlays. */
+.theater-ref-experience .theater-ref-rsvp {
+  position: relative !important;
+  width: min(640px, 100vw) !important;
+  aspect-ratio: 1086 / 1448 !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background: url("../../assets/theater/rsvoEmpty.png") center / 100% 100% no-repeat !important;
+  overflow: hidden !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp > .theater-ref-rsvp-card {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-rsvp-card > * {
+  display: none !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-marquee-title,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-section-lead,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-rsvp-form,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-rsvp-success {
+  display: block !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-marquee-title {
+  position: absolute !important;
+  left: 19.5% !important;
+  top: 20.55% !important;
+  width: 61% !important;
+  height: 7.8% !important;
+  z-index: 3 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+  background: transparent !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-marquee-title > :not(p) {
+  display: none !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-marquee-title p {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #251711 !important;
+  font-family: 'Cinzel', 'Trajan Pro', serif !important;
+  font-size: clamp(0.66rem, 1.85vw, 1.16rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.13em !important;
+  line-height: 1.25 !important;
+  text-transform: uppercase !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-section-lead {
+  position: absolute !important;
+  left: 23.6% !important;
+  top: 33.15% !important;
+  z-index: 3 !important;
+  width: 52.8% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #251711 !important;
+  font-family: 'Cinzel', 'Trajan Pro', serif !important;
+  font-size: clamp(0.7rem, 1.9vw, 1.26rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.09em !important;
+  line-height: 1.42 !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-section-lead::after,
+.theater-ref-experience .theater-ref-rsvp .theater-ref-message-field::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 50% !important;
+  display: block !important;
+  width: 58% !important;
+  aspect-ratio: 1573 / 22 !important;
+  transform: translateX(-50%) !important;
+  background: url("../../assets/theater/rsvp/horizontalSeparator_transparent.png") center / contain no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-section-lead::after {
+  bottom: -64% !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form {
+  position: absolute !important;
+  left: 14.2% !important;
+  top: 42.45% !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 3 !important;
+  display: block !important;
+  width: 71.6% !important;
+  height: 47.3% !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-family: 'Cinzel', 'Playfair Display', serif !important;
+  color: #251711 !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form label,
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-line-field,
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-guests,
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-message-field {
+  background: transparent !important;
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #251711 !important;
+  font-family: inherit !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-line-field {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  display: grid !important;
+  grid-template-columns: 12% 1fr !important;
+  gap: 2.2% !important;
+  align-items: end !important;
+  width: 100% !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-line-field span {
+  display: block !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-line-field span::before {
+  content: "M" !important;
+  display: block !important;
+  color: #74170f !important;
+  font-family: 'Great Vibes', cursive !important;
+  font-size: clamp(3rem, 8.35vw, 5.25rem) !important;
+  line-height: 0.72 !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form input,
+.theater-ref-experience .theater-ref-rsvp-form textarea {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1.5px solid rgba(47, 27, 19, 0.74) !important;
+  border-radius: 0 !important;
+  color: #251711 !important;
+  font-family: inherit !important;
+  font-size: clamp(0.72rem, 2vw, 1.08rem) !important;
+  padding: 0.1em 0.3em !important;
+  outline: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form textarea {
+  border-bottom: 1.5px solid rgba(47, 27, 19, 0.74) !important;
+  resize: none !important;
+  min-height: 2.5em !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice {
+  position: absolute !important;
+  left: 7.6% !important;
+  top: 21.6% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 19.5% !important;
+  width: 84.8% !important;
+  background: transparent !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 1% !important;
+  width: 3.6% !important;
+  height: 78% !important;
+  transform: translateX(-50%) !important;
+  background: url("../../assets/theater/rsvp/verticalSeparator_transparent.png") center / contain no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice button {
+  background: transparent !important;
+  border: 0 !important;
+  color: #251711 !important;
+  font-family: inherit !important;
+  font-size: clamp(0.62rem, 1.85vw, 1.14rem) !important;
+  letter-spacing: 0.08em !important;
+  line-height: 1.08 !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: 23% minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 7% !important;
+  text-align: left !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice button span {
+  width: 100% !important;
+  aspect-ratio: 1 !important;
+  height: auto !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  background: url("../../assets/theater/rsvp/circle_transparent.png") center / contain no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice button.active span {
+  background:
+    radial-gradient(circle, #74170f 0 43%, transparent 45%),
+    url("../../assets/theater/rsvp/circle_transparent.png") center / contain no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-rsvp-choice button small {
+  display: block !important;
+  width: 100% !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+  font-size: 0.75em !important;
+  opacity: 0.75 !important;
+  grid-column: 2 !important;
+  margin-top: 0.08em !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-guests {
+  position: absolute !important;
+  left: 24.4% !important;
+  top: 39.4% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 34% !important;
+  gap: 2.4% !important;
+  align-items: end !important;
+  width: 61.5% !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-guests::before {
+  content: "" !important;
+  position: absolute !important;
+  left: -24.7% !important;
+  top: -24% !important;
+  display: block !important;
+  width: 20.6% !important;
+  aspect-ratio: 994 / 737 !important;
+  background: url("../../assets/theater/rsvp/seats_transparent.png") center / contain no-repeat !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-guests span {
+  color: #251711 !important;
+  font-size: clamp(0.58rem, 1.72vw, 1.04rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.085em !important;
+  line-height: 1.22 !important;
+  text-transform: uppercase !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-message-field {
+  position: absolute !important;
+  left: 9.6% !important;
+  top: 57.3% !important;
+  display: block !important;
+  width: 80.8% !important;
+  text-align: center !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-message-field::before {
+  top: -34% !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-message-field strong {
+  display: block !important;
+  color: #74170f !important;
+  font-size: clamp(0.68rem, 1.9vw, 1.18rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.11em !important;
+  text-transform: uppercase !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-message-field small {
+  display: block !important;
+  margin-top: 0.34em !important;
+  color: #251711 !important;
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  font-size: clamp(0.64rem, 1.75vw, 1.08rem) !important;
+  font-style: italic !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.1 !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-message-field textarea {
+  margin-top: 10.5% !important;
+  height: 2.65em !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-ticket-submit {
+  position: absolute !important;
+  left: 11.5% !important;
+  top: 82.4% !important;
+  z-index: 4 !important;
+  display: grid !important;
+  place-content: center !important;
+  width: 77% !important;
+  height: 16.2% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #74170f !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-ticket-submit span {
+  display: none !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp-form .theater-ref-ticket-submit small {
+  display: block !important;
+  width: 100% !important;
+  color: #251711 !important;
+  font-size: clamp(0.66rem, 1.8vw, 1.12rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.11em !important;
+  line-height: 1.15 !important;
+  text-transform: uppercase !important;
+}
+
+.theater-ref-experience .theater-ref-rsvp .theater-ref-rsvp-success {
+  position: absolute !important;
+  left: 21% !important;
+  top: 43% !important;
+  width: 58% !important;
+  z-index: 4 !important;
+  padding: 2.4% !important;
+  background: rgba(240, 225, 201, 0.88) !important;
+  border: 1px solid rgba(116, 23, 15, 0.55) !important;
+  text-align: center !important;
 }

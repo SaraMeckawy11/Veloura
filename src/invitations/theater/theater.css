@@ -283,7 +283,7 @@
   width: min(1536px, calc(100vw - 18px));
   aspect-ratio: 1536 / 1024;
   margin: 0 auto clamp(24px, 5vw, 70px);
-  background-image: url("../../assets/theater/countdown1.png");
+  background-image: url("../../assets/theater/countdownEmpty.png");
 }
 
 .theater-ref-count-grid {
@@ -526,15 +526,15 @@
 }
 
 .theater-ref-memories-1 { background-image: url("../../assets/theater/memories1.png"); }
-.theater-ref-memories-2 { background-image: url("../../assets/theater/memories2.png"); }
-.theater-ref-memories-3 { background-image: url("../../assets/theater/memories3.png"); }
-.theater-ref-memories-4 { background-image: url("../../assets/theater/memories4.png"); }
-.theater-ref-memories-5 { background-image: url("../../assets/theater/memories5.png"); }
+.theater-ref-memories-2 { background-image: url("../../assets/theater/memories1.png"); }
+.theater-ref-memories-3 { background-image: url("../../assets/theater/memories1.png"); }
+.theater-ref-memories-4 { background-image: url("../../assets/theater/memories1.png"); }
+.theater-ref-memories-5 { background-image: url("../../assets/theater/memories1.png"); }
 
 .theater-ref-memories-6 {
   width: min(941px, calc(100vw - 18px));
   aspect-ratio: 941 / 1672;
-  background-image: url("../../assets/theater/memories6.png");
+  background-image: url("../../assets/theater/memories1.png");
 }
 
 .theater-ref-film {
@@ -884,19 +884,19 @@
 .theater-ref-story-2 {
   width: min(948px, calc(100vw - 18px));
   aspect-ratio: 948 / 1659;
-  background-image: url("../../assets/theater/story2.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-3 {
   width: min(836px, calc(100vw - 18px));
   aspect-ratio: 836 / 1881;
-  background-image: url("../../assets/theater/story3.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-4 {
   width: min(756px, calc(100vw - 18px));
   aspect-ratio: 756 / 2079;
-  background-image: url("../../assets/theater/story4.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-scene {
@@ -1144,7 +1144,7 @@
   z-index: 12 !important;
   width: 134% !important;
   aspect-ratio: 1271 / 933 !important;
-  background-image: url("../../assets/theater/hero-crop/curtainUp.png") !important;
+  background-image: url("../../assets/theater/hero/curtainUp.png") !important;
   filter: drop-shadow(0 1.6cqw 2.4cqw rgba(0, 0, 0, 0.42));
 }
 
@@ -1154,7 +1154,7 @@
   z-index: 8 !important;
   width: 25.8% !important;
   aspect-ratio: 421 / 1453 !important;
-  background-image: url("../../assets/theater/hero-crop/curtainLeft.png") !important;
+  background-image: url("../../assets/theater/hero/curtainLeft.png") !important;
   filter: drop-shadow(1.2cqw 0.8cqw 1.4cqw rgba(0, 0, 0, 0.46));
 }
 
@@ -1164,7 +1164,7 @@
   z-index: 8 !important;
   width: 43.6% !important;
   aspect-ratio: 847 / 1523 !important;
-  background-image: url("../../assets/theater/hero-crop/curtainRight.png") !important;
+  background-image: url("../../assets/theater/hero/curtainRight.png") !important;
   filter: drop-shadow(-1.2cqw 0.8cqw 1.4cqw rgba(0, 0, 0, 0.46));
 }
 
@@ -1189,7 +1189,7 @@
   width: 58% !important;
   aspect-ratio: 1114 / 1339 !important;
   transform: translateX(-50%) !important;
-  background-image: url("../../assets/theater/hero-crop/chandelier.png") !important;
+  background-image: url("../../assets/theater/hero/chandelier.png") !important;
   filter:
     drop-shadow(0 0 1.5cqw rgba(255, 222, 151, 0.5))
     drop-shadow(0 2.1cqw 2.6cqw rgba(0, 0, 0, 0.34));
@@ -1201,7 +1201,7 @@
   z-index: 36 !important;
   width: 47.8% !important;
   aspect-ratio: 949 / 1219 !important;
-  background-image: url("../../assets/theater/hero-crop/flowerLeft.png") !important;
+  background-image: url("../../assets/theater/hero/flowerLeft.png") !important;
   filter: drop-shadow(1.2cqw 1.8cqw 2cqw rgba(0, 0, 0, 0.54));
 }
 
@@ -1211,7 +1211,7 @@
   z-index: 36 !important;
   width: 48.5% !important;
   aspect-ratio: 1035 / 1178 !important;
-  background-image: url("../../assets/theater/hero-crop/flowerRight.png") !important;
+  background-image: url("../../assets/theater/hero/flowerRight.png") !important;
   filter: drop-shadow(-1.2cqw 1.8cqw 2cqw rgba(0, 0, 0, 0.54));
 }
 
@@ -1241,7 +1241,7 @@
   display: block !important;
   container-type: inline-size;
   color: #681510 !important;
-  background: url("../../assets/theater/hero-crop/detailsTicket.png") center / 100% 100% no-repeat !important;
+  background: url("../../assets/theater/hero/detailsTicket.png") center / 100% 100% no-repeat !important;
   border: 0 !important;
   box-shadow:
     0 2.4cqw 3.2cqw rgba(20, 2, 4, 0.35),
@@ -1267,7 +1267,7 @@
   top: 6.5% !important;
   width: 41% !important;
   aspect-ratio: 1348 / 425 !important;
-  background: url("../../assets/theater/hero-crop/mask.png") center / 100% 100% no-repeat !important;
+  background: url("../../assets/theater/hero/mask.png") center / 100% 100% no-repeat !important;
 }
 
 .theater-ref-hero .theater-ref-mask span {
@@ -1283,7 +1283,7 @@
   height: 68.6% !important;
   color: transparent !important;
   font-size: 0 !important;
-  background: url("../../assets/theater/hero-crop/seperators.png") center / 100% 100% no-repeat !important;
+  background: url("../../assets/theater/hero/seperators.png") center / 100% 100% no-repeat !important;
   pointer-events: none !important;
 }
 
@@ -1459,7 +1459,7 @@
   margin: 0 !important;
   padding: 0 !important;
   display: block !important;
-  background: url("../../assets/theater/hero-crop/admitTicket.png") center / 100% 100% no-repeat !important;
+  background: url("../../assets/theater/hero/admitTicket.png") center / 100% 100% no-repeat !important;
   border: 0 !important;
   box-shadow: 0 1.4cqw 2.4cqw rgba(18, 2, 4, 0.42) !important;
 }
@@ -1558,19 +1558,19 @@
 .theater-ref-story-2 {
   width: min(948px, calc(100vw - 18px));
   aspect-ratio: 948 / 1659;
-  background-image: url("../../assets/theater/story2.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-3 {
   width: min(836px, calc(100vw - 18px));
   aspect-ratio: 836 / 1881;
-  background-image: url("../../assets/theater/story3.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-4 {
   width: min(756px, calc(100vw - 18px));
   aspect-ratio: 756 / 2079;
-  background-image: url("../../assets/theater/story4.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-scene {
@@ -6833,7 +6833,7 @@
   width: min(1536px, calc(100vw - 18px));
   aspect-ratio: 1536 / 1024;
   margin: 0 auto clamp(24px, 5vw, 70px);
-  background-image: url("../../assets/theater/countdown1.png");
+  background-image: url("../../assets/theater/countdownEmpty.png");
 }
 
 .theater-ref-count-grid {
@@ -7076,15 +7076,15 @@
 }
 
 .theater-ref-memories-1 { background-image: url("../../assets/theater/memories1.png"); }
-.theater-ref-memories-2 { background-image: url("../../assets/theater/memories2.png"); }
-.theater-ref-memories-3 { background-image: url("../../assets/theater/memories3.png"); }
-.theater-ref-memories-4 { background-image: url("../../assets/theater/memories4.png"); }
-.theater-ref-memories-5 { background-image: url("../../assets/theater/memories5.png"); }
+.theater-ref-memories-2 { background-image: url("../../assets/theater/memories1.png"); }
+.theater-ref-memories-3 { background-image: url("../../assets/theater/memories1.png"); }
+.theater-ref-memories-4 { background-image: url("../../assets/theater/memories1.png"); }
+.theater-ref-memories-5 { background-image: url("../../assets/theater/memories1.png"); }
 
 .theater-ref-memories-6 {
   width: min(941px, calc(100vw - 18px));
   aspect-ratio: 941 / 1672;
-  background-image: url("../../assets/theater/memories6.png");
+  background-image: url("../../assets/theater/memories1.png");
 }
 
 .theater-ref-film {
@@ -7432,19 +7432,19 @@
 .theater-ref-story-2 {
   width: min(948px, calc(100vw - 18px));
   aspect-ratio: 948 / 1659;
-  background-image: url("../../assets/theater/story2.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-3 {
   width: min(836px, calc(100vw - 18px));
   aspect-ratio: 836 / 1881;
-  background-image: url("../../assets/theater/story3.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-4 {
   width: min(756px, calc(100vw - 18px));
   aspect-ratio: 756 / 2079;
-  background-image: url("../../assets/theater/story4.png");
+  background-image: url("../../assets/theater/story.png");
 }
 
 .theater-ref-story-scene {

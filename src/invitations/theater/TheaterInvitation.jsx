@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TheaterSplash from './TheaterSplash';
 import './theater.css';
-import './theater-components.css';
 import './theater-final.css';
 import { buildInvitationImageSources, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
@@ -312,7 +311,6 @@ function TheaterReferenceExperience({
       )}
 
       <ReferenceDetails
-        billingCode={billingCode}
         fullDateStr={fullDateStr}
         dayStr={dayStr}
         monthStr={monthStr}
@@ -436,7 +434,6 @@ function ReferenceCountdown({ countdown }) {
 }
 
 function ReferenceDetails({
-  billingCode,
   fullDateStr,
   dayStr,
   monthStr,
@@ -473,7 +470,7 @@ function ReferenceDetails({
           <div>
             <span>Time</span>
             <strong>{timeStr || 'To be announced'}</strong>
-            <small>{billingCode}</small>
+            <small>Doors open</small>
           </div>
         </div>
       </div>
@@ -490,7 +487,7 @@ function ReferenceDetails({
         <span className="theater-ref-dress-masks" aria-hidden />
         <div>
           <strong>Dress Code</strong>
-          <p>Black tie optional. Dress to impress.</p>
+          <p>Black tie optional. Arrive ready for an encore.</p>
         </div>
         <em>Admit Two</em>
       </div>
