@@ -25,24 +25,24 @@ export const THEATER_DEMO_ORDER = {
   },
   storyMilestones: [
     {
-      date: '2018',
-      title: 'Curtain Call',
-      description: 'A chance encounter after the show - and our story began with applause still echoing.',
+      date: '2019',
+      title: 'First Meeting',
+      description: 'A simple coffee date became the start of something unforgettable.',
     },
     {
       date: '2020',
-      title: 'Opening Night',
-      description: 'Our first trip together felt like the premiere of a play we never wanted to end.',
+      title: 'First Adventure',
+      description: 'Our first trip together turned into a memory we would always cherish.',
     },
     {
-      date: '2023',
-      title: 'Center Stage',
-      description: 'We moved in, and every quiet evening became a duet worth memorizing.',
+      date: '2022',
+      title: 'A Golden Escape',
+      description: 'A sunset walk through the city became one of our most cherished memories',
     },
     {
       date: '2025',
       title: 'The Proposal',
-      description: 'Under a single warm spotlight, a question - and the only possible answer.',
+      description: 'A quiet sunset, a beautiful view, and a promise for forever.',
     },
   ],
   storyImages: [
