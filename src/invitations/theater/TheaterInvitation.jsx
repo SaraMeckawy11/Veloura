@@ -170,7 +170,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           dayOfMonth={dayOfMonth}
           timeStr={timeStr}
           venue={venue}
-          venueAddress={venueAddress}
           weddingDate={weddingDate}
         />
 
@@ -223,7 +222,6 @@ function HeroSection({
   dayOfMonth,
   timeStr,
   venue,
-  venueAddress,
   weddingDate,
 }) {
   return (
@@ -242,7 +240,6 @@ function HeroSection({
       )}
       {timeStr && <p className="theater-hero-time">Doors open at {timeStr}</p>}
       <h2>{venue || 'The Royale Grand Theatre'}</h2>
-      {venueAddress && <p className="theater-hero-address">{venueAddress}</p>}
     </section>
   );
 }
@@ -398,7 +395,8 @@ function RsvpSection({
           <label className="theater-message-field">
             <span>Message for the bride and groom</span>
             <textarea
-              rows={4}
+              rows={2}
+              placeholder="Share a wish, a memory, or a song…"
               value={rsvpForm.message}
               onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
             />
@@ -435,8 +433,8 @@ function RsvpChoice({ active, onClick, title, subtitle }) {
 
 function MemoriesSection({ images }) {
   const uniqueImages = useMemo(() => images.filter(byUniquePhoto), [images]);
-  const repeatCount = uniqueImages.length ? Math.max(3, Math.ceil(12 / uniqueImages.length)) : 0;
-  const loopImages = uniqueImages.length ? Array.from({ length: repeatCount }, () => uniqueImages).flat() : [];
+
+  if (!uniqueImages.length) return null;
 
   return (
     <section className="theater-memories" aria-labelledby="theater-memories-title">
@@ -449,16 +447,16 @@ function MemoriesSection({ images }) {
       <div className="theater-memories-track">
         {[0, 1].map(group => (
           <div className="theater-memories-group" key={group} aria-hidden={group > 0 ? 'true' : undefined}>
-            {loopImages.map((image, index) => (
-              <figure className="theater-memory-card" key={`${group}-${getInvitationPhotoSrc(image)}-${index}`}>
+            {uniqueImages.map((image, index) => (
+              <figure className="theater-memory-card" key={`${group}-${getInvitationPhotoSrc(image)}`}>
                 <img className="theater-memory-frame" src={memoriesContainer} alt="" aria-hidden="true" />
                 <div className="theater-memory-photo">
                   <InvitationPhoto
                     src={image}
                     sizes="(max-width: 720px) 220px, 300px"
-                    alt={`Memory ${(index % uniqueImages.length) + 1}`}
+                    alt={`Memory ${index + 1}`}
                     loading={group === 0 ? 'eager' : 'lazy'}
-                    fetchPriority={group === 0 && index < uniqueImages.length ? 'high' : 'auto'}
+                    fetchPriority={group === 0 ? 'high' : 'auto'}
                   />
                 </div>
               </figure>

@@ -63,7 +63,7 @@ body:has(.theater-theme),
 
 .theater-hero h1 {
   left: 18%;
-  top: 33.5%;
+  top: 36%;
   width: 64%;
   color: #8a5d1a;
   font-family: var(--font-script);
@@ -82,8 +82,16 @@ body:has(.theater-theme),
   white-space: nowrap;
 }
 
+.theater-hero h1 span:first-child {
+  margin-bottom: 0.22em;
+}
+
+.theater-hero h1 span:last-child {
+  margin-top: 0.22em;
+}
+
 .theater-hero h1 em {
-  margin: 0.04em 0 0.04em;
+  margin: 0;
   color: var(--theater-red);
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 0.34em;
@@ -94,13 +102,13 @@ body:has(.theater-theme),
 }
 
 .theater-hero-date {
-  left: 21%;
-  top: 55.4%;
+  left: 14%;
+  top: 56.2%;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 3%;
-  width: 58%;
+  gap: 2.5%;
+  width: 72%;
   color: var(--theater-red);
   font-family: var(--font-marquee);
   text-transform: uppercase;
@@ -108,11 +116,12 @@ body:has(.theater-theme),
 
 .theater-hero-date span {
   color: #331d15;
-  font-size: clamp(0.58rem, 1.55vw, 1rem);
+  font-size: clamp(0.55rem, 1.45vw, 0.94rem);
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   line-height: 1.05;
   text-align: center;
+  white-space: nowrap;
 }
 
 .theater-hero-date span:first-child {
@@ -141,7 +150,7 @@ body:has(.theater-theme),
 
 .theater-hero-time {
   left: 27%;
-  top: 62.5%;
+  top: 63.5%;
   width: 46%;
   color: #65150f;
   font-family: var(--font-marquee);
@@ -153,28 +162,15 @@ body:has(.theater-theme),
 }
 
 .theater-hero h2 {
-  left: 16%;
-  top: 67.4%;
-  width: 68%;
+  left: 14%;
+  top: 68.5%;
+  width: 72%;
   color: #74170f;
   font-family: var(--font-marquee);
-  font-size: clamp(0.66rem, 1.65vw, 1.08rem);
+  font-size: clamp(0.72rem, 1.78vw, 1.18rem);
   font-weight: 800;
   letter-spacing: 0.14em;
   line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.theater-hero-address {
-  left: 24%;
-  top: 70.9%;
-  width: 52%;
-  color: #4b2318;
-  font-family: var(--font-marquee);
-  font-size: clamp(0.5rem, 1.2vw, 0.82rem);
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  line-height: 1.15;
   text-transform: uppercase;
 }
 
@@ -258,17 +254,17 @@ body:has(.theater-theme),
 
 .theater-story-list {
   display: grid;
-  gap: clamp(28px, 5vw, 48px);
-  width: min(560px, calc(100vw - 32px));
+  gap: clamp(20px, 4vw, 36px);
+  width: min(520px, calc(100vw - 32px));
   margin: 0 auto;
 }
 
 .theater-story-card {
   display: grid;
   justify-items: center;
-  gap: clamp(10px, 2vw, 18px);
+  gap: clamp(6px, 1.4vw, 12px);
   width: 100%;
-  padding: clamp(14px, 3vw, 22px) clamp(14px, 3vw, 22px) clamp(18px, 3.5vw, 26px);
+  padding: clamp(10px, 2.2vw, 16px) clamp(12px, 2.6vw, 18px) clamp(12px, 2.6vw, 18px);
   border: 1px solid rgba(184, 134, 42, 0.45);
   border-radius: 8px;
   background: #f6e7c8;
@@ -278,8 +274,8 @@ body:has(.theater-theme),
 .theater-story-photo {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  padding: 2.4%;
+  aspect-ratio: 16 / 10;
+  padding: 1.8%;
   border: 1.5px solid rgba(184, 134, 42, 0.65);
   border-radius: 6px;
   background: #f0dcb1;
@@ -305,8 +301,8 @@ body:has(.theater-theme),
 }
 
 .theater-story-film {
-  width: 60%;
-  max-width: 320px;
+  width: 48%;
+  max-width: 240px;
   height: auto;
   object-fit: contain;
   pointer-events: none;
@@ -320,11 +316,11 @@ body:has(.theater-theme),
 
 .theater-story-copy span {
   display: inline-block;
-  margin-bottom: 0.45em;
-  padding: 0.1em 0.7em;
+  margin-bottom: 0.35em;
+  padding: 0.1em 0.6em;
   color: var(--theater-red);
   font-family: var(--font-marquee);
-  font-size: clamp(0.8rem, 2.4vw, 1.05rem);
+  font-size: clamp(0.7rem, 2vw, 0.92rem);
   font-weight: 800;
   letter-spacing: 0.18em;
   line-height: 1;
@@ -334,10 +330,10 @@ body:has(.theater-theme),
 }
 
 .theater-story-copy h3 {
-  margin: 0 0 0.5em;
+  margin: 0 0 0.35em;
   color: var(--theater-red);
   font-family: var(--font-marquee);
-  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(0.9rem, 2.6vw, 1.3rem);
   font-weight: 800;
   letter-spacing: 0.12em;
   line-height: 1.1;
@@ -345,14 +341,14 @@ body:has(.theater-theme),
 }
 
 .theater-story-copy p {
-  width: 92%;
+  width: 94%;
   margin: 0 auto;
   color: #2d1c16;
   font-family: var(--font-soft);
-  font-size: clamp(0.84rem, 2.2vw, 1.08rem);
+  font-size: clamp(0.76rem, 1.95vw, 0.98rem);
   font-style: italic;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .theater-details {
@@ -370,11 +366,11 @@ body:has(.theater-theme),
 
 .theater-details-map {
   position: absolute;
-  left: 8.5%;
-  top: 49%;
+  left: 9.5%;
+  top: 51%;
   z-index: 1;
-  width: 83%;
-  height: 31%;
+  width: 81%;
+  height: 30%;
   overflow: hidden;
   border-radius: 4px;
   background: #e1d1b4;
@@ -401,9 +397,9 @@ body:has(.theater-theme),
 }
 
 .theater-details-venue {
-  left: 33%;
-  top: 27%;
-  width: 56%;
+  left: 35%;
+  top: 29%;
+  width: 54%;
   text-align: left;
 }
 
@@ -433,13 +429,13 @@ body:has(.theater-theme),
 }
 
 .theater-details-date {
-  left: 21%;
-  top: 38.2%;
+  left: 23%;
+  top: 40.5%;
 }
 
 .theater-details-time {
-  left: 58%;
-  top: 38.2%;
+  left: 60%;
+  top: 40.5%;
 }
 
 .theater-details-date strong,
@@ -465,9 +461,9 @@ body:has(.theater-theme),
 }
 
 .theater-details-invite {
-  left: 21%;
-  top: 87%;
-  width: 58%;
+  left: 24%;
+  top: 89%;
+  width: 56%;
   text-align: center;
 }
 
@@ -521,7 +517,7 @@ body:has(.theater-theme),
 .theater-name-field {
   position: absolute;
   left: 0;
-  top: 0;
+  top: 6%;
   display: grid;
   grid-template-columns: 23% minmax(0, 1fr);
   align-items: end;
@@ -668,15 +664,22 @@ body:has(.theater-theme),
 }
 
 .theater-message-field textarea {
-  min-height: clamp(62px, 14vw, 96px);
-  padding: 0.55em 0.7em;
-  border: 1px solid rgba(47, 27, 19, 0.4);
+  min-height: clamp(40px, 9vw, 64px);
+  padding: 0.45em 0.6em;
+  border: 1px solid rgba(47, 27, 19, 0.35);
   border-radius: 4px;
-  background: rgba(255, 248, 230, 0.55);
+  background: rgba(255, 248, 230, 0.5);
+  font-family: var(--font-soft);
+  font-size: clamp(0.78rem, 2vw, 1rem);
   resize: none;
-  line-height: 1.4;
+  line-height: 1.35;
   text-align: left;
   transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.theater-message-field textarea::placeholder {
+  color: rgba(75, 36, 20, 0.55);
+  font-style: italic;
 }
 
 .theater-message-field textarea:focus {
