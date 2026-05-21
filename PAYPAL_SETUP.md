@@ -25,7 +25,7 @@ PAYPAL_CLIENT_ID=replace_me_paypal_client_id
 PAYPAL_CLIENT_SECRET=replace_me_paypal_client_secret
 PAYPAL_WEBHOOK_ID=replace_me_paypal_webhook_id
 
-PRICE_USD=89.00
+PRICE_USD=45.00
 PRICE_CURRENCY=USD
 ```
 

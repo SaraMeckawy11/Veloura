@@ -6,7 +6,7 @@ import '../styles/OrderFlow.css';
 const API = import.meta.env.VITE_API_URL || '/api';
 const STORAGE_KEY = 'veloura_order_draft';
 const PENDING_ORDER_KEY = 'veloura_pending_order_id';
-const DISPLAY_PRICE = '$89';
+const DISPLAY_PRICE = '$45';
 const DEFAULT_INVITATION_MESSAGE = 'Two Souls, One Destination.';
 const OLD_MESSAGE_HELP_TEXT = 'This text appears as the tagline under your names in the invitation ';
 
@@ -224,9 +224,9 @@ export default function OrderFlow() {
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
     { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', category: 'launch', envelope: 'Blue envelope opens to a bride and groom walking toward the sea', colorScheme: { primary: '#1f5f8f', secondary: '#ec866f', background: '#fffaf1' } },
+    { _id: 'theater', name: 'Theater', slug: 'theater', category: 'launch', envelope: 'Velvet curtain parts to reveal a softly lit stage', colorScheme: { primary: '#6e0f1f', secondary: '#c9a45a', background: '#fff5e1' } },
     { _id: 'gazebo-garden', name: 'Garden Pavilion', slug: 'gazebo-garden', category: 'launch', envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight', colorScheme: { primary: '#86ad61', secondary: '#fff8ea', background: '#eff8dc' } },
     { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', category: 'launch', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
-    { _id: 'theater', name: 'Theater', slug: 'theater', category: 'launch', envelope: 'Velvet curtain parts to reveal a softly lit stage', colorScheme: { primary: '#6e0f1f', secondary: '#c9a45a', background: '#fff5e1' } },
   ];
 
   const goToSuccessPage = useCallback((orderId) => {

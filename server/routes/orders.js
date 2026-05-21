@@ -17,7 +17,7 @@ import { getClientUrl } from '../config/urls.js';
 
 const router = Router();
 
-const PRICE_USD = process.env.PRICE_USD || '89.00';
+const PRICE_USD = process.env.PRICE_USD || '45.00';
 const CURRENCY = process.env.PRICE_CURRENCY || 'USD';
 const CLIENT_URL = getClientUrl();
 const HIDEABLE_WEDDING_FIELDS = new Set([
