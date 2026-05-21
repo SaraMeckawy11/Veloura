@@ -344,9 +344,16 @@ export default function OrderFlow() {
   });
 
   // Upload a single file to Cloudinary in the background and update photos state.
-  // Heavily hardened for Android — particularly the Google Photos picker, which
-  // routinely returns files with no extension, mimetype `application/octet-stream`,
-  // or (for cloud-only photos not downloaded to the device) zero bytes.
+  //
+  // Strategy: POST the file DIRECTLY to Cloudinary using a signed upload
+  // signature fetched from our backend. This bypasses our Express server's
+  // multipart parser entirely — which was the root cause of the Android
+  // failure (multer + Google Photos files with no extension and an
+  // application/octet-stream mimetype were a fragile combination).
+  //
+  // If the signature endpoint is unavailable (e.g. Cloudinary credentials not
+  // configured), we fall back to the legacy /api/upload multipart endpoint so
+  // local dev without Cloudinary still works.
   const uploadFileInBackground = useCallback((file, category, localId) => {
     const markFailed = (message) => {
       setPhotos(prev => ({
@@ -358,45 +365,84 @@ export default function OrderFlow() {
       setUploadError(message);
     };
 
-    // Cloud-only photos picked from Google Photos sometimes arrive with size 0
-    // because the actual bytes never finished downloading from the cloud.
-    // There's nothing we can upload — tell the user clearly.
+    const applySuccess = (url, publicId) => {
+      setPhotos(prev => ({
+        ...prev,
+        [category]: prev[category].map(p =>
+          p._localId === localId
+            ? { url, publicId, label: category, fit: normalizePhotoFit(p.fit) }
+            : p
+        ),
+      }));
+    };
+
+    // Cloud-only Google Photos files sometimes arrive with size 0 because the
+    // actual bytes never finished downloading from the cloud.
     if (!file || file.size === 0) {
-      markFailed('This photo isn’t downloaded on your device yet. Open it in Google Photos to download, then try again.');
+      markFailed('This photo isn’t downloaded on your device yet. Open it in Google Photos to download it, then try again.');
       return;
     }
 
-    // Build a sane filename. Some Android pickers give us "image" or
-    // "IMG_20231101_123456" with no extension; some give us "blob" or an empty
-    // string. Append .jpg in those cases so Cloudinary identifies the format
-    // correctly and the server's extension check has something to look at.
+    // Normalize the filename so Cloudinary always sees a recognizable
+    // extension — Android pickers commonly hand us "image", "blob", or
+    // "IMG_20231101_123456" with nothing after the underscore.
     const rawName = (file.name || '').trim();
     const hasExt = /\.[a-z0-9]{2,5}$/i.test(rawName);
     const filename = (!rawName || rawName === 'blob' || !hasExt)
       ? `${rawName && rawName !== 'blob' ? rawName : `photo-${Date.now()}`}.jpg`
       : rawName;
 
-    const fd = new FormData();
-    fd.append('photos', file, filename);
+    const uploadViaServer = () => {
+      const fd = new FormData();
+      fd.append('photos', file, filename);
+      fetch(`${API}/upload?category=${category}`, { method: 'POST', body: fd })
+        .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })).catch(() => ({ ok: r.ok, status: r.status, data: { error: `HTTP ${r.status}` } })))
+        .then(({ ok, status, data }) => {
+          if (!ok || !data.files?.[0]) {
+            throw new Error(data.error || `Upload failed (HTTP ${status})`);
+          }
+          applySuccess(data.files[0].url, data.files[0].publicId);
+        })
+        .catch((err) => {
+          markFailed(`Photo upload failed: ${err?.message || 'network error'}. Remove the photo and try again.`);
+        });
+    };
 
-    fetch(`${API}/upload?category=${category}`, { method: 'POST', body: fd })
-      .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })).catch(() => ({ ok: r.ok, status: r.status, data: { error: `HTTP ${r.status}` } })))
-      .then(({ ok, status, data }) => {
-        if (!ok || !data.files?.[0]) {
-          throw new Error(data.error || `Upload failed (HTTP ${status})`);
+    // Step 1: ask our backend for a Cloudinary upload signature.
+    fetch(`${API}/upload/signature?category=${encodeURIComponent(category)}`)
+      .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })).catch(() => ({ ok: r.ok, status: r.status, data: {} })))
+      .then(({ ok, data }) => {
+        if (!ok || !data.cloudName || !data.signature) {
+          // No Cloudinary signature available — fall back to the server-side
+          // multipart upload so this works in local dev without Cloudinary.
+          return uploadViaServer();
         }
-        // Swap the local preview with the Cloudinary URL
-        setPhotos(prev => ({
-          ...prev,
-          [category]: prev[category].map(p =>
-            p._localId === localId
-              ? { url: data.files[0].url, publicId: data.files[0].publicId, label: category, fit: normalizePhotoFit(p.fit) }
-              : p
-          ),
-        }));
+
+        // Step 2: POST the file straight to Cloudinary. No round trip through
+        // our Express server, so the previously fragile Android multer path
+        // is bypassed entirely.
+        const fd = new FormData();
+        fd.append('file', file, filename);
+        fd.append('api_key', data.apiKey);
+        fd.append('timestamp', String(data.timestamp));
+        fd.append('signature', data.signature);
+        fd.append('folder', data.folder);
+        if (data.transformation) fd.append('transformation', data.transformation);
+
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${data.cloudName}/${data.resourceType || 'image'}/upload`;
+
+        return fetch(cloudinaryUrl, { method: 'POST', body: fd })
+          .then(r => r.json().then(payload => ({ ok: r.ok, status: r.status, payload })).catch(() => ({ ok: r.ok, status: r.status, payload: {} })))
+          .then(({ ok: cloudOk, status: cloudStatus, payload }) => {
+            if (!cloudOk || !payload.secure_url) {
+              const message = payload?.error?.message || `Upload failed (HTTP ${cloudStatus})`;
+              throw new Error(message);
+            }
+            applySuccess(payload.secure_url, payload.public_id);
+          });
       })
       .catch((err) => {
-        markFailed(`Photo upload failed: ${err?.message || 'network error'}. Tap the photo to remove and try again.`);
+        markFailed(`Photo upload failed: ${err?.message || 'network error'}. Remove the photo and try again.`);
       });
   }, []);
 
