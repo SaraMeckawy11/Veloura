@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx eslint *)",
+      "Bash(echo \"DONE-$?\")",
+      "Bash(echo \"EXIT-$?\")",
+      "Bash(npm run *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(sleep 4 && cat /c/Users/sara1/AppData/Local/Temp/claude/C--Sara-Veloura/d6797c91-d600-44a3-bb8b-854a034be0aa/tasks/bygr97oz9.output)",
+      "PowerShell(npx eslint src/invitations/ 2>&1)",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 5173,5174,5175,3000,4173,8080 } | Select-Object LocalPort, OwningProcess)",
+      "Bash(git -C /c/Sara/Veloura add src/invitations/theater/TheaterInvitation.jsx src/invitations/theater/theater-final.css)",
+      "Bash(git -C /c/Sara/Veloura commit -m ' *)",
+      "Bash(git -C /c/Sara/Veloura push origin main)",
+      "Read(//c/Users/sara1/AppData/Local/Temp/claude/C--Sara-Veloura/d50888cd-dcfe-448d-ba39-75561334e07c/tasks/**)",
+      "Bash(git -C /c/Sara/Veloura add -A src/invitations/theater/)",
+      "Bash(git -C /c/Sara/Veloura status --short)",
+      "Bash(git reset *)",
+      "Bash(git restore *)",
+      "Bash(tasklist /FI \"IMAGENAME eq node.exe\" /FO TABLE)",
+      "PowerShell(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -in 5173,5174,4000,3000,8080 } | Select-Object LocalPort,OwningProcess | Format-Table -AutoSize)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"ProcessId IN \\(33940,35128,42076,42936,51216\\)\")",
+      "Bash(cat C:\\\\\\\\Users\\\\\\\\sara1\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\C--Sara-Veloura\\\\\\\\9458e23a-82a7-4986-b39b-13f0b570431f\\\\\\\\tasks\\\\\\\\bbrwaa80a.output)",
+      "Bash(grep -iE \"deploy|render|railway|fly|docker|procfile|\\\\.yml$|\\\\.yaml$\")",
+      "Bash(grep -E \"\\\\.\\(js|json\\)$\")",
+      "Bash(git show *)"
+    ]
+  }
+}
