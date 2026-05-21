@@ -224,8 +224,8 @@ export default function OrderFlow() {
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
     { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', category: 'launch', envelope: 'Blue envelope opens to a bride and groom walking toward the sea', colorScheme: { primary: '#1f5f8f', secondary: '#ec866f', background: '#fffaf1' } },
-    { _id: 'theater', name: 'Theater', slug: 'theater', category: 'launch', envelope: 'Velvet curtain parts to reveal a softly lit stage', colorScheme: { primary: '#6e0f1f', secondary: '#c9a45a', background: '#fff5e1' } },
     { _id: 'gazebo-garden', name: 'Garden Pavilion', slug: 'gazebo-garden', category: 'launch', envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight', colorScheme: { primary: '#86ad61', secondary: '#fff8ea', background: '#eff8dc' } },
+    { _id: 'theater', name: 'Theater', slug: 'theater', category: 'launch', envelope: 'Velvet curtain parts to reveal a softly lit stage', colorScheme: { primary: '#6e0f1f', secondary: '#c9a45a', background: '#fff5e1' } },
     { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', category: 'launch', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
   ];
 
@@ -311,22 +311,35 @@ export default function OrderFlow() {
 
   // Fallback for images the browser can't render natively (e.g. HEIC)
   // Create a small thumbnail data URL from a File (fits in localStorage without blowing the 5MB limit)
+  // Hardened against Android browsers that can silently fail to decode large
+  // camera photos — a 4s timeout guarantees the promise always resolves.
   const fileToThumbUrl = (file) => new Promise((resolve) => {
     const img = new Image();
     const blobUrl = URL.createObjectURL(file);
-    img.onload = () => {
-      const MAX = 200; // thumbnail size — small enough for localStorage
-      let w = img.width, h = img.height;
-      if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-      else { w = Math.round(w * MAX / h); h = MAX; }
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      URL.revokeObjectURL(blobUrl);
-      resolve(canvas.toDataURL('image/jpeg', 0.6));
+    let settled = false;
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      try { URL.revokeObjectURL(blobUrl); } catch { /* noop */ }
+      resolve(value);
     };
-    img.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(null); };
+    img.onload = () => {
+      try {
+        const MAX = 200; // thumbnail size — small enough for localStorage
+        let w = img.width, h = img.height;
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        finish(canvas.toDataURL('image/jpeg', 0.6));
+      } catch {
+        finish(null);
+      }
+    };
+    img.onerror = () => finish(null);
+    setTimeout(() => finish(null), 4000);
     img.src = blobUrl;
   });
 
@@ -360,7 +373,7 @@ export default function OrderFlow() {
       });
   }, []);
 
-  const handlePhotoUpload = async (e, category) => {
+  const handlePhotoUpload = (e, category) => {
     const files = e.target.files;
     if (!files.length) return;
     setUploadError('');
@@ -377,20 +390,26 @@ export default function OrderFlow() {
     // Reset input immediately so same file can be re-selected
     e.target.value = '';
 
-    // Create entries with blob URL (fast display) + thumbnail (localStorage persistence)
-    const entries = await Promise.all(filesToUpload.map(async (f) => {
+    // Build preview entries synchronously — never block the actual upload on
+    // image decoding. On Android, decoding large camera photos can stall the
+    // canvas thumbnail step indefinitely, which previously prevented the
+    // upload fetch from ever firing.
+    const entries = filesToUpload.map((file) => {
       const localId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-      const thumbUrl = await fileToThumbUrl(f);
-      return { file: f, localId, preview: {
-        url: URL.createObjectURL(f),
-        publicId: '',
-        label: category,
-        fit: DEFAULT_PHOTO_FIT,
-        _uploading: true,
-        _localId: localId,
-        _thumbUrl: thumbUrl, // small data URL saved to localStorage
-      }};
-    }));
+      return {
+        file,
+        localId,
+        preview: {
+          url: URL.createObjectURL(file),
+          publicId: '',
+          label: category,
+          fit: DEFAULT_PHOTO_FIT,
+          _uploading: true,
+          _localId: localId,
+          _thumbUrl: null,
+        },
+      };
+    });
 
     // Show previews instantly
     setPhotos(prev => ({
@@ -402,6 +421,20 @@ export default function OrderFlow() {
     for (const { file, localId } of entries) {
       uploadFileInBackground(file, category, localId);
     }
+
+    // Compute thumbnails in the background — used only for localStorage
+    // persistence if the user reloads mid-upload. A failure here is harmless.
+    entries.forEach(({ file, localId }) => {
+      fileToThumbUrl(file).then((thumbUrl) => {
+        if (!thumbUrl) return;
+        setPhotos(prev => ({
+          ...prev,
+          [category]: prev[category].map(p =>
+            p._localId === localId ? { ...p, _thumbUrl: thumbUrl } : p
+          ),
+        }));
+      });
+    });
   };
 
   const handleStoryMilestone = (index, key, value) => {
@@ -958,21 +991,33 @@ export default function OrderFlow() {
                           <label className="photo-upload-btn photo-upload-btn--square photo-upload-btn--template" style={storyPreviewStyle}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                             Photo
-                            <input type="file" accept="image/*,.heic,.heif" onChange={async (e) => {
+                            <input type="file" accept="image/*,.heic,.heif" onChange={(e) => {
                               const files = e.target.files;
                               if (!files.length) return;
                               setUploadError('');
                               const file = files[0];
                               e.target.value = '';
                               const localId = `story-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-                              const thumbUrl = await fileToThumbUrl(file);
+                              // Show preview + start upload immediately. Thumbnail
+                              // generation runs in the background and only affects
+                              // localStorage persistence — never block the upload
+                              // on it (was hanging some Android browsers).
                               setPhotos(prev => {
                                 const updated = [...prev.story];
-                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', fit: DEFAULT_PHOTO_FIT, _uploading: true, _localId: localId, _thumbUrl: thumbUrl };
+                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', fit: DEFAULT_PHOTO_FIT, _uploading: true, _localId: localId, _thumbUrl: null };
                                 return { ...prev, story: updated };
                               });
-                              // Background upload
                               uploadFileInBackground(file, 'story', localId);
+                              fileToThumbUrl(file).then((thumbUrl) => {
+                                if (!thumbUrl) return;
+                                setPhotos(prev => {
+                                  const updated = [...prev.story];
+                                  if (updated[i] && updated[i]._localId === localId) {
+                                    updated[i] = { ...updated[i], _thumbUrl: thumbUrl };
+                                  }
+                                  return { ...prev, story: updated };
+                                });
+                              });
                             }} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                           </label>
                         )}
