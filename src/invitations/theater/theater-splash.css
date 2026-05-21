@@ -22,7 +22,7 @@
     radial-gradient(ellipse 58% 24% at 50% 92%, rgba(177, 37, 61, 0.16), transparent 68%),
     repeating-linear-gradient(90deg, rgba(176, 125, 77, 0.05) 0 1px, transparent 1px 18px),
     linear-gradient(180deg, #fff8e8 0%, #f4dfb7 56%, #eed1a2 100%);
-  animation: theater-splash-stage-rise 3.2s ease-out both;
+  animation: theater-splash-stage-rise 4.4s ease-out both;
 }
 
 .theater-splash-stage::before {
@@ -77,6 +77,7 @@
   bottom: 0;
   z-index: 4;
   width: 57%;
+  background-color: #4a1810;
   background-image: url("../../assets/theater/splashCurtain.webp");
   background-repeat: no-repeat;
   background-size: 200% 100%;
@@ -87,14 +88,14 @@
   left: 0;
   background-position: left center;
   transform-origin: 0 50%;
-  animation: theater-splash-open-left 3.25s cubic-bezier(0.62, 0, 0.18, 1) both;
+  animation: theater-splash-open-left 4.6s cubic-bezier(0.62, 0, 0.18, 1) both;
 }
 
 .theater-splash-curtain-right {
   right: 0;
   background-position: right center;
   transform-origin: 100% 50%;
-  animation: theater-splash-open-right 3.25s cubic-bezier(0.62, 0, 0.18, 1) both;
+  animation: theater-splash-open-right 4.6s cubic-bezier(0.62, 0, 0.18, 1) both;
 }
 
 .theater-splash-vignette {
@@ -137,23 +138,6 @@
 
 }
 
-/* Reveal the rendered hero itself as the curtains open. */
-.theater-splash {
-  background: transparent;
-}
-
-.theater-splash-stage {
-  background: transparent;
-}
-
-.theater-splash-stage::before,
-.theater-splash-stage::after,
-.theater-splash-footlights {
-  display: none;
-}
-
-.theater-splash-vignette {
-  background:
-    radial-gradient(ellipse at 50% 48%, transparent 0 42%, rgba(24, 4, 8, 0.08) 78%, rgba(24, 4, 8, 0.22) 100%),
-    linear-gradient(180deg, rgba(24, 4, 8, 0.16) 0%, transparent 30%, transparent 72%, rgba(24, 4, 8, 0.18) 100%);
-}
+/* Hero is revealed by the splash's opacity fade-out (see TheaterSplash.jsx),
+   not by transparent gaps in the stage. Keeping the stage opaque prevents
+   the hero text from flashing through on mobile before the curtain image loads. */
