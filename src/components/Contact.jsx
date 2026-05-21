@@ -10,8 +10,9 @@ export default function Contact() {
       <div className="container">
         <div className="section-header reveal" ref={headerRef}>
           <span className="section-label">Get in Touch</span>
+          <h2 className="section-title">Let's create something beautiful</h2>
           <p className="section-subtitle">
-            Have a question or a custom invitation in mind? Reach us by email or Instagram.
+            Ready to get started? Reach out and we'll bring your dream invitation to life.
           </p>
         </div>
 
