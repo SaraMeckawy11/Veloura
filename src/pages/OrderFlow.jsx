@@ -344,21 +344,47 @@ export default function OrderFlow() {
   });
 
   // Upload a single file to Cloudinary in the background and update photos state.
-  // Android browsers sometimes hand us a File whose .name is empty or whose
-  // mimetype is application/octet-stream (e.g. HEIC files synced from iCloud,
-  // photos opened from Downloads). FormData.append with an explicit filename
-  // ensures the server sees a usable originalname, and the server's filter now
-  // accepts by extension as well as mimetype.
+  // Heavily hardened for Android — particularly the Google Photos picker, which
+  // routinely returns files with no extension, mimetype `application/octet-stream`,
+  // or (for cloud-only photos not downloaded to the device) zero bytes.
   const uploadFileInBackground = useCallback((file, category, localId) => {
+    const markFailed = (message) => {
+      setPhotos(prev => ({
+        ...prev,
+        [category]: prev[category].map(p =>
+          p._localId === localId ? { ...p, _uploading: false, _failed: true } : p
+        ),
+      }));
+      setUploadError(message);
+    };
+
+    // Cloud-only photos picked from Google Photos sometimes arrive with size 0
+    // because the actual bytes never finished downloading from the cloud.
+    // There's nothing we can upload — tell the user clearly.
+    if (!file || file.size === 0) {
+      markFailed('This photo isn’t downloaded on your device yet. Open it in Google Photos to download, then try again.');
+      return;
+    }
+
+    // Build a sane filename. Some Android pickers give us "image" or
+    // "IMG_20231101_123456" with no extension; some give us "blob" or an empty
+    // string. Append .jpg in those cases so Cloudinary identifies the format
+    // correctly and the server's extension check has something to look at.
+    const rawName = (file.name || '').trim();
+    const hasExt = /\.[a-z0-9]{2,5}$/i.test(rawName);
+    const filename = (!rawName || rawName === 'blob' || !hasExt)
+      ? `${rawName && rawName !== 'blob' ? rawName : `photo-${Date.now()}`}.jpg`
+      : rawName;
+
     const fd = new FormData();
-    const filename = file.name && file.name !== 'blob'
-      ? file.name
-      : `photo-${Date.now()}.jpg`;
     fd.append('photos', file, filename);
+
     fetch(`${API}/upload?category=${category}`, { method: 'POST', body: fd })
-      .then(r => r.json().then(data => ({ ok: r.ok, data })).catch(() => ({ ok: r.ok, data: { error: `HTTP ${r.status}` } })))
-      .then(({ ok, data }) => {
-        if (!ok || !data.files?.[0]) throw new Error(data.error || 'Upload failed');
+      .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })).catch(() => ({ ok: r.ok, status: r.status, data: { error: `HTTP ${r.status}` } })))
+      .then(({ ok, status, data }) => {
+        if (!ok || !data.files?.[0]) {
+          throw new Error(data.error || `Upload failed (HTTP ${status})`);
+        }
         // Swap the local preview with the Cloudinary URL
         setPhotos(prev => ({
           ...prev,
@@ -370,14 +396,7 @@ export default function OrderFlow() {
         }));
       })
       .catch((err) => {
-        // Keep the local preview visible but mark as failed — user can retry or remove
-        setPhotos(prev => ({
-          ...prev,
-          [category]: prev[category].map(p =>
-            p._localId === localId ? { ...p, _uploading: false, _failed: true } : p
-          ),
-        }));
-        setUploadError(`Photo upload failed: ${err?.message || 'network error'}. Tap the photo to remove and try again.`);
+        markFailed(`Photo upload failed: ${err?.message || 'network error'}. Tap the photo to remove and try again.`);
       });
   }, []);
 
