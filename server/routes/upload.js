@@ -4,14 +4,7 @@ import upload from '../middleware/upload.js';
 import cloudinary from '../config/cloudinary.js';
 
 const router = Router();
-// Categories that can be uploaded directly from the browser to Cloudinary via
-// a signed upload. Photos use this path so Android (especially the Google
-// Photos picker) doesn't have to round-trip the file through our Express
-// server's multipart parser, which was failing silently on certain devices.
-const ALLOWED_DIRECT_UPLOAD_CATEGORIES = new Set([
-  'music', 'gallery', 'story', 'venue', 'couple',
-]);
-const IMAGE_DIRECT_UPLOAD_CATEGORIES = new Set(['gallery', 'story', 'venue', 'couple']);
+const ALLOWED_DIRECT_UPLOAD_CATEGORIES = new Set(['music']);
 
 // Helper: upload buffer to Cloudinary
 function uploadToCloudinary(fileBuffer, options = {}) {
@@ -49,15 +42,7 @@ router.get('/signature', (req, res) => {
 
     const timestamp = Math.round(Date.now() / 1000);
     const folder = `veloura/uploads/${category}`;
-    const isImage = IMAGE_DIRECT_UPLOAD_CATEGORIES.has(category);
-    // For image uploads we also constrain the maximum dimensions at upload time
-    // so a 50-megapixel Android photo doesn't blow our Cloudinary storage
-    // budget. The same params must be included in the signed payload so
-    // Cloudinary accepts them on the direct POST.
-    const signedParams = isImage
-      ? { timestamp, folder, transformation: 'w_1600,h_1600,c_limit,q_auto,f_auto' }
-      : { timestamp, folder };
-    const signature = cloudinary.utils.api_sign_request(signedParams, apiSecret);
+    const signature = cloudinary.utils.api_sign_request({ timestamp, folder }, apiSecret);
 
     res.json({
       cloudName,
@@ -65,8 +50,7 @@ router.get('/signature', (req, res) => {
       timestamp,
       folder,
       signature,
-      resourceType: isImage ? 'image' : 'video',
-      transformation: signedParams.transformation || null,
+      resourceType: category === 'music' ? 'video' : 'image',
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

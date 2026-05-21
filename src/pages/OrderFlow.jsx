@@ -311,142 +311,56 @@ export default function OrderFlow() {
 
   // Fallback for images the browser can't render natively (e.g. HEIC)
   // Create a small thumbnail data URL from a File (fits in localStorage without blowing the 5MB limit)
-  // Hardened against Android browsers that can silently fail to decode large
-  // camera photos — a 4s timeout guarantees the promise always resolves.
   const fileToThumbUrl = (file) => new Promise((resolve) => {
     const img = new Image();
     const blobUrl = URL.createObjectURL(file);
-    let settled = false;
-    const finish = (value) => {
-      if (settled) return;
-      settled = true;
-      try { URL.revokeObjectURL(blobUrl); } catch { /* noop */ }
-      resolve(value);
-    };
     img.onload = () => {
-      try {
-        const MAX = 200; // thumbnail size — small enough for localStorage
-        let w = img.width, h = img.height;
-        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-        else { w = Math.round(w * MAX / h); h = MAX; }
-        const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        finish(canvas.toDataURL('image/jpeg', 0.6));
-      } catch {
-        finish(null);
-      }
+      const MAX = 200; // thumbnail size — small enough for localStorage
+      let w = img.width, h = img.height;
+      if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+      else { w = Math.round(w * MAX / h); h = MAX; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(blobUrl);
+      resolve(canvas.toDataURL('image/jpeg', 0.6));
     };
-    img.onerror = () => finish(null);
-    setTimeout(() => finish(null), 4000);
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); resolve(null); };
     img.src = blobUrl;
   });
 
-  // Upload a single file to Cloudinary in the background and update photos state.
-  //
-  // Strategy: POST the file DIRECTLY to Cloudinary using a signed upload
-  // signature fetched from our backend. This bypasses our Express server's
-  // multipart parser entirely — which was the root cause of the Android
-  // failure (multer + Google Photos files with no extension and an
-  // application/octet-stream mimetype were a fragile combination).
-  //
-  // If the signature endpoint is unavailable (e.g. Cloudinary credentials not
-  // configured), we fall back to the legacy /api/upload multipart endpoint so
-  // local dev without Cloudinary still works.
+  // Upload a single file to Cloudinary in the background and update photos state
   const uploadFileInBackground = useCallback((file, category, localId) => {
-    const markFailed = (message) => {
-      setPhotos(prev => ({
-        ...prev,
-        [category]: prev[category].map(p =>
-          p._localId === localId ? { ...p, _uploading: false, _failed: true } : p
-        ),
-      }));
-      setUploadError(message);
-    };
-
-    const applySuccess = (url, publicId) => {
-      setPhotos(prev => ({
-        ...prev,
-        [category]: prev[category].map(p =>
-          p._localId === localId
-            ? { url, publicId, label: category, fit: normalizePhotoFit(p.fit) }
-            : p
-        ),
-      }));
-    };
-
-    // Cloud-only Google Photos files sometimes arrive with size 0 because the
-    // actual bytes never finished downloading from the cloud.
-    if (!file || file.size === 0) {
-      markFailed('This photo isn’t downloaded on your device yet. Open it in Google Photos to download it, then try again.');
-      return;
-    }
-
-    // Normalize the filename so Cloudinary always sees a recognizable
-    // extension — Android pickers commonly hand us "image", "blob", or
-    // "IMG_20231101_123456" with nothing after the underscore.
-    const rawName = (file.name || '').trim();
-    const hasExt = /\.[a-z0-9]{2,5}$/i.test(rawName);
-    const filename = (!rawName || rawName === 'blob' || !hasExt)
-      ? `${rawName && rawName !== 'blob' ? rawName : `photo-${Date.now()}`}.jpg`
-      : rawName;
-
-    const uploadViaServer = () => {
-      const fd = new FormData();
-      fd.append('photos', file, filename);
-      fetch(`${API}/upload?category=${category}`, { method: 'POST', body: fd })
-        .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })).catch(() => ({ ok: r.ok, status: r.status, data: { error: `HTTP ${r.status}` } })))
-        .then(({ ok, status, data }) => {
-          if (!ok || !data.files?.[0]) {
-            throw new Error(data.error || `Upload failed (HTTP ${status})`);
-          }
-          applySuccess(data.files[0].url, data.files[0].publicId);
-        })
-        .catch((err) => {
-          markFailed(`Photo upload failed: ${err?.message || 'network error'}. Remove the photo and try again.`);
-        });
-    };
-
-    // Step 1: ask our backend for a Cloudinary upload signature.
-    fetch(`${API}/upload/signature?category=${encodeURIComponent(category)}`)
-      .then(r => r.json().then(data => ({ ok: r.ok, status: r.status, data })).catch(() => ({ ok: r.ok, status: r.status, data: {} })))
+    const fd = new FormData();
+    fd.append('photos', file);
+    fetch(`${API}/upload?category=${category}`, { method: 'POST', body: fd })
+      .then(r => r.json().then(data => ({ ok: r.ok, data })))
       .then(({ ok, data }) => {
-        if (!ok || !data.cloudName || !data.signature) {
-          // No Cloudinary signature available — fall back to the server-side
-          // multipart upload so this works in local dev without Cloudinary.
-          return uploadViaServer();
-        }
-
-        // Step 2: POST the file straight to Cloudinary. No round trip through
-        // our Express server, so the previously fragile Android multer path
-        // is bypassed entirely.
-        const fd = new FormData();
-        fd.append('file', file, filename);
-        fd.append('api_key', data.apiKey);
-        fd.append('timestamp', String(data.timestamp));
-        fd.append('signature', data.signature);
-        fd.append('folder', data.folder);
-        if (data.transformation) fd.append('transformation', data.transformation);
-
-        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${data.cloudName}/${data.resourceType || 'image'}/upload`;
-
-        return fetch(cloudinaryUrl, { method: 'POST', body: fd })
-          .then(r => r.json().then(payload => ({ ok: r.ok, status: r.status, payload })).catch(() => ({ ok: r.ok, status: r.status, payload: {} })))
-          .then(({ ok: cloudOk, status: cloudStatus, payload }) => {
-            if (!cloudOk || !payload.secure_url) {
-              const message = payload?.error?.message || `Upload failed (HTTP ${cloudStatus})`;
-              throw new Error(message);
-            }
-            applySuccess(payload.secure_url, payload.public_id);
-          });
+        if (!ok || !data.files?.[0]) throw new Error(data.error || 'Upload failed');
+        // Swap the local preview with the Cloudinary URL
+        setPhotos(prev => ({
+          ...prev,
+          [category]: prev[category].map(p =>
+            p._localId === localId
+              ? { url: data.files[0].url, publicId: data.files[0].publicId, label: category, fit: normalizePhotoFit(p.fit) }
+              : p
+          ),
+        }));
       })
-      .catch((err) => {
-        markFailed(`Photo upload failed: ${err?.message || 'network error'}. Remove the photo and try again.`);
+      .catch(() => {
+        // Keep the local preview visible but mark as failed — user can retry or remove
+        setPhotos(prev => ({
+          ...prev,
+          [category]: prev[category].map(p =>
+            p._localId === localId ? { ...p, _uploading: false, _failed: true } : p
+          ),
+        }));
+        setUploadError('One or more photos failed to upload. You can remove and re-add them.');
       });
   }, []);
 
-  const handlePhotoUpload = (e, category) => {
+  const handlePhotoUpload = async (e, category) => {
     const files = e.target.files;
     if (!files.length) return;
     setUploadError('');
@@ -463,26 +377,20 @@ export default function OrderFlow() {
     // Reset input immediately so same file can be re-selected
     e.target.value = '';
 
-    // Build preview entries synchronously — never block the actual upload on
-    // image decoding. On Android, decoding large camera photos can stall the
-    // canvas thumbnail step indefinitely, which previously prevented the
-    // upload fetch from ever firing.
-    const entries = filesToUpload.map((file) => {
+    // Create entries with blob URL (fast display) + thumbnail (localStorage persistence)
+    const entries = await Promise.all(filesToUpload.map(async (f) => {
       const localId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-      return {
-        file,
-        localId,
-        preview: {
-          url: URL.createObjectURL(file),
-          publicId: '',
-          label: category,
-          fit: DEFAULT_PHOTO_FIT,
-          _uploading: true,
-          _localId: localId,
-          _thumbUrl: null,
-        },
-      };
-    });
+      const thumbUrl = await fileToThumbUrl(f);
+      return { file: f, localId, preview: {
+        url: URL.createObjectURL(f),
+        publicId: '',
+        label: category,
+        fit: DEFAULT_PHOTO_FIT,
+        _uploading: true,
+        _localId: localId,
+        _thumbUrl: thumbUrl, // small data URL saved to localStorage
+      }};
+    }));
 
     // Show previews instantly
     setPhotos(prev => ({
@@ -494,20 +402,6 @@ export default function OrderFlow() {
     for (const { file, localId } of entries) {
       uploadFileInBackground(file, category, localId);
     }
-
-    // Compute thumbnails in the background — used only for localStorage
-    // persistence if the user reloads mid-upload. A failure here is harmless.
-    entries.forEach(({ file, localId }) => {
-      fileToThumbUrl(file).then((thumbUrl) => {
-        if (!thumbUrl) return;
-        setPhotos(prev => ({
-          ...prev,
-          [category]: prev[category].map(p =>
-            p._localId === localId ? { ...p, _thumbUrl: thumbUrl } : p
-          ),
-        }));
-      });
-    });
   };
 
   const handleStoryMilestone = (index, key, value) => {
@@ -995,7 +889,7 @@ export default function OrderFlow() {
                     <label className="photo-upload-btn">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                       Add
-                      <input type="file" multiple accept="image/*" onChange={e => handlePhotoUpload(e, 'venue')} />
+                      <input type="file" multiple accept="image/*,.heic,.heif" onChange={e => handlePhotoUpload(e, 'venue')} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                     </label>
                   )}
                   {photos.venue.map((photo, i) => (
@@ -1064,34 +958,22 @@ export default function OrderFlow() {
                           <label className="photo-upload-btn photo-upload-btn--square photo-upload-btn--template" style={storyPreviewStyle}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                             Photo
-                            <input type="file" accept="image/*" onChange={(e) => {
+                            <input type="file" accept="image/*,.heic,.heif" onChange={async (e) => {
                               const files = e.target.files;
                               if (!files.length) return;
                               setUploadError('');
                               const file = files[0];
                               e.target.value = '';
                               const localId = `story-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-                              // Show preview + start upload immediately. Thumbnail
-                              // generation runs in the background and only affects
-                              // localStorage persistence — never block the upload
-                              // on it (was hanging some Android browsers).
+                              const thumbUrl = await fileToThumbUrl(file);
                               setPhotos(prev => {
                                 const updated = [...prev.story];
-                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', fit: DEFAULT_PHOTO_FIT, _uploading: true, _localId: localId, _thumbUrl: null };
+                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', fit: DEFAULT_PHOTO_FIT, _uploading: true, _localId: localId, _thumbUrl: thumbUrl };
                                 return { ...prev, story: updated };
                               });
+                              // Background upload
                               uploadFileInBackground(file, 'story', localId);
-                              fileToThumbUrl(file).then((thumbUrl) => {
-                                if (!thumbUrl) return;
-                                setPhotos(prev => {
-                                  const updated = [...prev.story];
-                                  if (updated[i] && updated[i]._localId === localId) {
-                                    updated[i] = { ...updated[i], _thumbUrl: thumbUrl };
-                                  }
-                                  return { ...prev, story: updated };
-                                });
-                              });
-                            }} />
+                            }} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                           </label>
                         )}
                       </div>
@@ -1124,7 +1006,7 @@ export default function OrderFlow() {
                     <label className="photo-upload-btn photo-upload-btn--template photo-upload-btn--gallery" style={galleryPreviewStyle}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                       Add
-                      <input type="file" multiple accept="image/*" onChange={e => handlePhotoUpload(e, 'gallery')} />
+                      <input type="file" multiple accept="image/*,.heic,.heif" onChange={e => handlePhotoUpload(e, 'gallery')} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                     </label>
                   )}
                   {photos.gallery.map((photo, i) => (

@@ -616,7 +616,6 @@
   gap: 16px;
 }
 .photo-upload-btn {
-  position: relative;
   width: var(--upload-preview-width, 88px);
   height: auto;
   aspect-ratio: var(--upload-preview-aspect-ratio, 1 / 1);
@@ -631,18 +630,6 @@
   color: var(--text-secondary);
   cursor: pointer;
   transition: var(--transition);
-}
-
-/* Stretch the hidden file input across the whole label so taps on any part
-   of the button reliably open the file picker on Android. Zero-size inputs
-   were sometimes being skipped by Android's accessibility / touch layer. */
-.photo-upload-btn input[type="file"] {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
 }
 
 .photo-upload-btn--template,
