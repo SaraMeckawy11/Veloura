@@ -25,7 +25,12 @@
       "Bash(cat C:\\\\\\\\Users\\\\\\\\sara1\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\C--Sara-Veloura\\\\\\\\9458e23a-82a7-4986-b39b-13f0b570431f\\\\\\\\tasks\\\\\\\\bbrwaa80a.output)",
       "Bash(grep -iE \"deploy|render|railway|fly|docker|procfile|\\\\.yml$|\\\\.yaml$\")",
       "Bash(grep -E \"\\\\.\\(js|json\\)$\")",
-      "Bash(git show *)"
+      "Bash(git show *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(powershell -Command \"Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(node -e 'const fs=require\\('\\\\''fs'\\\\''\\);const b=fs.readFileSync\\('\\\\''__TRACKED_VAR__'\\\\''\\);const w=b.readUInt32BE\\(16\\),h=b.readUInt32BE\\(20\\);console.log\\('\\\\''__TRACKED_VAR__'\\\\'',w+'\\\\''x'\\\\''+h\\);')",
+      "Bash(node -e ' *)",
+      "Bash(echo \"exit:$?\")"
     ]
   }
 }

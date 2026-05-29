@@ -4,11 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const SPLASH_VIDEO = '/assets/eal.mp4';
 const SPLASH_POSTER = '/assets/gazebo-splash-video-first-frame.png';
-const SPLASH_PLAYBACK_RATE = 0.6;
-const SPLASH_END_PADDING_MS = 500;
-const FALLBACK_DISMISS_MS = 7600;
-const AUTO_OPEN_MIN_MS = 1300;
-const AUTO_OPEN_FALLBACK_MS = 2600;
+const SPLASH_PLAYBACK_RATE = 1.25;
+const SPLASH_END_PADDING_MS = 260;
+const FALLBACK_DISMISS_MS = 4200;
+const AUTO_OPEN_MIN_MS = 800;
+const AUTO_OPEN_FALLBACK_MS = 1500;
 
 export default function GazeboSplash({ onDismiss }) {
   const ambientVideoRef = useRef(null);

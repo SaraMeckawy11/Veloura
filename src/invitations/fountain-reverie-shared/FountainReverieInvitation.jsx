@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
-import CoastalSplash from './CoastalSplash';
-import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import FountainSplash from './FountainSplash';
+import FountainHeroText from './FountainHeroText';
+import './fountain-reverie.css';
+import { buildInvitationImageSources, containInvitationPhoto, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
-
-import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
-import cruiseShip from '../../assets/coastal/cruise-ship-clean.webp';
-import blueShellAsset from '../../assets/coastal/blue-shell-transparent.webp';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -35,20 +32,75 @@ function buildMapEmbedUrl(rawUrl, fallbackQuery) {
   return null;
 }
 
+function formatHeroTime(value) {
+  const raw = `${value || ''}`.trim();
+  if (!raw) return '';
+
+  const match = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?(?:\s*([AaPp][Mm]))?$/);
+  if (!match) return raw;
+
+  let hours = Number(match[1]);
+  const minutes = match[2];
+  const meridiem = match[3]?.toUpperCase() || (hours >= 12 ? 'PM' : 'AM');
+  hours = hours % 12 || 12;
+  return `${hours}:${minutes} ${meridiem}`;
+}
+
+function getTimeOfDayLine(value) {
+  const raw = `${value || ''}`.trim();
+  const match = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?(?:\s*([AaPp][Mm]))?$/);
+  if (!match) return '';
+
+  let hours = Number(match[1]);
+  const meridiem = match[3]?.toUpperCase();
+  if (meridiem === 'PM' && hours < 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+  if (hours < 12) return 'IN THE MORNING';
+  if (hours < 17) return 'IN THE AFTERNOON';
+  return 'IN THE EVENING';
+}
+
+function formatWeddingDateParts(date) {
+  if (!date) return { weekday: '', full: '', dayMonthYear: '', month: '', day: '' };
+  return {
+    weekday: date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase(),
+    full: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+    dayMonthYear: date.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }).toUpperCase(),
+    month: date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+    day: date.getDate(),
+  };
+}
+
 const FlourishSvg = ({ className = '' }) => (
-  <svg className={className} viewBox="0 0 110 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-    <path d="M0 7 Q 18 0 36 7 T 72 7 T 110 7" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
-    <circle cx="55" cy="7" r="2.2" fill="currentColor" opacity="0.85" />
-    <circle cx="20" cy="7" r="1" fill="currentColor" opacity="0.6" />
-    <circle cx="90" cy="7" r="1" fill="currentColor" opacity="0.6" />
+  <svg className={className} viewBox="0 0 190 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+    <path d="M4 11H77" stroke="currentColor" strokeWidth="0.85" opacity="0.7" />
+    <path d="M113 11H186" stroke="currentColor" strokeWidth="0.85" opacity="0.7" />
+    <path d="M95 4.5C98.6 8.5 98.6 13.5 95 17.5C91.4 13.5 91.4 8.5 95 4.5Z" stroke="currentColor" strokeWidth="0.9" />
+    <path d="M84 11C89 6.8 93 7.2 95 11C93 14.8 89 15.2 84 11Z" stroke="currentColor" strokeWidth="0.9" />
+    <path d="M106 11C101 6.8 97 7.2 95 11C97 14.8 101 15.2 106 11Z" stroke="currentColor" strokeWidth="0.9" />
+    <path d="M95 8.2C97.1 9.9 97.1 12.1 95 13.8C92.9 12.1 92.9 9.9 95 8.2Z" fill="currentColor" opacity="0.76" />
+    <circle cx="80" cy="11" r="1.15" fill="currentColor" opacity="0.74" />
+    <circle cx="110" cy="11" r="1.15" fill="currentColor" opacity="0.74" />
   </svg>
 );
 
-const BlueShellMark = ({ className = '' }) => (
-  <img className={className} src={blueShellAsset} alt="" aria-hidden="true" />
+const Crest = ({ initials }) => (
+  <div className="fountain-crest" aria-hidden>
+    <svg className="fountain-crest-frame" viewBox="0 0 170 118" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M85 7C103 23 122 21 129 45C137 73 114 98 85 103C56 98 33 73 41 45C48 21 67 23 85 7Z" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M27 80C45 64 62 72 85 90C108 72 125 64 143 80" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M19 88C39 88 46 96 64 96" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M151 88C131 88 124 96 106 96" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M85 1L90 11L101 12L92 19L95 30L85 24L75 30L78 19L69 12L80 11L85 1Z" stroke="currentColor" strokeWidth="1" />
+      <path d="M85 100L90 108L99 109L92 115L94 124L85 119L76 124L78 115L71 109L80 108L85 100Z" stroke="currentColor" strokeWidth="1" />
+    </svg>
+    <span>{initials[0] || 'A'}</span>
+    <i aria-hidden />
+    <span>{initials[1] || 'Z'}</span>
+  </div>
 );
 
-export default function CoastalBreezeInvitation({ order, demo = false, publicSlug }) {
+export default function FountainReverieInvitation({ order, demo = false, publicSlug, heroImage, variant = 'v1' }) {
   const [showSplash, setShowSplash] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
@@ -64,23 +116,14 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
-  const dayStr = weddingDate
-    ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' })
-    : '';
-  const monthStr = weddingDate
-    ? weddingDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
-    : '';
-  const dayOfMonth = weddingDate ? weddingDate.getDate() : '';
-  const fullDateStr = weddingDate
-    ? weddingDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
-    : '';
-  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime) : '';
+  const dateParts = formatWeddingDateParts(weddingDate);
+  const timeStr = fieldEnabled('weddingTime') ? formatHeroTime(wd.weddingTime) : '';
+  const timeOfDay = fieldEnabled('weddingTime') ? getTimeOfDayLine(wd.weddingTime) : '';
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
-  const message = fieldEnabled('message') ? (wd.message || 'With the sea as our witness, we begin forever.') : '';
-  const tideCode = wd.flightNo || `COAST-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
+  const initials = `${name1[0] || 'A'}${name2[0] || 'Z'}`.toUpperCase();
   const pad = (n) => n.toString().padStart(2, '0');
 
   const allPhotos = order.photos || [];
@@ -141,15 +184,15 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     });
 
     preloads.forEach(({ src, srcSet }) => {
-        const image = new Image();
-        image.decoding = 'async';
-        image.fetchPriority = 'high';
-        if (srcSet) {
-          image.srcset = srcSet;
-          image.sizes = '(max-width: 680px) 220px, 300px';
-        }
-        image.src = src;
-      });
+      const image = new Image();
+      image.decoding = 'async';
+      image.fetchPriority = 'high';
+      if (srcSet) {
+        image.srcset = srcSet;
+        image.sizes = '(max-width: 680px) 220px, 300px';
+      }
+      image.src = src;
+    });
 
     return () => links.forEach(link => link.remove());
   }, [isReferenceDemo, order]);
@@ -189,81 +232,60 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className="coastal-theme">
+    <div className={`fountain-theme fountain-theme-${variant}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
       {showSplash && (
-        <CoastalSplash onDismiss={handleSplashDismiss} />
+        <FountainSplash onDismiss={handleSplashDismiss} />
       )}
 
-      <section className="coastal-hero">
-        <div className="coastal-hero-bg" aria-hidden>
-          <img src={ceremonyArch} alt="" />
-          <div className="coastal-hero-bg-wash" />
+      <section className="fountain-hero">
+        <div className="fountain-hero-art">
+          <img className="fountain-hero-image" src={heroImage} alt="" aria-hidden="true" />
+          <motion.article
+            className="fountain-hero-copy"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+          >
+            <FountainHeroText
+              firstInitial={initials[0] || 'A'}
+              secondInitial={initials[1] || 'Z'}
+              bride={name1}
+              groom={name2}
+              day={dateParts.weekday || 'SATURDAY'}
+              date={dateParts.dayMonthYear || '24 MAY 2025'}
+              time={timeStr ? `AT ${timeStr}` : 'AT 5:30 PM'}
+              timeNote={timeOfDay || 'IN THE EVENING'}
+              venue={(venue || 'THE GARDEN PAVILION').toUpperCase()}
+              address1=""
+              address2=""
+            />
+          </motion.article>
         </div>
-
-        <motion.article
-          className="coastal-hero-card"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-        >
-          <span className="coastal-kicker">Please join us to</span>
-          <span className="coastal-kicker coastal-kicker-thin">celebrate the marriage of</span>
-
-          <h1>
-            <span className="coastal-hero-name">{name1}</span>
-            <span className="coastal-hero-amp">&amp;</span>
-            <span className="coastal-hero-name">{name2}</span>
-          </h1>
-
-          <FlourishSvg className="coastal-hero-flourish" />
-
-          {weddingDate ? (
-            <div className="coastal-hero-datepill">
-              <div>
-                <small>{dayStr ? dayStr.slice(0, 3).toUpperCase() : 'Day'}</small>
-              </div>
-              <span aria-hidden />
-              <div className="coastal-hero-datepill-month">
-                <small>{monthStr || 'Month'}</small>
-                <strong>{dayOfMonth || '—'}</strong>
-              </div>
-              <span aria-hidden />
-              <div>
-                <small>{timeStr || 'Time'}</small>
-              </div>
-            </div>
-          ) : null}
-
-          <p className="coastal-hero-venue">{venue || 'By the sea'}</p>
-
-          {message && <p className="coastal-hero-message">"{message}"</p>}
-        </motion.article>
       </section>
 
       {weddingDate && (
-        <section className="coastal-countdown coastal-section-denim">
+        <section className="fountain-countdown">
           <SectionTitle eyebrow="Save The Date" title="Counting The Moments" light />
-          <div className="coastal-count-grid">
+          <div className="fountain-count-grid">
             <CountdownUnit value={pad(timeLeft.days)} label="Days" />
             <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
             <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
             <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />
           </div>
-          <AnimatedBoat />
         </section>
       )}
 
       {!isReferenceDemo && couplePhotos.length > 0 && (
-        <section className="coastal-section coastal-couple-section">
-          <SectionTitle eyebrow="The couple" title="A Love" script="In Full Tide" />
-          <div className="coastal-couple-grid">
+        <section className="fountain-section fountain-couple-section">
+          <SectionTitle eyebrow="The Couple" title="A Love" script="In Bloom" />
+          <div className="fountain-couple-grid">
             {couplePhotos.map((photo, index) => (
               <motion.figure
                 key={index}
-                className="coastal-photo-frame coastal-couple-photo"
+                className="fountain-photo-frame fountain-couple-photo"
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -282,22 +304,22 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         <StorySection milestones={order.storyMilestones || []} images={storyPhotos} />
       ) : null}
 
-      <section className="coastal-section coastal-event-section">
+      <section className="fountain-section fountain-event-section">
         <SectionTitle eyebrow="The Big Day" title="Ceremony" script="& Reception" />
-        <div className="coastal-event-layout">
+        <div className="fountain-event-layout">
           <motion.div
-            className="coastal-event-card"
+            className="fountain-event-card"
             initial={{ opacity: 0, x: -28 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="coastal-kicker">{tideCode}</span>
-            <h3>{venue || 'The Shoreline'}</h3>
+            <span className="fountain-small-label">{dateParts.month && dateParts.day ? `${dateParts.month} ${dateParts.day}` : 'Wedding Day'}</span>
+            <h3>{venue || 'The Garden Pavilion'}</h3>
             <dl>
               <div>
                 <dt>Date</dt>
-                <dd>{fullDateStr || 'To be announced'}</dd>
+                <dd>{dateParts.full || 'To be announced'}</dd>
               </div>
               {timeStr && (
                 <div>
@@ -313,28 +335,19 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
               )}
             </dl>
             {embedSrc && (
-              <div className="coastal-map">
+              <div className="fountain-map">
                 <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
                 <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
           </motion.div>
 
-          <motion.div
-            className="coastal-event-art"
-            initial={{ opacity: 0, x: 28 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <img src={ceremonyArch} alt="" />
-          </motion.div>
         </div>
 
         {!isReferenceDemo && venuePhotos.length > 0 && (
-          <div className="coastal-venue-grid">
+          <div className="fountain-venue-grid">
             {venuePhotos.map((photo, index) => (
-              <figure key={index} className="coastal-photo-frame">
+              <figure key={index} className="fountain-photo-frame">
                 <InvitationPhoto src={photo} alt={`Venue ${index + 1}`} sizes="(max-width: 768px) 80vw, 320px" />
               </figure>
             ))}
@@ -343,121 +356,112 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       </section>
 
       {rsvpEnabled && (
-      <section className="coastal-rsvp-section">
-        <div className="coastal-rsvp-ocean" aria-hidden>
-          <span className="coastal-rsvp-foam coastal-rsvp-foam-one" />
-          <span className="coastal-rsvp-foam coastal-rsvp-foam-two" />
-          <BlueShellMark className="coastal-rsvp-watermark" />
-        </div>
-        <div className="coastal-rsvp-inner">
-          <div className="coastal-rsvp-intro">
-            <BlueShellMark className="coastal-rsvp-shell-mark" />
-            <span className="coastal-rsvp-eyebrow">RSVP</span>
-            <h2 className="coastal-rsvp-title">Kindly Respond</h2>
-            <p className="coastal-rsvp-lead">
-              We can't wait to celebrate with you. Please let us know by replying below.
-            </p>
-            <div className="coastal-rsvp-tide-card" aria-label="Wedding details">
-              <span>{fullDateStr || 'Date to be announced'}</span>
-              <strong>{venue || 'By the sea'}</strong>
+        <section className="fountain-rsvp-section">
+          <div className="fountain-rsvp-inner">
+            <div className="fountain-rsvp-intro">
+              <span className="fountain-small-label">RSVP</span>
+              <h2>Kindly Respond</h2>
+              <p>We cannot wait to celebrate beside the fountain light. Please let us know by replying below.</p>
+              <div className="fountain-rsvp-date-card" aria-label="Wedding details">
+                <span>{dateParts.full || 'Date to be announced'}</span>
+                <strong>{venue || 'The Garden Pavilion'}</strong>
+              </div>
             </div>
-          </div>
 
-          <AnimatePresence mode="wait">
-            {!rsvpSubmitted ? (
-              <motion.form
-                key="rsvp-form"
-                onSubmit={handleRsvp}
-                className="coastal-rsvp-card"
-                exit={{ opacity: 0, y: -20 }}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.55 }}
-              >
-                <div className="coastal-rsvp-grid">
-                  <div className="coastal-field coastal-field-full">
-                    <label htmlFor="rsvp-name">Full name</label>
-                    <input
-                      id="rsvp-name"
-                      type="text"
-                      required
-                      value={rsvpForm.guestName}
-                      onChange={event => setRsvpForm({ ...rsvpForm, guestName: event.target.value })}
-                      placeholder="Your full name"
-                    />
-                  </div>
+            <AnimatePresence mode="wait">
+              {!rsvpSubmitted ? (
+                <motion.form
+                  key="rsvp-form"
+                  onSubmit={handleRsvp}
+                  className="fountain-rsvp-card"
+                  exit={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.55 }}
+                >
+                  <div className="fountain-rsvp-grid">
+                    <div className="fountain-field fountain-field-full">
+                      <label htmlFor="fountain-rsvp-name">Full name</label>
+                      <input
+                        id="fountain-rsvp-name"
+                        type="text"
+                        required
+                        value={rsvpForm.guestName}
+                        onChange={event => setRsvpForm({ ...rsvpForm, guestName: event.target.value })}
+                        placeholder="Your full name"
+                      />
+                    </div>
 
-                  <div className="coastal-field">
-                    <label htmlFor="rsvp-guests">Guests</label>
-                    <input
-                      id="rsvp-guests"
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={rsvpForm.guestCount}
-                      onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value) || 1 })}
-                    />
-                  </div>
+                    <div className="fountain-field">
+                      <label htmlFor="fountain-rsvp-guests">Guests</label>
+                      <input
+                        id="fountain-rsvp-guests"
+                        type="number"
+                        min={1}
+                        max={10}
+                        value={rsvpForm.guestCount}
+                        onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value) || 1 })}
+                      />
+                    </div>
 
-                  <div className="coastal-field coastal-field-attending">
-                    <label>Will you attend?</label>
-                    <div className="coastal-rsvp-toggle" role="radiogroup" aria-label="Will you attend?">
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={rsvpForm.attending === 'yes'}
-                        className={rsvpForm.attending === 'yes' ? 'active' : ''}
-                        onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
-                      >
-                        Joyfully accept
-                      </button>
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={rsvpForm.attending === 'no'}
-                        className={rsvpForm.attending === 'no' ? 'active' : ''}
-                        onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
-                      >
-                        Regretfully decline
-                      </button>
+                    <div className="fountain-field fountain-field-attending">
+                      <label>Will you attend?</label>
+                      <div className="fountain-rsvp-toggle" role="radiogroup" aria-label="Will you attend?">
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={rsvpForm.attending === 'yes'}
+                          className={rsvpForm.attending === 'yes' ? 'active' : ''}
+                          onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
+                        >
+                          Joyfully accept
+                        </button>
+                        <button
+                          type="button"
+                          role="radio"
+                          aria-checked={rsvpForm.attending === 'no'}
+                          className={rsvpForm.attending === 'no' ? 'active' : ''}
+                          onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
+                        >
+                          Regretfully decline
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="fountain-field fountain-field-full">
+                      <label htmlFor="fountain-rsvp-message">Message <span>(optional)</span></label>
+                      <textarea
+                        id="fountain-rsvp-message"
+                        rows={4}
+                        value={rsvpForm.message}
+                        onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
+                        placeholder="Share a wish, a memory, or a song request..."
+                      />
                     </div>
                   </div>
 
-                  <div className="coastal-field coastal-field-full">
-                    <label htmlFor="rsvp-message">Message <span className="coastal-field-optional">(optional)</span></label>
-                    <textarea
-                      id="rsvp-message"
-                      rows={4}
-                      value={rsvpForm.message}
-                      onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
-                      placeholder="Share a wish, a memory, or a song request…"
-                    />
-                  </div>
-                </div>
-
-                {rsvpError && <p className="coastal-rsvp-error">{rsvpError}</p>}
-                <button type="submit" className="coastal-submit">
-                  <span>Send Response</span>
-                </button>
-              </motion.form>
-            ) : (
-              <motion.div
-                key="rsvp-success"
-                className="coastal-rsvp-card coastal-rsvp-success"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.45 }}
-              >
-                <BlueShellMark className="coastal-rsvp-success-shell" />
-                <span>Response received</span>
-                <h3>Thank you, {rsvpForm.guestName}</h3>
-                <p>Your reply has been sent to the couple. We can't wait to celebrate together.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
+                  {rsvpError && <p className="fountain-rsvp-error">{rsvpError}</p>}
+                  <button type="submit" className="fountain-submit">
+                    <span>Send Response</span>
+                  </button>
+                </motion.form>
+              ) : (
+                <motion.div
+                  key="rsvp-success"
+                  className="fountain-rsvp-card fountain-rsvp-success"
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.45 }}
+                >
+                  <span>Response received</span>
+                  <h3>Thank you, {rsvpForm.guestName}</h3>
+                  <p>Your reply has been sent to the couple. We cannot wait to celebrate together.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </section>
       )}
 
       {isReferenceDemo && order.galleryImages?.length ? (
@@ -466,18 +470,12 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         <GallerySection images={allGallery} />
       ) : null}
 
-      <footer className="coastal-footer">
-        <div className="coastal-footer-foam" aria-hidden />
-        <div className="coastal-footer-inner">
-          <BlueShellMark className="coastal-footer-shell" />
-          <p className="coastal-footer-script">with love</p>
-          <h2 className="coastal-footer-names">
-            {name1} <span className="coastal-footer-amp">&amp;</span> {name2}
-          </h2>
-          <div className="coastal-footer-rule" aria-hidden />
-          <p className="coastal-footer-meta-line">
-            Thank you for being part of our beginning
-          </p>
+      <footer className="fountain-footer">
+        <div className="fountain-footer-inner">
+          <p className="fountain-reception">with love</p>
+          <h2>{name1} <span>&amp;</span> {name2}</h2>
+          <FlourishSvg className="fountain-section-divider" />
+          <p>Thank you for being part of our beginning</p>
         </div>
       </footer>
     </div>
@@ -486,20 +484,20 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
 function SectionTitle({ eyebrow, title, script, light = false }) {
   return (
-    <div className={`coastal-section-title${light ? ' coastal-section-title-light' : ''}`}>
+    <div className={`fountain-section-title${light ? ' fountain-section-title-light' : ''}`}>
       <span>{eyebrow}</span>
       <h2>
         {title}
         {script && <span className="script">{script}</span>}
       </h2>
-      <FlourishSvg className="coastal-section-divider" />
+      <FlourishSvg className="fountain-section-divider" />
     </div>
   );
 }
 
 function CountdownUnit({ value, label }) {
   return (
-    <div className="coastal-count-unit">
+    <div className="fountain-count-unit">
       <strong>{value}</strong>
       <span>{label}</span>
     </div>
@@ -509,32 +507,28 @@ function CountdownUnit({ value, label }) {
 function StorySection({ milestones, images }) {
   const items = images.length
     ? images.map((src, index) => ({ src, ...(milestones[index] || {}) }))
-    : milestones.map((milestone) => ({ ...milestone, src: ceremonyArch }));
+    : milestones.map((milestone) => ({ ...milestone, src: '' }));
 
   return (
-    <section className="coastal-section coastal-story-section">
-      <SectionTitle eyebrow="Our story" title="The Route" script="Of Us" />
-      <div className="coastal-story-list">
+    <section className="fountain-section fountain-story-section">
+      <SectionTitle eyebrow="Our Story" title="The Path" script="To Forever" />
+      <div className="fountain-story-grid">
         {items.map((item, index) => (
           <motion.article
             key={index}
-            className="coastal-story-item"
-            initial={{ opacity: 0, y: 18 }}
+            className="fountain-story-card"
+            initial={{ opacity: 0, y: 26 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.55, delay: index * 0.08 }}
+            transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
           >
-            <motion.figure
-              className="coastal-photo-frame"
-              initial={{ opacity: 0, x: index % 2 === 0 ? -42 : 42 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.9, delay: index * 0.1 + 0.08, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <InvitationPhoto src={containInvitationPhoto(item.src)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 768px) 80vw, 280px" />
-            </motion.figure>
+            {item.src && (
+              <figure className="fountain-photo-frame fountain-story-photo">
+                <InvitationPhoto src={containInvitationPhoto(item.src)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 768px) 90vw, 380px" />
+              </figure>
+            )}
             {(item.date || item.title || item.description) && (
-              <div>
+              <div className="fountain-story-text">
                 {item.date && <span>{item.date}</span>}
                 {item.title && <h3>{item.title}</h3>}
                 {item.description && <p>{item.description}</p>}
@@ -555,7 +549,6 @@ function GallerySection({ images }) {
   const galleryImageKey = uniqueImages.map(getInvitationPhotoSrc).join('|');
   const galleryRowRef = useRef(null);
   const galleryUnitRef = useRef(null);
-  // Repeat images enough times to fill at least 2x the viewport for seamless looping
   const unitRepeatCount = uniqueImages.length ? Math.max(3, Math.ceil(12 / uniqueImages.length)) : 0;
   const unitImages = uniqueImages.length
     ? Array.from({ length: unitRepeatCount }, () => uniqueImages).flat()
@@ -596,7 +589,6 @@ function GallerySection({ images }) {
 
     const animate = (time) => {
       if (!previousTime) previousTime = time;
-      // Clamp to 0.04s for more consistent timing (esp. on iOS)
       const elapsedSeconds = Math.min((time - previousTime) / 1000, 0.04);
       previousTime = time;
 
@@ -709,7 +701,7 @@ function GallerySection({ images }) {
     const imageSrc = getInvitationPhotoSrc(src);
 
     return (
-      <figure key={`${groupIndex}-${imageSrc}-${index}`} className="coastal-gallery-card">
+      <figure key={`${groupIndex}-${imageSrc}-${index}`} className="fountain-gallery-card">
         <InvitationPhoto
           src={src}
           sizes="(max-width: 680px) 220px, 300px"
@@ -722,20 +714,20 @@ function GallerySection({ images }) {
   });
 
   return (
-    <section className="coastal-gallery-section">
-      <div className="coastal-gallery-header">
+    <section className="fountain-gallery-section">
+      <div className="fountain-gallery-header">
         <h2>Memories</h2>
       </div>
-      <div className="coastal-gallery-viewport">
+      <div className="fountain-gallery-viewport">
         <div
-          className={`coastal-gallery-row${unitImages.length ? ' coastal-gallery-row-loop' : ''}`}
+          className={`fountain-gallery-row${unitImages.length ? ' fountain-gallery-row-loop' : ''}`}
           ref={galleryRowRef}
         >
           {[0, 1, 2, 3].map((groupIndex) => (
             <div
               key={groupIndex}
               ref={groupIndex === 0 ? galleryUnitRef : null}
-              className="coastal-gallery-group"
+              className="fountain-gallery-group"
               aria-hidden={groupIndex > 0 ? 'true' : undefined}
             >
               {renderGalleryGroup(groupIndex)}
@@ -744,26 +736,5 @@ function GallerySection({ images }) {
         </div>
       </div>
     </section>
-  );
-}
-
-function AnimatedBoat({ small = false }) {
-  return (
-    <div className={`coastal-boat-wrap${small ? ' coastal-boat-wrap-small' : ''}`} aria-hidden>
-      <div className="coastal-boat">
-        <img src={cruiseShip} alt="" />
-      </div>
-      <span className="coastal-boat-wake" />
-    </div>
-  );
-}
-
-function CoastalBirds({ compact = false }) {
-  return (
-    <div className={`coastal-main-birds${compact ? ' coastal-main-birds-compact' : ''}`} aria-hidden>
-      <span />
-      <span />
-      <span />
-    </div>
   );
 }

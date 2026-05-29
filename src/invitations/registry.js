@@ -20,6 +20,14 @@ const registry = {
     component: lazy(() => import('./coastal-breeze/CoastalBreezeInvitation')),
     demoData: () => import('./coastal-breeze/demoData').then(m => m.COASTAL_BREEZE_DEMO_ORDER),
   },
+  'fountain-reverie-v1': {
+    component: lazy(() => import('./fountain-reverie-v1/FountainReverieV1Invitation')),
+    demoData: () => import('./fountain-reverie-v1/demoData').then(m => m.FOUNTAIN_REVERIE_V1_DEMO_ORDER),
+  },
+  'fountain-reverie-v2': {
+    component: lazy(() => import('./fountain-reverie-v2/FountainReverieV2Invitation')),
+    demoData: () => import('./fountain-reverie-v2/demoData').then(m => m.FOUNTAIN_REVERIE_V2_DEMO_ORDER),
+  },
   'gazebo-garden': {
     component: lazy(() => import('./gazebo-garden/GazeboGardenInvitation')),
     demoData: () => import('./gazebo-garden/demoData').then(m => m.GAZEBO_GARDEN_DEMO_ORDER),

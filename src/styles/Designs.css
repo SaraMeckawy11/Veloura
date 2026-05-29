@@ -96,6 +96,11 @@
   transition: transform 0.5s ease;
 }
 
+.design-card-image--fountain {
+  background-size: cover;
+  background-position: center 38%;
+}
+
 .design-card:hover .design-card-image {
   transform: scale(1.05);
 }

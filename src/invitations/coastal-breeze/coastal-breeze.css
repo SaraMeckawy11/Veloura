@@ -608,7 +608,7 @@
 
 .coastal-story-item {
   display: grid;
-  grid-template-columns: minmax(180px, 280px) 1fr;
+  grid-template-columns: minmax(190px, 280px) 1fr;
   gap: 32px;
   align-items: center;
   padding: 22px;
@@ -620,7 +620,7 @@
 }
 
 .coastal-story-item:nth-child(even) {
-  grid-template-columns: 1fr minmax(180px, 280px);
+  grid-template-columns: 1fr minmax(190px, 280px);
 }
 
 .coastal-story-item:nth-child(even) figure {
@@ -628,7 +628,12 @@
 }
 
 .coastal-story-item figure {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
+}
+
+.coastal-story-item figure > .invitation-photo {
+  --invitation-photo-scale: 1;
+  --invitation-photo-hover-scale: 1.03;
 }
 
 .coastal-story-item span {
@@ -1345,8 +1350,14 @@
   width: 100%;
   overflow: hidden;
   padding: 8px 0;
+  touch-action: pan-y;
+  cursor: grab;
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.coastal-gallery-viewport:active {
+  cursor: grabbing;
 }
 
 .coastal-gallery-row {
@@ -1381,6 +1392,7 @@
     0 18px 42px rgba(20, 53, 83, 0.14),
     0 1px 0 rgba(255, 255, 255, 0.7) inset;
   transition: transform 0.45s ease, box-shadow 0.45s ease;
+  scroll-snap-align: center;
 }
 
 .coastal-gallery-card:hover {

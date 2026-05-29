@@ -548,7 +548,7 @@
 .gazebo-story-art {
   position: relative;
   min-height: 14rem;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 0.5rem;
 }
@@ -561,8 +561,8 @@
 
 .gazebo-story-art > .invitation-photo {
   --invitation-photo-pad: 0.32rem;
-  --invitation-photo-scale: 1.08;
-  --invitation-photo-hover-scale: 1.12;
+  --invitation-photo-scale: 1;
+  --invitation-photo-hover-scale: 1.03;
   --invitation-photo-surface: linear-gradient(180deg, rgba(255, 255, 251, 0.9), rgba(241, 248, 236, 0.92));
   --invitation-photo-overlay-top: rgba(255, 255, 255, 0.08);
   --invitation-photo-overlay-bottom: rgba(245, 250, 238, 0.24);
@@ -942,8 +942,14 @@
   width: 100%;
   overflow: hidden;
   padding: 0.5rem 0;
+  touch-action: pan-y;
+  cursor: grab;
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.gazebo-gallery-viewport:active {
+  cursor: grabbing;
 }
 
 .gazebo-gallery-row {
@@ -979,6 +985,7 @@
     0 18px 42px rgba(69, 88, 59, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.72);
   transition: box-shadow 220ms ease, transform 220ms ease;
+  scroll-snap-align: center;
 }
 
 .gazebo-memory-card:hover {

@@ -356,6 +356,11 @@ body:has(.theater-theme),
   background: #2a1810;
 }
 
+.theater-story-photo .invitation-photo {
+  --invitation-photo-scale: 1;
+  --invitation-photo-hover-scale: 1.03;
+}
+
 .theater-story-photo-empty {
   position: absolute;
   inset: 0;
@@ -822,8 +827,14 @@ body:has(.theater-theme),
   width: 100%;
   overflow: hidden;
   padding-block: clamp(8px, 2vw, 16px);
+  touch-action: pan-y;
+  cursor: grab;
   mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.theater-memories-viewport:active {
+  cursor: grabbing;
 }
 
 .theater-memories-track {
@@ -832,7 +843,6 @@ body:has(.theater-theme),
   transform: translate3d(0, 0, 0);
   will-change: transform;
   backface-visibility: hidden;
-  pointer-events: none;
   transform-style: flat;
 }
 
@@ -855,6 +865,7 @@ body:has(.theater-theme),
   padding: 0;
   background: url("../../assets/theater/memories/emptyContainer_transparent.png") center / contain no-repeat;
   list-style: none;
+  scroll-snap-align: center;
 }
 
 .theater-memory-photo {

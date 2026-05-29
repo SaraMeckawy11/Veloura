@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
-import { formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
@@ -300,7 +300,7 @@ function StorySection({ items }) {
           <article className="theater-story-card" key={`${item.title || 'story'}-${index}`}>
             <div className="theater-story-photo">
               {item.image ? (
-                <InvitationPhoto src={item.image} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 720px) 76vw, 420px" />
+                <InvitationPhoto src={containInvitationPhoto(item.image)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 720px) 76vw, 420px" />
               ) : (
                 <div className="theater-story-photo-empty" aria-hidden="true" />
               )}
@@ -464,16 +464,27 @@ function MemoriesSection({ images }) {
     if (!track || !unit || !repeatedImages.length || typeof window === 'undefined') return undefined;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const viewport = track.parentElement;
     let animationFrame = 0;
     let distance = 0;
     let offset = 0;
     let previousTime = 0;
+    let isInteracting = false;
     let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
+
+    const wrapOffset = (value) => {
+      if (!distance) return 0;
+      return ((value % distance) + distance) % distance;
+    };
+
+    const applyOffset = (value) => {
+      offset = wrapOffset(value);
+      track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+    };
 
     const updateDistance = () => {
       distance = unit.scrollWidth;
-      offset = distance ? offset % distance : 0;
-      track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      applyOffset(offset);
     };
 
     const updateSpeed = () => {
@@ -485,10 +496,8 @@ function MemoriesSection({ images }) {
       const elapsedSeconds = Math.min((time - previousTime) / 1000, 0.04);
       previousTime = time;
 
-      if (distance > 0) {
-        offset += pixelsPerSecond * elapsedSeconds;
-        if (offset >= distance - 1) offset = 0;
-        track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      if (!isInteracting && distance > 0) {
+        applyOffset(offset + pixelsPerSecond * elapsedSeconds);
       }
 
       animationFrame = window.requestAnimationFrame(animate);
@@ -520,9 +529,60 @@ function MemoriesSection({ images }) {
     }
     window.addEventListener('resize', updateDistance);
     window.addEventListener('resize', updateSpeed);
+    let resumeTimer = 0;
+    let pointerActive = false;
+    let pointerStartX = 0;
+    let pointerStartOffset = 0;
+    const pause = () => {
+      isInteracting = true;
+      window.clearTimeout(resumeTimer);
+    };
+    const resumeSoon = () => {
+      window.clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(() => {
+        previousTime = 0;
+        isInteracting = false;
+      }, 700);
+    };
+    const handlePointerDown = (event) => {
+      if (!distance) return;
+      pointerActive = true;
+      pointerStartX = event.clientX;
+      pointerStartOffset = offset;
+      pause();
+      viewport?.setPointerCapture?.(event.pointerId);
+    };
+    const handlePointerMove = (event) => {
+      if (!pointerActive) return;
+      event.preventDefault();
+      applyOffset(pointerStartOffset - (event.clientX - pointerStartX));
+    };
+    const handlePointerEnd = (event) => {
+      if (!pointerActive) return;
+      pointerActive = false;
+      viewport?.releasePointerCapture?.(event.pointerId);
+      resumeSoon();
+    };
+    const handleWheel = (event) => {
+      const delta = Math.abs(event.deltaX) >= Math.abs(event.deltaY)
+        ? event.deltaX
+        : (event.shiftKey ? event.deltaY : 0);
+      if (!delta || !distance) return;
+      event.preventDefault();
+      pause();
+      applyOffset(offset + delta);
+      resumeSoon();
+    };
+    viewport?.addEventListener('pointerdown', handlePointerDown);
+    viewport?.addEventListener('pointermove', handlePointerMove);
+    viewport?.addEventListener('pointerup', handlePointerEnd);
+    viewport?.addEventListener('pointercancel', handlePointerEnd);
+    viewport?.addEventListener('pointerleave', handlePointerEnd);
+    viewport?.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
       window.cancelAnimationFrame(animationFrame);
+      window.clearTimeout(resumeTimer);
       resizeObserver?.disconnect();
       if (reducedMotion.removeEventListener) {
         reducedMotion.removeEventListener('change', startAnimation);
@@ -531,6 +591,12 @@ function MemoriesSection({ images }) {
       }
       window.removeEventListener('resize', updateDistance);
       window.removeEventListener('resize', updateSpeed);
+      viewport?.removeEventListener('pointerdown', handlePointerDown);
+      viewport?.removeEventListener('pointermove', handlePointerMove);
+      viewport?.removeEventListener('pointerup', handlePointerEnd);
+      viewport?.removeEventListener('pointercancel', handlePointerEnd);
+      viewport?.removeEventListener('pointerleave', handlePointerEnd);
+      viewport?.removeEventListener('wheel', handleWheel);
     };
   }, [repeatedImages.length, memoryImageKey]);
 

@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
+import fountainHero1Preview from '../assets/Fountain Reverie/hero.png';
+import fountainHero2Preview from '../assets/Fountain Reverie/hero2.png';
 import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
@@ -13,6 +15,30 @@ const designs = [
       badge: 'Available',
       badgeClass: 'badge-launch',
       demoPath: '/demo/coastal-breeze',
+    },
+    {
+      name: 'Fountain Reverie I',
+      category: 'launch',
+      description: 'A sunlit garden fountain design with ornate gold typography and an elegant door reveal.',
+      image: fountainHero1Preview,
+      overlay: 'linear-gradient(135deg, rgba(148,116,47,0.12), rgba(245,223,207,0.18))',
+      imageClassName: 'design-card-image--fountain',
+      hidePreviewText: true,
+      badge: 'Available',
+      badgeClass: 'badge-launch',
+      demoPath: '/demo/fountain-reverie-v1',
+    },
+    {
+      name: 'Fountain Reverie II',
+      category: 'launch',
+      description: 'A brighter floral fountain scene framed by garden pillars, soft gold, and romantic script.',
+      image: fountainHero2Preview,
+      overlay: 'linear-gradient(135deg, rgba(91,72,28,0.12), rgba(135,145,108,0.14))',
+      imageClassName: 'design-card-image--fountain',
+      hidePreviewText: true,
+      badge: 'Available',
+      badgeClass: 'badge-launch',
+      demoPath: '/demo/fountain-reverie-v2',
     },
     {
     name: 'Garden Pavilion',
@@ -207,14 +233,16 @@ export default function Designs() {
             >
               <div className="design-card-preview">
                 <div
-                  className="design-card-image"
+                  className={`design-card-image ${design.imageClassName || ''}`.trim()}
                   style={{
                     backgroundImage: `${design.overlay}, url(${design.image})`,
                   }}
                 >
-                  <span className={`design-preview-text ${design.previewClassName || ''}`.trim()}>
-                    {design.previewName || design.name}
-                  </span>
+                  {!design.hidePreviewText && (
+                    <span className={`design-preview-text ${design.previewClassName || ''}`.trim()}>
+                      {design.previewName || design.name}
+                    </span>
+                  )}
                 </div>
                 <span className={`design-badge ${design.badgeClass}`}>{design.badge}</span>
                 {design.demoPath && (

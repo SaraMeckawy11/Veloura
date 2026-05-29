@@ -1,51 +1,90 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* is used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import splashCurtainUrl from '../../assets/theater/splashCurtain.webp';
 import './theater-splash.css';
 
+const AUTO_OPEN_MIN_MS = 800;
+const AUTO_OPEN_FALLBACK_MS = 1500;
+
 export default function TheaterSplash({ onDismiss }) {
   const [fading, setFading] = useState(false);
   const [ready, setReady] = useState(false);
   const dismissRef = useRef(onDismiss);
+  const openingRef = useRef(false);
+  const fadeTimerRef = useRef(0);
+  const exitTimerRef = useRef(0);
 
-  // Keep the latest dismiss handler available without re-running the timer effect.
   useEffect(() => {
     dismissRef.current = onDismiss;
   }, [onDismiss]);
 
-  // Preload the curtain image. The CSS holds the curtains and stage paused
-  // (and keeps the splash backdrop opaque) until `ready` flips, so the hero
-  // text under the splash can't peek through before the curtain is visible.
-  useEffect(() => {
-    const img = new Image();
-    const markReady = () => setReady(true);
-    img.onload = markReady;
-    img.onerror = markReady; // fail open — never block the splash forever
-    img.src = splashCurtainUrl;
-    if (img.complete) markReady();
+  const startOpening = useCallback(() => {
+    if (openingRef.current) return;
+    openingRef.current = true;
+    setReady(true);
+    window.clearTimeout(fadeTimerRef.current);
+    window.clearTimeout(exitTimerRef.current);
+    fadeTimerRef.current = window.setTimeout(() => setFading(true), 2850);
+    exitTimerRef.current = window.setTimeout(() => dismissRef.current?.(), 3400);
   }, []);
 
-  // Only schedule the fade/dismiss after the curtain has actually appeared.
+  useEffect(() => () => {
+    window.clearTimeout(fadeTimerRef.current);
+    window.clearTimeout(exitTimerRef.current);
+  }, []);
+
   useEffect(() => {
-    if (!ready) return undefined;
-    const fadeTimer = window.setTimeout(() => setFading(true), 3700);
-    const exitTimer = window.setTimeout(() => dismissRef.current?.(), 4350);
-    return () => {
-      window.clearTimeout(fadeTimer);
-      window.clearTimeout(exitTimer);
+    let cancelled = false;
+    let openTimer = 0;
+    let fallbackTimer = 0;
+    let openScheduled = false;
+    const startedAt = performance.now();
+    const img = new Image();
+
+    const scheduleOpen = () => {
+      if (cancelled || openScheduled) return;
+      openScheduled = true;
+      const elapsed = performance.now() - startedAt;
+      const delay = Math.max(AUTO_OPEN_MIN_MS - elapsed, 0);
+      openTimer = window.setTimeout(() => {
+        if (!cancelled) startOpening();
+      }, delay);
     };
-  }, [ready]);
+
+    img.onload = scheduleOpen;
+    img.onerror = scheduleOpen;
+    img.src = splashCurtainUrl;
+    fallbackTimer = window.setTimeout(scheduleOpen, AUTO_OPEN_FALLBACK_MS);
+    if (img.complete) scheduleOpen();
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(openTimer);
+      window.clearTimeout(fallbackTimer);
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [startOpening]);
 
   return (
     <AnimatePresence>
       <motion.div
         key="theater-splash"
         className={`theater-splash${ready ? ' is-ready' : ''}`}
-        aria-hidden
+        role="button"
+        tabIndex={0}
+        aria-label="Open invitation"
+        onClick={startOpening}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            startOpening();
+          }
+        }}
         animate={fading ? { opacity: 0 } : { opacity: 1 }}
-        transition={fading ? { duration: 0.8, ease: 'easeInOut' } : { duration: 0.2 }}
-        exit={{ opacity: 0, transition: { duration: 0.7, ease: 'easeOut' } }}
+        transition={fading ? { duration: 0.65, ease: 'easeInOut' } : { duration: 0.2 }}
+        exit={{ opacity: 0, transition: { duration: 0.55, ease: 'easeOut' } }}
       >
         <div className="theater-splash-stage" aria-hidden>
           <span className="theater-splash-footlights" />

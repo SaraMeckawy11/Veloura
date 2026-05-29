@@ -34,8 +34,8 @@ const STARS = [
   { id: 9, left: 6, top: 75, delay: 1.1, dur: 1.9 },
 ];
 
-const AUTO_OPEN_MIN_MS = 1500;
-const AUTO_OPEN_FALLBACK_MS = 3000;
+const AUTO_OPEN_MIN_MS = 800;
+const AUTO_OPEN_FALLBACK_MS = 1500;
 
 export default function BoardingPassSplash({ onDismiss }) {
   const [dismissed, setDismissed] = useState(false);
@@ -50,7 +50,7 @@ export default function BoardingPassSplash({ onDismiss }) {
     if (dismissedRef.current) return;
     dismissedRef.current = true;
     setDismissed(true);
-    setTimeout(() => onDismissRef.current(), 1800);
+    setTimeout(() => onDismissRef.current(), 1300);
   }, []);
 
   useEffect(() => {
@@ -113,7 +113,7 @@ export default function BoardingPassSplash({ onDismiss }) {
             handleOpen();
           }
         }}
-        exit={{ opacity: 0, transition: { duration: 0.6, delay: 1.0 } }}
+        exit={{ opacity: 0, transition: { duration: 0.45, delay: 0.55 } }}
       >
         <div className="inv-splash-petals" aria-hidden>
           {PETALS.map((p) => (
@@ -178,7 +178,7 @@ export default function BoardingPassSplash({ onDismiss }) {
           }
           transition={
             dismissed
-              ? { duration: 1.6, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
+              ? { duration: 1.15, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
               : undefined
           }
         />

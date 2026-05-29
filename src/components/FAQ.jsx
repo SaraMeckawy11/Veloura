@@ -31,6 +31,10 @@ const faqs = [
     q: 'What if I need to change my wedding date?',
     a: 'Life happens and we understand. Date changes are completely free — just let us know and we\'ll update your invitation immediately. Your guests will always see the latest information.',
   },
+  {
+    q: 'I didn\'t receive my confirmation email — what should I do?',
+    a: 'After payment, we send a confirmation email with your invitation link right away. If you don\'t see it in your inbox, please check your spam or junk folder, as it can sometimes land there. Adding us to your contacts ensures future emails arrive safely.',
+  },
 ];
 
 export default function FAQ() {

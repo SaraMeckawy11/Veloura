@@ -19,6 +19,11 @@ export function getInvitationPhotoSrc(source) {
   return resolveInvitationPhoto(source).src;
 }
 
+export function containInvitationPhoto(source) {
+  const resolved = resolveInvitationPhoto(source);
+  return resolved.src ? { src: resolved.src, fit: 'contain' } : source;
+}
+
 export function formatInvitationTime(value) {
   const raw = `${value || ''}`.trim();
   if (!raw) return '';
