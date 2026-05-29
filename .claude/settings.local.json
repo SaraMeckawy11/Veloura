@@ -30,7 +30,10 @@
       "Bash(powershell -Command \"Get-Process -Name node -ErrorAction SilentlyContinue | Stop-Process -Force\")",
       "Bash(node -e 'const fs=require\\('\\\\''fs'\\\\''\\);const b=fs.readFileSync\\('\\\\''__TRACKED_VAR__'\\\\''\\);const w=b.readUInt32BE\\(16\\),h=b.readUInt32BE\\(20\\);console.log\\('\\\\''__TRACKED_VAR__'\\\\'',w+'\\\\''x'\\\\''+h\\);')",
       "Bash(node -e ' *)",
-      "Bash(echo \"exit:$?\")"
+      "Bash(echo \"exit:$?\")",
+      "Bash(Select-String -NotMatch \"node_modules\")",
+      "Bash(Select-Object -First 200)",
+      "Bash(node -e \"const fs=require\\('fs'\\);['hero.png','hero1empty.png','hero2.png','hero2empty.png'].forEach\\(f=>{try{const b=fs.readFileSync\\('src/assets/Fountain Reverie/'+f\\);const w=b.readUInt32BE\\(16\\),h=b.readUInt32BE\\(20\\);console.log\\(f,w+'x'+h\\);}catch\\(e\\){console.log\\(f,'ERR',e.message\\)}}\\)\")"
     ]
   }
 }

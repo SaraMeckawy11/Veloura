@@ -41,10 +41,9 @@
   background: #efe9dc;
 }
 
-.fountain-theme-v2 {
-  --fountain-hero-aspect: 1024 / 1536;
-  --fountain-hero-ratio: 0.6667;
-}
+/* Fountain Reverie II now uses the same 941×1672 hero art as V1, so it
+   inherits the base --fountain-hero-aspect / --fountain-hero-ratio. No V2
+   override is needed — overriding it letterboxed the image (gaps left/right). */
 
 .fountain-hero-art {
   position: relative;
@@ -135,9 +134,9 @@
 .fountain-small-label {
   display: block;
   margin: 0;
-  color: var(--fountain-ink);
+  color: var(--fountain-bronze);
   font-family: var(--font-display);
-  font-size: min(2.25cqw, 0.9cqh);
+  font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.34em;
   line-height: 1.35;
@@ -309,26 +308,8 @@
   pointer-events: none;
 }
 
-.fountain-theme-v2 .fountain-hero-text {
-  padding-top: min(9.8cqh, 5.8rem);
-}
-
-.fountain-theme-v2 .fountain-invite-text {
-  margin-top: min(1.2cqh, 0.75rem);
-}
-
-.fountain-theme-v2 .fountain-hero-text .fountain-divider {
-  margin-top: min(0.85cqh, 0.55rem);
-  margin-bottom: min(0.85cqh, 0.55rem);
-}
-
-.fountain-theme-v2 .fountain-details {
-  margin-top: min(1cqh, 0.7rem);
-}
-
-.fountain-theme-v2 .fountain-hero-text .fountain-reception {
-  margin-top: min(0.8cqh, 0.55rem);
-}
+/* Fountain Reverie II now shares V1's hero art (941×1672), so its hero text
+   inherits V1's spacing rhythm — no V2-specific hero overrides. */
 
 .fountain-monogram {
   margin-bottom: min(3cqh, 1.6rem);
@@ -525,64 +506,49 @@
   position: relative;
   z-index: 2;
   max-width: 760px;
-  margin: 0 auto 46px;
+  margin: 0 auto 42px;
   text-align: center;
 }
 
+/* Eyebrow — mirrors the hero "TOGETHER WITH THEIR FAMILIES" family line:
+   flat bronze ink, upright Cormorant, wide uppercase tracking. */
 .fountain-section-title span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  color: var(--fountain-gold);
+  display: block;
+  color: var(--fountain-bronze);
   font-family: var(--font-display);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.46em;
-  text-indent: 0.46em;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
   text-transform: uppercase;
-  text-shadow: 0 1px 0 rgba(255, 253, 247, 0.7);
 }
 
-.fountain-section-title span::before,
-.fountain-section-title span::after {
-  content: '';
-  width: clamp(24px, 6vw, 50px);
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--fountain-gold-soft) 60%, var(--fountain-gold));
-  opacity: 0.85;
-}
-
-.fountain-section-title span::after {
-  transform: scaleX(-1);
-}
-
+/* Title — upright Cormorant in the deep warm ink, echoing the hero's serif
+   display text. No italics, no gradients, no shadows. */
 .fountain-section-title h2 {
-  margin: 16px 0 0;
+  margin: 12px 0 0;
   color: var(--fountain-ink-dark);
   font-family: var(--font-display);
-  font-size: clamp(2.65rem, 6.1vw, 4.7rem);
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: 0.006em;
-  line-height: 1.02;
-  text-shadow: 0 1px 0 rgba(255, 253, 247, 0.62), 0 6px 22px rgba(124, 101, 54, 0.14);
+  font-size: clamp(2.1rem, 6vw, 3.5rem);
+  font-weight: 500;
+  font-style: normal;
+  letter-spacing: 0.01em;
+  line-height: 1.08;
 }
 
+/* Script accent — identical treatment to the hero couple names: Pinyon
+   Script in the same flat bronze. Sized with the viewport so long words
+   (e.g. "Reception") stay on one line and never clip on small screens. */
 .fountain-section-title h2 .script {
   display: block;
-  margin-top: 4px;
-  font-family: var(--font-script);
-  font-size: 1.12em;
+  margin-top: 6px;
+  color: var(--fountain-bronze);
+  font-family: 'Great Vibes', 'Cormorant Garamond', cursive;
+  font-size: clamp(1.3rem, 6.5vw, 3.5rem);
   font-weight: 400;
   font-style: normal;
-  line-height: 0.9;
-  color: var(--fountain-gold);
-  background: linear-gradient(104deg, var(--fountain-gold-soft), var(--fountain-gold) 46%, #6f531c);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 1px rgba(124, 101, 54, 0.22));
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .fountain-section-title-light h2,
@@ -592,10 +558,10 @@
 
 .fountain-section-divider {
   display: block;
-  width: clamp(150px, 22vw, 190px);
-  margin: 22px auto 0;
+  width: clamp(140px, 20vw, 180px);
+  margin: 18px auto 0;
   color: var(--fountain-gold);
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .fountain-count-grid {
@@ -809,12 +775,12 @@
 }
 
 .fountain-event-card h3 {
-  margin: 14px 0 24px;
+  margin: 0 0 26px;
   color: var(--fountain-ink-dark);
   font-family: var(--font-display);
   font-size: clamp(2rem, 4.6vw, 3rem);
-  font-weight: 300;
-  line-height: 1.05;
+  font-weight: 500;
+  line-height: 1.06;
 }
 
 .fountain-event-card dl {
@@ -825,10 +791,11 @@
 
 .fountain-event-card dt {
   display: block;
-  color: var(--fountain-gold);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.28em;
+  color: var(--fountain-bronze);
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
 }
 
@@ -930,13 +897,13 @@
 }
 
 .fountain-rsvp-intro h2 {
-  margin: 14px 0;
+  margin: 10px 0 16px;
   color: var(--fountain-bronze);
-  font-family: var(--font-script);
-  font-size: clamp(3.2rem, 7vw, 5.2rem);
+  font-family: 'Great Vibes', 'Cormorant Garamond', cursive;
+  font-size: clamp(3rem, 6.6vw, 4.8rem);
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 0.95;
+  line-height: 1.04;
   text-transform: none;
 }
 
@@ -963,10 +930,11 @@
 
 .fountain-rsvp-date-card span {
   display: block;
-  color: var(--fountain-gold);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
+  color: var(--fountain-bronze);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
 }
 
@@ -1197,11 +1165,11 @@
   position: relative;
   margin: 0;
   color: var(--fountain-bronze);
-  font-family: var(--font-script);
-  font-size: clamp(3.4rem, 7vw, 5.4rem);
+  font-family: 'Great Vibes', 'Cormorant Garamond', cursive;
+  font-size: clamp(2.4rem, 8vw, 4.6rem);
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 0.95;
+  line-height: 1.08;
   text-transform: none;
 }
 
@@ -1571,10 +1539,14 @@
     font-size: min(4.2cqw, 1.7cqh);
   }
 
-  .fountain-small-caps,
-  .fountain-small-label {
+  .fountain-small-caps {
     font-size: min(2.25cqw, 0.9cqh);
     letter-spacing: 0.34em;
+  }
+
+  .fountain-small-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
   }
 
   .fountain-divider {
@@ -1923,69 +1895,5 @@
   line-height: 1;
 }
 
-/* Variant 2 (wider, shorter canvas): keep the stack compact while matching
-   the same reference typography and spacing rhythm. */
-.fountain-theme-v2 .fountain-hero-text {
-  padding-top: min(10.8cqh, 5.9rem);
-}
-
-.fountain-theme-v2 .fountain-mono {
-  width: min(15cqw, 122px);
-  margin-bottom: min(0.6cqh, 5px);
-}
-
-.fountain-theme-v2 .fountain-fam {
-  font-size: min(2.2cqw, 14.5px);
-}
-
-.fountain-theme-v2 .fountain-rule {
-  width: min(31cqw, 186px);
-  margin-top: min(1.05cqh, 8px);
-  margin-bottom: min(1.05cqh, 8px);
-}
-
-.fountain-theme-v2 .fountain-couple {
-  margin: min(0.45cqh, 4px) 0;
-}
-
-.fountain-theme-v2 .fountain-couple h1 {
-  font-size: min(8.6cqw, 66px);
-  line-height: 0.98;
-}
-
-.fountain-theme-v2 .fountain-couple__amp {
-  width: min(22cqw, 144px);
-  margin-top: min(0.6cqh, 5px);
-  margin-bottom: min(0.6cqh, 5px);
-}
-
-.fountain-theme-v2 .fountain-invite {
-  margin-top: min(1cqh, 8px);
-}
-
-.fountain-theme-v2 .fountain-invite p {
-  margin: min(0.42cqh, 3px) 0;
-  font-size: min(2.4cqw, 15.5px);
-}
-
-.fountain-theme-v2 .fountain-info {
-  width: min(52cqw, 372px);
-  margin-top: min(1.1cqh, 9px);
-}
-
-.fountain-theme-v2 .fountain-info__title {
-  font-size: min(1.85cqw, 12px);
-}
-
-.fountain-theme-v2 .fountain-info__line {
-  font-size: min(1.6cqw, 10.5px);
-}
-
-.fountain-theme-v2 .fountain-info__sep {
-  height: min(8.9cqh, 60px);
-}
-
-.fountain-theme-v2 .fountain-recep {
-  margin-top: min(0.85cqh, 7px);
-  font-size: min(5cqw, 32px);
-}
+/* Variant 2 intentionally has no hero-text overrides: it shares V1's art and
+   therefore V1's monogram / names / details spacing rhythm. */

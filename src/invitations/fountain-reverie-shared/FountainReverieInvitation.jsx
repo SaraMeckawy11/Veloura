@@ -314,7 +314,6 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="fountain-small-label">{dateParts.month && dateParts.day ? `${dateParts.month} ${dateParts.day}` : 'Wedding Day'}</span>
             <h3>{venue || 'The Garden Pavilion'}</h3>
             <dl>
               <div>
