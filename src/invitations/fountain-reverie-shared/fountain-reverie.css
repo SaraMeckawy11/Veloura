@@ -3414,6 +3414,17 @@
       rgba(246, 246, 236, 0) 100%);
 }
 
+/* Let the footer melt up into the shared canvas so the memories → footer
+   boundary is a soft fade rather than a hard colour step. */
+.fountain-footer {
+  background:
+    linear-gradient(180deg,
+      rgba(251, 246, 235, 0) 0%,
+      rgba(249, 242, 228, 0.55) 14%,
+      rgba(245, 236, 219, 0.85) 50%,
+      rgba(241, 233, 216, 0.95) 100%);
+}
+
 /* Larger, more readable note copy in the message section */
 .fountain-envelope-copy {
   left: 20%;
@@ -3422,13 +3433,13 @@
 }
 
 .fountain-envelope-copy span {
-  font-size: clamp(0.74rem, 1.9vw, 0.94rem);
+  font-size: clamp(0.8rem, 2vw, 1rem);
 }
 
 .fountain-envelope-copy p {
   max-width: 32rem;
   margin-top: 0.8em;
-  font-size: clamp(1.04rem, 2.35vw, 1.34rem);
+  font-size: clamp(1.12rem, 2.5vw, 1.44rem);
   line-height: 1.46;
 }
 
@@ -3445,13 +3456,13 @@
   }
 
   .fountain-envelope-copy span {
-    font-size: 0.62rem;
+    font-size: 0.68rem;
     letter-spacing: 0.16em;
   }
 
   .fountain-envelope-copy p {
     margin-top: 0.7em;
-    font-size: clamp(0.74rem, 3vw, 0.94rem);
+    font-size: clamp(0.82rem, 3.2vw, 1.02rem);
     line-height: 1.34;
   }
 
