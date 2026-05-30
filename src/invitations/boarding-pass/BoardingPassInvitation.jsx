@@ -601,7 +601,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 function BoardingPassMessageSection({ message }) {
   return (
     <section className="inv-message-section">
-      <h2 className="inv-message-title">A Little Note From Us</h2>
+      <h2 className="inv-message-title">A Note</h2>
       <div className="inv-gold-divider" />
       <motion.div
         className="inv-envelope"
@@ -612,7 +612,7 @@ function BoardingPassMessageSection({ message }) {
       >
         <img className="inv-envelope-image" src={boardingPassEnvelope} alt="" aria-hidden="true" />
         <article className="inv-envelope-copy">
-          <span>From our hearts</span>
+          <span>From Our Hearts to Yours</span>
           <p>{message}</p>
         </article>
       </motion.div>

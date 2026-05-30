@@ -223,11 +223,11 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 function TheaterMessageSection({ message }) {
   return (
     <section className="theater-message" aria-label="A note from the couple">
-      <h2>A Little Note From Us</h2>
+      <h2>A Note</h2>
       <div className="theater-envelope">
         <img className="theater-envelope-image" src={theaterEnvelope} alt="" aria-hidden="true" />
         <article className="theater-envelope-copy">
-          <span>From our hearts</span>
+          <span>From Our Hearts to Yours</span>
           <p>{message}</p>
         </article>
       </div>

@@ -489,7 +489,7 @@ function SectionTitle({ title }) {
 function CoupleMessageSection({ message }) {
   return (
     <section className="fountain-section fountain-message-section">
-      <SectionTitle title="A Little Note From Us" />
+      <SectionTitle title="A Note" />
       <motion.div
         className="fountain-envelope"
         initial={{ opacity: 0, y: 28 }}
@@ -499,7 +499,7 @@ function CoupleMessageSection({ message }) {
       >
         <img className="fountain-envelope-image" src={envelopeMessage} alt="" aria-hidden="true" />
         <article className="fountain-envelope-copy">
-          <span>From our hearts</span>
+          <span>From Our Hearts to Yours</span>
           <p>{message}</p>
         </article>
       </motion.div>

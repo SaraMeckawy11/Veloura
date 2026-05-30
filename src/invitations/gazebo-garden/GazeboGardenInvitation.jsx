@@ -499,7 +499,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 function GazeboMessageSection({ message }) {
   return (
     <section className="gazebo-section gazebo-message-section">
-      <SectionTitle title="A Little Note From Us" />
+      <SectionTitle title="A Note" />
       <motion.div
         className="gazebo-note-envelope"
         initial={{ opacity: 0, y: 28 }}
@@ -509,7 +509,7 @@ function GazeboMessageSection({ message }) {
       >
         <img className="gazebo-note-envelope-image" src={gardenEnvelope} alt="" aria-hidden="true" />
         <article className="gazebo-note-envelope-copy">
-          <span>From our hearts</span>
+          <span>From Our Hearts to Yours</span>
           <p>{message}</p>
         </article>
       </motion.div>

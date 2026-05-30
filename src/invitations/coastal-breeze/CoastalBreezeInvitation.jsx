@@ -513,7 +513,7 @@ function CountdownUnit({ value, label }) {
 function CoastalMessageSection({ message }) {
   return (
     <section className="coastal-message-section">
-      <SectionTitle title="A Little Note From Us" />
+      <SectionTitle title="A Note" />
       <motion.div
         className="coastal-envelope"
         initial={{ opacity: 0, y: 28 }}
@@ -523,7 +523,7 @@ function CoastalMessageSection({ message }) {
       >
         <img className="coastal-envelope-image" src={coastalEnvelope} alt="" aria-hidden="true" />
         <article className="coastal-envelope-copy">
-          <span>From our hearts</span>
+          <span>From Our Hearts to Yours</span>
           <p>{message}</p>
         </article>
       </motion.div>
