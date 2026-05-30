@@ -355,7 +355,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
         )}
       </section>
 
-      {coupleMessage && <CoupleMessageSection message={coupleMessage} name1={name1} name2={name2} />}
+      {coupleMessage && <CoupleMessageSection message={coupleMessage} />}
 
       {rsvpEnabled && (
         <>
@@ -486,7 +486,7 @@ function SectionTitle({ title }) {
   );
 }
 
-function CoupleMessageSection({ message, name1, name2 }) {
+function CoupleMessageSection({ message }) {
   return (
     <section className="fountain-section fountain-message-section">
       <SectionTitle title="A Note" />
@@ -501,7 +501,6 @@ function CoupleMessageSection({ message, name1, name2 }) {
         <article className="fountain-envelope-copy">
           <span>From our hearts</span>
           <p>{message}</p>
-          <strong>{name1} <i>&amp;</i> {name2}</strong>
         </article>
       </motion.div>
     </section>

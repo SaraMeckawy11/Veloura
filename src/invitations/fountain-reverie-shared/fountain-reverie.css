@@ -3414,27 +3414,10 @@
       rgba(246, 246, 236, 0) 100%);
 }
 
-/* A delicate gilded vine closes each section title, mirroring the crest
-   above it so headers feel framed and the decorative set carries through
-   every section consistently. */
-.fountain-section-title {
-  position: relative;
-}
-
-.fountain-section-title::after {
-  content: "";
-  display: block;
-  width: min(300px, 66vw);
-  height: clamp(18px, 3vw, 28px);
-  margin-top: clamp(6px, 1.1vw, 12px);
-  background: url("../../assets/Fountain Reverie/sectionSeperator.png") center / 100% auto no-repeat;
-  opacity: 0.9;
-}
-
 /* Larger, more readable note copy in the message section */
 .fountain-envelope-copy {
   left: 20%;
-  top: 16%;
+  top: 22%;
   width: 60%;
 }
 
@@ -3457,7 +3440,7 @@
 @media (max-width: 680px) {
   .fountain-envelope-copy {
     left: 19%;
-    top: 16.5%;
+    top: 21%;
     width: 62%;
   }
 
