@@ -3428,7 +3428,7 @@
 /* Larger, more readable note copy in the message section */
 .fountain-envelope-copy {
   left: 50%;
-  top: 22%;
+  top: 26%;
   width: 60%;
   transform: translateX(-50%);
 }
@@ -3452,7 +3452,7 @@
 @media (max-width: 680px) {
   .fountain-envelope-copy {
     left: 50%;
-    top: 21%;
+    top: 25%;
     width: 62%;
   }
 

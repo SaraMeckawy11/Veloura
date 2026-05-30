@@ -1014,7 +1014,7 @@ body:has(.theater-theme),
 .theater-envelope-copy {
   position: absolute;
   left: 50%;
-  top: 21%;
+  top: 25%;
   width: 62%;
   color: var(--theater-ink);
   text-align: center;
@@ -1046,7 +1046,7 @@ body:has(.theater-theme),
 @media (max-width: 560px) {
   .theater-envelope-copy {
     left: 50%;
-    top: 19.5%;
+    top: 23.5%;
     width: 65%;
   }
 
