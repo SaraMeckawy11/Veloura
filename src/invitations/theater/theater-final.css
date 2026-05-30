@@ -1013,11 +1013,12 @@ body:has(.theater-theme),
 
 .theater-envelope-copy {
   position: absolute;
-  left: 19%;
+  left: 50%;
   top: 21%;
   width: 62%;
   color: var(--theater-ink);
   text-align: center;
+  transform: translateX(-50%);
 }
 
 .theater-envelope-copy span {
@@ -1044,7 +1045,7 @@ body:has(.theater-theme),
 
 @media (max-width: 560px) {
   .theater-envelope-copy {
-    left: 17.5%;
+    left: 50%;
     top: 19.5%;
     width: 65%;
   }

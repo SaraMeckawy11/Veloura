@@ -1370,12 +1370,13 @@ textarea.kiosk-input {
 
 .inv-envelope-copy {
   position: absolute;
-  left: 19%;
+  left: 50%;
   top: 21%;
   width: 62%;
   color: var(--bp-navy);
   font-family: var(--font-display);
   text-align: center;
+  transform: translateX(-50%);
 }
 
 .inv-envelope-copy span {
@@ -1405,7 +1406,7 @@ textarea.kiosk-input {
   }
 
   .inv-envelope-copy {
-    left: 17%;
+    left: 50%;
     top: 19.5%;
     width: 66%;
   }

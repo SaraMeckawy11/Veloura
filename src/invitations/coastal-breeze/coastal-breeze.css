@@ -1759,11 +1759,12 @@
 
 .coastal-envelope-copy {
   position: absolute;
-  left: 20%;
+  left: 50%;
   top: 20%;
   width: 60%;
   color: var(--coast-denim-dark);
   text-align: center;
+  transform: translateX(-50%);
 }
 
 .coastal-envelope-copy span {
@@ -1793,7 +1794,7 @@
   }
 
   .coastal-envelope-copy {
-    left: 18%;
+    left: 50%;
     top: 19%;
     width: 64%;
   }

@@ -69,6 +69,27 @@
   box-shadow: 0 0 70px rgba(139, 105, 55, 0.16);
 }
 
+.gazebo-splash--html-animation {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 253, 242, 0.95), rgba(238, 225, 194, 0.92) 56%, rgba(206, 184, 145, 0.82)),
+    url("../../assets/coastal/envelope-texture.jpg");
+  background-position: center;
+  background-size: cover;
+}
+
+.gazebo-splash-envelope-animation {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: min(337px, 88vw, calc(88vh * 337 / 540));
+  height: min(540px, calc(88vw * 540 / 337), 88vh);
+  border: 0;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
 .gazebo-splash-beige-texture {
   position: absolute;
   inset: 0;
@@ -1223,12 +1244,13 @@
 
 .gazebo-note-envelope-copy {
   position: absolute;
-  left: 20%;
+  left: 50%;
   top: 22%;
   width: 60%;
   color: #314234;
   font-family: "Cormorant Garamond", Georgia, serif;
   text-align: center;
+  transform: translateX(-50%);
 }
 
 .gazebo-note-envelope-copy span {
@@ -1263,7 +1285,7 @@
   }
 
   .gazebo-note-envelope-copy {
-    left: 21%;
+    left: 50%;
     top: 20%;
     width: 58%;
   }
