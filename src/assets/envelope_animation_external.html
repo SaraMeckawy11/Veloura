@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Envelope Animation</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: transparent;
+    }
+
+    .envelope-animation {
+      width: 337px;
+      max-width: 100%;
+      line-height: 0;
+    }
+
+    .envelope-animation canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="envelope-animation">
+    <canvas id="envelopeAnimation" width="337" height="540" data-loop="false"></canvas>
+  </div>
+
+  <script>
+    (() => {
+      const frameWidth = 337;
+      const frameHeight = 540;
+      const frameCount = 73;
+      const columns = 12;
+      const fps = 30;
+      const canvas = document.getElementById("envelopeAnimation");
+      const context = canvas.getContext("2d", { alpha: true });
+      const loop = canvas.dataset.loop === "true";
+      const sprite = new Image();
+      const spriteSources = ["./envelope_animation_sprite.webp", "./envelope_animation_sprite.png"];
+      let startTime = null;
+      let lastFrame = -1;
+
+      function drawFrame(frameIndex) {
+        const sourceX = (frameIndex % columns) * frameWidth;
+        const sourceY = Math.floor(frameIndex / columns) * frameHeight;
+        context.clearRect(0, 0, frameWidth, frameHeight);
+        context.drawImage(
+          sprite,
+          sourceX,
+          sourceY,
+          frameWidth,
+          frameHeight,
+          0,
+          0,
+          frameWidth,
+          frameHeight
+        );
+      }
+
+      function tick(now) {
+        if (startTime === null) {
+          startTime = now;
+        }
+        const elapsed = (now - startTime) / 1000;
+        let frameIndex = Math.floor(elapsed * fps);
+        if (loop) {
+          frameIndex %= frameCount;
+        } else {
+          frameIndex = Math.min(frameIndex, frameCount - 1);
+        }
+        if (frameIndex !== lastFrame) {
+          drawFrame(frameIndex);
+          lastFrame = frameIndex;
+        }
+        if (loop || frameIndex < frameCount - 1) {
+          requestAnimationFrame(tick);
+        }
+      }
+
+      function loadSprite(sourceIndex) {
+        sprite.onload = () => {
+          drawFrame(0);
+          requestAnimationFrame(tick);
+        };
+        sprite.onerror = () => {
+          if (sourceIndex + 1 < spriteSources.length) {
+            loadSprite(sourceIndex + 1);
+          }
+        };
+        sprite.src = spriteSources[sourceIndex];
+      }
+
+      loadSprite(0);
+    })();
+  </script>
+</body>
+</html>
