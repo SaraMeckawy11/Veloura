@@ -96,6 +96,19 @@ const TEMPLATE_UPLOAD_LAYOUTS = {
   },
 };
 
+// Which optional fields each invitation design actually renders. Fields that
+// a template does not display are hidden from the order form so the user is
+// never asked for details that won't appear on their invitation.
+// (Unknown/remote templates default to showing every optional field.)
+const TEMPLATE_OPTIONAL_FIELD_SUPPORT = {
+  'boarding-pass': { message: true, venueAddress: true },
+  'coastal-breeze': { message: true, venueAddress: true },
+  'fountain-reverie-v1': { message: true, venueAddress: true },
+  'fountain-reverie-v2': { message: true, venueAddress: true },
+  'gazebo-garden': { message: true, venueAddress: true },
+  'theater': { message: false, venueAddress: true },
+};
+
 const normalizePhotoFit = (value) => {
   if (value === 'fit' || value === 'containFit' || value === 'contain') return 'contain';
   return VALID_PHOTO_FITS.has(value) ? value : DEFAULT_PHOTO_FIT;
@@ -651,12 +664,20 @@ export default function OrderFlow() {
     }
   };
 
+  // Only offer optional fields that the chosen invitation design actually shows.
+  // `venueAddress` and `message` are gated on the selected template; unknown
+  // templates fall back to showing the field.
+  const templateFieldSupport = TEMPLATE_OPTIONAL_FIELD_SUPPORT[selectedTemplate?.slug] || {};
   const optionalFields = [
     { key: 'venueAddress', label: 'Venue Address' },
     { key: 'message', label: 'Personal Message' },
     { key: 'rsvp', label: 'RSVP Section' },
     // Removed secondLanguage option
-  ];
+  ].filter(field => {
+    if (field.key === 'venueAddress') return templateFieldSupport.venueAddress !== false;
+    if (field.key === 'message') return templateFieldSupport.message !== false;
+    return true;
+  });
 
   if (loading) {
     return (
