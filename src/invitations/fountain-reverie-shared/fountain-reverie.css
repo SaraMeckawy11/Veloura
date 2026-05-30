@@ -3350,3 +3350,129 @@
     padding: 28px 18px 24px;
   }
 }
+
+/* ============================================================
+   Section polish — richer canvas, smooth gradient transitions,
+   tighter spacing, larger message copy, and a consistent
+   decorative flourish framing every section.
+   ============================================================ */
+
+/* Richer, warmer background canvas with more depth and colour */
+.fountain-theme {
+  background:
+    radial-gradient(ellipse 58% 38% at 6% 5%, rgba(244, 223, 203, 0.62), transparent 62%),
+    radial-gradient(ellipse 54% 44% at 95% 20%, rgba(196, 208, 167, 0.44), transparent 62%),
+    radial-gradient(ellipse 60% 42% at 3% 56%, rgba(212, 223, 191, 0.38), transparent 62%),
+    radial-gradient(ellipse 64% 46% at 97% 82%, rgba(243, 220, 204, 0.54), transparent 62%),
+    linear-gradient(180deg, #fdf6ea 0%, #f7eedc 28%, #f2e6cf 54%, #f6eedd 78%, #fdf7ec 100%);
+}
+
+/* Tighter vertical rhythm — trim dead space at the top & bottom of sections */
+.fountain-section,
+.fountain-countdown,
+.fountain-rsvp-section,
+.fountain-gallery-section {
+  padding-top: clamp(38px, 5.5vw, 70px);
+  padding-bottom: clamp(38px, 5.5vw, 70px);
+}
+
+.fountain-countdown {
+  min-height: 0;
+}
+
+.fountain-message-section {
+  padding-top: clamp(40px, 6vw, 74px);
+  padding-bottom: clamp(44px, 6.5vw, 84px);
+}
+
+.fountain-section-title {
+  margin-bottom: clamp(20px, 3vw, 34px);
+}
+
+/* Smooth, gently alternating gradient bands that fade into one another, so
+   every section transition reads as an intentional colour shift — never a
+   hard seam and never a flat, empty stretch. */
+.fountain-countdown,
+.fountain-event-section,
+.fountain-rsvp-section {
+  background:
+    linear-gradient(180deg,
+      rgba(250, 238, 219, 0) 0%,
+      rgba(250, 238, 219, 0.62) 16%,
+      rgba(247, 233, 211, 0.68) 84%,
+      rgba(250, 238, 219, 0) 100%);
+}
+
+.fountain-story-section,
+.fountain-message-section,
+.fountain-gallery-section {
+  background:
+    linear-gradient(180deg,
+      rgba(246, 246, 236, 0) 0%,
+      rgba(241, 244, 229, 0.58) 16%,
+      rgba(237, 241, 225, 0.64) 84%,
+      rgba(246, 246, 236, 0) 100%);
+}
+
+/* A delicate gilded vine closes each section title, mirroring the crest
+   above it so headers feel framed and the decorative set carries through
+   every section consistently. */
+.fountain-section-title {
+  position: relative;
+}
+
+.fountain-section-title::after {
+  content: "";
+  display: block;
+  width: min(300px, 66vw);
+  height: clamp(18px, 3vw, 28px);
+  margin-top: clamp(6px, 1.1vw, 12px);
+  background: url("../../assets/Fountain Reverie/sectionSeperator.png") center / 100% auto no-repeat;
+  opacity: 0.9;
+}
+
+/* Larger, more readable note copy in the message section */
+.fountain-envelope-copy {
+  left: 20%;
+  top: 16%;
+  width: 60%;
+}
+
+.fountain-envelope-copy span {
+  font-size: clamp(0.74rem, 1.9vw, 0.94rem);
+}
+
+.fountain-envelope-copy p {
+  max-width: 32rem;
+  margin-top: 0.8em;
+  font-size: clamp(1.04rem, 2.35vw, 1.34rem);
+  line-height: 1.46;
+}
+
+.fountain-envelope-copy strong {
+  margin-top: 0.5em;
+  font-size: clamp(2rem, 5vw, 3.3rem);
+}
+
+@media (max-width: 680px) {
+  .fountain-envelope-copy {
+    left: 19%;
+    top: 16.5%;
+    width: 62%;
+  }
+
+  .fountain-envelope-copy span {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+  }
+
+  .fountain-envelope-copy p {
+    margin-top: 0.7em;
+    font-size: clamp(0.74rem, 3vw, 0.94rem);
+    line-height: 1.34;
+  }
+
+  .fountain-envelope-copy strong {
+    font-size: clamp(1.6rem, 6.6vw, 2.1rem);
+  }
+}
