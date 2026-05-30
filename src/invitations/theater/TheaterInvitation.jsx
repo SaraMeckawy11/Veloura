@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
-import { containInvitationPhoto, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
 import storyTitle from '../../assets/theater/story/title7_transparent.png';
+import theaterEnvelope from '../../assets/theater/theater-envelope-transparent.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -76,6 +77,9 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const venue = weddingDetails.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (weddingDetails.venueAddress || '') : '';
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(weddingDetails.weddingTime) : '';
+  const coupleMessage = fieldEnabled('message')
+    ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : weddingDetails.message) || DEFAULT_COUPLE_MESSAGE)
+    : '';
 
   const storyPhotos = (order.photos || []).filter(photo => photo.label === 'story');
   const galleryPhotos = (order.photos || []).filter(photo => photo.label === 'gallery');
@@ -187,6 +191,8 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           embedSrc={embedSrc}
         />
 
+        {coupleMessage && <TheaterMessageSection message={coupleMessage} />}
+
         {fieldEnabled('rsvp') && (
           <RsvpSection
             rsvpForm={rsvpForm}
@@ -211,6 +217,21 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
         </footer>
       </main>
     </div>
+  );
+}
+
+function TheaterMessageSection({ message }) {
+  return (
+    <section className="theater-message" aria-label="A note from the couple">
+      <h2>A Little Note From Us</h2>
+      <div className="theater-envelope">
+        <img className="theater-envelope-image" src={theaterEnvelope} alt="" aria-hidden="true" />
+        <article className="theater-envelope-copy">
+          <span>From our hearts</span>
+          <p>{message}</p>
+        </article>
+      </div>
+    </section>
   );
 }
 

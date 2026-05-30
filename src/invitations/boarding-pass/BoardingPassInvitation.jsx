@@ -3,9 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { containInvitationPhoto, formatInvitationTime } from '../shared';
+import { containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import './boarding-pass.css';
+import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -81,17 +82,19 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
-  const mapEnabled = !disabledFields.includes('venueMapUrl');
+  const fieldEnabled = (key) => !disabledFields.includes(key);
+  const mapEnabled = fieldEnabled('venueMapUrl');
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
   const dateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     : '';
-  const timeStr = formatInvitationTime(wd.weddingTime);
+  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime) : '';
   const venue = wd.venue || '';
-  const venueAddress = wd.venueAddress || '';
-  const message = wd.message || 'Two Souls, One Destination.';
+  const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
+  const message = fieldEnabled('message') ? (wd.message || 'Two Souls, One Destination.') : '';
+  const coupleMessage = fieldEnabled('message') ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE) : '';
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const flightNo = wd.flightNo || `WD-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const pad = (n) => n.toString().padStart(2, '0');
@@ -410,6 +413,8 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         </motion.div>
       </section>
 
+      {coupleMessage && <BoardingPassMessageSection message={coupleMessage} />}
+
       {/* ========== RSVP ========== */}
       <section className="inv-rsvp-section">
         <div className="inv-rsvp-bg-decor">
@@ -590,6 +595,28 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         </div>
       </section>
     </div>
+  );
+}
+
+function BoardingPassMessageSection({ message }) {
+  return (
+    <section className="inv-message-section">
+      <h2 className="inv-message-title">A Little Note From Us</h2>
+      <div className="inv-gold-divider" />
+      <motion.div
+        className="inv-envelope"
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <img className="inv-envelope-image" src={boardingPassEnvelope} alt="" aria-hidden="true" />
+        <article className="inv-envelope-copy">
+          <span>From our hearts</span>
+          <p>{message}</p>
+        </article>
+      </motion.div>
+    </section>
   );
 }
 

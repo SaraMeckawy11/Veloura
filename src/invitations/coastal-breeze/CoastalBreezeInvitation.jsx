@@ -3,12 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
 import cruiseShip from '../../assets/coastal/cruise-ship-clean.webp';
-import blueShellAsset from '../../assets/coastal/blue-shell-transparent.webp';
+import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
+import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -78,6 +79,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
   const message = fieldEnabled('message') ? (wd.message || 'With the sea as our witness, we begin forever.') : '';
+  const coupleMessage = fieldEnabled('message') ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE) : '';
   const tideCode = wd.flightNo || `COAST-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -342,6 +344,8 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         )}
       </section>
 
+      {coupleMessage && <CoastalMessageSection message={coupleMessage} />}
+
       {rsvpEnabled && (
       <section className="coastal-rsvp-section">
         <div className="coastal-rsvp-ocean" aria-hidden>
@@ -487,7 +491,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 function SectionTitle({ eyebrow, title, script, light = false }) {
   return (
     <div className={`coastal-section-title${light ? ' coastal-section-title-light' : ''}`}>
-      <span>{eyebrow}</span>
+      {eyebrow && <span>{eyebrow}</span>}
       <h2>
         {title}
         {script && <span className="script">{script}</span>}
@@ -503,6 +507,27 @@ function CountdownUnit({ value, label }) {
       <strong>{value}</strong>
       <span>{label}</span>
     </div>
+  );
+}
+
+function CoastalMessageSection({ message }) {
+  return (
+    <section className="coastal-message-section">
+      <SectionTitle title="A Little Note From Us" />
+      <motion.div
+        className="coastal-envelope"
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <img className="coastal-envelope-image" src={coastalEnvelope} alt="" aria-hidden="true" />
+        <article className="coastal-envelope-copy">
+          <span>From our hearts</span>
+          <p>{message}</p>
+        </article>
+      </motion.div>
+    </section>
   );
 }
 

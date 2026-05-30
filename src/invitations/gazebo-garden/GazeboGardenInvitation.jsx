@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { containInvitationPhoto, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import './gazebo-garden.css';
+import gardenEnvelope from '../../assets/gardenPavilion/garden-pavilion-envelope-transparent.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -134,6 +135,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
   const message = fieldEnabled('message') ? (wd.message || 'A garden promise sealed in soft light.') : '';
+  const coupleMessage = fieldEnabled('message') ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE) : '';
   const heroDate = compactDateStr || fullDateStr;
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
@@ -388,6 +390,8 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         </div>
       </section>
 
+      {coupleMessage && <GazeboMessageSection message={coupleMessage} />}
+
       {rsvpEnabled && (
       <section id="rsvp" className="gazebo-section gazebo-rsvp-section">
         <SectionTitle eyebrow="Kindly reply" title="Reserve your place" />
@@ -492,10 +496,31 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   );
 }
 
+function GazeboMessageSection({ message }) {
+  return (
+    <section className="gazebo-section gazebo-message-section">
+      <SectionTitle title="A Little Note From Us" />
+      <motion.div
+        className="gazebo-note-envelope"
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.16 }}
+        transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <img className="gazebo-note-envelope-image" src={gardenEnvelope} alt="" aria-hidden="true" />
+        <article className="gazebo-note-envelope-copy">
+          <span>From our hearts</span>
+          <p>{message}</p>
+        </article>
+      </motion.div>
+    </section>
+  );
+}
+
 function SectionTitle({ eyebrow, title, lead, children }) {
   return (
     <div className="gazebo-section-title">
-      <p className="gazebo-section-eyebrow">{eyebrow}</p>
+      {eyebrow && <p className="gazebo-section-eyebrow">{eyebrow}</p>}
       <h2>{title}</h2>
       {children}
       {lead && <p className="gazebo-section-lead">{lead}</p>}

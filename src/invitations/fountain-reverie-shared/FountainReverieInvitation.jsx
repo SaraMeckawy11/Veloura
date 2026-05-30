@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import FountainSplash from './FountainSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
-import { buildInvitationImageSources, containInvitationPhoto, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import sectionSeparator from '../../assets/Fountain Reverie/decorative_components/elegant_vintage_ornamental_flourish_transparent.png';
 import envelopeMessage from '../../assets/Fountain Reverie/envelope_message.png';
@@ -111,7 +111,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
   const coupleMessage = fieldEnabled('message')
-    ? (order.coupleMessage || wd.message || 'Thank you for sharing in the joy of this day. Your love and support mean more to us than words can say, and we cannot wait to celebrate this new beginning with you.')
+    ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE)
     : '';
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -489,7 +489,7 @@ function SectionTitle({ title }) {
 function CoupleMessageSection({ message }) {
   return (
     <section className="fountain-section fountain-message-section">
-      <SectionTitle title="A Note" />
+      <SectionTitle title="A Little Note From Us" />
       <motion.div
         className="fountain-envelope"
         initial={{ opacity: 0, y: 28 }}

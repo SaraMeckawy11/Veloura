@@ -1,5 +1,7 @@
 const CLOUDINARY_UPLOAD_SEGMENT = '/image/upload/';
 const VALID_PHOTO_FITS = new Set(['cover', 'contain']);
+export const DEFAULT_COUPLE_MESSAGE = 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.';
+
 const normalizePhotoFit = (value) => {
   if (value === 'fit' || value === 'containFit' || value === 'contain') return 'contain';
   return VALID_PHOTO_FITS.has(value) ? value : 'cover';
