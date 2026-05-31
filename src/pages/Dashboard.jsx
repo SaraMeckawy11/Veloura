@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
+import { downloadGuestMessagesPdf } from '../lib/guestMessagesPdf';
 import '../styles/Dashboard.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -48,6 +49,7 @@ export default function Dashboard() {
   const [photoUploading, setPhotoUploading] = useState({});
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
+  const [downloadingMessages, setDownloadingMessages] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -298,6 +300,24 @@ export default function Dashboard() {
     navigator.clipboard.writeText(text);
     setCopied(label);
     setTimeout(() => setCopied(''), 2000);
+  };
+
+  const handleDownloadMessages = async () => {
+    const messages = (rsvpData?.rsvps || []).filter(rsvp => rsvp.message?.trim());
+    if (!messages.length || downloadingMessages) return;
+
+    setDownloadingMessages(true);
+    setSaveMsg('');
+    try {
+      await downloadGuestMessagesPdf({
+        themeSlug: order.template?.slug,
+        coupleNames: [wd.groomName, wd.brideName].filter(Boolean).join(' & ') || 'Our Wedding',
+        messages,
+      });
+    } catch (err) {
+      setSaveMsg(err.message || 'Could not download guest messages.');
+    }
+    setDownloadingMessages(false);
   };
 
   if (loading) {
@@ -631,14 +651,6 @@ export default function Dashboard() {
 
         {/* Stats grid */}
         <div className="dash-stats">
-          <div className="stat-card stat-details">
-            <div className="stat-value">{order.weddingDetailsEditCount || 0}</div>
-            <div className="stat-label">Detail Edits</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-value">{rsvpData?.summary?.total || 0}</div>
-            <div className="stat-label">Total RSVPs</div>
-          </div>
           <div className="stat-card stat-yes">
             <div className="stat-value">{rsvpData?.summary?.attending || 0}</div>
             <div className="stat-label">Attending</div>
@@ -646,10 +658,6 @@ export default function Dashboard() {
           <div className="stat-card stat-no">
             <div className="stat-value">{rsvpData?.summary?.notAttending || 0}</div>
             <div className="stat-label">Not Attending</div>
-          </div>
-          <div className="stat-card stat-maybe">
-            <div className="stat-value">{rsvpData?.summary?.maybe || 0}</div>
-            <div className="stat-label">Maybe</div>
           </div>
           <div className="stat-card stat-guests">
             <div className="stat-value">{rsvpData?.summary?.totalGuests || 0}</div>
@@ -741,7 +749,13 @@ export default function Dashboard() {
         {/* Guest Messages */}
         {rsvpData?.rsvps?.some(r => r.message) && (
           <div className="dash-section">
-            <h2 className="dash-section-title">Guest Messages</h2>
+            <div className="dash-section-heading">
+              <h2 className="dash-section-title">Guest Messages</h2>
+              <button type="button" className="dash-download-btn" onClick={handleDownloadMessages} disabled={downloadingMessages}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                {downloadingMessages ? 'Preparing PDF...' : 'Download PDF'}
+              </button>
+            </div>
             <div className="dash-messages-grid">
               {rsvpData.rsvps.filter(r => r.message).map((r, i) => (
                 <div key={i} className="dash-message-card">

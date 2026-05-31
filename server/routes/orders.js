@@ -400,8 +400,6 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       musicEnabled: order.musicEnabled,
       publicSlug: order.publicSlug,
       invitationUrl: publicInvitationUrl(order.publicSlug),
-      editsRemaining: order.editsRemaining,
-      weddingDetailsEditCount: order.weddingDetailsEditCount,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,
       activatedAt: order.activatedAt,
@@ -525,8 +523,6 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
 
     res.json({
       message: 'Invitation updated',
-      editsRemaining: order.editsRemaining,
-      weddingDetailsEditCount: order.weddingDetailsEditCount,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,
     });
@@ -564,7 +560,7 @@ router.get('/invite/:publicSlug', async (req, res) => {
   try {
     const order = await Order.findOne({ publicSlug: req.params.publicSlug, status: 'active' })
       .populate('template')
-      .select('-editToken -paypalOrderId -paypalCaptureId -customerEmail -editHistory');
+      .select('-editToken -paypalOrderId -paypalCaptureId -customerEmail -editHistory -weddingDetailsEditCount');
 
     if (!order) return res.status(404).json({ error: 'Invitation not found' });
     res.json(order);
@@ -608,8 +604,6 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       publicSlug: order.publicSlug,
       invitationUrl: publicInvitationUrl(order.publicSlug),
       invitationCode: order.invitationCode,
-      editsRemaining: order.editsRemaining,
-      weddingDetailsEditCount: order.weddingDetailsEditCount,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,
       activatedAt: order.activatedAt,

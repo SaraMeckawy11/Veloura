@@ -161,7 +161,7 @@
 /* Stats */
 .dash-stats {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 32px;
 }
@@ -184,9 +184,7 @@
 }
 .stat-yes .stat-value { color: var(--sage); }
 .stat-no .stat-value { color: var(--rose); }
-.stat-maybe .stat-value { color: #D97706; }
 .stat-guests .stat-value { color: var(--gold); }
-.stat-details .stat-value { color: var(--gold); }
 
 .stat-label {
   font-size: 0.72rem;
@@ -289,6 +287,43 @@
 }
 
 /* Guest Messages */
+.dash-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.dash-section-heading .dash-section-title {
+  margin-bottom: 0;
+}
+
+.dash-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 15px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  background: var(--gold-bg);
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.dash-download-btn:hover:not(:disabled) {
+  background: var(--gold);
+  color: var(--white);
+}
+
+.dash-download-btn:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
 .dash-messages-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -352,6 +387,7 @@
 
 @media (max-width: 480px) {
   .dash-stats { grid-template-columns: repeat(2, 1fr); }
+  .dash-section-heading { align-items: flex-start; flex-direction: column; }
 }
 
 /* Edit Form */
