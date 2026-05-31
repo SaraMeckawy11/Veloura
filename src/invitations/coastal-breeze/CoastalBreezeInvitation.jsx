@@ -208,12 +208,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <div className="coastal-hero-bg-wash" />
         </div>
 
-        <motion.article
-          className="coastal-hero-card"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-        >
+        <article className="coastal-hero-card">
           <div className="coastal-hero-top">
             <span className="coastal-kicker">Please join us to</span>
             <span className="coastal-kicker coastal-kicker-thin">celebrate the marriage of</span>
@@ -251,7 +246,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
             {message && <p className="coastal-hero-message">"{message}"</p>}
           </div>
-        </motion.article>
+        </article>
       </section>
 
       {weddingDate && (

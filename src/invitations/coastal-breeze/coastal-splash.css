@@ -133,7 +133,7 @@
     rgba(255, 232, 196, 0.2) 38%,
     transparent 68%
   );
-  filter: blur(18px);
+  filter: none;
   transform-origin: center;
 }
 
