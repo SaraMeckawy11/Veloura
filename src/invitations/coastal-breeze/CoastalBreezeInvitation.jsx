@@ -194,7 +194,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className={`coastal-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
+    <div className={`coastal-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}${showSplash ? ' coastal-splash-active' : ''}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

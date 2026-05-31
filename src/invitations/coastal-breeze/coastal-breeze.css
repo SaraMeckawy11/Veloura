@@ -180,6 +180,10 @@
   color: #1a1612;
 }
 
+.coastal-splash-active .coastal-hero-card {
+  visibility: hidden;
+}
+
 .coastal-hero-top,
 .coastal-hero-center,
 .coastal-hero-bottom {
@@ -205,7 +209,7 @@
 }
 
 .coastal-hero-top {
-  top: -10px;
+  top: -16px;
 }
 
 .coastal-hero-center::before {
@@ -214,8 +218,9 @@
   z-index: 0;
   inset: 12% 22% 24%;
   pointer-events: none;
-  background: radial-gradient(ellipse 82% 78% at center, rgba(255, 255, 252, 0.98) 0%, rgba(255, 253, 247, 0.88) 40%, rgba(255, 253, 247, 0.46) 72%, transparent 100%);
-  filter: blur(2px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 252, 0.96) 0%, rgba(255, 253, 247, 0.78) 32%, rgba(255, 253, 247, 0.42) 56%, rgba(255, 253, 247, 0.16) 76%, transparent 100%);
+  filter: blur(4px);
 }
 
 .coastal-kicker {
