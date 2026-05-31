@@ -162,7 +162,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   };
 
   return (
-    <div className="theater-theme">
+    <div className={`theater-theme${showSplash ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />}
       {showSplash && <TheaterSplash onDismiss={handleSplashDismiss} />}
 

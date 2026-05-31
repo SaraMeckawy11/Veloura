@@ -58,6 +58,10 @@ img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; }
 button { cursor: pointer; border: none; font-family: inherit; }
 
+.invitation-splash-gated > :not(audio):not(.inv-splash):not(.coastal-splash):not(.fountain-splash):not(.gazebo-splash):not(.theater-splash) {
+  visibility: hidden;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

@@ -150,26 +150,3 @@
   }
 
 }
-
-/* Reveal the rendered hero itself as the curtains open. Only flips to
-   transparent once the curtain image has loaded (.is-ready) — otherwise
-   the splash's painted backdrop stays in place and hides the hero. */
-.theater-splash.is-ready {
-  background: transparent;
-}
-
-.theater-splash.is-ready .theater-splash-stage {
-  background: transparent;
-}
-
-.theater-splash.is-ready .theater-splash-stage::before,
-.theater-splash.is-ready .theater-splash-stage::after,
-.theater-splash.is-ready .theater-splash-footlights {
-  display: none;
-}
-
-.theater-splash.is-ready .theater-splash-vignette {
-  background:
-    radial-gradient(ellipse at 50% 48%, transparent 0 42%, rgba(24, 4, 8, 0.08) 78%, rgba(24, 4, 8, 0.22) 100%),
-    linear-gradient(180deg, rgba(24, 4, 8, 0.16) 0%, transparent 30%, transparent 72%, rgba(24, 4, 8, 0.18) 100%);
-}

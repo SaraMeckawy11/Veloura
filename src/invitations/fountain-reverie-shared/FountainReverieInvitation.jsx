@@ -225,7 +225,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className={`fountain-theme fountain-theme-${variant}`}>
+    <div className={`fountain-theme fountain-theme-${variant}${showSplash ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

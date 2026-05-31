@@ -268,7 +268,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   };
 
   return (
-    <div className="gazebo-theme theme-watercolor">
+    <div className={`gazebo-theme theme-watercolor${showSplash ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

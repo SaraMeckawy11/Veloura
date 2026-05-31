@@ -131,7 +131,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
   // ===================== MAIN PAGE =====================
   return (
-    <div className="inv-page boarding-pass-theme">
+    <div className={`inv-page boarding-pass-theme${showSplash ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
