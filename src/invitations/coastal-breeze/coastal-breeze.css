@@ -208,11 +208,11 @@
   content: '';
   position: absolute;
   z-index: 0;
-  inset: -72% -42%;
+  inset: -74% 17%;
   pointer-events: none;
-  background: radial-gradient(ellipse 58% 100% at center, rgba(255, 255, 252, 1) 0%, rgba(255, 253, 247, 0.96) 32%, rgba(255, 253, 247, 0.7) 60%, rgba(255, 253, 247, 0.32) 80%, transparent 100%);
-  filter: blur(6px);
-  transform: scaleY(1.45);
+  background: radial-gradient(ellipse 42% 100% at center, rgba(255, 255, 252, 0.98) 0%, rgba(255, 253, 247, 0.88) 40%, rgba(255, 253, 247, 0.46) 72%, transparent 100%);
+  filter: blur(2px);
+  transform: scaleY(1.5);
 }
 
 .coastal-kicker {
