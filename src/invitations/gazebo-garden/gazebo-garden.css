@@ -25,7 +25,6 @@
   inset: 0;
   z-index: 9999;
   overflow: hidden;
-  cursor: pointer;
   background-color: #f0e4c8;
   color: #314234;
   outline: none;
@@ -70,11 +69,20 @@
 }
 
 .gazebo-splash--html-animation {
+  background: transparent;
+}
+
+.gazebo-splash-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   background:
     radial-gradient(circle at 50% 42%, rgba(255, 253, 242, 0.95), rgba(238, 225, 194, 0.92) 56%, rgba(206, 184, 145, 0.82)),
     url("../../assets/coastal/envelope-texture.jpg");
   background-position: center;
   background-size: cover;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
 }
 
 .gazebo-splash-envelope-animation {
@@ -100,6 +108,7 @@
   mix-blend-mode: soft-light;
   opacity: 0.32;
   pointer-events: none;
+  transition: opacity 0.7s ease;
 }
 
 .gazebo-splash--opening .gazebo-splash-beige-texture {
@@ -110,9 +119,19 @@
   position: absolute;
   inset: 0;
   z-index: 4;
+  pointer-events: none;
   background:
     radial-gradient(circle at 50% 45%, rgba(255, 255, 245, 0), rgba(246, 235, 205, 0.06) 42%, rgba(75, 55, 28, 0.18)),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 24%, transparent 72%, rgba(242, 230, 198, 0.78));
+  transition: opacity 0.7s ease;
+}
+
+/* As the envelope finishes opening, fade the beige envelope layers away so the
+   hero section underneath is revealed directly (instead of a flat beige wash). */
+.gazebo-splash--revealing .gazebo-splash-backdrop,
+.gazebo-splash--revealing .gazebo-splash-beige-texture,
+.gazebo-splash--revealing .gazebo-splash-overlay {
+  opacity: 0;
 }
 
 .gazebo-envelope-scene {

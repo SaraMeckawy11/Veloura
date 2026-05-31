@@ -392,14 +392,15 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                   </label>
                   <label className="fountain-rsvp-panel-field" htmlFor="fountain-rsvp-guests">
                     <span>Number of guests</span>
-                    <input
+                    <select
                       id="fountain-rsvp-guests"
-                      type="number"
-                      min={1}
-                      max={10}
                       value={rsvpForm.guestCount}
                       onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value, 10) || 1 })}
-                    />
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(count => (
+                        <option key={count} value={count}>{count}</option>
+                      ))}
+                    </select>
                   </label>
                     <fieldset className="fountain-rsvp-panel-choice">
                       <legend>Will you attend?</legend>

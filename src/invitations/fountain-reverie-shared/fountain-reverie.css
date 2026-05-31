@@ -71,8 +71,8 @@
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(ellipse at 50% 44%, rgba(255, 249, 238, 0.34), rgba(255, 249, 238, 0.14) 38%, transparent 68%),
-    linear-gradient(180deg, rgba(255, 250, 241, 0.08), transparent 28%, transparent 76%, rgba(82, 59, 20, 0.1));
+    radial-gradient(ellipse 72% 60% at 50% 42%, rgba(255, 249, 238, 0.18), rgba(255, 249, 238, 0.07) 52%, transparent 82%),
+    linear-gradient(180deg, rgba(255, 250, 241, 0.05), transparent 30%, transparent 78%, rgba(82, 59, 20, 0.1));
   pointer-events: none;
 }
 
@@ -1314,6 +1314,9 @@
   --fountain-door-aspect-h: 1619;
   --fountain-door-cover-w: max(100vw, calc(100dvh * var(--fountain-door-aspect-w) / var(--fountain-door-aspect-h)));
   --fountain-door-cover-h: max(100dvh, calc(100vw * var(--fountain-door-aspect-h) / var(--fountain-door-aspect-w)));
+  /* The painted gap between the two door leaves sits slightly right of the
+     image's geometric centre, so split the panels there for a true seam. */
+  --fountain-door-split: 52%;
 
   position: fixed;
   inset: 0;
@@ -1322,7 +1325,7 @@
   overflow: hidden;
   background: transparent;
   perspective: 1900px;
-  perspective-origin: 50% 52%;
+  perspective-origin: 52% 52%;
   touch-action: manipulation;
 }
 
@@ -1357,7 +1360,7 @@
   z-index: 6;
   transform-style: preserve-3d;
   perspective: 1900px;
-  perspective-origin: 50% 52%;
+  perspective-origin: 52% 52%;
 }
 
 .fountain-door-panel {
@@ -1368,7 +1371,7 @@
   z-index: 3;
   overflow: hidden;
   background-repeat: no-repeat;
-  background-size: 200% 100%;
+  background-size: var(--fountain-door-cover-w) 100%;
   box-shadow:
     0 0 70px rgba(68, 45, 11, 0.36),
     inset 0 0 70px rgba(68, 45, 11, 0.12);
@@ -1383,7 +1386,8 @@
 
 .fountain-door-panel-left {
   left: 0;
-  background-position: 0% center;
+  width: var(--fountain-door-split);
+  background-position: left center;
   transform-origin: left center;
 }
 
@@ -1393,7 +1397,8 @@
 
 .fountain-door-panel-right {
   right: 0;
-  background-position: 100% center;
+  width: calc(100% - var(--fountain-door-split));
+  background-position: right center;
   transform-origin: right center;
 }
 
@@ -2544,7 +2549,8 @@
 }
 
 .fountain-rsvp-panel-field input,
-.fountain-rsvp-panel-field textarea {
+.fountain-rsvp-panel-field textarea,
+.fountain-rsvp-panel-field select {
   width: 100%;
   padding: 11px 16px;
   border: 1px solid rgba(184, 145, 69, 0.52);
@@ -2556,6 +2562,23 @@
   font-family: var(--font-display);
   font-size: clamp(0.94rem, 2.6vw, 1.2rem);
   font-weight: 500;
+}
+
+.fountain-rsvp-panel-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.4em;
+  background-image: linear-gradient(45deg, transparent 50%, var(--fountain-ink-dark) 50%), linear-gradient(135deg, var(--fountain-ink-dark) 50%, transparent 50%);
+  background-position: calc(100% - 1.1em) 55%, calc(100% - 0.85em) 55%;
+  background-size: 0.34em 0.34em, 0.34em 0.34em;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.fountain-rsvp-panel-field select:focus {
+  border-color: rgba(128, 105, 55, 0.78);
+  background-color: rgba(255, 253, 247, 0.9);
+  box-shadow: 0 0 0 4px rgba(128, 105, 55, 0.1);
 }
 
 .fountain-rsvp-panel-field textarea {

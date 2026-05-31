@@ -68,8 +68,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 50% 55% at 50% 50%, rgba(255, 253, 247, 1) 0%, rgba(255, 253, 247, 0.96) 38%, rgba(255, 253, 247, 0.72) 62%, rgba(255, 253, 247, 0.28) 84%, transparent 100%),
-    linear-gradient(180deg, rgba(255, 253, 247, 0.62) 0%, transparent 24%, transparent 76%, rgba(255, 250, 240, 0.62) 100%);
+    radial-gradient(ellipse 58% 64% at 50% 50%, rgba(255, 253, 247, 1) 0%, rgba(255, 253, 247, 0.99) 46%, rgba(255, 253, 247, 0.88) 66%, rgba(255, 253, 247, 0.5) 84%, transparent 100%),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.78) 0%, rgba(255, 253, 247, 0.2) 30%, transparent 50%, rgba(255, 250, 240, 0.32) 72%, rgba(255, 250, 240, 0.78) 100%);
 }
 
 .coastal-main-birds {
@@ -1061,7 +1061,8 @@
 }
 
 .coastal-rsvp-card input,
-.coastal-rsvp-card textarea {
+.coastal-rsvp-card textarea,
+.coastal-rsvp-card select {
   width: 100%;
   padding: 15px 16px;
   color: var(--coast-ink);
@@ -1074,15 +1075,28 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+.coastal-rsvp-card select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.6em;
+  background-image: linear-gradient(45deg, transparent 50%, var(--coast-denim-dark) 50%), linear-gradient(135deg, var(--coast-denim-dark) 50%, transparent 50%);
+  background-position: calc(100% - 1.15em) 55%, calc(100% - 0.9em) 55%;
+  background-size: 0.36em 0.36em, 0.36em 0.36em;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
 .coastal-rsvp-card input:hover,
-.coastal-rsvp-card textarea:hover {
+.coastal-rsvp-card textarea:hover,
+.coastal-rsvp-card select:hover {
   border-color: rgba(20, 53, 83, 0.22);
 }
 
 .coastal-rsvp-card input:focus,
-.coastal-rsvp-card textarea:focus {
+.coastal-rsvp-card textarea:focus,
+.coastal-rsvp-card select:focus {
   border-color: var(--coast-denim);
-  background: #ffffff;
+  background-color: #ffffff;
   box-shadow:
     0 0 0 4px rgba(41, 99, 143, 0.12),
     0 10px 22px rgba(20, 53, 83, 0.08);

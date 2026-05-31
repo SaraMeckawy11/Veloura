@@ -449,7 +449,11 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                     <div className="inv-rsvp-row">
                       <div className="inv-form-field">
                         <label className="data-label">PASSENGERS</label>
-                        <input type="number" min={1} max={10} className="kiosk-input" value={rsvpForm.guestCount} onChange={e => setRsvpForm({ ...rsvpForm, guestCount: parseInt(e.target.value) || 1 })} />
+                        <select className="kiosk-input kiosk-select" value={rsvpForm.guestCount} onChange={e => setRsvpForm({ ...rsvpForm, guestCount: parseInt(e.target.value) || 1 })}>
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(count => (
+                            <option key={count} value={count}>{count}</option>
+                          ))}
+                        </select>
                       </div>
                       <div className="inv-form-field">
                         <label className="data-label">WILL YOU BE BOARDING?</label>

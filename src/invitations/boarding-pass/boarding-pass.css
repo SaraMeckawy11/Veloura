@@ -912,6 +912,19 @@
 textarea.kiosk-input {
   resize: none;
 }
+select.kiosk-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.6em;
+  background-image: linear-gradient(45deg, transparent 50%, var(--bp-fg) 50%), linear-gradient(135deg, var(--bp-fg) 50%, transparent 50%);
+  background-position: calc(100% - 0.7em) 55%, calc(100% - 0.45em) 55%;
+  background-size: 0.34em 0.34em, 0.34em 0.34em;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+select.kiosk-select option {
+  color: #1a1a1a;
+}
 
 /* RSVP toggle buttons */
 .inv-radio-group {

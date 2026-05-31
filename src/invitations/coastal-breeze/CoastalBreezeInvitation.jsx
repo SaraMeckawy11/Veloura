@@ -394,14 +394,15 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
                   <div className="coastal-field">
                     <label htmlFor="rsvp-guests">Guests</label>
-                    <input
+                    <select
                       id="rsvp-guests"
-                      type="number"
-                      min={1}
-                      max={10}
                       value={rsvpForm.guestCount}
                       onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value) || 1 })}
-                    />
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(count => (
+                        <option key={count} value={count}>{count}</option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="coastal-field coastal-field-attending">

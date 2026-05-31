@@ -421,13 +421,14 @@ function RsvpSection({
           <label className="theater-guests-field">
             <img src={rsvpSeats} alt="" aria-hidden="true" />
             <span>Number of guests attending</span>
-            <input
-              type="number"
-              min={1}
-              max={10}
+            <select
               value={rsvpForm.guestCount}
               onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value, 10) || 1 })}
-            />
+            >
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(count => (
+                <option key={count} value={count}>{count}</option>
+              ))}
+            </select>
           </label>
 
           <label className="theater-message-field">

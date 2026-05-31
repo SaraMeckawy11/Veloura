@@ -606,7 +606,8 @@ body:has(.theater-theme),
 }
 
 .theater-rsvp-form input,
-.theater-rsvp-form textarea {
+.theater-rsvp-form textarea,
+.theater-rsvp-form select {
   width: 100%;
   border: 0;
   border-bottom: 1.5px solid rgba(47, 27, 19, 0.74);
@@ -616,6 +617,17 @@ body:has(.theater-theme),
   box-shadow: none;
   color: var(--theater-ink);
   font: 600 clamp(0.78rem, 2vw, 1.08rem) var(--font-body);
+}
+
+.theater-rsvp-form select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.1em;
+  background-image: linear-gradient(45deg, transparent 50%, var(--theater-ink) 50%), linear-gradient(135deg, var(--theater-ink) 50%, transparent 50%);
+  background-position: calc(100% - 0.5em) 55%, calc(100% - 0.25em) 55%;
+  background-size: 0.32em 0.32em, 0.32em 0.32em;
+  background-repeat: no-repeat;
+  cursor: pointer;
 }
 
 .theater-rsvp-choice {
@@ -710,7 +722,8 @@ body:has(.theater-theme),
   text-transform: uppercase;
 }
 
-.theater-guests-field input {
+.theater-guests-field input,
+.theater-guests-field select {
   text-align: center;
 }
 
@@ -765,8 +778,8 @@ body:has(.theater-theme),
 
 .theater-rsvp-submit {
   position: absolute;
-  left: -10%;
-  top: 100%;
+  left: -1%;
+  top: 92%;
   width: 70%;
   height: 22%;
   padding: 0;
