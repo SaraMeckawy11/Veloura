@@ -869,7 +869,6 @@
   position: relative;
   padding: clamp(86px, 11vw, 140px) 22px;
   background:
-    radial-gradient(ellipse at 18% 4%, rgba(255, 253, 247, 0.96), transparent 23rem),
     radial-gradient(ellipse at 84% 78%, rgba(247, 222, 188, 0.5), transparent 24rem),
     radial-gradient(ellipse at 20% 92%, rgba(126, 132, 77, 0.2), transparent 26rem),
     linear-gradient(180deg, #fff8e8 0%, #ead9ba 100%);
@@ -1370,6 +1369,7 @@
   width: 50%;
   z-index: 3;
   overflow: hidden;
+  background-color: #e9dcc4;
   background-repeat: no-repeat;
   background-size: var(--fountain-door-cover-w) 100%;
   transform-style: preserve-3d;
@@ -1963,7 +1963,6 @@
   border: 1px solid rgba(128, 105, 55, 0.36);
   border-radius: 42% 42% 8px 8px / 26% 26% 8px 8px;
   background:
-    radial-gradient(ellipse at 50% 6%, rgba(255, 255, 255, 0.84), transparent 58%),
     linear-gradient(180deg, rgba(255, 253, 246, 0.92), rgba(239, 224, 196, 0.72));
   box-shadow:
     0 18px 38px rgba(87, 70, 32, 0.11),
@@ -2391,7 +2390,6 @@
 .fountain-count-unit {
   border-color: rgba(151, 130, 79, 0.34);
   background:
-    radial-gradient(ellipse at 50% 4%, rgba(255, 255, 255, 0.94), transparent 60%),
     linear-gradient(180deg, rgba(255, 254, 249, 0.97), rgba(241, 231, 207, 0.7));
   box-shadow:
     0 14px 28px rgba(94, 78, 42, 0.09),
@@ -2935,7 +2933,6 @@
   padding: clamp(186px, 29vw, 226px) clamp(26px, 6vw, 58px) clamp(28px, 4vw, 42px);
   border-radius: 24px;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.92), transparent 34%),
     linear-gradient(180deg, rgba(255, 254, 250, 0.99), rgba(248, 240, 226, 0.98));
 }
 

@@ -57,6 +57,7 @@
   width: 50%;
   z-index: 3;
   overflow: hidden;
+  background-color: #cdd6df;
   background-repeat: no-repeat;
   background-size: 200% 100%;
   box-shadow:

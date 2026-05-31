@@ -68,8 +68,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 56% 60% at 50% 50%, rgba(255, 253, 247, 0.92) 0%, rgba(255, 253, 247, 0.84) 46%, rgba(255, 253, 247, 0.6) 66%, rgba(255, 253, 247, 0.28) 84%, transparent 100%),
-    linear-gradient(180deg, rgba(255, 253, 247, 0.6) 0%, rgba(255, 253, 247, 0.12) 30%, transparent 50%, rgba(255, 250, 240, 0.2) 72%, rgba(255, 250, 240, 0.58) 100%);
+    radial-gradient(ellipse 58% 52% at 50% 42%, rgba(255, 253, 247, 0.5) 0%, rgba(255, 253, 247, 0.24) 48%, transparent 74%),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.32) 0%, transparent 26%, transparent 72%, rgba(255, 250, 240, 0.36) 100%);
 }
 
 .coastal-main-birds {
@@ -177,11 +177,13 @@
 
 .coastal-kicker {
   display: block;
-  color: #2e2820;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.34em;
+  color: #6e5e44;
+  font-family: var(--font-display);
+  font-size: clamp(0.6rem, 3vw, 0.86rem);
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .coastal-kicker-thin {
@@ -196,7 +198,7 @@
   align-items: center;
   gap: 4px;
   margin: 26px 0 8px;
-  color: #14241f;
+  color: #2f4d70;
   font-family: var(--font-script);
   font-weight: 400;
   font-size: clamp(3rem, 9vw, 5rem);
@@ -215,9 +217,10 @@
 .coastal-hero-amp {
   display: block;
   margin: 4px 0;
-  font-family: var(--font-script-alt);
-  font-size: 0.7em;
-  color: #6d8474;
+  font-family: var(--font-display);
+  font-size: 0.42em;
+  font-style: italic;
+  color: #9a8460;
   line-height: 1;
 }
 
@@ -239,7 +242,7 @@
   margin: 0 auto;
   border: none;
   background: transparent;
-  color: #4a4032;
+  color: #2f4d70;
   font-family: var(--font-display);
   font-size: clamp(1.05rem, 2.5vw, 1.28rem);
   font-weight: 500;
@@ -250,7 +253,7 @@
 .coastal-hero-datepill > span {
   height: 24px;
   width: 1px;
-  background: rgba(74, 64, 50, 0.35);
+  background: rgba(47, 77, 112, 0.4);
 }
 
 .coastal-hero-datepill div {
@@ -264,7 +267,7 @@
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #4a4032;
+  color: #2f4d70;
 }
 
 .coastal-hero-datepill-month {
@@ -277,7 +280,7 @@
 .coastal-hero-datepill-month small {
   font-size: 0.7em;
   letter-spacing: 0.24em;
-  color: #6d5b40;
+  color: #3a567c;
 }
 
 .coastal-hero-datepill-month strong {
@@ -285,13 +288,13 @@
   font-family: var(--font-display);
   font-size: 1.4em;
   font-weight: 500;
-  color: #3a4a3f;
+  color: #2f4d70;
   line-height: 1;
 }
 
 .coastal-hero-venue {
   margin: 26px 0 4px;
-  color: #4a4032;
+  color: #2f4d70;
   font-family: var(--font-display);
   font-size: 1.04rem;
   font-weight: 500;

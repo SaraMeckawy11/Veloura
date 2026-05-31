@@ -42,12 +42,16 @@
 }
 
 .gc-trigger-value {
-  font-weight: 600;
+  font-size: 1.08em;
+  font-weight: 700;
+  color: var(--gc-text);
+  opacity: 1;
 }
 
 .gc-trigger-caret {
   flex: none;
   color: var(--gc-accent);
+  opacity: 0.95;
 }
 
 /* ---- Modal ---- */

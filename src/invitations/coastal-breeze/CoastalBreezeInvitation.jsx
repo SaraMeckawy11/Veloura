@@ -7,6 +7,7 @@ import { buildInvitationImageSources, containInvitationPhoto, DEFAULT_COUPLE_MES
 import InvitationPhoto from '../InvitationPhoto';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
+import coastalHeroEmpty from '../../assets/coastal/heroEmpty.png';
 import cruiseShip from '../../assets/coastal/cruise-ship-clean.webp';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
@@ -202,7 +203,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
       <section className="coastal-hero">
         <div className="coastal-hero-bg" aria-hidden>
-          <img src={ceremonyArch} alt="" />
+          <img src={coastalHeroEmpty} alt="" />
           <div className="coastal-hero-bg-wash" />
         </div>
 

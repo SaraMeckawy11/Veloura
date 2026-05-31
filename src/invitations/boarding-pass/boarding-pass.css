@@ -71,7 +71,6 @@
   background: linear-gradient(180deg, #0a0608 0%, #120c10 40%, #0d0a0e 100%);
   display: block;
   cursor: pointer;
-  animation: inv-fade-in 0.5s ease;
   overflow: hidden;
 }
 .inv-splash-petals {

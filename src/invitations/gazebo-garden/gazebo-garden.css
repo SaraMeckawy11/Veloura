@@ -25,8 +25,7 @@
   inset: 0;
   z-index: 9999;
   overflow: hidden;
-  cursor: pointer;
-  background-color: transparent;
+  background-color: #f0e4c8;
   color: #314234;
   outline: none;
   touch-action: manipulation;
@@ -70,7 +69,16 @@
 }
 
 .gazebo-splash--html-animation {
-  background: transparent;
+  background: #f0e4c8;
+}
+
+.gazebo-splash-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 50% 38%, #fbf3df, #efe2c4 58%, #e2d2ac);
+  pointer-events: none;
 }
 
 .gazebo-splash-envelope-animation {

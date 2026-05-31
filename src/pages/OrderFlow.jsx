@@ -8,7 +8,7 @@ import '../styles/OrderFlow.css';
 const API = import.meta.env.VITE_API_URL || '/api';
 const STORAGE_KEY = 'veloura_order_draft';
 const PENDING_ORDER_KEY = 'veloura_pending_order_id';
-const DISPLAY_PRICE = '$45';
+const DISPLAY_PRICE = '$99';
 const DEFAULT_INVITATION_MESSAGE = 'Two Souls, One Destination.';
 const OLD_MESSAGE_HELP_TEXT = 'This text appears as the tagline under your names in the invitation ';
 

@@ -36,8 +36,8 @@ export default function Pricing() {
           <div className="pricing-card">
             <div className="pricing-plan-name">All-Inclusive Package</div>
             <div className="pricing-amount">
-              <span className="old-price">$60</span>
-              $45
+              <span className="old-price">$119</span>
+              $99
             </div>
             <div className="pricing-desc">One-time payment · No subscription · Limited time launch price</div>
 

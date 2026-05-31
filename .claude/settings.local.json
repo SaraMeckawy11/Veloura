@@ -33,7 +33,11 @@
       "Bash(echo \"exit:$?\")",
       "Bash(Select-String -NotMatch \"node_modules\")",
       "Bash(Select-Object -First 200)",
-      "Bash(node -e \"const fs=require\\('fs'\\);['hero.png','hero1empty.png','hero2.png','hero2empty.png'].forEach\\(f=>{try{const b=fs.readFileSync\\('src/assets/Fountain Reverie/'+f\\);const w=b.readUInt32BE\\(16\\),h=b.readUInt32BE\\(20\\);console.log\\(f,w+'x'+h\\);}catch\\(e\\){console.log\\(f,'ERR',e.message\\)}}\\)\")"
+      "Bash(node -e \"const fs=require\\('fs'\\);['hero.png','hero1empty.png','hero2.png','hero2empty.png'].forEach\\(f=>{try{const b=fs.readFileSync\\('src/assets/Fountain Reverie/'+f\\);const w=b.readUInt32BE\\(16\\),h=b.readUInt32BE\\(20\\);console.log\\(f,w+'x'+h\\);}catch\\(e\\){console.log\\(f,'ERR',e.message\\)}}\\)\")",
+      "Bash(grep -nA12 \"^\\\\.fountain-splash \\\\{\" fountain-reverie-shared/fountain-reverie.css)",
+      "Bash(grep -nA10 \"splash-screen\\\\|bp-splash\\\\|boarding-splash\" boarding-pass/boarding-pass.css)",
+      "Bash(grep -rnA10 \"^\\\\.inv-splash \\\\{\" .)",
+      "Bash(git log *)"
     ]
   }
 }
