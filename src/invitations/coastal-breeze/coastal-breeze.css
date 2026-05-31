@@ -69,8 +69,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 58% 52% at 50% 42%, rgba(255, 253, 247, 0.74) 0%, rgba(255, 253, 247, 0.42) 48%, transparent 74%),
-    linear-gradient(180deg, rgba(255, 253, 247, 0.48) 0%, transparent 26%, transparent 72%, rgba(255, 250, 240, 0.48) 100%);
+    radial-gradient(ellipse 58% 52% at 50% 42%, rgba(255, 253, 247, 0.84) 0%, rgba(255, 253, 247, 0.52) 48%, transparent 74%),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.56) 0%, transparent 26%, transparent 72%, rgba(255, 250, 240, 0.56) 100%);
 }
 
 .coastal-main-birds {
@@ -193,7 +193,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 45%;
+  top: 43%;
   transform: translateY(-50%);
 }
 
@@ -234,9 +234,6 @@
   font-family: var(--font-script);
   font-size: 1em;
   line-height: 1;
-  text-shadow:
-    0 0 16px rgba(255, 253, 247, 0.95),
-    0 1px 5px rgba(255, 253, 247, 0.9);
 }
 
 .coastal-hero-amp {
