@@ -386,7 +386,10 @@
 }
 
 @media (max-width: 480px) {
-  .dash-stats { grid-template-columns: repeat(2, 1fr); }
+  .dash-stats { gap: 8px; }
+  .stat-card { padding: 16px 8px; }
+  .stat-value { font-size: 1.7rem; }
+  .stat-label { font-size: 0.62rem; letter-spacing: 0.05em; }
   .dash-section-heading { align-items: flex-start; flex-direction: column; }
 }
 
