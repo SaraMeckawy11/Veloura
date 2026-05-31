@@ -76,6 +76,7 @@ const orderSchema = new mongoose.Schema({
 
   // Edit tracking
   editsRemaining:   { type: Number, default: 5 },     // legacy — general edits are now unlimited
+  weddingDetailsEditCount: { type: Number, default: 0 }, // actual dashboard edits to wedding details
   nameEditsRemaining: { type: Number, default: 2 },   // 2 name corrections allowed within grace period
   dateEditsRemaining: { type: Number, default: 2 },   // 2 date changes allowed total
   activatedAt:      { type: Date },                    // when payment was confirmed — starts grace period

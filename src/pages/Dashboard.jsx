@@ -631,6 +631,10 @@ export default function Dashboard() {
 
         {/* Stats grid */}
         <div className="dash-stats">
+          <div className="stat-card stat-details">
+            <div className="stat-value">{order.weddingDetailsEditCount || 0}</div>
+            <div className="stat-label">Detail Edits</div>
+          </div>
           <div className="stat-card">
             <div className="stat-value">{rsvpData?.summary?.total || 0}</div>
             <div className="stat-label">Total RSVPs</div>

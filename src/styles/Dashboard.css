@@ -161,7 +161,7 @@
 /* Stats */
 .dash-stats {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 12px;
   margin-bottom: 32px;
 }
@@ -186,6 +186,7 @@
 .stat-no .stat-value { color: var(--rose); }
 .stat-maybe .stat-value { color: #D97706; }
 .stat-guests .stat-value { color: var(--gold); }
+.stat-details .stat-value { color: var(--gold); }
 
 .stat-label {
   font-size: 0.72rem;

@@ -27,6 +27,18 @@ const HIDEABLE_WEDDING_FIELDS = new Set([
   'message',
   'secondLanguage',
 ]);
+const WEDDING_DETAIL_FIELDS = new Set([
+  'groomName',
+  'brideName',
+  'weddingDate',
+  'weddingTime',
+  'venue',
+  'venueAddress',
+  'venueMapUrl',
+  'message',
+  'language',
+  'secondLanguage',
+]);
 
 function normalizeDisabledFields(fields) {
   return Array.isArray(fields) ? [...new Set(fields.filter(Boolean))] : [];
@@ -40,6 +52,29 @@ function normalizePhotos(photos) {
   return Array.isArray(photos)
     ? photos.map(photo => ({ ...photo, fit: normalizePhotoFit(photo?.fit) }))
     : [];
+}
+
+function normalizeWeddingDetailValue(field, value) {
+  if (field === 'weddingDate') {
+    if (!value) return '';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? `${value}` : date.toISOString().slice(0, 10);
+  }
+  return `${value ?? ''}`.trim();
+}
+
+export function getWeddingDetailChanges(currentDetails = {}, nextDetails = {}) {
+  return Object.keys(nextDetails).filter(field => (
+    WEDDING_DETAIL_FIELDS.has(field)
+    && normalizeWeddingDetailValue(field, currentDetails?.[field])
+      !== normalizeWeddingDetailValue(field, nextDetails[field])
+  ));
+}
+
+export function getDisabledWeddingFieldChanges(currentFields = [], nextFields = []) {
+  const current = new Set(currentFields);
+  const next = new Set(nextFields);
+  return [...HIDEABLE_WEDDING_FIELDS].filter(field => current.has(field) !== next.has(field));
 }
 
 function applyDisabledFields(weddingDetails = {}, disabledFields = []) {
@@ -366,6 +401,7 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       publicSlug: order.publicSlug,
       invitationUrl: publicInvitationUrl(order.publicSlug),
       editsRemaining: order.editsRemaining,
+      weddingDetailsEditCount: order.weddingDetailsEditCount,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,
       activatedAt: order.activatedAt,
@@ -398,6 +434,13 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     const weddingDetails = req.body.weddingDetails
       ? applyDisabledFields(req.body.weddingDetails, disabledFields)
       : undefined;
+    const weddingDetailChanges = weddingDetails
+      ? getWeddingDetailChanges(order.weddingDetails, weddingDetails)
+      : [];
+    const disabledWeddingFieldChanges = req.body.disabledFields !== undefined
+      ? getDisabledWeddingFieldChanges(order.disabledFields, disabledFields)
+      : [];
+    const weddingDetailsChanged = weddingDetailChanges.length > 0 || disabledWeddingFieldChanges.length > 0;
 
     // --- Name change validation ---
     const nameChanges = weddingDetails ? order.getNameFieldChanges(weddingDetails) : [];
@@ -434,7 +477,7 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     if (weddingDetails) {
       const existing = order.weddingDetails?.toObject?.() || order.weddingDetails || {};
       order.weddingDetails = { ...existing, ...weddingDetails };
-      fieldsChanged.push('weddingDetails');
+      if (weddingDetailsChanged) fieldsChanged.push('weddingDetails');
     }
     if (customizations) {
       for (const [k, v] of Object.entries(customizations)) order.customizations.set(k, v);
@@ -449,7 +492,11 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     if (musicPublicId !== undefined) { order.musicPublicId = musicPublicId; fieldsChanged.push('musicPublicId'); }
     if (musicEnabled !== undefined) { order.musicEnabled = musicEnabled; fieldsChanged.push('musicEnabled'); }
 
-    // General edits are unlimited; only the name/date correction counters are tracked.
+    // General edits are unlimited. Track actual wedding-detail edits separately
+    // from the limited name/date correction counters.
+    if (weddingDetailsChanged) {
+      order.weddingDetailsEditCount = (order.weddingDetailsEditCount || 0) + 1;
+    }
     if (nameChanges.length > 0) {
       order.nameEditsRemaining -= 1;
       fieldsChanged.push('coupleNames');
@@ -479,6 +526,7 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     res.json({
       message: 'Invitation updated',
       editsRemaining: order.editsRemaining,
+      weddingDetailsEditCount: order.weddingDetailsEditCount,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,
     });
@@ -561,6 +609,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       invitationUrl: publicInvitationUrl(order.publicSlug),
       invitationCode: order.invitationCode,
       editsRemaining: order.editsRemaining,
+      weddingDetailsEditCount: order.weddingDetailsEditCount,
       nameEditsRemaining: order.nameEditsRemaining,
       dateEditsRemaining: order.dateEditsRemaining,
       activatedAt: order.activatedAt,
