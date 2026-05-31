@@ -215,6 +215,8 @@
 }
 
 .coastal-hero-card h1 {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -227,6 +229,16 @@
   line-height: 1;
   letter-spacing: 0;
   text-transform: none;
+}
+
+.coastal-hero-card h1::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -42% -58%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 252, 0.98) 0%, rgba(255, 253, 247, 0.86) 38%, rgba(255, 253, 247, 0.48) 62%, transparent 82%);
+  filter: blur(24px);
 }
 
 .coastal-hero-name {
