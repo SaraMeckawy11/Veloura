@@ -36,6 +36,7 @@ function buildMapEmbedUrl(rawUrl, fallbackQuery) {
 
 export default function BoardingPassInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
+  const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
@@ -131,11 +132,11 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
   // ===================== MAIN PAGE =====================
   return (
-    <div className={`inv-page boarding-pass-theme${showSplash ? ' invitation-splash-gated' : ''}`}>
+    <div className={`inv-page boarding-pass-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
-      {showSplash && <BoardingPassSplash onDismiss={handleSplashDismiss} />}
+      {showSplash && <BoardingPassSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />}
       {/* ========== HERO ========== */}
       <section className="inv-hero">
         {/* Cloud background with parallax scroll */}

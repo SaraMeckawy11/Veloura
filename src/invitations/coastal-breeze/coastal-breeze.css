@@ -69,9 +69,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 82% 30% at 50% 16%, rgba(255, 253, 247, 0.82) 0%, rgba(255, 253, 247, 0.42) 56%, transparent 100%),
-    radial-gradient(ellipse 70% 26% at 50% 74%, rgba(255, 253, 247, 0.5) 0%, rgba(255, 253, 247, 0.2) 58%, transparent 100%),
-    linear-gradient(180deg, rgba(255, 253, 247, 0.42) 0%, transparent 28%, transparent 70%, rgba(255, 250, 240, 0.32) 100%);
+    radial-gradient(ellipse 58% 64% at 50% 50%, rgba(255, 253, 247, 1) 0%, rgba(255, 253, 247, 0.99) 46%, rgba(255, 253, 247, 0.88) 66%, rgba(255, 253, 247, 0.5) 84%, transparent 100%),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.78) 0%, rgba(255, 253, 247, 0.2) 30%, transparent 50%, rgba(255, 250, 240, 0.32) 72%, rgba(255, 250, 240, 0.78) 100%);
 }
 
 .coastal-main-birds {
@@ -182,11 +181,20 @@
 }
 
 .coastal-hero-top,
+.coastal-hero-center,
 .coastal-hero-bottom {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+}
+
+.coastal-hero-center {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .coastal-kicker {

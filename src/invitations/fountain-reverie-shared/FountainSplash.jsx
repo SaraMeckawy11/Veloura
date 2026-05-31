@@ -7,18 +7,27 @@ import './fountain-reverie.css';
 const AUTO_OPEN_MIN_MS = 1200;
 const AUTO_OPEN_FALLBACK_MS = 1500;
 
-export default function FountainSplash({ onDismiss }) {
+export default function FountainSplash({ onReady, onDismiss }) {
   const [opening, setOpening] = useState(false);
   const [fading, setFading] = useState(false);
   const openingRef = useRef(false);
+  const readyRef = useRef(false);
+  const onReadyRef = useRef(onReady);
   const onDismissRef = useRef(onDismiss);
 
   useEffect(() => {
+    onReadyRef.current = onReady;
     onDismissRef.current = onDismiss;
-  }, [onDismiss]);
+  }, [onReady, onDismiss]);
+
+  const markReady = useCallback(() => {
+    if (readyRef.current) return;
+    readyRef.current = true;
+    onReadyRef.current?.();
+  }, []);
 
   const handleOpen = useCallback(() => {
-    if (openingRef.current) return;
+    if (!readyRef.current || openingRef.current) return;
     openingRef.current = true;
     setOpening(true);
     setTimeout(() => setFading(true), 4600);
@@ -34,6 +43,7 @@ export default function FountainSplash({ onDismiss }) {
 
     const scheduleOpen = () => {
       if (cancelled || openScheduled) return;
+      markReady();
       openScheduled = true;
       const elapsed = performance.now() - startedAt;
       const delay = Math.max(AUTO_OPEN_MIN_MS - elapsed, 0);
@@ -68,7 +78,7 @@ export default function FountainSplash({ onDismiss }) {
       image.onload = null;
       image.onerror = null;
     };
-  }, [handleOpen]);
+  }, [handleOpen, markReady]);
 
   const swingDuration = 4.4;
   const swingEase = [0.45, 0, 0.2, 1];

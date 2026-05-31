@@ -106,6 +106,7 @@ function formatDate(date) {
 
 export default function GazeboGardenInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
+  const [splashReady, setSplashReady] = useState(false);
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -268,12 +269,13 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   };
 
   return (
-    <div className={`gazebo-theme theme-watercolor${showSplash ? ' invitation-splash-gated' : ''}`}>
+    <div className={`gazebo-theme theme-watercolor${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
       {showSplash && (
         <GazeboSplash
+          onReady={() => setSplashReady(true)}
           onDismiss={handleSplashDismiss}
         />
       )}

@@ -45,6 +45,7 @@ function byUniquePhoto(image, index, allImages) {
 
 export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
+  const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
@@ -162,9 +163,9 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   };
 
   return (
-    <div className={`theater-theme${showSplash ? ' invitation-splash-gated' : ''}`}>
+    <div className={`theater-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />}
-      {showSplash && <TheaterSplash onDismiss={handleSplashDismiss} />}
+      {showSplash && <TheaterSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />}
 
       <main className="theater-invitation">
         <HeroSection

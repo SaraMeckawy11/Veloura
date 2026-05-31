@@ -7,20 +7,29 @@ import './theater-splash.css';
 const AUTO_OPEN_MIN_MS = 800;
 const AUTO_OPEN_FALLBACK_MS = 1500;
 
-export default function TheaterSplash({ onDismiss }) {
+export default function TheaterSplash({ onReady, onDismiss }) {
   const [fading, setFading] = useState(false);
   const [ready, setReady] = useState(false);
   const dismissRef = useRef(onDismiss);
+  const onReadyRef = useRef(onReady);
+  const assetReadyRef = useRef(false);
   const openingRef = useRef(false);
   const fadeTimerRef = useRef(0);
   const exitTimerRef = useRef(0);
 
   useEffect(() => {
+    onReadyRef.current = onReady;
     dismissRef.current = onDismiss;
-  }, [onDismiss]);
+  }, [onReady, onDismiss]);
+
+  const markReady = useCallback(() => {
+    if (assetReadyRef.current) return;
+    assetReadyRef.current = true;
+    onReadyRef.current?.();
+  }, []);
 
   const startOpening = useCallback(() => {
-    if (openingRef.current) return;
+    if (!assetReadyRef.current || openingRef.current) return;
     openingRef.current = true;
     setReady(true);
     window.clearTimeout(fadeTimerRef.current);
@@ -44,6 +53,7 @@ export default function TheaterSplash({ onDismiss }) {
 
     const scheduleOpen = () => {
       if (cancelled || openScheduled) return;
+      markReady();
       openScheduled = true;
       const elapsed = performance.now() - startedAt;
       const delay = Math.max(AUTO_OPEN_MIN_MS - elapsed, 0);
@@ -65,7 +75,7 @@ export default function TheaterSplash({ onDismiss }) {
       img.onload = null;
       img.onerror = null;
     };
-  }, [startOpening]);
+  }, [markReady, startOpening]);
 
   return (
     <AnimatePresence>

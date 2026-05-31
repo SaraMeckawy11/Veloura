@@ -52,6 +52,7 @@ const BlueShellMark = ({ className = '' }) => (
 
 export default function CoastalBreezeInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
+  const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
@@ -192,12 +193,12 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className={`coastal-theme${showSplash ? ' invitation-splash-gated' : ''}`}>
+    <div className={`coastal-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
       {showSplash && (
-        <CoastalSplash onDismiss={handleSplashDismiss} />
+        <CoastalSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
       )}
 
       <section className="coastal-hero">
@@ -215,7 +216,9 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <div className="coastal-hero-top">
             <span className="coastal-kicker">Please join us to</span>
             <span className="coastal-kicker coastal-kicker-thin">celebrate the marriage of</span>
+          </div>
 
+          <div className="coastal-hero-center">
             <h1>
               <span className="coastal-hero-name">{name1}</span>
               <span className="coastal-hero-amp">&amp;</span>

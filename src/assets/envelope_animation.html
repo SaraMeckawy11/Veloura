@@ -102,6 +102,7 @@
 
       sprite.onload = () => {
         drawFrame(0);
+        window.parent.postMessage({ type: "gazebo-envelope-ready" }, window.location.origin);
         requestAnimationFrame(tick);
       };
       window.addEventListener("resize", resizeCanvas);

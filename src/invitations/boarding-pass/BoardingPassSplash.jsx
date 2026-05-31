@@ -37,17 +37,26 @@ const STARS = [
 const AUTO_OPEN_MIN_MS = 800;
 const AUTO_OPEN_FALLBACK_MS = 1500;
 
-export default function BoardingPassSplash({ onDismiss }) {
+export default function BoardingPassSplash({ onReady, onDismiss }) {
   const [dismissed, setDismissed] = useState(false);
   const dismissedRef = useRef(false);
+  const readyRef = useRef(false);
+  const onReadyRef = useRef(onReady);
   const onDismissRef = useRef(onDismiss);
 
   useEffect(() => {
+    onReadyRef.current = onReady;
     onDismissRef.current = onDismiss;
-  }, [onDismiss]);
+  }, [onReady, onDismiss]);
+
+  const markReady = useCallback(() => {
+    if (readyRef.current) return;
+    readyRef.current = true;
+    onReadyRef.current?.();
+  }, []);
 
   const handleOpen = useCallback(() => {
-    if (dismissedRef.current) return;
+    if (!readyRef.current || dismissedRef.current) return;
     dismissedRef.current = true;
     setDismissed(true);
     setTimeout(() => onDismissRef.current(), 1300);
@@ -62,6 +71,7 @@ export default function BoardingPassSplash({ onDismiss }) {
 
     const scheduleOpen = () => {
       if (cancelled || openScheduled) return;
+      markReady();
       openScheduled = true;
       const elapsed = performance.now() - startedAt;
       const delay = Math.max(AUTO_OPEN_MIN_MS - elapsed, 0);
@@ -96,7 +106,7 @@ export default function BoardingPassSplash({ onDismiss }) {
       image.onload = null;
       image.onerror = null;
     };
-  }, [handleOpen]);
+  }, [handleOpen, markReady]);
 
   return (
     <AnimatePresence>

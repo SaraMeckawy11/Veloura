@@ -9,15 +9,25 @@ const END_PADDING_MS = 320;
 const FALLBACK_DISMISS_MS = 4600;
 const ANIMATION_DISMISS_MS = Math.ceil((FRAME_COUNT / FRAMES_PER_SECOND) * 1000) + END_PADDING_MS;
 
-export default function GazeboSplash({ onDismiss }) {
+export default function GazeboSplash({ onReady, onDismiss }) {
   const dismissTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
+  const iframeRef = useRef(null);
+  const readyRef = useRef(false);
+  const onReadyRef = useRef(onReady);
   const onDismissRef = useRef(onDismiss);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
+    onReadyRef.current = onReady;
     onDismissRef.current = onDismiss;
-  }, [onDismiss]);
+  }, [onReady, onDismiss]);
+
+  const markReady = useCallback(() => {
+    if (readyRef.current) return;
+    readyRef.current = true;
+    onReadyRef.current?.();
+  }, []);
 
   const finishOpening = useCallback(() => {
     if (hasOpenedRef.current) return;
@@ -42,6 +52,11 @@ export default function GazeboSplash({ onDismiss }) {
     dismissTimerRef.current = window.setTimeout(finishOpening, delay);
   }, [finishOpening]);
 
+  const handleAnimationReady = useCallback(() => {
+    markReady();
+    scheduleDismiss(ANIMATION_DISMISS_MS);
+  }, [markReady, scheduleDismiss]);
+
   useEffect(() => {
     scheduleDismiss(FALLBACK_DISMISS_MS);
 
@@ -51,6 +66,16 @@ export default function GazeboSplash({ onDismiss }) {
       }
     };
   }, [scheduleDismiss]);
+
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.source !== iframeRef.current?.contentWindow) return;
+      if (event.data?.type === 'gazebo-envelope-ready') handleAnimationReady();
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [handleAnimationReady]);
 
   return (
     <AnimatePresence>
@@ -62,13 +87,11 @@ export default function GazeboSplash({ onDismiss }) {
         transition={fading ? { duration: 0.6, ease: 'easeInOut' } : { duration: 0.2 }}
         exit={{ opacity: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }}
       >
-        {/* Keep the hero covered until the envelope has finished opening. */}
-        <div className="gazebo-splash-backdrop" aria-hidden />
         <iframe
+          ref={iframeRef}
           className="gazebo-splash-envelope-animation"
           src={envelopeAnimationUrl}
           title="Envelope opening animation"
-          onLoad={() => scheduleDismiss(ANIMATION_DISMISS_MS)}
           aria-hidden="true"
           tabIndex={-1}
         />

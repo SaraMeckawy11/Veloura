@@ -92,6 +92,7 @@ const Crest = ({ initials }) => (
 
 export default function FountainReverieInvitation({ order, demo = false, publicSlug, heroImage, variant = 'v1' }) {
   const [showSplash, setShowSplash] = useState(true);
+  const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
@@ -225,12 +226,12 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className={`fountain-theme fountain-theme-${variant}${showSplash ? ' invitation-splash-gated' : ''}`}>
+    <div className={`fountain-theme fountain-theme-${variant}${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
       {showSplash && (
-        <FountainSplash onDismiss={handleSplashDismiss} />
+        <FountainSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
       )}
 
       <section className="fountain-hero">
