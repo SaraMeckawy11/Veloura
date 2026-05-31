@@ -6,6 +6,7 @@ import { containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, g
 import InvitationPhoto from '../InvitationPhoto';
 import './gazebo-garden.css';
 import gardenEnvelope from '../../assets/gardenPavilion/garden-pavilion-envelope-transparent.png';
+import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -417,14 +418,16 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                     required
                   />
                 </label>
-                <label>
+                <div className="gazebo-rsvp-guest-field">
                   <span>Guest count</span>
-                  <select value={rsvpForm.guestCount} onChange={event => updateRsvpField('guestCount', event.target.value)} required>
-                    {[1, 2, 3, 4, 5, 6].map(count => (
-                      <option key={count} value={count}>{count}</option>
-                    ))}
-                  </select>
-                </label>
+                  <GuestCountField
+                    id="gazebo-guests"
+                    theme="gazebo"
+                    label="Guest count"
+                    value={rsvpForm.guestCount}
+                    onChange={count => updateRsvpField('guestCount', count)}
+                  />
+                </div>
               </div>
 
               <fieldset>

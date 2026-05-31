@@ -70,9 +70,9 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background:
-    radial-gradient(ellipse 72% 60% at 50% 42%, rgba(255, 249, 238, 0.18), rgba(255, 249, 238, 0.07) 52%, transparent 82%),
-    linear-gradient(180deg, rgba(255, 250, 241, 0.05), transparent 30%, transparent 78%, rgba(82, 59, 20, 0.1));
+  /* No bright spotlight glow — it read as a "flashlight" sweep while
+     scrolling. Keep only a faint grounding shade at the very bottom. */
+  background: linear-gradient(180deg, transparent 82%, rgba(82, 59, 20, 0.08));
   pointer-events: none;
 }
 
@@ -1372,9 +1372,6 @@
   overflow: hidden;
   background-repeat: no-repeat;
   background-size: var(--fountain-door-cover-w) 100%;
-  box-shadow:
-    0 0 70px rgba(68, 45, 11, 0.36),
-    inset 0 0 70px rgba(68, 45, 11, 0.12);
   transform-style: preserve-3d;
   backface-visibility: hidden;
   will-change: transform, filter;
@@ -1425,9 +1422,8 @@
 }
 
 .fountain-splash-opening .fountain-door-panel {
-  box-shadow:
-    0 20px 90px rgba(43, 28, 8, 0.42),
-    inset 0 0 90px rgba(43, 28, 8, 0.2);
+  /* No shadow on the parting edges — keep the opening seam clean. */
+  box-shadow: none;
 }
 
 .fountain-splash-vignette {
@@ -2549,8 +2545,7 @@
 }
 
 .fountain-rsvp-panel-field input,
-.fountain-rsvp-panel-field textarea,
-.fountain-rsvp-panel-field select {
+.fountain-rsvp-panel-field textarea {
   width: 100%;
   padding: 11px 16px;
   border: 1px solid rgba(184, 145, 69, 0.52);
@@ -2562,23 +2557,6 @@
   font-family: var(--font-display);
   font-size: clamp(0.94rem, 2.6vw, 1.2rem);
   font-weight: 500;
-}
-
-.fountain-rsvp-panel-field select {
-  appearance: none;
-  -webkit-appearance: none;
-  padding-right: 2.4em;
-  background-image: linear-gradient(45deg, transparent 50%, var(--fountain-ink-dark) 50%), linear-gradient(135deg, var(--fountain-ink-dark) 50%, transparent 50%);
-  background-position: calc(100% - 1.1em) 55%, calc(100% - 0.85em) 55%;
-  background-size: 0.34em 0.34em, 0.34em 0.34em;
-  background-repeat: no-repeat;
-  cursor: pointer;
-}
-
-.fountain-rsvp-panel-field select:focus {
-  border-color: rgba(128, 105, 55, 0.78);
-  background-color: rgba(255, 253, 247, 0.9);
-  box-shadow: 0 0 0 4px rgba(128, 105, 55, 0.1);
 }
 
 .fountain-rsvp-panel-field textarea {

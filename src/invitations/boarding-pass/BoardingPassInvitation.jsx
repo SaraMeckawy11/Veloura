@@ -7,6 +7,7 @@ import { containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime } 
 import InvitationPhoto from '../InvitationPhoto';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
+import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -449,11 +450,13 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                     <div className="inv-rsvp-row">
                       <div className="inv-form-field">
                         <label className="data-label">PASSENGERS</label>
-                        <select className="kiosk-input kiosk-select" value={rsvpForm.guestCount} onChange={e => setRsvpForm({ ...rsvpForm, guestCount: parseInt(e.target.value) || 1 })}>
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(count => (
-                            <option key={count} value={count}>{count}</option>
-                          ))}
-                        </select>
+                        <GuestCountField
+                          id="bp-passengers"
+                          theme="boarding"
+                          label="Number of passengers"
+                          value={rsvpForm.guestCount}
+                          onChange={count => setRsvpForm({ ...rsvpForm, guestCount: count })}
+                        />
                       </div>
                       <div className="inv-form-field">
                         <label className="data-label">WILL YOU BE BOARDING?</label>

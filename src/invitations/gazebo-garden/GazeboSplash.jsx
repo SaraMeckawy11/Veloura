@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import envelopeAnimationUrl from '../../assets/envelope_animation.html?url';
@@ -13,7 +13,6 @@ export default function GazeboSplash({ onDismiss }) {
   const dismissTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
   const onDismissRef = useRef(onDismiss);
-  const [revealing, setRevealing] = useState(false);
 
   useEffect(() => {
     onDismissRef.current = onDismiss;
@@ -28,10 +27,7 @@ export default function GazeboSplash({ onDismiss }) {
       dismissTimerRef.current = null;
     }
 
-    // Fade the beige envelope backdrop away so the opened envelope reveals the
-    // hero section underneath, then unmount the splash once the reveal settles.
-    setRevealing(true);
-    window.setTimeout(() => onDismissRef.current(), 820);
+    onDismissRef.current();
   }, []);
 
   const scheduleDismiss = useCallback((delay) => {
@@ -56,11 +52,21 @@ export default function GazeboSplash({ onDismiss }) {
     <AnimatePresence>
       <motion.div
         key="gazebo-splash"
-        className={`gazebo-splash gazebo-splash--html-animation${revealing ? ' gazebo-splash--revealing' : ''}`}
-        aria-hidden="true"
+        className="gazebo-splash gazebo-splash--html-animation"
+        role="button"
+        tabIndex={0}
+        aria-label="Open invitation"
+        onClick={finishOpening}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            finishOpening();
+          }
+        }}
         exit={{ opacity: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }}
       >
-        <div className="gazebo-splash-backdrop" aria-hidden />
+        {/* The envelope animation plays over a transparent stage so the hero
+            section underneath is revealed directly as the envelope opens. */}
         <iframe
           className="gazebo-splash-envelope-animation"
           src={envelopeAnimationUrl}
@@ -69,8 +75,6 @@ export default function GazeboSplash({ onDismiss }) {
           aria-hidden="true"
           tabIndex={-1}
         />
-        <div className="gazebo-splash-beige-texture" aria-hidden />
-        <div className="gazebo-splash-overlay" aria-hidden />
       </motion.div>
     </AnimatePresence>
   );

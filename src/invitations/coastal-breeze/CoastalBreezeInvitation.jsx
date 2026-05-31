@@ -10,6 +10,7 @@ import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustrati
 import cruiseShip from '../../assets/coastal/cruise-ship-clean.webp';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
+import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -394,15 +395,13 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
                   <div className="coastal-field">
                     <label htmlFor="rsvp-guests">Guests</label>
-                    <select
+                    <GuestCountField
                       id="rsvp-guests"
+                      theme="coastal"
+                      label="Number of guests"
                       value={rsvpForm.guestCount}
-                      onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value) || 1 })}
-                    >
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(count => (
-                        <option key={count} value={count}>{count}</option>
-                      ))}
-                    </select>
+                      onChange={count => setRsvpForm({ ...rsvpForm, guestCount: count })}
+                    />
                   </div>
 
                   <div className="coastal-field coastal-field-attending">

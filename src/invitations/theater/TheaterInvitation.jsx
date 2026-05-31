@@ -8,6 +8,7 @@ import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
 import storyTitle from '../../assets/theater/story/title7_transparent.png';
 import theaterEnvelope from '../../assets/theater/theater-envelope-transparent.png';
+import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -421,14 +422,13 @@ function RsvpSection({
           <label className="theater-guests-field">
             <img src={rsvpSeats} alt="" aria-hidden="true" />
             <span>Number of guests attending</span>
-            <select
+            <GuestCountField
+              id="theater-guests"
+              theme="theater"
+              label="Number of guests"
               value={rsvpForm.guestCount}
-              onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value, 10) || 1 })}
-            >
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(count => (
-                <option key={count} value={count}>{count}</option>
-              ))}
-            </select>
+              onChange={count => setRsvpForm({ ...rsvpForm, guestCount: count })}
+            />
           </label>
 
           <label className="theater-message-field">

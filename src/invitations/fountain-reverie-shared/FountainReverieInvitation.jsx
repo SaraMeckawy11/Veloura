@@ -8,6 +8,7 @@ import { buildInvitationImageSources, containInvitationPhoto, DEFAULT_COUPLE_MES
 import InvitationPhoto from '../InvitationPhoto';
 import sectionSeparator from '../../assets/Fountain Reverie/decorative_components/elegant_vintage_ornamental_flourish_transparent.png';
 import envelopeMessage from '../../assets/Fountain Reverie/envelope_message.png';
+import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -390,18 +391,16 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                       placeholder="e.g. Olivia Rossi"
                     />
                   </label>
-                  <label className="fountain-rsvp-panel-field" htmlFor="fountain-rsvp-guests">
+                  <div className="fountain-rsvp-panel-field">
                     <span>Number of guests</span>
-                    <select
+                    <GuestCountField
                       id="fountain-rsvp-guests"
+                      theme="fountain"
+                      label="Number of guests"
                       value={rsvpForm.guestCount}
-                      onChange={event => setRsvpForm({ ...rsvpForm, guestCount: parseInt(event.target.value, 10) || 1 })}
-                    >
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(count => (
-                        <option key={count} value={count}>{count}</option>
-                      ))}
-                    </select>
-                  </label>
+                      onChange={count => setRsvpForm({ ...rsvpForm, guestCount: count })}
+                    />
+                  </div>
                     <fieldset className="fountain-rsvp-panel-choice">
                       <legend>Will you attend?</legend>
                       <div role="radiogroup" aria-label="Will you attend?">
