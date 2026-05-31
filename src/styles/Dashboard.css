@@ -521,6 +521,35 @@
   color: var(--text-secondary);
   margin-bottom: 12px;
 }
+.photo-category {
+  margin-top: 18px;
+  padding: 16px;
+  background: var(--bg-alt, #f9f7f2);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+}
+.photo-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.photo-category-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.photo-category-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--white, #fff);
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
 .edit-photos-section .photo-upload-area {
   display: flex;
   gap: 12px;
@@ -528,8 +557,8 @@
   justify-content: center;
 }
 .edit-photos-section .photo-upload-btn {
-  width: 100px;
-  height: 100px;
+  width: 116px;
+  height: 116px;
   border: 2px dashed var(--border);
   border-radius: var(--radius-md);
   display: flex;
@@ -547,13 +576,14 @@
   color: var(--gold);
 }
 .edit-photos-section .photo-preview {
-  width: 100px;
-  height: 100px;
+  width: 116px;
+  height: 116px;
   border-radius: var(--radius-md);
   overflow: hidden;
   position: relative;
-  background: var(--bg-alt, #f6f4ef);
+  background: var(--white, #fff);
   border: 1px solid var(--border-light);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 .edit-photos-section .photo-preview img {
   width: 100%;

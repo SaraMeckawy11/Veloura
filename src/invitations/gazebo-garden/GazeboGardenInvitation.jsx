@@ -636,6 +636,16 @@ function GazeboGallerySection({ items }) {
     }
     window.addEventListener('resize', updateDistance);
     window.addEventListener('resize', updateSpeed);
+    // requestAnimationFrame is suspended while the tab/page is hidden. When the
+    // page becomes visible again, restart the loop (and clear any stuck
+    // interaction state) so the marquee always keeps looping infinitely.
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        isInteracting = false;
+        startAnimation();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
     let resumeTimer = 0;
     let pointerActive = false;
     let pointerStartX = 0;
@@ -698,6 +708,7 @@ function GazeboGallerySection({ items }) {
       }
       window.removeEventListener('resize', updateDistance);
       window.removeEventListener('resize', updateSpeed);
+      document.removeEventListener('visibilitychange', handleVisibility);
       viewport?.removeEventListener('pointerdown', handlePointerDown);
       viewport?.removeEventListener('pointermove', handlePointerMove);
       viewport?.removeEventListener('pointerup', handlePointerEnd);

@@ -69,7 +69,8 @@
 .invitation-photo[data-fit='containFit'] .invitation-photo__img {
   object-fit: contain;
   padding: calc(var(--invitation-photo-pad) * 0.4);
-  transform: scale(1.08);
+  /* No zoom in contain mode — the whole photo must stay visible exactly. */
+  transform: none;
 }
 
 .invitation-photo:hover .invitation-photo__backdrop-image {
@@ -82,5 +83,6 @@
 
 .invitation-photo[data-fit='contain']:hover .invitation-photo__img,
 .invitation-photo[data-fit='containFit']:hover .invitation-photo__img {
-  transform: scale(1.11);
+  /* Keep the full photo visible on hover too — no cropping zoom. */
+  transform: none;
 }

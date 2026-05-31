@@ -9,7 +9,6 @@ const API = import.meta.env.VITE_API_URL || '/api';
 const STORAGE_KEY = 'veloura_order_draft';
 const PENDING_ORDER_KEY = 'veloura_pending_order_id';
 const DISPLAY_PRICE = '$99';
-const DEFAULT_INVITATION_MESSAGE = 'Two Souls, One Destination.';
 const OLD_MESSAGE_HELP_TEXT = 'This text appears as the tagline under your names in the invitation ';
 // The envelope "A Note" message every design reveals in its demo. Used as the
 // placeholder for the optional Envelope Message field.
@@ -122,18 +121,6 @@ const TEMPLATE_DEMO_ENVELOPE_MESSAGE = {
   'fountain-reverie-v2': DEFAULT_ENVELOPE_MESSAGE,
   'gazebo-garden': DEFAULT_ENVELOPE_MESSAGE,
   'theater': DEFAULT_ENVELOPE_MESSAGE,
-};
-
-// The default tagline/message each design shows in its demo. Used as the
-// placeholder in the optional "Personal Message" field so the user sees the
-// real demo copy for the design they picked (not a generic fallback).
-const TEMPLATE_DEMO_MESSAGE = {
-  'boarding-pass': 'Two Souls, One Destination.',
-  'coastal-breeze': 'With the sea as our witness, we begin forever.',
-  'fountain-reverie-v1': 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.',
-  'fountain-reverie-v2': 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.',
-  'gazebo-garden': 'A garden promise sealed in soft light.',
-  'theater': 'Black tie  •  Dinner & dancing to follow',
 };
 
 const normalizePhotoFit = (value) => {
@@ -700,13 +687,12 @@ export default function OrderFlow() {
   const templateFieldSupport = TEMPLATE_OPTIONAL_FIELD_SUPPORT[selectedTemplate?.slug] || {};
   const optionalFields = [
     { key: 'venueAddress', label: 'Venue Address' },
-    { key: 'message', label: 'Personal Message' },
     { key: 'coupleMessage', label: 'Envelope Message' },
     { key: 'rsvp', label: 'RSVP Section' },
+    // Personal Message (hero tagline) removed — the demo tagline is used.
     // Removed secondLanguage option
   ].filter(field => {
     if (field.key === 'venueAddress') return templateFieldSupport.venueAddress !== false;
-    if (field.key === 'message') return templateFieldSupport.message !== false;
     if (field.key === 'coupleMessage') return templateFieldSupport.coupleMessage !== false;
     return true;
   });
@@ -924,26 +910,13 @@ export default function OrderFlow() {
                       {!disabledFields.includes(field.key) && (
                         field.key === 'rsvp' ? (
                           <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
-                        ) : field.key === 'message' ? (
-                          <>
-                            <textarea
-                              className="message-textarea"
-                              value={form[field.key]}
-                              onChange={e => handleInput(field.key, e.target.value)}
-                              rows={3}
-                              placeholder={TEMPLATE_DEMO_MESSAGE[selectedTemplate?.slug] || DEFAULT_INVITATION_MESSAGE}
-                            />
-                            <p className="form-hint message-hint">
-                              Leave blank to use the template message shown in the demo.
-                            </p>
-                          </>
                         ) : field.key === 'coupleMessage' ? (
                           <>
                             <textarea
-                              className="message-textarea"
+                              className="message-textarea message-textarea--tall"
                               value={form[field.key]}
                               onChange={e => handleInput(field.key, e.target.value)}
-                              rows={3}
+                              rows={5}
                               placeholder={TEMPLATE_DEMO_ENVELOPE_MESSAGE[selectedTemplate?.slug] || DEFAULT_ENVELOPE_MESSAGE}
                             />
                             <p className="form-hint message-hint">

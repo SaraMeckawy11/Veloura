@@ -344,6 +344,7 @@
   box-shadow: 0 0 0 3px rgba(184,146,74,0.08);
 }
 .form-field textarea { resize: vertical; min-height: 80px; }
+.form-field textarea.message-textarea--tall { min-height: 124px; }
 .message-textarea:placeholder-shown {
   color: var(--text);
 }

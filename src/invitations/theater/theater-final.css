@@ -163,7 +163,13 @@ body:has(.theater-theme),
 }
 
 .theater-hero-month {
-  margin-top: 0.4em;
+  /* A touch more breathing room under the day number. */
+  margin-top: 0.58em;
+}
+
+.theater-hero-year {
+  /* And a touch more room under the month. */
+  margin-top: 0.26em;
 }
 
 .theater-hero-time {
