@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { downloadGuestMessagesPdf, downloadGuestResponsesPdf } from '../lib/guestMessagesPdf';
+import InvitationPhoto from '../invitations/InvitationPhoto';
+import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
 import '../styles/Dashboard.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -383,6 +385,8 @@ export default function Dashboard() {
   const inviteUrl = `${window.location.origin}/i/${order.publicSlug}`;
   const wd = order.weddingDetails || {};
   const venueAddressSupported = (TEMPLATE_FIELD_SUPPORT[order.template?.slug] || {}).venueAddress !== false;
+  const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
+  const galleryPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'gallery');
 
   return (
     <div className="dash-page">
@@ -582,10 +586,10 @@ export default function Dashboard() {
                           )}
                         </div>
                         <div className="edit-story-body">
-                          <div className="edit-story-photo">
+                          <div className="edit-story-photo" style={storyPhotoPreviewStyle}>
                             {photo ? (
                               <>
-                                <img src={photo.url} alt={`Story ${i + 1}`} style={{ objectFit: normalizePhotoFit(photo.fit) }} />
+                                <InvitationPhoto src={photo} alt={`Story ${i + 1}`} />
                                 <div className="photo-fit-controls" role="group" aria-label={`Story photo ${i + 1} fit`}>
                                   {PHOTO_FIT_OPTIONS.map(option => (
                                     <button
@@ -653,8 +657,12 @@ export default function Dashboard() {
                         </label>
                       )}
                       {editPhotos[cat.key].map((photo, i) => (
-                        <div key={i} className="photo-preview">
-                          <img src={photo.url} alt={`${cat.label} ${i + 1}`} style={{ objectFit: normalizePhotoFit(photo.fit) }} />
+                        <div
+                          key={i}
+                          className="photo-preview"
+                          style={cat.key === 'gallery' ? galleryPhotoPreviewStyle : storyPhotoPreviewStyle}
+                        >
+                          <InvitationPhoto src={photo} alt={`${cat.label} ${i + 1}`} />
                           <div className="photo-fit-controls" role="group" aria-label={`${cat.label} ${i + 1} fit`}>
                             {PHOTO_FIT_OPTIONS.map(option => (
                               <button

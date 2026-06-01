@@ -1325,6 +1325,7 @@
 
 .story-milestone-item {
   display: flex;
+  flex-direction: column;
   gap: 14px;
   padding: 14px;
   background: var(--bg-alt);
@@ -1392,7 +1393,7 @@
 }
 
 .story-milestone-photo {
-  width: var(--upload-preview-width, 72px);
+  width: 100%;
   height: auto;
   aspect-ratio: var(--upload-preview-aspect-ratio, 1 / 1);
   border-radius: var(--radius-sm);
@@ -1459,12 +1460,7 @@
 }
 
 @media (max-width: 480px) {
-  .story-milestone-item {
-    flex-direction: column;
-  }
   .story-milestone-photo {
     width: 100%;
-    max-width: 220px;
-    align-self: center;
   }
 }
