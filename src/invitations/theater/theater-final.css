@@ -339,23 +339,30 @@ body:has(.theater-theme),
   justify-items: center;
   gap: 0;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   min-height: clamp(430px, 76vw, 540px);
   padding: clamp(14px, 2.8vw, 22px) clamp(12px, 2.6vw, 18px) clamp(22px, 4vw, 34px);
   border: 1px solid rgba(184, 134, 42, 0.45);
   border-radius: 8px;
   background: #f6e7c8;
   box-shadow: 0 6px 18px rgba(76, 35, 12, 0.08);
+  box-sizing: border-box;
 }
 
 .theater-story-photo {
   position: relative;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   aspect-ratio: 16 / 10;
   padding: 1.8%;
   border: 1.5px solid rgba(184, 134, 42, 0.65);
   border-radius: 6px;
+  overflow: hidden;
   background: #f0dcb1;
   box-shadow: 0 0 0 3px rgba(245, 226, 192, 0.55) inset;
+  box-sizing: border-box;
 }
 
 .theater-story-photo .invitation-photo,
