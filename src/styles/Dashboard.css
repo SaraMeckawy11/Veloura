@@ -161,7 +161,7 @@
 /* Stats */
 .dash-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 32px;
   width: 100%;
@@ -186,6 +186,7 @@
 }
 .stat-yes .stat-value { color: var(--sage); }
 .stat-no .stat-value { color: var(--rose); }
+.stat-responses .stat-value { color: var(--text-secondary); }
 .stat-guests .stat-value { color: var(--gold); }
 
 .stat-label {
@@ -382,7 +383,7 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .dash-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .details-grid { grid-template-columns: 1fr; }
   .dash-header { flex-direction: column; gap: 12px; }
   .dash-link-card { flex-direction: column; align-items: flex-start; }

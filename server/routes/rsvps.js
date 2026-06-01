@@ -63,6 +63,7 @@ router.get('/dashboard/:editToken', async (req, res) => {
     const summary = {
       attending: rsvps.filter(r => r.attending === 'yes').length,
       notAttending: rsvps.filter(r => r.attending === 'no').length,
+      totalResponses: rsvps.length,
       totalGuests: rsvps
         .filter(r => r.attending === 'yes')
         .reduce((sum, r) => sum + r.guestCount, 0),

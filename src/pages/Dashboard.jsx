@@ -678,6 +678,10 @@ export default function Dashboard() {
             <div className="stat-value">{rsvpData?.summary?.notAttending || 0}</div>
             <div className="stat-label">Not Attending</div>
           </div>
+          <div className="stat-card stat-responses">
+            <div className="stat-value">{rsvpData?.summary?.totalResponses || 0}</div>
+            <div className="stat-label">Total Responses</div>
+          </div>
           <div className="stat-card stat-guests">
             <div className="stat-value">{rsvpData?.summary?.totalGuests || 0}</div>
             <div className="stat-label">Total Guests</div>

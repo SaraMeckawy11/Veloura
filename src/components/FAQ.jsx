@@ -9,7 +9,7 @@ const faqs = [
   },
   {
     q: 'Can I edit my invitation after it\'s published?',
-    a: 'Yes! We offer a limited number of free edits for dates, times, venue details, and text. However, the couple names are permanently locked after payment — each invitation is tied to the original couple and cannot be reused for a different event.',
+    a: 'Yes! You can update your invitation details, text, and photos from your private dashboard whenever you need to. Couple names can be corrected up to twice during the first 48 hours after payment, then they are permanently locked. Wedding date changes have a separate two-change limit.',
   },
   {
     q: 'How does the RSVP system work?',
@@ -29,7 +29,7 @@ const faqs = [
   // },
   {
     q: 'What if I need to change my wedding date?',
-    a: 'Life happens and we understand. Date changes are completely free — just let us know and we\'ll update your invitation immediately. Your guests will always see the latest information.',
+    a: 'You can update your wedding date from your private dashboard up to two times. After both changes have been used, the date is locked and you can contact us if you need further help.',
   },
   {
     q: 'I didn\'t receive my confirmation email — what should I do?',

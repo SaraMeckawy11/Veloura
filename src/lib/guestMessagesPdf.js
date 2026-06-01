@@ -340,107 +340,114 @@ function formatResponseDate(value) {
   if (!value) return '';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return date.toLocaleDateString('en-US');
 }
 
-function getResponseDetailLines(ctx, response) {
-  const lines = [
-    `Response: ${formatResponseStatus(response.attending)}`,
-    `Guests: ${response.guestCount || 1}`,
-    response.plusOneName ? `Plus one: ${response.plusOneName}` : '',
-    response.email ? `Email: ${response.email}` : '',
-    response.phone ? `Phone: ${response.phone}` : '',
-    response.dietaryPreferences ? `Dietary notes: ${response.dietaryPreferences}` : '',
-    formatResponseDate(response.respondedAt) ? `Responded: ${formatResponseDate(response.respondedAt)}` : '',
-  ].filter(Boolean);
-  return lines.flatMap(line => wrapText(ctx, line, PAGE_WIDTH - (PAGE_MARGIN * 2) - 72));
-}
+const RESPONSE_TABLE_COLUMNS = [
+  { label: 'Guest Name', width: 430 },
+  { label: 'Status', width: 250 },
+  { label: 'Guests', width: 120 },
+  { label: 'Date', width: 256 },
+];
+const RESPONSE_TABLE_HEADER_HEIGHT = 58;
+const RESPONSE_TABLE_LINE_HEIGHT = 28;
 
-function getResponseCardHeight(detailLines, messageLines) {
-  return 90 + (detailLines.length * 30) + (messageLines.length ? 48 + (messageLines.length * 34) : 0);
-}
-
-function drawResponseCard(page, theme, response, detailLines, messageLines, isContinuation) {
+function drawResponseTableHeader(page, theme) {
   const x = PAGE_MARGIN;
   const y = page.y;
-  const width = PAGE_WIDTH - (PAGE_MARGIN * 2);
-  const cardHeight = getResponseCardHeight(detailLines, messageLines);
+  const width = RESPONSE_TABLE_COLUMNS.reduce((sum, column) => sum + column.width, 0);
 
-  page.ctx.fillStyle = theme.card;
+  page.ctx.fillStyle = theme.soft;
   page.ctx.strokeStyle = theme.soft;
   page.ctx.lineWidth = 2;
-  page.ctx.beginPath();
-  page.ctx.roundRect(x, y, width, cardHeight, 18);
-  page.ctx.fill();
-  page.ctx.stroke();
+  page.ctx.fillRect(x, y, width, RESPONSE_TABLE_HEADER_HEIGHT);
+  page.ctx.strokeRect(x, y, width, RESPONSE_TABLE_HEADER_HEIGHT);
 
   page.ctx.textAlign = 'left';
   page.ctx.fillStyle = theme.ink;
-  page.ctx.font = '700 29px Georgia, serif';
-  page.ctx.fillText(`${response.guestName || 'Guest'}${isContinuation ? ' (continued)' : ''}`, x + 36, y + 48);
-
-  let lineY = y + 88;
-  page.ctx.fillStyle = theme.muted;
-  page.ctx.font = '21px Arial, sans-serif';
-  detailLines.forEach(line => {
-    page.ctx.fillText(line, x + 36, lineY);
-    lineY += 30;
+  page.ctx.font = '700 19px Arial, sans-serif';
+  let columnX = x;
+  RESPONSE_TABLE_COLUMNS.forEach(column => {
+    page.ctx.fillText(column.label.toUpperCase(), columnX + 18, y + 36);
+    columnX += column.width;
+    if (columnX < x + width) {
+      page.ctx.beginPath();
+      page.ctx.moveTo(columnX, y);
+      page.ctx.lineTo(columnX, y + RESPONSE_TABLE_HEADER_HEIGHT);
+      page.ctx.stroke();
+    }
   });
 
-  if (messageLines.length) {
-    lineY += 8;
-    page.ctx.fillStyle = theme.accent;
-    page.ctx.font = '700 17px Arial, sans-serif';
-    page.ctx.fillText('MESSAGE', x + 36, lineY);
-    lineY += 34;
+  page.y += RESPONSE_TABLE_HEADER_HEIGHT;
+}
 
-    page.ctx.fillStyle = theme.ink;
-    page.ctx.font = 'italic 23px Georgia, serif';
-    messageLines.forEach(line => {
-      page.ctx.fillText(line, x + 36, lineY);
-      lineY += 34;
-    });
+function getResponseTableRow(ctx, response) {
+  ctx.font = '21px Arial, sans-serif';
+  const guestLines = wrapText(ctx, response.guestName || 'Guest', RESPONSE_TABLE_COLUMNS[0].width - 36);
+  if (response.plusOne && response.plusOneName) {
+    guestLines.push(...wrapText(ctx, `+ ${response.plusOneName}`, RESPONSE_TABLE_COLUMNS[0].width - 36));
   }
+  const cells = [
+    guestLines,
+    [formatResponseStatus(response.attending)],
+    [`${response.guestCount || 1}`],
+    [formatResponseDate(response.respondedAt) || '-'],
+  ];
+  const lineCount = Math.max(...cells.map(lines => lines.length));
+  return { cells, height: Math.max(64, 28 + (lineCount * RESPONSE_TABLE_LINE_HEIGHT)) };
+}
 
-  page.y += cardHeight + CARD_GAP;
+function drawResponseTableRow(page, theme, row, index) {
+  const x = PAGE_MARGIN;
+  const y = page.y;
+  const width = RESPONSE_TABLE_COLUMNS.reduce((sum, column) => sum + column.width, 0);
+
+  page.ctx.fillStyle = index % 2 === 0 ? theme.card : theme.background;
+  page.ctx.strokeStyle = theme.soft;
+  page.ctx.lineWidth = 2;
+  page.ctx.fillRect(x, y, width, row.height);
+  page.ctx.strokeRect(x, y, width, row.height);
+
+  let columnX = x;
+  row.cells.forEach((lines, columnIndex) => {
+    page.ctx.textAlign = columnIndex === 2 ? 'center' : 'left';
+    page.ctx.fillStyle = columnIndex === 1 ? theme.accent : theme.ink;
+    page.ctx.font = `${columnIndex === 1 ? '700 ' : ''}21px Arial, sans-serif`;
+    const textX = columnIndex === 2
+      ? columnX + (RESPONSE_TABLE_COLUMNS[columnIndex].width / 2)
+      : columnX + 18;
+    lines.forEach((line, lineIndex) => {
+      page.ctx.fillText(line, textX, y + 36 + (lineIndex * RESPONSE_TABLE_LINE_HEIGHT));
+    });
+    columnX += RESPONSE_TABLE_COLUMNS[columnIndex].width;
+    if (columnX < x + width) {
+      page.ctx.beginPath();
+      page.ctx.moveTo(columnX, y);
+      page.ctx.lineTo(columnX, y + row.height);
+      page.ctx.stroke();
+    }
+  });
+
+  page.y += row.height;
 }
 
 export async function downloadGuestResponsesPdf({ themeSlug, coupleNames, responses }) {
   const theme = getTheme(themeSlug);
   const title = 'GUEST RESPONSES';
-  const subtitle = 'A keepsake of everyone celebrating with you';
+  const subtitle = 'Your RSVP details at a glance';
   const pages = [];
   let page = createPage(theme, coupleNames, title, subtitle);
   pages.push(page);
+  drawResponseTableHeader(page, theme);
 
-  responses.forEach(response => {
-    page.ctx.font = '21px Arial, sans-serif';
-    const detailLines = getResponseDetailLines(page.ctx, response);
-    page.ctx.font = 'italic 23px Georgia, serif';
-    const messageLines = response.message?.trim()
-      ? wrapText(page.ctx, response.message, PAGE_WIDTH - (PAGE_MARGIN * 2) - 72)
-      : [];
-    const segments = [];
-    const maxLinesPerCard = 14;
-
-    if (!messageLines.length) {
-      segments.push([]);
-    } else {
-      for (let index = 0; index < messageLines.length; index += maxLinesPerCard) {
-        segments.push(messageLines.slice(index, index + maxLinesPerCard));
-      }
+  responses.forEach((response, index) => {
+    const row = getResponseTableRow(page.ctx, response);
+    if (page.y + row.height > PAGE_HEIGHT - 128) {
+      page = createPage(theme, coupleNames, title, subtitle);
+      pages.push(page);
+      drawResponseTableHeader(page, theme);
     }
-
-    segments.forEach((segment, index) => {
-      const isContinuation = index > 0;
-      const segmentDetailLines = isContinuation ? [] : detailLines;
-      const cardHeight = getResponseCardHeight(segmentDetailLines, segment);
-      if (page.y + cardHeight > PAGE_HEIGHT - 128) {
-        page = createPage(theme, coupleNames, title, subtitle);
-        pages.push(page);
-      }
-      drawResponseCard(page, theme, response, segmentDetailLines, segment, isContinuation);
-    });
+    drawResponseTableRow(page, theme, row, index);
   });
 
   await downloadPages(pages, theme, `${sanitizeFilename(coupleNames)}-guest-responses.pdf`);
