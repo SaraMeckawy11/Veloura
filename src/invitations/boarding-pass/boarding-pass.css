@@ -719,6 +719,17 @@
   cursor: pointer;
   background: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
 }
+.inv-gallery-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 3px var(--bp-champagne),
+    inset 0 0 0 5px hsla(38, 55%, 58%, 0.15);
+  pointer-events: none;
+}
 .inv-gallery-item > .invitation-photo {
   --invitation-photo-pad: 0.3rem;
   --invitation-photo-scale: 1.1;
