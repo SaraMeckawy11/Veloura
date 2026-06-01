@@ -7,12 +7,10 @@ import '../styles/Dashboard.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 const PHOTO_CATEGORIES = {
-  venue: { label: 'Venue Photos', max: 2 },
   story: { label: 'Our Story Photos', max: 4 },
   gallery: { label: 'Gallery Photos', max: 6 },
 };
 const NON_STORY_CATEGORIES = [
-  { key: 'venue', label: 'Venue Photos', max: 2 },
   { key: 'gallery', label: 'Gallery Photos', max: 6 },
 ];
 const PHOTO_FIT_OPTIONS = [
@@ -641,7 +639,7 @@ export default function Dashboard() {
 
               <div className="edit-photos-section">
                 <label className="edit-photos-label">Photos</label>
-                <p className="form-hint">Manage photos by category. Each category appears in its own section of the invitation.</p>
+                <p className="form-hint">Manage the photos shown in your invitation gallery.</p>
                 {NON_STORY_CATEGORIES.map(cat => (
                   <div key={cat.key} className="photo-category">
                     <div className="photo-category-header">
@@ -660,7 +658,7 @@ export default function Dashboard() {
                         <div
                           key={i}
                           className="photo-preview"
-                          style={cat.key === 'gallery' ? galleryPhotoPreviewStyle : storyPhotoPreviewStyle}
+                          style={galleryPhotoPreviewStyle}
                         >
                           <InvitationPhoto src={photo} alt={`${cat.label} ${i + 1}`} />
                           <div className="photo-fit-controls" role="group" aria-label={`${cat.label} ${i + 1} fit`}>
