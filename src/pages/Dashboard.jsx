@@ -20,6 +20,16 @@ const PHOTO_FIT_OPTIONS = [
 const normalizePhotoFit = (value) => (
   value === 'contain' || value === 'containFit' || value === 'fit' ? 'contain' : 'cover'
 );
+const parseUploadResponse = async (res) => {
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.files?.length) {
+    throw new Error(data.error || 'Photo upload failed');
+  }
+  return data.files;
+};
+const revokeLocalPhotoUrl = (photo) => {
+  if (photo?._localUrl) URL.revokeObjectURL(photo._localUrl);
+};
 // The envelope "A Note" message every design shows in its demo — used as the
 // placeholder so a blank field keeps the default note.
 const DEFAULT_ENVELOPE_MESSAGE = 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.';
@@ -143,35 +153,66 @@ export default function Dashboard() {
   const removeStoryMilestone = (index) => {
     setEditStoryMilestones(prev => prev.filter((_, i) => i !== index));
     // Keep story photos aligned with milestones — drop the photo at the removed index.
-    setEditPhotos(prev => ({ ...prev, story: prev.story.filter((_, i) => i !== index) }));
+    setEditPhotos(prev => {
+      revokeLocalPhotoUrl(prev.story[index]);
+      return { ...prev, story: prev.story.filter((_, i) => i !== index) };
+    });
   };
 
   const handleStoryPhotoUpload = async (e, index) => {
     const files = e.target.files;
     if (!files.length) return;
+    const file = files[0];
+    const localId = `story-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const localUrl = URL.createObjectURL(file);
+    e.target.value = '';
+    setSaveMsg('');
     setPhotoUploading(prev => ({ ...prev, [`story-${index}`]: true }));
+    setEditPhotos(prev => {
+      const updated = [...prev.story];
+      revokeLocalPhotoUrl(updated[index]);
+      updated[index] = {
+        url: localUrl,
+        publicId: '',
+        label: 'story',
+        fit: 'cover',
+        _localId: localId,
+        _localUrl: localUrl,
+        _uploading: true,
+      };
+      return { ...prev, story: updated };
+    });
     const formData = new FormData();
-    formData.append('photos', files[0]);
+    formData.append('photos', file);
     try {
       const res = await fetch(`${API}/upload?category=story`, { method: 'POST', body: formData });
-      const data = await res.json();
-      if (data.files && data.files[0]) {
-        setEditPhotos(prev => {
-          const updated = [...prev.story];
-          updated[index] = { ...data.files[0], fit: 'cover' };
-          return { ...prev, story: updated };
-        });
-      }
-    } catch {
-      setSaveMsg('Photo upload failed');
+      const [uploadedPhoto] = await parseUploadResponse(res);
+      setEditPhotos(prev => ({
+        ...prev,
+        story: prev.story.map(photo => (
+          photo?._localId === localId
+            ? { ...uploadedPhoto, fit: normalizePhotoFit(photo.fit) }
+            : photo
+        )),
+      }));
+      URL.revokeObjectURL(localUrl);
+    } catch (err) {
+      setEditPhotos(prev => ({
+        ...prev,
+        story: prev.story.map(photo => (
+          photo?._localId === localId ? { ...photo, _uploading: false, _failed: true } : photo
+        )),
+      }));
+      setSaveMsg(err.message || 'Photo upload failed');
+    } finally {
+      setPhotoUploading(prev => ({ ...prev, [`story-${index}`]: false }));
     }
-    e.target.value = '';
-    setPhotoUploading(prev => ({ ...prev, [`story-${index}`]: false }));
   };
 
   const removeStoryPhoto = (index) => {
     setEditPhotos(prev => {
       const updated = [...prev.story];
+      revokeLocalPhotoUrl(updated[index]);
       updated[index] = undefined;
       return { ...prev, story: updated };
     });
@@ -237,31 +278,73 @@ export default function Dashboard() {
       e.target.value = '';
       return;
     }
+    const filesToUpload = Array.from(files).slice(0, remaining);
+    const pendingPhotos = filesToUpload.map(file => {
+      const localUrl = URL.createObjectURL(file);
+      return {
+        url: localUrl,
+        publicId: '',
+        label: category,
+        fit: 'cover',
+        _localId: `${category}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        _localUrl: localUrl,
+        _uploading: true,
+      };
+    });
+    e.target.value = '';
+    setSaveMsg('');
     setPhotoUploading(prev => ({ ...prev, [category]: true }));
+    setEditPhotos(prev => ({ ...prev, [category]: [...prev[category], ...pendingPhotos] }));
     const formData = new FormData();
-    Array.from(files)
-      .slice(0, remaining)
-      .forEach((f) => formData.append('photos', f));
+    filesToUpload.forEach(file => formData.append('photos', file));
 
     try {
       const res = await fetch(`${API}/upload?category=${category}`, { method: 'POST', body: formData });
-      const data = await res.json();
-      if (data.files) setEditPhotos(prev => ({ ...prev, [category]: [...prev[category], ...data.files.map(photo => ({ ...photo, fit: 'cover' }))] }));
-    } catch {
-      setSaveMsg('Photo upload failed');
+      const uploadedPhotos = await parseUploadResponse(res);
+      if (uploadedPhotos.length !== pendingPhotos.length) throw new Error('Some photos did not finish uploading. Please try again.');
+      setEditPhotos(prev => ({
+        ...prev,
+        [category]: prev[category].map(photo => {
+          const pendingIndex = pendingPhotos.findIndex(pending => pending._localId === photo?._localId);
+          return pendingIndex >= 0
+            ? { ...uploadedPhotos[pendingIndex], fit: normalizePhotoFit(photo.fit) }
+            : photo;
+        }),
+      }));
+      pendingPhotos.forEach(revokeLocalPhotoUrl);
+    } catch (err) {
+      setEditPhotos(prev => ({
+        ...prev,
+        [category]: prev[category].map(photo => (
+          pendingPhotos.some(pending => pending._localId === photo?._localId)
+            ? { ...photo, _uploading: false, _failed: true }
+            : photo
+        )),
+      }));
+      setSaveMsg(err.message || 'Photo upload failed');
+    } finally {
+      setPhotoUploading(prev => ({ ...prev, [category]: false }));
     }
-    e.target.value = '';
-    setPhotoUploading(prev => ({ ...prev, [category]: false }));
   };
 
   const removeEditPhoto = (category, index) => {
-    setEditPhotos(prev => ({ ...prev, [category]: prev[category].filter((_, i) => i !== index) }));
+    setEditPhotos(prev => {
+      revokeLocalPhotoUrl(prev[category][index]);
+      return { ...prev, [category]: prev[category].filter((_, i) => i !== index) };
+    });
   };
 
   const flattenEditPhotos = () => {
     return Object.entries(editPhotos).flatMap(([cat, items]) =>
-      items.filter(Boolean).map(p => ({ ...p, label: p.label || cat }))
+      items
+        .filter(p => p && !p._uploading && !p._failed && p.url && p.publicId)
+        .map(p => ({ url: p.url, publicId: p.publicId, label: p.label || cat, fit: normalizePhotoFit(p.fit) }))
     );
+  };
+
+  const cancelEditing = () => {
+    Object.values(editPhotos).flat().forEach(revokeLocalPhotoUrl);
+    setEditing(false);
   };
 
   const handleSaveEdit = async () => {
@@ -304,6 +387,7 @@ export default function Dashboard() {
       // Refresh order data
       const updated = await fetch(`${API}/orders/dashboard/${editToken}`).then(r => r.json());
       setOrder(updated);
+      Object.values(editPhotos).flat().forEach(revokeLocalPhotoUrl);
       setEditing(false);
       const parts = ['Saved!'];
       if (data.nameEditsRemaining !== undefined && data.nameEditsRemaining <= 0) {
@@ -385,6 +469,7 @@ export default function Dashboard() {
   const venueAddressSupported = (TEMPLATE_FIELD_SUPPORT[order.template?.slug] || {}).venueAddress !== false;
   const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
   const galleryPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'gallery');
+  const isPhotoUploading = Object.values(photoUploading).some(Boolean);
 
   return (
     <div className="dash-page">
@@ -588,6 +673,8 @@ export default function Dashboard() {
                             {photo ? (
                               <>
                                 <InvitationPhoto src={photo} alt={`Story ${i + 1}`} />
+                                {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
+                                {photo._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
                                 <div className="photo-fit-controls" role="group" aria-label={`Story photo ${i + 1} fit`}>
                                   {PHOTO_FIT_OPTIONS.map(option => (
                                     <button
@@ -661,6 +748,8 @@ export default function Dashboard() {
                           style={galleryPhotoPreviewStyle}
                         >
                           <InvitationPhoto src={photo} alt={`${cat.label} ${i + 1}`} />
+                          {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
+                          {photo._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
                           <div className="photo-fit-controls" role="group" aria-label={`${cat.label} ${i + 1} fit`}>
                             {PHOTO_FIT_OPTIONS.map(option => (
                               <button
@@ -685,10 +774,10 @@ export default function Dashboard() {
               </div>
 
               <div className="edit-actions">
-                <button className="btn btn-gold" onClick={handleSaveEdit} disabled={saving}>
-                  {saving ? 'Saving...' : 'Save Changes'}
+                <button className="btn btn-gold" onClick={handleSaveEdit} disabled={saving || isPhotoUploading}>
+                  {saving ? 'Saving...' : isPhotoUploading ? 'Uploading Photos...' : 'Save Changes'}
                 </button>
-                <button className="btn btn-secondary" onClick={() => setEditing(false)} disabled={saving}>
+                <button className="btn btn-secondary" onClick={cancelEditing} disabled={saving}>
                   Cancel
                 </button>
               </div>

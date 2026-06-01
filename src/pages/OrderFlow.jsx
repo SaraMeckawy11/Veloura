@@ -1142,8 +1142,14 @@ export default function OrderFlow() {
                   <h3 className="review-section-title">Photos ({allPhotos.length})</h3>
                   <div className="review-photos">
                     {allPhotos.map((p, i) => (
-                      <div key={i} className="review-photo-item">
-                        <img src={p.url} alt={`Photo ${i + 1}`} className="review-photo" />
+                      <div
+                        key={i}
+                        className="review-photo-item"
+                        style={getUploadPreviewStyle(selectedTemplate?.slug, p.label)}
+                      >
+                        <div className="review-photo">
+                          <InvitationPhoto src={p} alt={`Photo ${i + 1}`} />
+                        </div>
                         <span className="review-photo-label">{p.label}</span>
                       </div>
                     ))}

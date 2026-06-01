@@ -655,11 +655,6 @@
   border: 1px solid var(--border-light);
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
-.edit-photos-section .photo-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 .edit-photos-section .photo-preview > .invitation-photo,
 .edit-story-photo > .invitation-photo {
   width: 100%;
@@ -718,12 +713,6 @@
   background: var(--white, #fff);
   border: 1px dashed var(--border);
 }
-.edit-story-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
 .edit-story-photo .photo-remove {
   position: absolute;
   top: 4px;
@@ -759,6 +748,38 @@
 .edit-story-photo-uploading {
   font-size: 0.72rem;
   color: var(--text-secondary);
+}
+.photo-upload-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-top-color: var(--gold, #b8924a);
+  border-radius: 50%;
+  animation: dashboard-photo-spin 0.7s linear infinite;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 4;
+}
+.photo-failed-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  z-index: 4;
+}
+@keyframes dashboard-photo-spin {
+  to { transform: rotate(360deg); }
 }
 .edit-story-fields {
   width: 100%;
