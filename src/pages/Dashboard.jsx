@@ -65,6 +65,28 @@ export default function Dashboard() {
       .catch(() => { setError('Failed to load dashboard'); setLoading(false); });
   }, [editToken]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const refreshRsvps = () => {
+      fetch(`${API}/rsvps/dashboard/${editToken}`)
+        .then(r => r.json())
+        .then(data => {
+          if (!cancelled && !data.error) setRsvpData(data);
+        })
+        .catch(() => {});
+    };
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') refreshRsvps();
+    };
+    const interval = window.setInterval(refreshRsvps, 5000);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+    };
+  }, [editToken]);
+
   // Auto-enter edit mode if route is /edit/:token
   useEffect(() => {
     if (isEditRoute && order && !editing) {

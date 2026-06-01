@@ -73,28 +73,28 @@ const PHOTO_FIT_OPTIONS = [
 
 const TEMPLATE_UPLOAD_LAYOUTS = {
   'boarding-pass': {
-    story: { width: '88px', aspectRatio: '4 / 5' },
+    story: { width: '132px', aspectRatio: '4 / 3' },
     gallery: { width: '148px', aspectRatio: '1 / 1' },
   },
   'coastal-breeze': {
-    story: { width: '88px', aspectRatio: '4 / 5' },
+    story: { width: '132px', aspectRatio: '4 / 3' },
     gallery: { width: '148px', aspectRatio: '11 / 14' },
   },
   'fountain-reverie-v1': {
-    story: { width: '88px', aspectRatio: '4 / 5' },
+    story: { width: '132px', aspectRatio: '4 / 3' },
     gallery: { width: '148px', aspectRatio: '11 / 14' },
   },
   'fountain-reverie-v2': {
-    story: { width: '88px', aspectRatio: '4 / 5' },
+    story: { width: '132px', aspectRatio: '4 / 3' },
     gallery: { width: '148px', aspectRatio: '11 / 14' },
   },
   'gazebo-garden': {
-    story: { width: '88px', aspectRatio: '4 / 5' },
+    story: { width: '132px', aspectRatio: '4 / 3' },
     gallery: { width: '148px', aspectRatio: '11 / 14' },
   },
   'theater': {
-    story: { width: '88px', aspectRatio: '4 / 5' },
-    gallery: { width: '148px', aspectRatio: '11 / 14' },
+    story: { width: '132px', aspectRatio: '16 / 10' },
+    gallery: { width: '148px', aspectRatio: '268 / 404' },
   },
 };
 
