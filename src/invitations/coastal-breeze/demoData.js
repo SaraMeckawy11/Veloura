@@ -45,10 +45,10 @@ export const COASTAL_BREEZE_DEMO_ORDER = {
     },
   ],
   storyImages: [
-    { src: story1, fit: 'cover' },
-    { src: story2, fit: 'cover' },
-    { src: story3, fit: 'cover' },
-    { src: story4, fit: 'cover' },
+    { src: story1, fit: 'contain' },
+    { src: story2, fit: 'contain' },
+    { src: story3, fit: 'contain' },
+    { src: story4, fit: 'contain' },
   ],
   galleryImages: [
     { src: gallery1, fit: 'cover' },
