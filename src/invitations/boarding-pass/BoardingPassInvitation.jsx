@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
@@ -42,6 +42,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
+  const rsvpSubmissionId = useRef(createRsvpSubmissionId());
 
   // Countdown
   useEffect(() => {
@@ -72,7 +73,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       const res = await fetch(`${API}/rsvps/${publicSlug}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rsvpForm),
+        body: JSON.stringify({ ...rsvpForm, submissionId: rsvpSubmissionId.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'RSVP failed');

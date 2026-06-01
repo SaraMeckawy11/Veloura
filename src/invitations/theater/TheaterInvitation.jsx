@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
-import { containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
@@ -51,6 +51,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
+  const rsvpSubmissionId = useRef(createRsvpSubmissionId());
 
   const weddingDetails = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
@@ -152,7 +153,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
       const res = await fetch(`${API}/rsvps/${publicSlug}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rsvpForm),
+        body: JSON.stringify({ ...rsvpForm, submissionId: rsvpSubmissionId.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'RSVP failed');

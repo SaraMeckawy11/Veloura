@@ -20,6 +20,7 @@ import uploadRoutes from './routes/upload.js';
 import webhookRoutes from './routes/webhooks.js';
 import cronJob from './cron.js';
 import { syncOrderTemplateMetadata } from './services/orderSync.js';
+import { syncRsvpIndexes } from './services/rsvpSync.js';
 import { syncDefaultTemplates } from './services/templateSync.js';
 import { paypalApiConfigured } from './config/paypal.js';
 
@@ -51,6 +52,8 @@ async function runStartupSyncs() {
     console.log(
       `Orders normalized (${orderSyncResult.matchedCount || 0} checked, ${orderSyncResult.modifiedCount || 0} updated)`
     );
+    await syncRsvpIndexes();
+    console.log('RSVP indexes ready');
   } catch (err) {
     syncsRan = false;
     console.error('Startup data sync failed:', err.message);

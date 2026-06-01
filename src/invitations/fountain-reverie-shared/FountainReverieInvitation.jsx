@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import FountainSplash from './FountainSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
-import { buildInvitationImageSources, containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import sectionSeparator from '../../assets/Fountain Reverie/decorative_components/elegant_vintage_ornamental_flourish_transparent.png';
 import envelopeMessage from '../../assets/Fountain Reverie/envelope_message.png';
@@ -98,6 +98,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
+  const rsvpSubmissionId = useRef(createRsvpSubmissionId());
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
@@ -210,7 +211,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       const res = await fetch(`${API}/rsvps/${publicSlug}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rsvpForm),
+        body: JSON.stringify({ ...rsvpForm, submissionId: rsvpSubmissionId.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'RSVP failed');

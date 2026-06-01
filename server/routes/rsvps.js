@@ -16,29 +16,32 @@ router.post('/:publicSlug', async (req, res) => {
     }
 
     const { guestName, email, phone, attending, plusOne, plusOneName, guestCount, dietaryPreferences, message } = req.body;
+    const submissionId = `${req.body.submissionId || ''}`.trim().slice(0, 128) || undefined;
 
     if (!guestName?.trim()) return res.status(400).json({ error: 'Guest name is required' });
     if (!['yes', 'no', 'maybe'].includes(attending)) return res.status(400).json({ error: 'Invalid attending value' });
 
-    // Upsert — if guest with same email already RSVP'd, update it
-    const filter = email ? { order: order._id, email } : { order: order._id, guestName };
-    const rsvp = await Rsvp.findOneAndUpdate(
-      filter,
-      {
-        order: order._id,
-        guestName,
-        email,
-        phone,
-        attending,
-        plusOne: plusOne || false,
-        plusOneName,
-        guestCount: guestCount || 1,
-        dietaryPreferences,
-        message,
-        respondedAt: new Date(),
-      },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    const rsvpDetails = {
+      order: order._id,
+      submissionId,
+      guestName,
+      email,
+      phone,
+      attending,
+      plusOne: plusOne || false,
+      plusOneName,
+      guestCount: guestCount || 1,
+      dietaryPreferences,
+      message,
+      respondedAt: new Date(),
+    };
+    const rsvp = submissionId
+      ? await Rsvp.findOneAndUpdate(
+        { order: order._id, submissionId },
+        { $setOnInsert: rsvpDetails },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      )
+      : await Rsvp.create(rsvpDetails);
 
     // No per-RSVP email notification — responses are surfaced in the
     // couple's dashboard instead of emailing on every submission.
@@ -46,7 +49,7 @@ router.post('/:publicSlug', async (req, res) => {
     res.status(201).json({ message: 'RSVP recorded', rsvp });
   } catch (err) {
     if (err.code === 11000) {
-      return res.status(409).json({ error: 'You have already RSVP\'d. Your response has been updated.' });
+      return res.status(409).json({ error: 'This RSVP was already recorded. Please refresh the invitation before sending another response.' });
     }
     res.status(500).json({ error: err.message });
   }

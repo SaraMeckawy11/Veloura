@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 import './gazebo-garden.css';
 import gardenEnvelope from '../../assets/gardenPavilion/garden-pavilion-envelope-transparent.png';
@@ -119,6 +119,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
+  const rsvpSubmissionId = useRef(createRsvpSubmissionId());
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
@@ -258,6 +259,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           attending: rsvpForm.attending,
           dietaryPreferences: '',
           message: rsvpForm.message,
+          submissionId: rsvpSubmissionId.current,
         }),
       });
       const data = await res.json();

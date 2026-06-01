@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const rsvpSchema = new mongoose.Schema({
   order:        { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true, index: true },
+  submissionId: { type: String, trim: true, maxlength: 128 },
   guestName:    { type: String, required: true },
   email:        { type: String },
   phone:        { type: String },
@@ -14,7 +15,9 @@ const rsvpSchema = new mongoose.Schema({
   respondedAt:  { type: Date, default: Date.now },
 }, { timestamps: true });
 
-// Prevent duplicate RSVPs from same email for same order
-rsvpSchema.index({ order: 1, email: 1 }, { unique: true, sparse: true });
+// Retry-safe RSVP submissions without treating names, emails, or IP addresses
+// as identity. A new form load receives a new submission ID and creates a new
+// dashboard row, even when another guest entered the same name.
+rsvpSchema.index({ order: 1, submissionId: 1 }, { unique: true, sparse: true });
 
 export default mongoose.model('Rsvp', rsvpSchema);

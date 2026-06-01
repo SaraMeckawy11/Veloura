@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import InvitationPhoto from '../InvitationPhoto';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
@@ -59,6 +59,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
+  const rsvpSubmissionId = useRef(createRsvpSubmissionId());
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
@@ -178,7 +179,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       const res = await fetch(`${API}/rsvps/${publicSlug}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(rsvpForm),
+        body: JSON.stringify({ ...rsvpForm, submissionId: rsvpSubmissionId.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'RSVP failed');
