@@ -418,7 +418,6 @@ export default function Dashboard() {
     try {
       await downloadGuestMessagesPdf({
         coupleNames: [wd.groomName, wd.brideName].filter(Boolean).join(' & ') || 'Our Wedding',
-        weddingDate: wd.weddingDate,
         messages,
       });
     } catch (err) {
