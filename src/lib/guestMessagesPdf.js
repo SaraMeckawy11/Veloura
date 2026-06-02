@@ -1,5 +1,4 @@
 import coverEmptyUrl from '../assets/messages/coverEmpty.png';
-import middleEmptyUrl from '../assets/messages/middleEmpty.png';
 import coverLastUrl from '../assets/messages/coverLast.png';
 
 const PAGE_WIDTH = 1240;
@@ -17,16 +16,16 @@ const MSG_PAGE_H = 1619;
 // for a digital keepsake, the ratio is what matters so nothing distorts).
 const MSG_PAGE_W_PT = 480;
 const MSG_PAGE_H_PT = (MSG_PAGE_W_PT * MSG_PAGE_H) / MSG_PAGE_W;
-const MSG_CREAM = '#f7f0e3';
+const MSG_CREAM = '#faf2eb'; // page background, sampled from the reference artwork
+const MSG_FRAME = '#cda37a'; // double border colour, sampled from the reference
 const MSG_MARGIN_X = 80;
 const MSG_CONTENT_TOP = 268;
 const MSG_CONTENT_BOTTOM = MSG_PAGE_H - 120;
 const MSG_CARD_GAP = 26;
 const MSG_LINE_HEIGHT = 40;
-const MSG_NAME_BASELINE = 70;
-const MSG_META_BASELINE = 116;
-const MSG_MSG_START = 168;
-const MSG_CARD_BOTTOM_PAD = 46;
+const MSG_NAME_BASELINE = 60;
+const MSG_MSG_START = 110;
+const MSG_CARD_BOTTOM_PAD = 38;
 const MSG_PALETTE = {
   ink: '#3a3026',
   accent: '#b3873f',
@@ -360,19 +359,6 @@ function triggerDownload(pdfBytes, filename) {
   URL.revokeObjectURL(url);
 }
 
-function formatMessageStatus(attending) {
-  if (attending === 'yes') return 'Attending';
-  if (attending === 'no') return 'Not Attending';
-  return 'Maybe';
-}
-
-function formatMessageDate(value) {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-}
-
 function truncateToWidth(ctx, text, font, maxWidth) {
   ctx.font = font;
   if (ctx.measureText(text).width <= maxWidth) return text;
@@ -424,82 +410,34 @@ function drawCenterFlourish(ctx, cx, y, palette, reach) {
   ctx.restore();
 }
 
-// Circular status badge: check (attending), cross (not), or dash (maybe).
-function drawStatusIcon(ctx, cx, cy, attending, palette) {
-  ctx.save();
-  ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 2;
+// Double border frame with concave (inward-curved) corners, matching the
+// reference artwork — recreated in canvas so the message pages stay light.
+function drawConcaveFrame(ctx, inset, radius) {
+  const x0 = inset;
+  const y0 = inset;
+  const x1 = MSG_PAGE_W - inset;
+  const y1 = MSG_PAGE_H - inset;
+  const r = radius;
   ctx.beginPath();
-  ctx.arc(cx, cy, 13, 0, Math.PI * 2);
+  ctx.moveTo(x0 + r, y0);
+  ctx.lineTo(x1 - r, y0);
+  ctx.quadraticCurveTo(x1 - r, y0 + r, x1, y0 + r); // top-right
+  ctx.lineTo(x1, y1 - r);
+  ctx.quadraticCurveTo(x1 - r, y1 - r, x1 - r, y1); // bottom-right
+  ctx.lineTo(x0 + r, y1);
+  ctx.quadraticCurveTo(x0 + r, y1 - r, x0, y1 - r); // bottom-left
+  ctx.lineTo(x0, y0 + r);
+  ctx.quadraticCurveTo(x0 + r, y0 + r, x0 + r, y0); // top-left
   ctx.stroke();
-  ctx.lineWidth = 2.2;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  if (attending === 'yes') {
-    ctx.moveTo(cx - 6, cy + 0.5);
-    ctx.lineTo(cx - 1.5, cy + 5);
-    ctx.lineTo(cx + 6.5, cy - 5);
-  } else if (attending === 'no') {
-    ctx.moveTo(cx - 5, cy - 5);
-    ctx.lineTo(cx + 5, cy + 5);
-    ctx.moveTo(cx + 5, cy - 5);
-    ctx.lineTo(cx - 5, cy + 5);
-  } else {
-    ctx.moveTo(cx - 5, cy);
-    ctx.lineTo(cx + 5, cy);
-  }
-  ctx.stroke();
-  ctx.restore();
 }
 
-// Two simple person glyphs (heads + shoulders).
-function drawGuestsIcon(ctx, cx, cy, palette) {
-  ctx.save();
-  ctx.strokeStyle = palette.accent;
-  ctx.lineWidth = 1.8;
-  // Back figure
-  ctx.beginPath();
-  ctx.arc(cx + 6, cy - 4, 4, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(cx + 6, cy + 11, 7, Math.PI * 1.15, Math.PI * 1.85);
-  ctx.stroke();
-  // Front figure
-  ctx.beginPath();
-  ctx.arc(cx - 4, cy - 3, 5, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(cx - 4, cy + 12, 8, Math.PI, Math.PI * 2);
-  ctx.stroke();
-  ctx.restore();
-}
-
-// Small calendar glyph; (x, y) is the top-left.
-function drawCalendarIcon(ctx, x, y, palette) {
-  const w = 26;
-  const h = 24;
-  ctx.save();
-  ctx.strokeStyle = palette.accent;
-  ctx.fillStyle = palette.accent;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.roundRect(x, y + 3, w, h - 3, 3);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x, y + 10);
-  ctx.lineTo(x + w, y + 10);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x + 6, y);
-  ctx.lineTo(x + 6, y + 5);
-  ctx.moveTo(x + w - 6, y);
-  ctx.lineTo(x + w - 6, y + 5);
-  ctx.stroke();
-  [y + 15, y + 20].forEach((rowY, rowIndex) => {
-    const columns = rowIndex === 0 ? [x + 6, x + 13, x + 20] : [x + 6, x + 13];
-    columns.forEach(colX => ctx.fillRect(colX - 1, rowY - 1, 2, 2));
-  });
-  ctx.restore();
+function paintMessagesBackground(ctx) {
+  ctx.fillStyle = MSG_CREAM;
+  ctx.fillRect(0, 0, MSG_PAGE_W, MSG_PAGE_H);
+  ctx.strokeStyle = MSG_FRAME;
+  ctx.lineWidth = 1.6;
+  drawConcaveFrame(ctx, 33, 44); // outer line
+  drawConcaveFrame(ctx, 41, 36); // inner line (8px in, kept parallel)
 }
 
 function paintArtworkPage(bgImg) {
@@ -513,9 +451,12 @@ function paintArtworkPage(bgImg) {
   return canvas;
 }
 
-function createMessagesPage(bgImg, palette) {
-  const canvas = paintArtworkPage(bgImg);
+function createMessagesPage(palette) {
+  const canvas = document.createElement('canvas');
+  canvas.width = MSG_PAGE_W;
+  canvas.height = MSG_PAGE_H;
   const ctx = canvas.getContext('2d');
+  paintMessagesBackground(ctx);
   const cx = MSG_PAGE_W / 2;
 
   ctx.fillStyle = palette.ink;
@@ -567,33 +508,11 @@ function drawGuestMessageCard(page, palette, data) {
   ctx.fill();
   ctx.stroke();
 
-  // Guest name
+  // Guest name (signature)
   ctx.textAlign = 'left';
   ctx.fillStyle = palette.ink;
   ctx.font = '600 40px Georgia, serif';
   ctx.fillText(data.name, x + innerPad, y + MSG_NAME_BASELINE);
-
-  // Submitted-on block (top-right)
-  const calX = x + width - 210;
-  drawCalendarIcon(ctx, calX, y + 40, palette);
-  ctx.textAlign = 'left';
-  ctx.fillStyle = palette.muted;
-  ctx.font = '18px Georgia, serif';
-  ctx.fillText('Submitted on', calX + 38, y + 50);
-  ctx.fillStyle = palette.ink;
-  ctx.font = '20px Georgia, serif';
-  ctx.fillText(data.date, calX + 38, y + 76);
-
-  // Meta row: status + guest count
-  const metaY = y + MSG_META_BASELINE;
-  drawStatusIcon(ctx, x + innerPad + 13, metaY - 7, data.attending, palette);
-  ctx.fillStyle = palette.accent;
-  ctx.font = '22px Georgia, serif';
-  const statusX = x + innerPad + 36;
-  ctx.fillText(data.status, statusX, metaY);
-  const guestsIconX = statusX + ctx.measureText(data.status).width + 34;
-  drawGuestsIcon(ctx, guestsIconX, metaY - 7, palette);
-  ctx.fillText(data.guests, guestsIconX + 22, metaY);
 
   // Message body
   ctx.fillStyle = palette.message;
@@ -607,29 +526,22 @@ function drawGuestMessageCard(page, palette, data) {
 
 export async function buildGuestMessagesCanvases({ messages }) {
   const palette = MSG_PALETTE;
-  const [coverImg, middleImg, lastImg] = await Promise.all([
+  const [coverImg, lastImg] = await Promise.all([
     loadImage(coverEmptyUrl),
-    loadImage(middleEmptyUrl),
     loadImage(coverLastUrl),
   ]);
 
   const contentWidth = MSG_PAGE_W - MSG_MARGIN_X * 2;
-  const nameMaxWidth = contentWidth - 240;
+  const nameMaxWidth = contentWidth - 72;
   const messageWrapWidth = contentWidth - 72;
   const maxLinesPerCard = 26;
 
   const middlePages = [];
-  let page = createMessagesPage(middleImg, palette);
+  let page = createMessagesPage(palette);
   middlePages.push(page);
 
   messages.forEach(message => {
     const name = truncateToWidth(page.ctx, message.guestName || 'Guest', '600 40px Georgia, serif', nameMaxWidth);
-    const status = formatMessageStatus(message.attending);
-    const guestCount = Number.isFinite(Number(message.guestCount))
-      ? Number(message.guestCount)
-      : (message.attending === 'no' ? 0 : 1);
-    const guests = `${guestCount} Guest${guestCount === 1 ? '' : 's'}`;
-    const date = formatMessageDate(message.respondedAt);
 
     page.ctx.font = 'italic 26px Georgia, serif';
     const allLines = wrapText(page.ctx, message.message, messageWrapWidth);
@@ -640,10 +552,10 @@ export async function buildGuestMessagesCanvases({ messages }) {
 
     segments.forEach(segmentLines => {
       if (page.y + cardHeightForLines(segmentLines.length) > MSG_CONTENT_BOTTOM) {
-        page = createMessagesPage(middleImg, palette);
+        page = createMessagesPage(palette);
         middlePages.push(page);
       }
-      drawGuestMessageCard(page, palette, { name, status, guests, date, attending: message.attending, lines: segmentLines });
+      drawGuestMessageCard(page, palette, { name, lines: segmentLines });
     });
   });
 
