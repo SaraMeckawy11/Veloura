@@ -52,7 +52,8 @@
       "Bash(npm ls *)",
       "Bash(node -e \"const v=require\\('./node_modules/.package-lock.json'\\); \")",
       "Bash(node -e \"try{require.resolve\\('@resvg/resvg-js'\\);console.log\\('resvg: yes'\\)}catch{console.log\\('resvg: no'\\)}\")",
-      "Bash(node -e \"try{require.resolve\\('jimp'\\);console.log\\('jimp: yes'\\)}catch{console.log\\('jimp: no'\\)}\")"
+      "Bash(node -e \"try{require.resolve\\('jimp'\\);console.log\\('jimp: yes'\\)}catch{console.log\\('jimp: no'\\)}\")",
+      "Bash(awk '{print $5}')"
     ]
   }
 }

@@ -1,9 +1,44 @@
+import coverEmptyUrl from '../assets/messages/coverEmpty.png';
+import middleEmptyUrl from '../assets/messages/middleEmpty.png';
+import coverLastUrl from '../assets/messages/coverLast.png';
+
 const PAGE_WIDTH = 1240;
 const PAGE_HEIGHT = 1754;
 const PDF_WIDTH = 595.28;
 const PDF_HEIGHT = 841.89;
 const PAGE_MARGIN = 92;
 const CARD_GAP = 24;
+
+// ── Guest Messages keepsake (image-backed design) ──────────────────────────
+// Native pixel size of the artwork in src/assets/messages (971 x 1619).
+const MSG_PAGE_W = 971;
+const MSG_PAGE_H = 1619;
+// PDF point size keeps the artwork's aspect ratio (physical size is arbitrary
+// for a digital keepsake, the ratio is what matters so nothing distorts).
+const MSG_PAGE_W_PT = 480;
+const MSG_PAGE_H_PT = (MSG_PAGE_W_PT * MSG_PAGE_H) / MSG_PAGE_W;
+const MSG_CREAM = '#f7f0e3';
+const MSG_MARGIN_X = 80;
+const MSG_CONTENT_TOP = 268;
+const MSG_CONTENT_BOTTOM = MSG_PAGE_H - 120;
+const MSG_CARD_GAP = 26;
+const MSG_LINE_HEIGHT = 40;
+const MSG_NAME_BASELINE = 70;
+const MSG_META_BASELINE = 116;
+const MSG_MSG_START = 168;
+const MSG_CARD_BOTTOM_PAD = 46;
+const MSG_PALETTE = {
+  ink: '#3a3026',
+  accent: '#b3873f',
+  muted: '#9a8f7d',
+  message: '#5c5447',
+  cardFill: '#fdfaf4',
+  cardBorder: '#e7dac1',
+};
+
+function cardHeightForLines(lineCount) {
+  return MSG_MSG_START + Math.max(0, lineCount - 1) * MSG_LINE_HEIGHT + MSG_CARD_BOTTOM_PAD;
+}
 
 const THEMES = {
   'boarding-pass': {
@@ -225,7 +260,12 @@ function concatBytes(chunks) {
   return result;
 }
 
-export function buildPdfFromJpegPages(images) {
+export function buildPdfFromJpegPages(images, opts = {}) {
+  const widthPx = opts.widthPx ?? PAGE_WIDTH;
+  const heightPx = opts.heightPx ?? PAGE_HEIGHT;
+  const widthPt = opts.widthPt ?? PDF_WIDTH;
+  const heightPt = opts.heightPt ?? PDF_HEIGHT;
+
   const objects = [];
   const pageIds = images.map((_, index) => 3 + (index * 3));
   const imageIds = images.map((_, index) => 4 + (index * 3));
@@ -238,11 +278,11 @@ export function buildPdfFromJpegPages(images) {
     const pageId = pageIds[index];
     const imageId = imageIds[index];
     const contentId = contentIds[index];
-    const content = encodeAscii(`q\n${PDF_WIDTH} 0 0 ${PDF_HEIGHT} 0 0 cm\n/Im0 Do\nQ\n`);
+    const content = encodeAscii(`q\n${widthPt} 0 0 ${heightPt} 0 0 cm\n/Im0 Do\nQ\n`);
 
-    objects[pageId] = encodeAscii(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PDF_WIDTH} ${PDF_HEIGHT}] /Resources << /XObject << /Im0 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>`);
+    objects[pageId] = encodeAscii(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${widthPt} ${heightPt}] /Resources << /XObject << /Im0 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>`);
     objects[imageId] = concatBytes([
-      encodeAscii(`<< /Type /XObject /Subtype /Image /Width ${PAGE_WIDTH} /Height ${PAGE_HEIGHT} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${image.length} >>\nstream\n`),
+      encodeAscii(`<< /Type /XObject /Subtype /Image /Width ${widthPx} /Height ${heightPx} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${image.length} >>\nstream\n`),
       image,
       encodeAscii('\nendstream'),
     ]);
@@ -299,35 +339,334 @@ async function downloadPages(pages, theme, filename) {
   URL.revokeObjectURL(url);
 }
 
-export async function downloadGuestMessagesPdf({ themeSlug, coupleNames, messages }) {
-  const theme = getTheme(themeSlug);
-  const title = 'GUEST MESSAGES';
-  const subtitle = 'Words from the people celebrating with you';
-  const pages = [];
-  let page = createPage(theme, coupleNames, title, subtitle);
-  pages.push(page);
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Could not load the keepsake artwork.'));
+    img.src = src;
+  });
+}
+
+function triggerDownload(pdfBytes, filename) {
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+function formatMessageStatus(attending) {
+  if (attending === 'yes') return 'Attending';
+  if (attending === 'no') return 'Not Attending';
+  return 'Maybe';
+}
+
+function formatMessageDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function truncateToWidth(ctx, text, font, maxWidth) {
+  ctx.font = font;
+  if (ctx.measureText(text).width <= maxWidth) return text;
+  let trimmed = text;
+  while (trimmed.length > 1 && ctx.measureText(`${trimmed}…`).width > maxWidth) {
+    trimmed = trimmed.slice(0, -1);
+  }
+  return `${trimmed.trimEnd()}…`;
+}
+
+// Centered text with manual letter-spacing (robust across browsers).
+function drawSpacedText(ctx, text, centerX, baseline, spacing) {
+  const chars = [...text];
+  const widths = chars.map(char => ctx.measureText(char).width);
+  const total = widths.reduce((sum, w) => sum + w, 0) + spacing * (chars.length - 1);
+  const prevAlign = ctx.textAlign;
+  ctx.textAlign = 'left';
+  let x = centerX - total / 2;
+  chars.forEach((char, index) => {
+    ctx.fillText(char, x, baseline);
+    x += widths[index] + spacing;
+  });
+  ctx.textAlign = prevAlign;
+}
+
+// Short horizontal rule with a small diamond + dots in the middle.
+function drawCenterFlourish(ctx, cx, y, palette, reach) {
+  ctx.save();
+  ctx.strokeStyle = palette.accent;
+  ctx.fillStyle = palette.accent;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(cx - reach, y);
+  ctx.lineTo(cx - 18, y);
+  ctx.moveTo(cx + 18, y);
+  ctx.lineTo(cx + reach, y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, y - 6);
+  ctx.lineTo(cx + 7, y);
+  ctx.lineTo(cx, y + 6);
+  ctx.lineTo(cx - 7, y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx - 14, y, 1.7, 0, Math.PI * 2);
+  ctx.arc(cx + 14, y, 1.7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+// Circular status badge: check (attending), cross (not), or dash (maybe).
+function drawStatusIcon(ctx, cx, cy, attending, palette) {
+  ctx.save();
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 13, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  if (attending === 'yes') {
+    ctx.moveTo(cx - 6, cy + 0.5);
+    ctx.lineTo(cx - 1.5, cy + 5);
+    ctx.lineTo(cx + 6.5, cy - 5);
+  } else if (attending === 'no') {
+    ctx.moveTo(cx - 5, cy - 5);
+    ctx.lineTo(cx + 5, cy + 5);
+    ctx.moveTo(cx + 5, cy - 5);
+    ctx.lineTo(cx - 5, cy + 5);
+  } else {
+    ctx.moveTo(cx - 5, cy);
+    ctx.lineTo(cx + 5, cy);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+// Two simple person glyphs (heads + shoulders).
+function drawGuestsIcon(ctx, cx, cy, palette) {
+  ctx.save();
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 1.8;
+  // Back figure
+  ctx.beginPath();
+  ctx.arc(cx + 6, cy - 4, 4, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx + 6, cy + 11, 7, Math.PI * 1.15, Math.PI * 1.85);
+  ctx.stroke();
+  // Front figure
+  ctx.beginPath();
+  ctx.arc(cx - 4, cy - 3, 5, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx - 4, cy + 12, 8, Math.PI, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// Small calendar glyph; (x, y) is the top-left.
+function drawCalendarIcon(ctx, x, y, palette) {
+  const w = 26;
+  const h = 24;
+  ctx.save();
+  ctx.strokeStyle = palette.accent;
+  ctx.fillStyle = palette.accent;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(x, y + 3, w, h - 3, 3);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x, y + 10);
+  ctx.lineTo(x + w, y + 10);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x + 6, y);
+  ctx.lineTo(x + 6, y + 5);
+  ctx.moveTo(x + w - 6, y);
+  ctx.lineTo(x + w - 6, y + 5);
+  ctx.stroke();
+  [y + 15, y + 20].forEach((rowY, rowIndex) => {
+    const columns = rowIndex === 0 ? [x + 6, x + 13, x + 20] : [x + 6, x + 13];
+    columns.forEach(colX => ctx.fillRect(colX - 1, rowY - 1, 2, 2));
+  });
+  ctx.restore();
+}
+
+function paintArtworkPage(bgImg) {
+  const canvas = document.createElement('canvas');
+  canvas.width = MSG_PAGE_W;
+  canvas.height = MSG_PAGE_H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = MSG_CREAM;
+  ctx.fillRect(0, 0, MSG_PAGE_W, MSG_PAGE_H);
+  ctx.drawImage(bgImg, 0, 0, MSG_PAGE_W, MSG_PAGE_H);
+  return canvas;
+}
+
+function createMessagesPage(bgImg, palette) {
+  const canvas = paintArtworkPage(bgImg);
+  const ctx = canvas.getContext('2d');
+  const cx = MSG_PAGE_W / 2;
+
+  ctx.fillStyle = palette.ink;
+  ctx.font = '500 56px Georgia, serif';
+  drawSpacedText(ctx, 'MESSAGES', cx, 150, 14);
+  drawCenterFlourish(ctx, cx, 96, palette, 96);
+  drawCenterFlourish(ctx, cx, 198, palette, 110);
+
+  return { canvas, ctx, y: MSG_CONTENT_TOP };
+}
+
+function drawMessagesPageNumber(ctx, number, palette) {
+  const cx = MSG_PAGE_W / 2;
+  const y = MSG_PAGE_H - 74;
+  const label = String(number).padStart(2, '0');
+  ctx.textAlign = 'center';
+  ctx.fillStyle = palette.ink;
+  ctx.font = '22px Georgia, serif';
+  ctx.fillText(label, cx, y);
+  const halfNum = ctx.measureText(label).width / 2;
+  ctx.strokeStyle = palette.accent;
+  ctx.fillStyle = palette.accent;
+  ctx.lineWidth = 1.3;
+  [-1, 1].forEach(dir => {
+    const sx = cx + dir * (halfNum + 18);
+    ctx.beginPath();
+    ctx.moveTo(sx, y - 7);
+    ctx.lineTo(sx + dir * 38, y - 7);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(sx + dir * 46, y - 7, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawGuestMessageCard(page, palette, data) {
+  const { ctx } = page;
+  const x = MSG_MARGIN_X;
+  const y = page.y;
+  const width = MSG_PAGE_W - MSG_MARGIN_X * 2;
+  const innerPad = 36;
+  const cardHeight = cardHeightForLines(data.lines.length);
+
+  ctx.fillStyle = palette.cardFill;
+  ctx.strokeStyle = palette.cardBorder;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(x, y, width, cardHeight, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  // Guest name
+  ctx.textAlign = 'left';
+  ctx.fillStyle = palette.ink;
+  ctx.font = '600 40px Georgia, serif';
+  ctx.fillText(data.name, x + innerPad, y + MSG_NAME_BASELINE);
+
+  // Submitted-on block (top-right)
+  const calX = x + width - 210;
+  drawCalendarIcon(ctx, calX, y + 40, palette);
+  ctx.textAlign = 'left';
+  ctx.fillStyle = palette.muted;
+  ctx.font = '18px Georgia, serif';
+  ctx.fillText('Submitted on', calX + 38, y + 50);
+  ctx.fillStyle = palette.ink;
+  ctx.font = '20px Georgia, serif';
+  ctx.fillText(data.date, calX + 38, y + 76);
+
+  // Meta row: status + guest count
+  const metaY = y + MSG_META_BASELINE;
+  drawStatusIcon(ctx, x + innerPad + 13, metaY - 7, data.attending, palette);
+  ctx.fillStyle = palette.accent;
+  ctx.font = '22px Georgia, serif';
+  const statusX = x + innerPad + 36;
+  ctx.fillText(data.status, statusX, metaY);
+  const guestsIconX = statusX + ctx.measureText(data.status).width + 34;
+  drawGuestsIcon(ctx, guestsIconX, metaY - 7, palette);
+  ctx.fillText(data.guests, guestsIconX + 22, metaY);
+
+  // Message body
+  ctx.fillStyle = palette.message;
+  ctx.font = 'italic 26px Georgia, serif';
+  data.lines.forEach((line, index) => {
+    ctx.fillText(line, x + innerPad, y + MSG_MSG_START + index * MSG_LINE_HEIGHT);
+  });
+
+  page.y += cardHeight + MSG_CARD_GAP;
+}
+
+export async function buildGuestMessagesCanvases({ messages }) {
+  const palette = MSG_PALETTE;
+  const [coverImg, middleImg, lastImg] = await Promise.all([
+    loadImage(coverEmptyUrl),
+    loadImage(middleEmptyUrl),
+    loadImage(coverLastUrl),
+  ]);
+
+  const contentWidth = MSG_PAGE_W - MSG_MARGIN_X * 2;
+  const nameMaxWidth = contentWidth - 240;
+  const messageWrapWidth = contentWidth - 72;
+  const maxLinesPerCard = 26;
+
+  const middlePages = [];
+  let page = createMessagesPage(middleImg, palette);
+  middlePages.push(page);
 
   messages.forEach(message => {
-    page.ctx.font = 'italic 28px Georgia, serif';
-    const lines = wrapText(page.ctx, message.message, PAGE_WIDTH - (PAGE_MARGIN * 2) - 156);
-    const maxLinesPerCard = 25;
+    const name = truncateToWidth(page.ctx, message.guestName || 'Guest', '600 40px Georgia, serif', nameMaxWidth);
+    const status = formatMessageStatus(message.attending);
+    const guestCount = Number.isFinite(Number(message.guestCount))
+      ? Number(message.guestCount)
+      : (message.attending === 'no' ? 0 : 1);
+    const guests = `${guestCount} Guest${guestCount === 1 ? '' : 's'}`;
+    const date = formatMessageDate(message.respondedAt);
+
+    page.ctx.font = 'italic 26px Georgia, serif';
+    const allLines = wrapText(page.ctx, message.message, messageWrapWidth);
     const segments = [];
-    for (let index = 0; index < lines.length; index += maxLinesPerCard) {
-      segments.push(lines.slice(index, index + maxLinesPerCard));
+    for (let index = 0; index < allLines.length; index += maxLinesPerCard) {
+      segments.push(allLines.slice(index, index + maxLinesPerCard));
     }
 
-    segments.forEach((segment, index) => {
-      const isLastSegment = index === segments.length - 1;
-      const cardHeight = 64 + (segment.length * 39) + (isLastSegment ? 64 : 24);
-      if (page.y + cardHeight > PAGE_HEIGHT - 128) {
-        page = createPage(theme, coupleNames, title, subtitle);
-        pages.push(page);
+    segments.forEach(segmentLines => {
+      if (page.y + cardHeightForLines(segmentLines.length) > MSG_CONTENT_BOTTOM) {
+        page = createMessagesPage(middleImg, palette);
+        middlePages.push(page);
       }
-      drawMessageCard(page, theme, segment, message.guestName, isLastSegment);
+      drawGuestMessageCard(page, palette, { name, status, guests, date, attending: message.attending, lines: segmentLines });
     });
   });
 
-  await downloadPages(pages, theme, `${sanitizeFilename(coupleNames)}-guest-messages.pdf`);
+  // The cover is page 1, so interior message pages start numbering at 02.
+  middlePages.forEach((middlePage, index) => drawMessagesPageNumber(middlePage.ctx, index + 2, palette));
+
+  return [
+    paintArtworkPage(coverImg),
+    ...middlePages.map(middlePage => middlePage.canvas),
+    paintArtworkPage(lastImg),
+  ];
+}
+
+export async function downloadGuestMessagesPdf({ coupleNames, messages }) {
+  const canvases = await buildGuestMessagesCanvases({ messages });
+  const jpegPages = await Promise.all(canvases.map(canvas => canvasToJpeg(canvas)));
+  const pdfBytes = buildPdfFromJpegPages(jpegPages, {
+    widthPx: MSG_PAGE_W,
+    heightPx: MSG_PAGE_H,
+    widthPt: MSG_PAGE_W_PT,
+    heightPt: MSG_PAGE_H_PT,
+  });
+  triggerDownload(pdfBytes, `${sanitizeFilename(coupleNames)}-guest-messages.pdf`);
 }
 
 function formatResponseStatus(attending) {
