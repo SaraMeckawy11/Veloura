@@ -16,23 +16,28 @@ const MSG_PAGE_H = 1619;
 // for a digital keepsake, the ratio is what matters so nothing distorts).
 const MSG_PAGE_W_PT = 480;
 const MSG_PAGE_H_PT = (MSG_PAGE_W_PT * MSG_PAGE_H) / MSG_PAGE_W;
-const MSG_CREAM = '#faf2eb'; // page background, sampled from the reference artwork
-const MSG_FRAME = '#cda37a'; // double border colour, sampled from the reference
+const MSG_CREAM = '#fdf9f3'; // page background — lighter than the cover artwork
+const MSG_FRAME = '#cfa978'; // single border colour, sampled from the reference
 const MSG_MARGIN_X = 80;
-const MSG_CONTENT_TOP = 268;
-const MSG_CONTENT_BOTTOM = MSG_PAGE_H - 120;
+const MSG_CONTENT_TOP = 272;
+const MSG_CONTENT_BOTTOM = MSG_PAGE_H - 124;
 const MSG_CARD_GAP = 26;
-const MSG_LINE_HEIGHT = 40;
-const MSG_NAME_BASELINE = 60;
-const MSG_MSG_START = 110;
-const MSG_CARD_BOTTOM_PAD = 38;
+const MSG_LINE_HEIGHT = 42;
+const MSG_NAME_BASELINE = 62;
+const MSG_MSG_START = 116;
+const MSG_CARD_BOTTOM_PAD = 40;
+// Match the rest of the site: Cormorant Garamond display serif (loaded globally).
+const MSG_HEADER_FONT = "600 58px 'Cormorant Garamond', Georgia, serif";
+const MSG_NAME_FONT = "600 40px 'Cormorant Garamond', Georgia, serif";
+const MSG_MESSAGE_FONT = "italic 500 31px 'Cormorant Garamond', Georgia, serif";
+const MSG_NUMBER_FONT = "500 26px 'Cormorant Garamond', Georgia, serif";
 const MSG_PALETTE = {
   ink: '#3a3026',
   accent: '#b3873f',
   muted: '#9a8f7d',
-  message: '#5c5447',
-  cardFill: '#fdfaf4',
-  cardBorder: '#e7dac1',
+  message: '#564f44',
+  cardFill: '#fffefb',
+  cardBorder: '#ece0cb',
 };
 
 function cardHeightForLines(lineCount) {
@@ -410,8 +415,10 @@ function drawCenterFlourish(ctx, cx, y, palette, reach) {
   ctx.restore();
 }
 
-// Double border frame with concave (inward-curved) corners, matching the
+// Single border frame with concave (inward-scooped) corners, matching the
 // reference artwork — recreated in canvas so the message pages stay light.
+// Each corner is a true circular arc centred on the corner point, so the
+// scoop curves cleanly into the page interior.
 function drawConcaveFrame(ctx, inset, radius) {
   const x0 = inset;
   const y0 = inset;
@@ -421,13 +428,13 @@ function drawConcaveFrame(ctx, inset, radius) {
   ctx.beginPath();
   ctx.moveTo(x0 + r, y0);
   ctx.lineTo(x1 - r, y0);
-  ctx.quadraticCurveTo(x1 - r, y0 + r, x1, y0 + r); // top-right
+  ctx.arc(x1, y0, r, Math.PI, Math.PI / 2, true); // top-right scoop
   ctx.lineTo(x1, y1 - r);
-  ctx.quadraticCurveTo(x1 - r, y1 - r, x1 - r, y1); // bottom-right
+  ctx.arc(x1, y1, r, (Math.PI * 3) / 2, Math.PI, true); // bottom-right scoop
   ctx.lineTo(x0 + r, y1);
-  ctx.quadraticCurveTo(x0 + r, y1 - r, x0, y1 - r); // bottom-left
+  ctx.arc(x0, y1, r, 0, -Math.PI / 2, true); // bottom-left scoop
   ctx.lineTo(x0, y0 + r);
-  ctx.quadraticCurveTo(x0 + r, y0 + r, x0 + r, y0); // top-left
+  ctx.arc(x0, y0, r, Math.PI / 2, 0, true); // top-left scoop
   ctx.stroke();
 }
 
@@ -435,9 +442,8 @@ function paintMessagesBackground(ctx) {
   ctx.fillStyle = MSG_CREAM;
   ctx.fillRect(0, 0, MSG_PAGE_W, MSG_PAGE_H);
   ctx.strokeStyle = MSG_FRAME;
-  ctx.lineWidth = 1.6;
-  drawConcaveFrame(ctx, 33, 44); // outer line
-  drawConcaveFrame(ctx, 41, 36); // inner line (8px in, kept parallel)
+  ctx.lineWidth = 1.8;
+  drawConcaveFrame(ctx, 38, 42);
 }
 
 function paintArtworkPage(bgImg) {
@@ -460,10 +466,10 @@ function createMessagesPage(palette) {
   const cx = MSG_PAGE_W / 2;
 
   ctx.fillStyle = palette.ink;
-  ctx.font = '500 56px Georgia, serif';
-  drawSpacedText(ctx, 'MESSAGES', cx, 150, 14);
+  ctx.font = MSG_HEADER_FONT;
+  drawSpacedText(ctx, 'MESSAGES', cx, 152, 16);
   drawCenterFlourish(ctx, cx, 96, palette, 96);
-  drawCenterFlourish(ctx, cx, 198, palette, 110);
+  drawCenterFlourish(ctx, cx, 200, palette, 110);
 
   return { canvas, ctx, y: MSG_CONTENT_TOP };
 }
@@ -474,7 +480,7 @@ function drawMessagesPageNumber(ctx, number, palette) {
   const label = String(number).padStart(2, '0');
   ctx.textAlign = 'center';
   ctx.fillStyle = palette.ink;
-  ctx.font = '22px Georgia, serif';
+  ctx.font = MSG_NUMBER_FONT;
   ctx.fillText(label, cx, y);
   const halfNum = ctx.measureText(label).width / 2;
   ctx.strokeStyle = palette.accent;
@@ -500,28 +506,48 @@ function drawGuestMessageCard(page, palette, data) {
   const innerPad = 36;
   const cardHeight = cardHeightForLines(data.lines.length);
 
+  ctx.save();
   ctx.fillStyle = palette.cardFill;
+  ctx.strokeStyle = palette.cardBorder;
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = 'rgba(150, 120, 70, 0.12)';
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 4;
+  ctx.beginPath();
+  ctx.roundRect(x, y, width, cardHeight, 16);
+  ctx.fill();
+  ctx.restore();
   ctx.strokeStyle = palette.cardBorder;
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.roundRect(x, y, width, cardHeight, 16);
-  ctx.fill();
   ctx.stroke();
 
   // Guest name (signature)
   ctx.textAlign = 'left';
   ctx.fillStyle = palette.ink;
-  ctx.font = '600 40px Georgia, serif';
+  ctx.font = MSG_NAME_FONT;
   ctx.fillText(data.name, x + innerPad, y + MSG_NAME_BASELINE);
 
   // Message body
   ctx.fillStyle = palette.message;
-  ctx.font = 'italic 26px Georgia, serif';
+  ctx.font = MSG_MESSAGE_FONT;
   data.lines.forEach((line, index) => {
     ctx.fillText(line, x + innerPad, y + MSG_MSG_START + index * MSG_LINE_HEIGHT);
   });
 
   page.y += cardHeight + MSG_CARD_GAP;
+}
+
+async function ensureMessagesFonts() {
+  if (!document.fonts?.load) return;
+  try {
+    await Promise.all([MSG_HEADER_FONT, MSG_NAME_FONT, MSG_MESSAGE_FONT, MSG_NUMBER_FONT]
+      .map(font => document.fonts.load(font, 'MESSAGES')));
+    await document.fonts.ready;
+  } catch {
+    // Fall back to the serif stack if the web font can't be loaded.
+  }
 }
 
 export async function buildGuestMessagesCanvases({ messages }) {
@@ -530,6 +556,7 @@ export async function buildGuestMessagesCanvases({ messages }) {
     loadImage(coverEmptyUrl),
     loadImage(coverLastUrl),
   ]);
+  await ensureMessagesFonts();
 
   const contentWidth = MSG_PAGE_W - MSG_MARGIN_X * 2;
   const nameMaxWidth = contentWidth - 72;
@@ -541,9 +568,9 @@ export async function buildGuestMessagesCanvases({ messages }) {
   middlePages.push(page);
 
   messages.forEach(message => {
-    const name = truncateToWidth(page.ctx, message.guestName || 'Guest', '600 40px Georgia, serif', nameMaxWidth);
+    const name = truncateToWidth(page.ctx, message.guestName || 'Guest', MSG_NAME_FONT, nameMaxWidth);
 
-    page.ctx.font = 'italic 26px Georgia, serif';
+    page.ctx.font = MSG_MESSAGE_FONT;
     const allLines = wrapText(page.ctx, message.message, messageWrapWidth);
     const segments = [];
     for (let index = 0; index < allLines.length; index += maxLinesPerCard) {
@@ -559,8 +586,8 @@ export async function buildGuestMessagesCanvases({ messages }) {
     });
   });
 
-  // The cover is page 1, so interior message pages start numbering at 02.
-  middlePages.forEach((middlePage, index) => drawMessagesPageNumber(middlePage.ctx, index + 2, palette));
+  // Number the interior message pages starting at 01.
+  middlePages.forEach((middlePage, index) => drawMessagesPageNumber(middlePage.ctx, index + 1, palette));
 
   return [
     paintArtworkPage(coverImg),
