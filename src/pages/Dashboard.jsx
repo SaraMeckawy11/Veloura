@@ -417,8 +417,8 @@ export default function Dashboard() {
     setSaveMsg('');
     try {
       await downloadGuestMessagesPdf({
-        themeSlug: order.template?.slug,
         coupleNames: [wd.groomName, wd.brideName].filter(Boolean).join(' & ') || 'Our Wedding',
+        weddingDate: wd.weddingDate,
         messages,
       });
     } catch (err) {

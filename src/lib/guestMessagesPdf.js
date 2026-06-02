@@ -23,14 +23,20 @@ const MSG_CONTENT_TOP = 272;
 const MSG_CONTENT_BOTTOM = MSG_PAGE_H - 124;
 const MSG_CARD_GAP = 26;
 const MSG_LINE_HEIGHT = 42;
-const MSG_NAME_BASELINE = 62;
-const MSG_MSG_START = 116;
-const MSG_CARD_BOTTOM_PAD = 40;
+const MSG_MSG_START = 58;   // first message baseline from card top
+const MSG_SIG_GAP = 52;     // last message baseline → signature baseline
+const MSG_SIG_BOTTOM = 30;  // signature baseline → card bottom
 // Match the rest of the site: Cormorant Garamond display serif (loaded globally).
 const MSG_HEADER_FONT = "600 58px 'Cormorant Garamond', Georgia, serif";
-const MSG_NAME_FONT = "600 40px 'Cormorant Garamond', Georgia, serif";
 const MSG_MESSAGE_FONT = "italic 500 31px 'Cormorant Garamond', Georgia, serif";
+const MSG_SIGNATURE_FONT = "italic 600 31px 'Cormorant Garamond', Georgia, serif";
 const MSG_NUMBER_FONT = "500 26px 'Cormorant Garamond', Georgia, serif";
+const MSG_SIGNATURE_COLOR = '#b8924a'; // Veloura gold
+// Cover couple name + date block (sampled from the reference cover artwork).
+const COVER_NAME_BASELINE = 1296;
+const COVER_DATE_BASELINE = 1350;
+const COVER_NAME_COLOR = '#5e4534';
+const COVER_DATE_COLOR = '#7c6051';
 const MSG_PALETTE = {
   ink: '#3a3026',
   accent: '#b3873f',
@@ -41,7 +47,7 @@ const MSG_PALETTE = {
 };
 
 function cardHeightForLines(lineCount) {
-  return MSG_MSG_START + Math.max(0, lineCount - 1) * MSG_LINE_HEIGHT + MSG_CARD_BOTTOM_PAD;
+  return MSG_MSG_START + Math.max(0, lineCount - 1) * MSG_LINE_HEIGHT + MSG_SIG_GAP + MSG_SIG_BOTTOM;
 }
 
 const THEMES = {
@@ -457,6 +463,42 @@ function paintArtworkPage(bgImg) {
   return canvas;
 }
 
+function formatCoverDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+  const month = date.toLocaleDateString('en-US', { month: 'long' });
+  return `${weekday}, ${date.getDate()} ${month} ${date.getFullYear()}`.toUpperCase();
+}
+
+// Draw the couple's names + wedding date into the cover's empty plate,
+// mirroring the placement of the reference cover artwork.
+function drawCoverDetails(ctx, coupleNames, weddingDate) {
+  const cx = MSG_PAGE_W / 2;
+  const names = `${coupleNames || ''}`.trim().toUpperCase();
+  if (names) {
+    const spacing = 4;
+    const maxWidth = 600;
+    const measure = size => {
+      ctx.font = `600 ${size}px 'Cormorant Garamond', Georgia, serif`;
+      return [...names].reduce((sum, ch) => sum + ctx.measureText(ch).width, 0) + spacing * (names.length - 1);
+    };
+    let size = 42;
+    while (size > 24 && measure(size) > maxWidth) size -= 2;
+    ctx.font = `600 ${size}px 'Cormorant Garamond', Georgia, serif`;
+    ctx.fillStyle = COVER_NAME_COLOR;
+    drawSpacedText(ctx, names, cx, COVER_NAME_BASELINE, spacing);
+  }
+
+  const date = formatCoverDate(weddingDate);
+  if (date) {
+    ctx.font = "600 22px 'Cormorant Garamond', Georgia, serif";
+    ctx.fillStyle = COVER_DATE_COLOR;
+    drawSpacedText(ctx, date, cx, COVER_DATE_BASELINE, 3);
+  }
+}
+
 function createMessagesPage(palette) {
   const canvas = document.createElement('canvas');
   canvas.width = MSG_PAGE_W;
@@ -523,18 +565,21 @@ function drawGuestMessageCard(page, palette, data) {
   ctx.roundRect(x, y, width, cardHeight, 16);
   ctx.stroke();
 
-  // Guest name (signature)
-  ctx.textAlign = 'left';
-  ctx.fillStyle = palette.ink;
-  ctx.font = MSG_NAME_FONT;
-  ctx.fillText(data.name, x + innerPad, y + MSG_NAME_BASELINE);
-
   // Message body
+  ctx.textAlign = 'left';
   ctx.fillStyle = palette.message;
   ctx.font = MSG_MESSAGE_FONT;
   data.lines.forEach((line, index) => {
     ctx.fillText(line, x + innerPad, y + MSG_MSG_START + index * MSG_LINE_HEIGHT);
   });
+
+  // Guest signature, bottom-right in Veloura gold italic
+  const lastMessageBaseline = MSG_MSG_START + (data.lines.length - 1) * MSG_LINE_HEIGHT;
+  ctx.textAlign = 'right';
+  ctx.fillStyle = MSG_SIGNATURE_COLOR;
+  ctx.font = MSG_SIGNATURE_FONT;
+  ctx.fillText(`— ${data.name}`, x + width - innerPad, y + lastMessageBaseline + MSG_SIG_GAP);
+  ctx.textAlign = 'left';
 
   page.y += cardHeight + MSG_CARD_GAP;
 }
@@ -542,7 +587,7 @@ function drawGuestMessageCard(page, palette, data) {
 async function ensureMessagesFonts() {
   if (!document.fonts?.load) return;
   try {
-    await Promise.all([MSG_HEADER_FONT, MSG_NAME_FONT, MSG_MESSAGE_FONT, MSG_NUMBER_FONT]
+    await Promise.all([MSG_HEADER_FONT, MSG_MESSAGE_FONT, MSG_SIGNATURE_FONT, MSG_NUMBER_FONT]
       .map(font => document.fonts.load(font, 'MESSAGES')));
     await document.fonts.ready;
   } catch {
@@ -550,7 +595,7 @@ async function ensureMessagesFonts() {
   }
 }
 
-export async function buildGuestMessagesCanvases({ messages }) {
+export async function buildGuestMessagesCanvases({ coupleNames, weddingDate, messages }) {
   const palette = MSG_PALETTE;
   const [coverImg, lastImg] = await Promise.all([
     loadImage(coverEmptyUrl),
@@ -568,7 +613,7 @@ export async function buildGuestMessagesCanvases({ messages }) {
   middlePages.push(page);
 
   messages.forEach(message => {
-    const name = truncateToWidth(page.ctx, message.guestName || 'Guest', MSG_NAME_FONT, nameMaxWidth);
+    const name = truncateToWidth(page.ctx, message.guestName || 'Guest', MSG_SIGNATURE_FONT, nameMaxWidth);
 
     page.ctx.font = MSG_MESSAGE_FONT;
     const allLines = wrapText(page.ctx, message.message, messageWrapWidth);
@@ -589,15 +634,18 @@ export async function buildGuestMessagesCanvases({ messages }) {
   // Number the interior message pages starting at 01.
   middlePages.forEach((middlePage, index) => drawMessagesPageNumber(middlePage.ctx, index + 1, palette));
 
+  const coverCanvas = paintArtworkPage(coverImg);
+  drawCoverDetails(coverCanvas.getContext('2d'), coupleNames, weddingDate);
+
   return [
-    paintArtworkPage(coverImg),
+    coverCanvas,
     ...middlePages.map(middlePage => middlePage.canvas),
     paintArtworkPage(lastImg),
   ];
 }
 
-export async function downloadGuestMessagesPdf({ coupleNames, messages }) {
-  const canvases = await buildGuestMessagesCanvases({ messages });
+export async function downloadGuestMessagesPdf({ coupleNames, weddingDate, messages }) {
+  const canvases = await buildGuestMessagesCanvases({ coupleNames, weddingDate, messages });
   const jpegPages = await Promise.all(canvases.map(canvas => canvasToJpeg(canvas)));
   const pdfBytes = buildPdfFromJpegPages(jpegPages, {
     widthPx: MSG_PAGE_W,
