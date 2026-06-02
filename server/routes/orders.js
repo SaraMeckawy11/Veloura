@@ -111,7 +111,7 @@ async function ensureTemplateMetadata(order) {
 // POST /api/orders - create order + PayPal order. Refuses with 503 if PayPal credentials are missing.
 router.post('/', validateOrderBody, async (req, res) => {
   try {
-    const { customerName, customerEmail, customerPhone, templateId, weddingDetails, customizations, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones, coupleMessage } = req.body;
+    const { customerName, customerEmail, templateId, weddingDetails, customizations, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones, coupleMessage } = req.body;
     const disabledFields = normalizeDisabledFields(req.body.disabledFields);
     const cleanWeddingDetails = applyDisabledFields(weddingDetails, disabledFields);
 
@@ -159,7 +159,6 @@ router.post('/', validateOrderBody, async (req, res) => {
       user = new User({
         name: customerName,
         email: customerEmail,
-        phone: customerPhone || '',
       });
       await user.save();
     }

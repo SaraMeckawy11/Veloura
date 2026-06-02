@@ -44,6 +44,11 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Stop Android Chrome from auto-inflating text (and text-sized buttons/icons),
+     which made mobile render larger than desktop/iOS. Keep sizes as authored. */
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {

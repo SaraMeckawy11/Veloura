@@ -150,7 +150,6 @@ export default function OrderFlow() {
   const defaultForm = {
     customerName: '',
     customerEmail: '',
-    customerPhone: '',
     groomName: '',
     brideName: '',
     weddingDate: '',
@@ -601,7 +600,6 @@ export default function OrderFlow() {
         body: JSON.stringify({
           customerName: form.customerName,
           customerEmail,
-          customerPhone: form.customerPhone,
           templateId: selectedTemplate._id,
           weddingDetails: {
             groomName: form.groomName,
@@ -796,10 +794,6 @@ export default function OrderFlow() {
                     <label>Email Address *</label>
                     <input type="email" required value={form.customerEmail} onChange={e => handleInput('customerEmail', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                     <p className="form-hint message-hint">Your invitation link and private code will be sent here.</p>
-                  </div>
-                  <div className="form-field form-field--phone">
-                    <label>Phone Number</label>
-                    <input type="tel" value={form.customerPhone} onChange={e => handleInput('customerPhone', e.target.value)} placeholder="+20 xxx xxx xxxx" />
                   </div>
                 </div>
               </fieldset>
@@ -1119,7 +1113,6 @@ export default function OrderFlow() {
                 <div className="review-grid">
                   <div className="review-item"><span className="review-label">Name</span><span>{form.customerName}</span></div>
                   <div className="review-item"><span className="review-label">Email</span><span>{form.customerEmail}</span></div>
-                  {form.customerPhone && <div className="review-item"><span className="review-label">Phone</span><span>{form.customerPhone}</span></div>}
                 </div>
               </div>
 

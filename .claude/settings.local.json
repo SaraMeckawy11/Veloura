@@ -48,7 +48,11 @@
       "Bash(npm install *)",
       "Bash(cd /c/Sara/Veloura/src && grep -rni \"memories\\\\|memory\\\\|marquee\\\\|gallery.*loop\\\\|infinite\\\\|animation.*gallery\\\\|reel\" invitations/ --include=*.jsx -l | head; echo \"=== css animations gallery ===\"; grep -rni \"memories\\\\|reel\\\\|marquee\\\\|infinite\\\\|@keyframes\" invitations/coastal-breeze/coastal-breeze.css | head -20)",
       "Bash(echo \"exit: $?\")",
-      "Bash(node --input-type=module -e ' *)"
+      "Bash(node --input-type=module -e ' *)",
+      "Bash(npm ls *)",
+      "Bash(node -e \"const v=require\\('./node_modules/.package-lock.json'\\); \")",
+      "Bash(node -e \"try{require.resolve\\('@resvg/resvg-js'\\);console.log\\('resvg: yes'\\)}catch{console.log\\('resvg: no'\\)}\")",
+      "Bash(node -e \"try{require.resolve\\('jimp'\\);console.log\\('jimp: yes'\\)}catch{console.log\\('jimp: no'\\)}\")"
     ]
   }
 }
