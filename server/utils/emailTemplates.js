@@ -23,6 +23,39 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
     ? `Thank you, ${customerName}! We've received your details and your invitation is being prepared. Complete payment to share it with your guests.`
     : `Congratulations, ${customerName}! Your payment is confirmed. Here are your links.`;
 
+  const details = [
+    name1 && name2 ? ['Couple', `${name1} &amp; ${name2}`] : null,
+    dateStr ? ['Date', dateStr] : null,
+    venue ? ['Venue', venue] : null,
+  ].filter(Boolean);
+
+  const detailsTable = details
+    .map(([label, value], i) => {
+      const border = i === details.length - 1 ? '' : 'border-bottom: 1px solid #F0EDE8;';
+      return `
+                <tr>
+                  <td style="padding: 14px 16px 14px 0; ${border} font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; color: #A09A93; white-space: nowrap; vertical-align: middle;">${label}</td>
+                  <td style="padding: 14px 0; ${border} font-size: 14px; font-weight: 500; color: #2D2A26; text-align: right; vertical-align: middle;">${value}</td>
+                </tr>`;
+    })
+    .join('');
+
+  // Email-safe button using a table so it renders consistently in Outlook/Gmail/Apple Mail.
+  const button = (href, label, variant) => {
+    const isPrimary = variant === 'primary';
+    const bg = isPrimary ? '#C49B3A' : '#ffffff';
+    const color = isPrimary ? '#ffffff' : '#2D2A26';
+    const border = isPrimary ? '#C49B3A' : '#E8E4DF';
+    return `
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 10px;">
+                <tr>
+                  <td align="center" bgcolor="${bg}" style="border-radius: 50px; border: 1.5px solid ${border};">
+                    <a href="${href}" style="display: block; padding: 15px 16px; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 15px; font-weight: 600; color: ${color}; text-decoration: none; border-radius: 50px;">${label}</a>
+                  </td>
+                </tr>
+              </table>`;
+  };
+
   return {
     subject,
     html: `
@@ -31,85 +64,68 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { margin: 0; padding: 0; background: #F7F5F2; font-family: 'Helvetica Neue', Arial, sans-serif; color: #2D2A26; -webkit-font-smoothing: antialiased; }
-    .wrapper { max-width: 600px; margin: 0 auto; padding: 40px 16px; }
-    .card { background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
-    .card-body { padding: 36px 32px; }
-    .logo { font-family: Georgia, 'Times New Roman', serif; font-size: 28px; color: #2D2A26; letter-spacing: 1px; text-align: center; margin-bottom: 28px; }
-    .logo span { color: #D4AF5A; }
-    h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 24px; font-weight: 400; text-align: center; margin: 0 0 12px; color: #2D2A26; }
-    .subtitle { text-align: center; color: #7A756F; font-size: 14px; line-height: 1.7; margin: 0 0 28px; }
-    .details-card { background: #FAFAF8; border: 1px solid #F0EDE8; border-radius: 14px; padding: 8px 24px; margin-bottom: 28px; }
-    .details-table { width: 100%; border-collapse: collapse; }
-    .details-table td { padding: 14px 0; border-bottom: 1px solid #F0EDE8; font-size: 14px; vertical-align: middle; }
-    .details-table tr:last-child td { border-bottom: none; }
-    .detail-label { color: #A09A93; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; white-space: nowrap; padding-right: 16px !important; }
-    .detail-value { color: #2D2A26; font-weight: 500; text-align: right; }
-    .invite-code-box { background: #F7F5F2; border: 1.5px dashed #D4AF5A; border-radius: 10px; padding: 16px 20px; text-align: center; margin-bottom: 28px; }
-    .invite-code-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #A09A93; font-weight: 600; margin-bottom: 6px; }
-    .invite-code-value { font-family: 'Courier New', Courier, monospace; font-size: 20px; font-weight: 700; color: #D4AF5A; letter-spacing: 2px; }
-    .btn-group { margin-bottom: 8px; }
-    .btn { display: block; width: 100%; padding: 16px; text-align: center; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 15px; margin-bottom: 10px; box-sizing: border-box; }
-    .btn-primary { background: linear-gradient(135deg, #D4AF5A 0%, #C49B3A 100%); color: #fff; }
-    .btn-secondary { background: #fff; border: 1.5px solid #E8E4DF; color: #2D2A26; }
-    .divider { height: 1px; background: #F0EDE8; margin: 24px 0; }
-    .note { font-size: 12px; color: #A09A93; text-align: center; line-height: 1.65; }
-    .note strong { color: #D4AF5A; }
-    .footer { text-align: center; padding: 24px 16px; font-size: 11px; color: #B5B0AA; }
-    .footer a { color: #D4AF5A; text-decoration: none; }
-    @media (max-width: 480px) {
-      .card-body { padding: 24px 20px; }
-      h1 { font-size: 20px; }
-    }
-  </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
-<body>
-  <div class="wrapper">
-    <div class="card">
-      <div class="card-body">
-        <div class="logo">Velou<span>ra</span></div>
+<body style="margin: 0; padding: 0; background: #F7F5F2; -webkit-font-smoothing: antialiased;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: #F7F5F2;">
+    <tr>
+      <td align="center" style="padding: 40px 16px; font-family: 'Helvetica Neue', Arial, sans-serif;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%;">
+          <tr>
+            <td style="background: #ffffff; border-radius: 20px; padding: 36px 32px;">
 
-        <h1>${title}</h1>
-        <p class="subtitle">${subtitle}</p>
+              <div style="font-family: Georgia, 'Times New Roman', serif; font-size: 28px; color: #2D2A26; letter-spacing: 1px; text-align: center; padding-bottom: 28px;">Velou<span style="color: #D4AF5A;">ra</span></div>
 
-        <div class="details-card">
-          <table class="details-table" role="presentation" cellpadding="0" cellspacing="0">
-            <tbody>
-              ${name1 && name2 ? `<tr><td class="detail-label">Couple</td><td class="detail-value">${name1} &amp; ${name2}</td></tr>` : ''}
-              ${dateStr ? `<tr><td class="detail-label">Date</td><td class="detail-value">${dateStr}</td></tr>` : ''}
-              ${venue ? `<tr><td class="detail-label">Venue</td><td class="detail-value">${venue}</td></tr>` : ''}
-            </tbody>
-          </table>
-        </div>
+              <h1 style="font-family: Georgia, 'Times New Roman', serif; font-size: 24px; font-weight: 400; text-align: center; margin: 0 0 12px; color: #2D2A26;">${title}</h1>
+              <p style="text-align: center; color: #7A756F; font-size: 14px; line-height: 1.7; margin: 0 0 28px;">${subtitle}</p>
 
-        ${invitationCode ? `
-        <div class="invite-code-box">
-          <div class="invite-code-label">Your Invitation Code</div>
-          <div class="invite-code-value">${invitationCode}</div>
-        </div>
-        ` : ''}
+              ${detailsTable ? `
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: #FAFAF8; border: 1px solid #F0EDE8; border-radius: 14px; margin-bottom: 28px;">
+                <tr>
+                  <td style="padding: 8px 24px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      ${detailsTable}
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
 
-        <div class="btn-group">
-          ${!isPending ? `<a href="${invitationUrl}" class="btn btn-primary">View Your Invitation</a>` : ''}
-          <a href="${dashboardUrl}" class="btn ${isPending ? 'btn-primary' : 'btn-secondary'}">Go to Dashboard</a>
-          ${!isPending ? `<a href="${editUrl}" class="btn btn-secondary">Edit Your Invitation</a>` : ''}
-        </div>
+              ${invitationCode ? `
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: #F7F5F2; border-radius: 10px; margin-bottom: 28px;">
+                <tr>
+                  <td align="center" style="padding: 16px 20px; border: 1.5px dashed #D4AF5A; border-radius: 10px;">
+                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #A09A93; font-weight: 600; padding-bottom: 6px;">Your Invitation Code</div>
+                    <div style="font-family: 'Courier New', Courier, monospace; font-size: 20px; font-weight: 700; color: #C49B3A; letter-spacing: 2px;">${invitationCode}</div>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
 
-        <div class="divider"></div>
+              ${!isPending ? button(invitationUrl, 'View Your Invitation', 'primary') : ''}
+              ${button(dashboardUrl, 'Go to Dashboard', isPending ? 'primary' : 'secondary')}
+              ${!isPending ? button(editUrl, 'Edit Your Invitation', 'secondary') : ''}
 
-        <p class="note">
-          ${isPending
-            ? 'Complete your payment to activate your invitation.'
-            : `You can update your invitation whenever you'd like — just tap the edit link above.<br><br>Lost the link later? Come back to <a href="${CLIENT_URL}/my-invitation" style="color: #D4AF5A; text-decoration: none; font-weight: 600;">My Invitation</a> and enter your invitation code above. Keep this code private.`
-          }
-        </p>
-      </div>
-    </div>
-    <div class="footer">
-      &copy; ${new Date().getFullYear()} <a href="${CLIENT_URL}">Veloura</a> &middot; Beautiful wedding invitations
-    </div>
-  </div>
+              <div style="height: 1px; background: #F0EDE8; margin: 24px 0;"></div>
+
+              <p style="font-size: 12px; color: #A09A93; text-align: center; line-height: 1.65; margin: 0;">
+                ${isPending
+                  ? 'Complete your payment to activate your invitation.'
+                  : `You can update your invitation whenever you'd like — just tap the edit link above.<br><br>Lost the link later? Come back to <a href="${CLIENT_URL}/my-invitation" style="color: #D4AF5A; text-decoration: none; font-weight: 600;">My Invitation</a> and enter your invitation code above. Keep this code private.`
+                }
+              </p>
+
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding: 24px 16px; font-size: 11px; color: #B5B0AA;">
+              &copy; ${new Date().getFullYear()} <a href="${CLIENT_URL}" style="color: #D4AF5A; text-decoration: none;">Veloura</a> &middot; Beautiful wedding invitations
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>`,
   };

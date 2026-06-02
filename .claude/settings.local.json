@@ -47,7 +47,8 @@
       "Bash(timeout 8 node server.js)",
       "Bash(npm install *)",
       "Bash(cd /c/Sara/Veloura/src && grep -rni \"memories\\\\|memory\\\\|marquee\\\\|gallery.*loop\\\\|infinite\\\\|animation.*gallery\\\\|reel\" invitations/ --include=*.jsx -l | head; echo \"=== css animations gallery ===\"; grep -rni \"memories\\\\|reel\\\\|marquee\\\\|infinite\\\\|@keyframes\" invitations/coastal-breeze/coastal-breeze.css | head -20)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(node --input-type=module -e ' *)"
     ]
   }
 }
