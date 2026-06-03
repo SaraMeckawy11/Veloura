@@ -510,10 +510,6 @@ function drawResponseRow(page, palette, row, zebra) {
 
 export async function buildGuestResponsesCanvases({ responses }) {
   const palette = MSG_PALETTE;
-  const [coverImg, lastImg] = await Promise.all([
-    loadImage(coverEmptyUrl),
-    loadImage(coverLastUrl),
-  ]);
   await ensureKeepsakeFonts();
 
   const middlePages = [];
@@ -531,13 +527,10 @@ export async function buildGuestResponsesCanvases({ responses }) {
     drawResponseRow(page, palette, row, index % 2 === 1);
   });
 
+  // Guest responses are a plain table — no cover/back artwork pages.
   middlePages.forEach((middlePage, index) => drawMessagesPageNumber(middlePage.ctx, index + 1, palette));
 
-  return [
-    paintArtworkPage(coverImg),
-    ...middlePages.map(middlePage => middlePage.canvas),
-    paintArtworkPage(lastImg),
-  ];
+  return middlePages.map(middlePage => middlePage.canvas);
 }
 
 export async function downloadGuestResponsesPdf({ coupleNames, responses }) {
