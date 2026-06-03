@@ -60,6 +60,9 @@ function enforceTierDisabledFields(pricingTier, fields) {
   if (!tierAllows(pricingTier, 'rsvp') && !next.includes('rsvp')) {
     next.push('rsvp');
   }
+  if (!tierAllows(pricingTier, 'coupleMessage') && !next.includes('coupleMessage')) {
+    next.push('coupleMessage');
+  }
   return next;
 }
 
@@ -519,7 +522,12 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     if (colorOverrides) { order.colorOverrides = { ...order.colorOverrides, ...colorOverrides }; fieldsChanged.push('colorOverrides'); }
     if (photos) { order.photos = normalizeTierPhotos(photos, pricingTier); fieldsChanged.push('photos'); }
     if (storyMilestones) { order.storyMilestones = normalizeTierStoryMilestones(storyMilestones, pricingTier); fieldsChanged.push('storyMilestones'); }
-    if (coupleMessage !== undefined) { order.coupleMessage = coupleMessage; fieldsChanged.push('coupleMessage'); }
+    if (tierAllows(pricingTier, 'coupleMessage')) {
+      if (coupleMessage !== undefined) { order.coupleMessage = coupleMessage; fieldsChanged.push('coupleMessage'); }
+    } else if (order.coupleMessage) {
+      order.coupleMessage = undefined;
+      fieldsChanged.push('coupleMessage');
+    }
     if (tierAllows(pricingTier, 'music')) {
       if (musicUrl !== undefined) { order.musicUrl = musicUrl; fieldsChanged.push('musicUrl'); }
       if (musicPublicId !== undefined) { order.musicPublicId = musicPublicId; fieldsChanged.push('musicPublicId'); }

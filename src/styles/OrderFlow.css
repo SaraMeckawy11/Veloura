@@ -1088,6 +1088,14 @@
   overflow-wrap: break-word;
   word-break: break-word;
 }
+.review-item--wide {
+  grid-column: 1 / -1;
+}
+.review-item-message {
+  line-height: 1.6;
+  color: var(--text-secondary);
+  white-space: pre-line;
+}
 .review-label {
   font-size: 0.7rem;
   text-transform: uppercase;
@@ -1235,8 +1243,8 @@
 }
 
 .invitation-preview-panel {
-  width: min(100%, 1180px);
-  max-height: min(92vh, 860px);
+  width: min(100%, 560px);
+  max-height: min(94vh, 920px);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
@@ -1327,53 +1335,53 @@
   position: relative;
   display: flex;
   justify-content: center;
+  align-items: center;
   min-height: 0;
-  padding: 20px;
+  padding: 24px 20px;
   background:
-    linear-gradient(90deg, rgba(184, 146, 74, 0.08), transparent 18%, transparent 82%, rgba(184, 146, 74, 0.08)),
+    radial-gradient(120% 90% at 50% 0%, rgba(184, 146, 74, 0.10), transparent 60%),
     var(--bg-alt);
 }
 
-.invitation-preview-viewport {
-  width: 100%;
-  height: min(72vh, 720px);
-  overflow-x: hidden;
-  overflow-y: auto;
+/* Phone-shaped device frame. Sized to a mobile aspect ratio so the invitation
+   renders responsively as it would on a phone, centered in the preview. */
+.invitation-preview-device {
   position: relative;
+  width: min(384px, 100%);
+  height: min(80vh, 800px);
+  border-radius: 26px;
+  overflow: hidden;
   background: #fff;
   border: 1px solid rgba(45, 42, 38, 0.14);
-  border-radius: 18px;
-  box-shadow: 0 18px 50px rgba(45, 42, 38, 0.18);
+  box-shadow: 0 22px 60px rgba(45, 42, 38, 0.26);
   user-select: none;
   -webkit-user-select: none;
-  /* Become the containing block for the invitation's splash screen, which is
-     position:fixed. Without this the splash escapes the modal and covers the
-     whole window; with a transform the fixed splash is positioned and clipped
-     to the preview frame, so the splash reveal plays inside the preview itself. */
-  transform: translateZ(0);
 }
 
-.invitation-preview-viewport img,
-.invitation-preview-viewport video {
+.invitation-preview-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+.invitation-preview-device img,
+.invitation-preview-device video {
   -webkit-user-drag: none;
 }
 
 .invitation-preview-watermark {
   pointer-events: none;
   position: absolute;
-  top: 20px;
-  bottom: 20px;
-  left: 50%;
-  width: calc(100% - 40px);
+  inset: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: repeat(3, minmax(160px, 1fr));
-  gap: 44px 28px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px 18px;
   align-content: center;
   overflow: hidden;
-  border-radius: 18px;
   opacity: 0.12;
-  transform: translateX(-50%);
   mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
 }
 
@@ -2018,14 +2026,8 @@
     max-height: 94vh;
     border-radius: 14px;
   }
-  .invitation-preview-shell { padding: 12px; }
-  .invitation-preview-viewport { height: 68vh; }
-  .invitation-preview-watermark {
-    top: 12px;
-    bottom: 12px;
-    width: calc(100% - 24px);
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-  }
+  .invitation-preview-shell { padding: 14px 12px; }
+  .invitation-preview-device { height: min(72vh, 720px); }
   .invitation-preview-footer {
     flex-direction: column;
     align-items: flex-start;

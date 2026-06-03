@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { getPaypal } from '../lib/paypal';
 import InvitationPhoto from '../invitations/InvitationPhoto';
+import InvitationPreviewFrame from '../components/InvitationPreviewFrame';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
 import registry from '../invitations/registry';
 import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
@@ -506,6 +507,7 @@ export default function OrderFlow() {
   const storyIncluded = tierAllows(selectedTier, 'story');
   const galleryIncluded = tierAllows(selectedTier, 'gallery');
   const rsvpIncluded = tierAllows(selectedTier, 'rsvp');
+  const coupleMessageIncluded = tierAllows(selectedTier, 'coupleMessage');
   const musicIncluded = tierAllows(selectedTier, 'music');
   const photoAllowedForTier = (photo) => {
     if (photo.label === 'story') return storyIncluded;
@@ -799,7 +801,7 @@ export default function OrderFlow() {
     // Removed secondLanguage option
   ].filter(field => {
     if (field.key === 'message') return templateFieldSupport.message !== false;
-    if (field.key === 'coupleMessage') return templateFieldSupport.coupleMessage !== false;
+    if (field.key === 'coupleMessage') return coupleMessageIncluded && templateFieldSupport.coupleMessage !== false;
     if (field.key === 'rsvp') return rsvpIncluded;
     return true;
   });
@@ -870,11 +872,12 @@ export default function OrderFlow() {
                   </span>
                   <span className="tier-choice-desc">{tier.description}</span>
                   <span className="tier-choice-sections">
-                    {tier.sections.rsvp && <span>RSVP</span>}
-                    {tier.sections.story && <span>Story</span>}
+                    <span>Core details</span>
+                    {tier.sections.countdown && <span>Countdown</span>}
+                    {tier.sections.coupleMessage && <span>Envelope note</span>}
+                    {tier.sections.story && <span>Our Story</span>}
                     {tier.sections.gallery && <span>Gallery</span>}
-                    {tier.sections.music && <span>Music</span>}
-                    {!tier.sections.rsvp && !tier.sections.story && !tier.sections.gallery && <span>Core details</span>}
+                    {tier.sections.rsvp && <span>RSVP</span>}
                   </span>
                 </button>
               ))}
@@ -1391,8 +1394,8 @@ export default function OrderFlow() {
                   {form.weddingTime && fieldEnabled('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{formatOrderTime(form.weddingTime, form.timeFormat || '12h')}</span></div>}
                   <div className="review-item"><span className="review-label">Venue</span><span>{form.venue}</span></div>
                   <div className="review-item"><span className="review-label">Plan</span><span>{selectedTierConfig.name}</span></div>
-                  {form.message && fieldEnabled('message') && <div className="review-item"><span className="review-label">Message</span><span>{form.message}</span></div>}
-                  {form.coupleMessage && fieldEnabled('coupleMessage') && <div className="review-item"><span className="review-label">Envelope Message</span><span>{form.coupleMessage}</span></div>}
+                  {form.message && fieldEnabled('message') && <div className="review-item review-item--wide"><span className="review-label">Message</span><span className="review-item-message">{form.message}</span></div>}
+                  {form.coupleMessage && fieldEnabled('coupleMessage') && <div className="review-item review-item--wide"><span className="review-label">Envelope Message</span><span className="review-item-message">{form.coupleMessage}</span></div>}
                 </div>
               </div>
 
@@ -1611,35 +1614,37 @@ export default function OrderFlow() {
 
             <div className="invitation-preview-shell">
               <div
-                className="invitation-preview-viewport"
+                className="invitation-preview-device"
                 onContextMenu={(event) => event.preventDefault()}
                 onCopy={(event) => event.preventDefault()}
                 onDragStart={(event) => event.preventDefault()}
                 onSubmitCapture={(event) => event.preventDefault()}
               >
                 {PreviewInvitationComponent ? (
-                  <Suspense fallback={<div className="invitation-preview-loading">Loading preview...</div>}>
-                    <PreviewInvitationComponent
-                      key={`${selectedTemplate?.slug || 'template'}-preview`}
-                      order={previewOrder}
-                      demo={false}
-                      publicSlug="preview"
-                    />
-                  </Suspense>
+                  <InvitationPreviewFrame className="invitation-preview-frame" title="Invitation preview">
+                    <Suspense fallback={<div className="invitation-preview-loading">Loading preview...</div>}>
+                      <PreviewInvitationComponent
+                        key={`${selectedTemplate?.slug || 'template'}-preview`}
+                        order={previewOrder}
+                        demo={false}
+                        publicSlug="preview"
+                      />
+                    </Suspense>
+                  </InvitationPreviewFrame>
                 ) : (
                   <div className="invitation-preview-unavailable">
                     <h3>Preview unavailable</h3>
                     <p>This design cannot be rendered in the order preview yet.</p>
                   </div>
                 )}
-              </div>
-              <div className="invitation-preview-watermark" aria-hidden="true">
-                {Array.from({ length: 9 }, (_, index) => (
-                  <span key={index}>VELOURA PREVIEW</span>
-                ))}
-              </div>
-              <div className="invitation-preview-center-mark" aria-hidden="true">
-                VELOURA PREVIEW
+                <div className="invitation-preview-watermark" aria-hidden="true">
+                  {Array.from({ length: 9 }, (_, index) => (
+                    <span key={index}>VELOURA PREVIEW</span>
+                  ))}
+                </div>
+                <div className="invitation-preview-center-mark" aria-hidden="true">
+                  VELOURA PREVIEW
+                </div>
               </div>
             </div>
 

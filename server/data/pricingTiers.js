@@ -4,21 +4,25 @@ export const PRICING_TIERS = [
   {
     id: 'essential',
     name: 'Essential',
-    amount: '59.00',
+    amount: '29.00',
     sections: {
-      rsvp: false,
+      countdown: true,
+      coupleMessage: false,
       story: false,
       gallery: false,
+      rsvp: false,
     },
   },
   {
     id: 'signature',
     name: 'Signature',
-    amount: '99.00',
+    amount: '59.00',
     sections: {
-      rsvp: true,
+      countdown: true,
+      coupleMessage: true,
       story: true,
       gallery: true,
+      rsvp: true,
     },
   },
 ];
