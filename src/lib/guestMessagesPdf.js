@@ -418,6 +418,43 @@ function formatResponseDate(value) {
 const RESP_TABLE_X = MSG_MARGIN_X;
 const RESP_TABLE_W = RESP_COLUMNS.reduce((sum, col) => sum + col.width, 0);
 
+// Centered text with manual letter-spacing (robust across browsers).
+function drawSpacedText(ctx, text, centerX, baseline, spacing) {
+  const chars = [...text];
+  const widths = chars.map(char => ctx.measureText(char).width);
+  const total = widths.reduce((sum, w) => sum + w, 0) + spacing * (chars.length - 1);
+  const prevAlign = ctx.textAlign;
+  ctx.textAlign = 'left';
+  let x = centerX - total / 2;
+  chars.forEach((char, index) => {
+    ctx.fillText(char, x, baseline);
+    x += widths[index] + spacing;
+  });
+  ctx.textAlign = prevAlign;
+}
+
+// Couple names + title block at the top of each responses page.
+function drawResponsesTitle(page, palette, coupleNames) {
+  const { ctx } = page;
+  const cx = MSG_PAGE_W / 2;
+  ctx.textAlign = 'center';
+
+  ctx.fillStyle = palette.ink;
+  ctx.font = "600 50px 'Cormorant Garamond', Georgia, serif";
+  ctx.fillText(coupleNames || 'Our Wedding', cx, 150);
+
+  ctx.fillStyle = palette.accent;
+  ctx.font = "600 24px 'Cormorant Garamond', Georgia, serif";
+  drawSpacedText(ctx, 'GUEST RESPONSES', cx, 198, 6);
+
+  ctx.fillStyle = palette.muted;
+  ctx.font = "italic 24px 'Cormorant Garamond', Georgia, serif";
+  ctx.fillText('Your RSVP details at a glance', cx, 244);
+
+  ctx.textAlign = 'left';
+  page.y = 296;
+}
+
 function drawResponsesHeader(page, palette) {
   const { ctx } = page;
   const y = page.y;
@@ -508,21 +545,26 @@ function drawResponseRow(page, palette, row, zebra) {
   page.y += row.height;
 }
 
-export async function buildGuestResponsesCanvases({ responses }) {
+export async function buildGuestResponsesCanvases({ coupleNames, responses }) {
   const palette = MSG_PALETTE;
   await ensureKeepsakeFonts();
 
+  const startPage = () => {
+    const page = createFramedPage();
+    drawResponsesTitle(page, palette, coupleNames);
+    drawResponsesHeader(page, palette);
+    return page;
+  };
+
   const middlePages = [];
-  let page = createFramedPage();
+  let page = startPage();
   middlePages.push(page);
-  drawResponsesHeader(page, palette);
 
   responses.forEach((response, index) => {
     const row = getResponseRow(page.ctx, response);
     if (page.y + row.height > MSG_CONTENT_BOTTOM) {
-      page = createFramedPage();
+      page = startPage();
       middlePages.push(page);
-      drawResponsesHeader(page, palette);
     }
     drawResponseRow(page, palette, row, index % 2 === 1);
   });
@@ -534,7 +576,7 @@ export async function buildGuestResponsesCanvases({ responses }) {
 }
 
 export async function downloadGuestResponsesPdf({ coupleNames, responses }) {
-  const canvases = await buildGuestResponsesCanvases({ responses });
+  const canvases = await buildGuestResponsesCanvases({ coupleNames, responses });
   const jpegPages = await Promise.all(canvases.map(canvas => canvasToJpeg(canvas)));
   const pdfBytes = buildPdfFromJpegPages(jpegPages, {
     widthPx: MSG_PAGE_W,
