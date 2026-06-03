@@ -7,6 +7,7 @@ import GuestNote from '../GuestNote';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
+import useHeroScrollReset from '../useHeroScrollReset';
 import './gazebo-garden.css';
 import gardenEnvelope from '../../assets/gardenPavilion/garden-pavilion-envelope-transparent.png';
 
@@ -122,6 +123,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
   const rsvpSubmissionId = useRef(createRsvpSubmissionId());
+  const rootRef = useHeroScrollReset(showSplash);
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
@@ -286,7 +288,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   };
 
   return (
-    <div className={`gazebo-theme theme-watercolor${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`gazebo-theme theme-watercolor${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

@@ -1837,7 +1837,7 @@ export default function OrderFlow() {
                   </div>
                 )}
                 <div className="invitation-preview-watermark" aria-hidden="true">
-                  {Array.from({ length: 9 }, (_, index) => (
+                  {Array.from({ length: 60 }, (_, index) => (
                     <span key={index}>VELOURA PREVIEW</span>
                   ))}
                 </div>

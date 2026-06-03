@@ -8,6 +8,7 @@ import GuestNote from '../GuestNote';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
+import useHeroScrollReset from '../useHeroScrollReset';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
 import coastalHero from '../../assets/coastal/hero1.png';
@@ -62,6 +63,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
   const rsvpSubmissionId = useRef(createRsvpSubmissionId());
+  const rootRef = useHeroScrollReset(showSplash);
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
@@ -205,7 +207,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className={`coastal-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}${showSplash ? ' coastal-splash-active' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`coastal-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}${showSplash ? ' coastal-splash-active' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

@@ -571,6 +571,54 @@ body:has(.theater-theme),
   text-wrap: balance;
 }
 
+/* Guest policy ("Good to know") gets its own readable band — the old slot on
+   the printed details plate was too small to show more than one line. */
+.theater-guest-note {
+  width: min(640px, 100vw);
+  margin: 0 auto;
+  padding: 30px 24px 34px;
+  background: #f0e1c9;
+  text-align: center;
+}
+
+.theater-guest-note-eyebrow {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--theater-red);
+  font-family: var(--font-marquee);
+  font-size: clamp(0.82rem, 2.4vw, 1.12rem);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.theater-guest-note-list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  max-width: 460px;
+}
+
+.theater-guest-note-list li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #2f1b13;
+  font-family: var(--font-soft);
+  font-weight: 600;
+  font-size: clamp(0.86rem, 2.1vw, 1.06rem);
+  line-height: 1.4;
+}
+
+.theater-guest-note-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  color: var(--theater-red);
+}
+
 .theater-rsvp {
   aspect-ratio: 268 / 386;
   background-image: url("../../assets/theater/rsvoEmpty.png");

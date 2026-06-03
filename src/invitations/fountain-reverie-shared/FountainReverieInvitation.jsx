@@ -9,6 +9,7 @@ import GuestNote from '../GuestNote';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
+import useHeroScrollReset from '../useHeroScrollReset';
 import sectionSeparator from '../../assets/Fountain Reverie/decorative_components/elegant_vintage_ornamental_flourish_transparent.png';
 import envelopeMessage from '../../assets/Fountain Reverie/envelope_message.png';
 
@@ -108,6 +109,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
   const rsvpSubmissionId = useRef(createRsvpSubmissionId());
+  const rootRef = useHeroScrollReset(showSplash);
 
   const wd = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
@@ -240,7 +242,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className={`fountain-theme fountain-theme-${variant}${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`fountain-theme fountain-theme-${variant}${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

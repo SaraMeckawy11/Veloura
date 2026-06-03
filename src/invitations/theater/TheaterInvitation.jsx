@@ -5,6 +5,8 @@ import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE,
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
+import { GUEST_NOTE_ICONS } from '../GuestNote';
+import useHeroScrollReset from '../useHeroScrollReset';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
 import storyTitle from '../../assets/theater/story/title7_transparent.png';
@@ -52,6 +54,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
   const rsvpSubmissionId = useRef(createRsvpSubmissionId());
+  const rootRef = useHeroScrollReset(showSplash);
 
   const weddingDetails = order.weddingDetails || {};
   const disabledFields = order.disabledFields || [];
@@ -170,7 +173,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   };
 
   return (
-    <div className={`theater-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`theater-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />}
       {showSplash && <TheaterSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />}
 
@@ -198,8 +201,9 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           timeStr={timeStr}
           venue={venue}
           embedSrc={embedSrc}
-          guestPolicyLines={guestPolicyLines}
         />
+
+        <TheaterGuestNoteSection lines={guestPolicyLines} />
 
         {coupleMessage && <TheaterMessageSection message={coupleMessage} />}
 
@@ -227,6 +231,25 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
         </footer>
       </main>
     </div>
+  );
+}
+
+function TheaterGuestNoteSection({ lines }) {
+  if (!lines?.length) return null;
+  return (
+    <section className="theater-guest-note" aria-label="Good to know">
+      <span className="theater-guest-note-eyebrow">Good to know</span>
+      <ul className="theater-guest-note-list">
+        {lines.map((line, index) => (
+          <li key={line}>
+            <span className="theater-guest-note-icon" aria-hidden="true">
+              {GUEST_NOTE_ICONS[index] || GUEST_NOTE_ICONS[GUEST_NOTE_ICONS.length - 1]}
+            </span>
+            <span>{line}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -357,7 +380,6 @@ function DetailsSection({
   timeStr,
   venue,
   embedSrc,
-  guestPolicyLines,
 }) {
   return (
     <section className="theater-details" aria-label="Wedding details">
@@ -385,11 +407,7 @@ function DetailsSection({
         ) : null}
       </div>
       <div className="theater-details-invite">
-        {guestPolicyLines?.length ? (
-          guestPolicyLines.map(line => <p key={line}>{line}</p>)
-        ) : (
-          <p>Join us for an evening of love, light, and unforgettable moments.</p>
-        )}
+        <p>Join us for an evening of love, light, and unforgettable moments.</p>
       </div>
     </section>
   );
