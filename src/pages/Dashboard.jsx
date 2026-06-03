@@ -518,15 +518,6 @@ export default function Dashboard() {
   const galleryIncluded = tierAllows(order.pricingTier, 'gallery');
   const rsvpIncluded = tierAllows(order.pricingTier, 'rsvp');
   const coupleMessageIncluded = tierAllows(order.pricingTier, 'coupleMessage');
-  const countdownIncluded = tierAllows(order.pricingTier, 'countdown');
-  const planSections = [
-    { label: 'Core details', included: true },
-    { label: 'Countdown', included: countdownIncluded },
-    { label: 'Envelope note', included: coupleMessageIncluded },
-    { label: 'Our Story', included: storyIncluded },
-    { label: 'Gallery', included: galleryIncluded },
-    { label: 'RSVP', included: rsvpIncluded },
-  ];
   const selectedFontOption = getInvitationFontOption(editForm.invitationFont);
   const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
   const galleryPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'gallery');
@@ -701,7 +692,7 @@ export default function Dashboard() {
                       <div className="dash-guest-policy-card">
                         <span className="dash-guest-policy-label">Children</span>
                         <textarea
-                          rows={2}
+                          rows={3}
                           value={editForm.childrenPolicyText}
                           placeholder="e.g. Little ones are warmly welcome to share in the celebration."
                           onChange={e => handleEditInput('childrenPolicyText', e.target.value)}
@@ -710,7 +701,7 @@ export default function Dashboard() {
                       <div className="dash-guest-policy-card">
                         <span className="dash-guest-policy-label">Bringing a guest</span>
                         <textarea
-                          rows={2}
+                          rows={3}
                           value={editForm.plusOnePolicyText}
                           placeholder="e.g. You are warmly welcome to bring a guest with you."
                           onChange={e => handleEditInput('plusOnePolicyText', e.target.value)}
@@ -747,7 +738,7 @@ export default function Dashboard() {
                   </div>
                   {!isFieldDisabled('coupleMessage') && (
                     <>
-                      <textarea rows={4} value={editForm.coupleMessage} placeholder={DEFAULT_ENVELOPE_MESSAGE} onChange={e => handleEditInput('coupleMessage', e.target.value)} />
+                      <textarea rows={5} value={editForm.coupleMessage} placeholder={DEFAULT_ENVELOPE_MESSAGE} onChange={e => handleEditInput('coupleMessage', e.target.value)} />
                       <p className="form-hint">Shown inside the envelope. Edit it, or clear it to remove this note.</p>
                     </>
                   )}
@@ -960,21 +951,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="dash-plan-summary">
-            <span className="dash-plan-summary-title">Included in your {orderTier.name} plan</span>
-            <div className="dash-plan-chips">
-              {planSections.map(s => (
-                <span key={s.label} className={`dash-plan-chip ${s.included ? 'is-on' : 'is-off'}`}>
-                  {s.included ? (
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                  ) : (
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                  )}
-                  {s.label}
-                </span>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* RSVP list */}

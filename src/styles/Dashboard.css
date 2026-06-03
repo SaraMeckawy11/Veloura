@@ -161,7 +161,7 @@
 /* Stats */
 .dash-stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 32px;
   width: 100%;
@@ -241,47 +241,6 @@
 }
 
 /* Plan summary — reflects which sections the order's tier includes */
-.dash-plan-summary {
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border-light);
-}
-.dash-plan-summary-title {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-light);
-  margin-bottom: 12px;
-}
-.dash-plan-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.dash-plan-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  padding: 6px 12px 6px 10px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-}
-.dash-plan-chip.is-on {
-  color: var(--sage);
-  background: var(--sage-soft);
-  border-color: rgba(126, 155, 118, 0.25);
-}
-.dash-plan-chip.is-off {
-  color: var(--text-light);
-  background: var(--bg-alt);
-  border-color: var(--border-light);
-}
-.dash-plan-chip.is-off svg { opacity: 0.6; }
-
 /* RSVP table */
 .rsvp-table-wrap { overflow-x: auto; }
 
@@ -424,7 +383,7 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dash-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .details-grid { grid-template-columns: 1fr; }
   .dash-header { flex-direction: column; gap: 12px; }
   .dash-link-card { flex-direction: column; align-items: flex-start; }
@@ -586,7 +545,9 @@
 }
 
 .time-format-toggle {
-  display: inline-flex;
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-self: flex-start;
   gap: 4px;
   padding: 4px;
   margin-top: 10px;
@@ -595,14 +556,17 @@
   border-radius: 999px;
 }
 .time-format-toggle button {
+  min-width: 58px;
+  min-height: 30px;
   border: 0;
   background: transparent;
   color: var(--text-secondary);
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 0 12px;
   font-size: 0.8rem;
   font-weight: 650;
   cursor: pointer;
+  transition: var(--transition);
 }
 .time-format-toggle button.active {
   background: var(--gold);
@@ -720,7 +684,7 @@
 }
 .dash-guest-policy-card textarea {
   width: 100%;
-  min-height: 64px;
+  min-height: 88px;
   resize: vertical;
   padding: 10px 12px;
   border: 1px solid var(--border-light);
@@ -1143,17 +1107,19 @@
   min-height: 60px;
 }
 .edit-story-add {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
   background: transparent;
-  border: 1px dashed var(--border);
+  border: 2px dashed var(--border-light);
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 0.85rem;
-  align-self: flex-start;
+  font-weight: 600;
   transition: var(--transition);
 }
 .edit-story-add:hover {
