@@ -8,6 +8,7 @@ export const PRICING_TIERS = [
     price: '$39',
     oldPrice: '$59',
     amount: '39.00',
+    oldAmount: '59.00',
     description: 'A polished invitation with the core details your guests need.',
     features: [
       'Any launch invitation design',
@@ -33,11 +34,12 @@ export const PRICING_TIERS = [
     price: '$69',
     oldPrice: '$99',
     amount: '69.00',
+    oldAmount: '99.00',
     description: 'The complete guest-ready invitation with every interactive section.',
     featured: true,
     features: [
       'Everything in Essential',
-      'Personal envelope “A Note” message',
+      'Personal envelope "A Note" message',
       'Our Story timeline',
       'Photo gallery',
       'RSVP section with guest tracking',

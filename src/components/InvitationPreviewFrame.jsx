@@ -22,9 +22,15 @@ export default function InvitationPreviewFrame({ className, title = 'Invitation 
 
       idoc.documentElement.lang = document.documentElement.lang || 'en';
       idoc.documentElement.style.height = '100%';
+      idoc.documentElement.style.width = '100%';
+      idoc.documentElement.style.fontSize = '16px';
       idoc.body.style.margin = '0';
       idoc.body.style.minHeight = '100%';
+      idoc.body.style.width = '100%';
+      idoc.body.style.fontSize = '16px';
       idoc.body.style.background = '#fff';
+      idoc.body.style.overflowX = 'hidden';
+      idoc.body.style.overflowY = 'auto';
       idoc.body.style.webkitUserSelect = 'none';
       idoc.body.style.userSelect = 'none';
 

@@ -81,6 +81,17 @@ function loadPendingOrder() {
   } catch { return null; }
 }
 
+function getPricingQuery() {
+  const params = new URLSearchParams();
+  try {
+    params.set('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone || '');
+    params.set('locale', navigator.language || '');
+  } catch {
+    return '';
+  }
+  return params.toString();
+}
+
 const PHOTO_CATEGORIES = [
   { key: 'venue', label: 'Venue Photos', hint: 'Photos of your venue or ceremony location (max 2)', icon: 'location', max: 2 },
   { key: 'story', label: 'Our Story Photos', hint: 'Photos from your journey together — first date, trips, proposal (max 4)', icon: 'book', max: 4 },
@@ -174,6 +185,7 @@ export default function OrderFlow() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(draft?.selectedTemplate || null);
   const [loading, setLoading] = useState(true);
+  const [pricingCatalog, setPricingCatalog] = useState(null);
   const [confirming, setConfirming] = useState(false);
   const [paypalOrderData, setPaypalOrderData] = useState(null);
   const [paypalLoading, setPaypalLoading] = useState(false);
@@ -308,6 +320,18 @@ export default function OrderFlow() {
   }, [goToSuccessPage]);
 
   useEffect(() => {
+    const fallback = localTemplates
+      .filter(t => t.category === 'launch')
+      .map(t => ({
+        ...t,
+        previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
+      }));
+    setTemplates(fallback);
+    if (!selectedTemplate && fallback.length > 0) {
+      setSelectedTemplate(fallback[0]);
+    }
+    setLoading(false);
+
     fetch(`${API}/templates`)
       .then(r => {
         if (!r.ok) throw new Error('API error');
@@ -336,22 +360,20 @@ export default function OrderFlow() {
         } else if (!selectedTemplate && merged.length > 0) {
           setSelectedTemplate(merged[0]);
         }
-        setLoading(false);
       })
       .catch(() => {
-        // Fall back to local template data with local images
-        const fallback = localTemplates
-          .filter(t => t.category === 'launch')
-          .map(t => ({
-            ...t,
-            previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
-          }));
-        setTemplates(fallback);
-        if (!selectedTemplate && fallback.length > 0) {
-          setSelectedTemplate(fallback[0]);
-        }
-        setLoading(false);
+        // Local templates are already visible; keep the order flow responsive.
       });
+  }, []);
+
+  useEffect(() => {
+    const query = getPricingQuery();
+    fetch(`${API}/pricing${query ? `?${query}` : ''}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (data?.tiers?.length) setPricingCatalog(data);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -502,8 +524,17 @@ export default function OrderFlow() {
 
   const storyPreviewStyle = getUploadPreviewStyle(selectedTemplate?.slug, 'story');
   const galleryPreviewStyle = getUploadPreviewStyle(selectedTemplate?.slug, 'gallery');
-  const selectedTierConfig = getPricingTier(selectedTier);
-  const displayPrice = selectedTierConfig.price;
+  const pricingTiers = pricingCatalog?.tiers?.length
+    ? PRICING_TIERS.map(tier => ({
+      ...tier,
+      ...(pricingCatalog.tiers.find(remoteTier => remoteTier.id === tier.id) || {}),
+    }))
+    : PRICING_TIERS;
+  const selectedTierConfig = pricingTiers.find(tier => tier.id === normalizePricingTier(selectedTier)) || getPricingTier(selectedTier);
+  const displayPrice = selectedTierConfig.displayPrice || selectedTierConfig.price;
+  const paymentCurrencyNote = pricingCatalog?.displayIsConverted
+    ? 'PayPal checkout is processed in USD; Egyptian prices are shown as an EGP equivalent.'
+    : '';
   const effectiveDisabledFields = [...new Set([...disabledFields, ...getTierDisabledFields(selectedTier)])];
   const storyIncluded = tierAllows(selectedTier, 'story');
   const galleryIncluded = tierAllows(selectedTier, 'gallery');
@@ -858,7 +889,7 @@ export default function OrderFlow() {
             <p className="step-subtitle">Your plan controls which sections appear on your invitation.</p>
 
             <div className="tier-choice-grid">
-              {PRICING_TIERS.map(tier => (
+              {pricingTiers.map(tier => (
                 <button
                   key={tier.id}
                   type="button"
@@ -868,8 +899,8 @@ export default function OrderFlow() {
                   <span className="tier-choice-badge">{tier.badge}</span>
                   <span className="tier-choice-name">{tier.name}</span>
                   <span className="tier-choice-price">
-                    <span>{tier.oldPrice}</span>
-                    {tier.price}
+                    <span>{tier.oldDisplayPrice || tier.oldPrice}</span>
+                    {tier.displayPrice || tier.price}
                   </span>
                   <span className="tier-choice-desc">{tier.description}</span>
                   <span className="tier-choice-sections">
@@ -885,6 +916,7 @@ export default function OrderFlow() {
             </div>
 
             <div className="step-actions">
+              {paymentCurrencyNote && <p className="tier-currency-note">{paymentCurrencyNote}</p>}
               <button
                 className="btn btn-gold step-next"
                 onClick={() => setStep(2)}
@@ -1320,6 +1352,7 @@ export default function OrderFlow() {
                 <div className="price-summary">
                   <span className="price-label">Total</span>
                   <span className="price-value">{displayPrice}</span>
+                  {paymentCurrencyNote && <span className="price-note">{paymentCurrencyNote}</span>}
                 </div>
                 <button type="submit" className="btn btn-gold form-pay-btn">
                   Review & Pay
@@ -1395,7 +1428,6 @@ export default function OrderFlow() {
                   {form.weddingTime && fieldEnabled('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{formatOrderTime(form.weddingTime, form.timeFormat || '12h')}</span></div>}
                   <div className="review-item"><span className="review-label">Venue</span><span>{form.venue}</span></div>
                   <div className="review-item"><span className="review-label">Plan</span><span>{selectedTierConfig.name}</span></div>
-                  {form.message && fieldEnabled('message') && <div className="review-item review-item--wide"><span className="review-label">Message</span><span className="review-item-message">{form.message}</span></div>}
                   {form.coupleMessage && fieldEnabled('coupleMessage') && <div className="review-item review-item--wide"><span className="review-label">Envelope Message</span><span className="review-item-message">{form.coupleMessage}</span></div>}
                 </div>
               </div>
@@ -1438,6 +1470,7 @@ export default function OrderFlow() {
                   <div className="price-summary">
                     <span className="price-label">Total</span>
                     <span className="price-value">{displayPrice}</span>
+                    {paymentCurrencyNote && <span className="price-note">{paymentCurrencyNote}</span>}
                   </div>
                   <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
                 </div>
@@ -1489,6 +1522,12 @@ export default function OrderFlow() {
                       <dt>Subtotal</dt>
                       <dd>{displayPrice}</dd>
                     </div>
+                    {paymentCurrencyNote && (
+                      <div className="payment-summary-row payment-summary-note">
+                        <dt>PayPal</dt>
+                        <dd>USD checkout</dd>
+                      </div>
+                    )}
                     <div className="payment-summary-row payment-summary-grand">
                       <dt>Total due today</dt>
                       <dd>{displayPrice}</dd>

@@ -18,6 +18,7 @@ import orderRoutes from './routes/orders.js';
 import rsvpRoutes from './routes/rsvps.js';
 import uploadRoutes from './routes/upload.js';
 import webhookRoutes from './routes/webhooks.js';
+import pricingRoutes from './routes/pricing.js';
 import cronJob from './cron.js';
 import { syncOrderTemplateMetadata } from './services/orderSync.js';
 import { syncRsvpIndexes } from './services/rsvpSync.js';
@@ -76,6 +77,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/rsvps', rsvpRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/pricing', pricingRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

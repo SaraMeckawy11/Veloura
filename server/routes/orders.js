@@ -18,8 +18,10 @@ import { getClientUrl } from '../config/urls.js';
 
 const router = Router();
 
-const PRICE_USD = process.env.PRICE_USD || '99.00';
-const CURRENCY = process.env.PRICE_CURRENCY || 'USD';
+const PRICE_USD = process.env.PRICE_USD || '69.00';
+// Keep PayPal checkout in USD. EGP is display-only because PayPal REST Checkout
+// does not list EGP as a supported transaction currency.
+const CURRENCY = 'USD';
 const CLIENT_URL = getClientUrl();
 const HIDEABLE_WEDDING_FIELDS = new Set([
   'weddingTime',

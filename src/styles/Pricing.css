@@ -126,6 +126,15 @@
   justify-content: center;
 }
 
+.pricing-currency-note {
+  max-width: 720px;
+  margin: 20px auto 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  text-align: center;
+}
+
 @media (max-width: 980px) {
   .pricing-wrapper {
     grid-template-columns: 1fr;
