@@ -1547,19 +1547,21 @@
   position: relative;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
   padding: 22px 20px;
   background: var(--bg-alt);
 }
 
 /* Phone-shaped device frame. The aspect ratio is fixed so iframe viewport units
-   match a real mobile guest view instead of a cropped modal height. */
+   match a real mobile guest view. Height is the limiter so the whole phone is
+   always fully visible inside the modal — only the screen scrolls internally. */
 .invitation-preview-device {
   position: relative;
-  width: min(380px, 100%);
-  height: auto;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
   aspect-ratio: 390 / 844;
   border-radius: 28px;
   overflow: hidden;
@@ -1582,6 +1584,54 @@
 .invitation-preview-device img,
 .invitation-preview-device video {
   -webkit-user-drag: none;
+}
+
+.invitation-preview-watermark {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 52px 20px;
+  align-content: center;
+  overflow: hidden;
+  opacity: 0.075;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+}
+
+.invitation-preview-watermark span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  transform: rotate(-28deg);
+  color: rgba(72, 58, 32, 0.22);
+  border: 1px solid rgba(184, 146, 74, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.invitation-preview-center-mark {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 21;
+  transform: translate(-50%, -50%) rotate(-24deg);
+  padding: 10px 18px;
+  color: rgba(45, 42, 38, 0.065);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(184, 146, 74, 0.05);
+  border-radius: 999px;
+  font-size: clamp(0.9rem, 3.2vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .invitation-preview-loading,

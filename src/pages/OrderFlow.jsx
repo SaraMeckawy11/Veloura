@@ -1836,6 +1836,14 @@ export default function OrderFlow() {
                     <p>This design cannot be rendered in the order preview yet.</p>
                   </div>
                 )}
+                <div className="invitation-preview-watermark" aria-hidden="true">
+                  {Array.from({ length: 9 }, (_, index) => (
+                    <span key={index}>VELOURA PREVIEW</span>
+                  ))}
+                </div>
+                <div className="invitation-preview-center-mark" aria-hidden="true">
+                  VELOURA PREVIEW
+                </div>
               </div>
             </div>
 

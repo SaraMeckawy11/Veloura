@@ -23,11 +23,9 @@ export default function InvitationPreviewFrame({ className, title = 'Invitation 
       idoc.documentElement.lang = document.documentElement.lang || 'en';
       idoc.documentElement.style.height = '100%';
       idoc.documentElement.style.width = '100%';
-      idoc.documentElement.style.fontSize = '9px';
       idoc.body.style.margin = '0';
       idoc.body.style.minHeight = '100%';
       idoc.body.style.width = '100%';
-      idoc.body.style.fontSize = '9px';
       idoc.body.style.background = '#fff';
       idoc.body.style.overflowX = 'hidden';
       idoc.body.style.overflowY = 'auto';
@@ -45,10 +43,14 @@ export default function InvitationPreviewFrame({ className, title = 'Invitation 
       if (!idoc.getElementById('veloura-preview-text-scale')) {
         const style = idoc.createElement('style');
         style.id = 'veloura-preview-text-scale';
+        // Render at 1:1 so the preview matches the real demo invitation exactly.
+        // The phone-width iframe makes viewport units resolve like a real mobile
+        // screen, so text size and placement read at 100% fidelity. The internal
+        // scrollbar is hidden so the preview feels like the real delivered output.
         style.textContent = `
-          html { font-size: 9px !important; }
-          body.invitation-preview-render { font-size: 9px !important; }
-          body.invitation-preview-render * { text-size-adjust: 82%; -webkit-text-size-adjust: 82%; }
+          body.invitation-preview-render * { text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+          html, body.invitation-preview-render { scrollbar-width: none; -ms-overflow-style: none; }
+          html::-webkit-scrollbar, body.invitation-preview-render::-webkit-scrollbar { width: 0; height: 0; display: none; }
         `;
         idoc.head.appendChild(style);
       }
