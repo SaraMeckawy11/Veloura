@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { getInvitationFontStyle } from '../fontOptions';
 import InvitationPhoto from '../InvitationPhoto';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
@@ -79,9 +80,11 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const heroName2 = firstName(name2);
   const venue = weddingDetails.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (weddingDetails.venueAddress || '') : '';
-  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(weddingDetails.weddingTime) : '';
+  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(weddingDetails.weddingTime, weddingDetails.timeFormat) : '';
   const coupleMessage = fieldEnabled('coupleMessage')
-    ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : weddingDetails.message) || DEFAULT_COUPLE_MESSAGE)
+    ? (order.coupleMessage !== undefined && order.coupleMessage !== null
+      ? order.coupleMessage
+      : ((demo ? DEFAULT_COUPLE_MESSAGE : weddingDetails.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
 
   const storyPhotos = (order.photos || []).filter(photo => photo.label === 'story');
@@ -164,7 +167,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   };
 
   return (
-    <div className={`theater-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
+    <div className={`theater-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />}
       {showSplash && <TheaterSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />}
 

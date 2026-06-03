@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema({
     brideName:    { type: String },
     weddingDate:  { type: Date },
     weddingTime:  { type: String },
+    timeFormat:   { type: String, enum: ['12h', '24h'], default: '12h' },
     venue:        { type: String },
     venueAddress: { type: String },
     venueMapUrl:  { type: String },

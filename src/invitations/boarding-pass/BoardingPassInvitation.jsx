@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { getInvitationFontStyle } from '../fontOptions';
 import InvitationPhoto from '../InvitationPhoto';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
@@ -93,11 +94,17 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const dateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     : '';
-  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime) : '';
+  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime, wd.timeFormat) : '';
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
-  const message = fieldEnabled('message') ? (wd.message || 'Two Souls, One Destination.') : '';
-  const coupleMessage = fieldEnabled('coupleMessage') ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE) : '';
+  const message = fieldEnabled('message')
+    ? (wd.message !== undefined && wd.message !== null ? wd.message : 'Two Souls, One Destination.')
+    : '';
+  const coupleMessage = fieldEnabled('coupleMessage')
+    ? (order.coupleMessage !== undefined && order.coupleMessage !== null
+      ? order.coupleMessage
+      : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
+    : '';
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const flightNo = wd.flightNo || `WD-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const pad = (n) => n.toString().padStart(2, '0');
@@ -133,7 +140,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
   // ===================== MAIN PAGE =====================
   return (
-    <div className={`inv-page boarding-pass-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
+    <div className={`inv-page boarding-pass-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

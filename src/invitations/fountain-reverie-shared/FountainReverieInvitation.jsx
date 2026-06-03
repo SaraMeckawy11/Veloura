@@ -5,6 +5,7 @@ import FountainSplash from './FountainSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
 import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, getInvitationPhotoSrc } from '../shared';
+import { getInvitationFontStyle } from '../fontOptions';
 import InvitationPhoto from '../InvitationPhoto';
 import sectionSeparator from '../../assets/Fountain Reverie/decorative_components/elegant_vintage_ornamental_flourish_transparent.png';
 import envelopeMessage from '../../assets/Fountain Reverie/envelope_message.png';
@@ -35,7 +36,7 @@ function buildMapEmbedUrl(rawUrl, fallbackQuery) {
   return null;
 }
 
-function formatHeroTime(value) {
+function formatHeroTime(value, preference = '12h') {
   const raw = `${value || ''}`.trim();
   if (!raw) return '';
 
@@ -44,9 +45,16 @@ function formatHeroTime(value) {
 
   let hours = Number(match[1]);
   const minutes = match[2];
-  const meridiem = match[3]?.toUpperCase() || (hours >= 12 ? 'PM' : 'AM');
-  hours = hours % 12 || 12;
-  return `${hours}:${minutes} ${meridiem}`;
+  const meridiem = match[3]?.toUpperCase();
+
+  if (meridiem === 'PM' && hours < 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+
+  if (preference === '24h') {
+    return `${String(hours).padStart(2, '0')}:${minutes}`;
+  }
+
+  return `${hours % 12 || 12}:${minutes} ${hours >= 12 ? 'PM' : 'AM'}`;
 }
 
 function getTimeOfDayLine(value) {
@@ -109,12 +117,14 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
   const name2 = wd.brideName || 'Partner 2';
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
   const dateParts = formatWeddingDateParts(weddingDate);
-  const timeStr = fieldEnabled('weddingTime') ? formatHeroTime(wd.weddingTime) : '';
+  const timeStr = fieldEnabled('weddingTime') ? formatHeroTime(wd.weddingTime, wd.timeFormat) : '';
   const timeOfDay = fieldEnabled('weddingTime') ? getTimeOfDayLine(wd.weddingTime) : '';
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
   const coupleMessage = fieldEnabled('coupleMessage')
-    ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE)
+    ? (order.coupleMessage !== undefined && order.coupleMessage !== null
+      ? order.coupleMessage
+      : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -227,7 +237,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className={`fountain-theme fountain-theme-${variant}${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`}>
+    <div className={`fountain-theme fountain-theme-${variant}${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

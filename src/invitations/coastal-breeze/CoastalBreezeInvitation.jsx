@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
 import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { getInvitationFontStyle } from '../fontOptions';
 import InvitationPhoto from '../InvitationPhoto';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
@@ -79,11 +80,17 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const fullDateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
     : '';
-  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime) : '';
+  const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime, wd.timeFormat) : '';
   const venue = wd.venue || '';
   const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
-  const message = fieldEnabled('message') ? (wd.message || 'With the sea as our witness, we begin forever.') : '';
-  const coupleMessage = fieldEnabled('coupleMessage') ? (order.coupleMessage || (demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE) : '';
+  const message = fieldEnabled('message')
+    ? (wd.message !== undefined && wd.message !== null ? wd.message : 'With the sea as our witness, we begin forever.')
+    : '';
+  const coupleMessage = fieldEnabled('coupleMessage')
+    ? (order.coupleMessage !== undefined && order.coupleMessage !== null
+      ? order.coupleMessage
+      : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
+    : '';
   const tideCode = wd.flightNo || `COAST-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -195,7 +202,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div className={`coastal-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}${showSplash ? ' coastal-splash-active' : ''}`}>
+    <div className={`coastal-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}${showSplash ? ' coastal-splash-active' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

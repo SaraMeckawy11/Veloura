@@ -17,7 +17,6 @@ export const GAZEBO_GARDEN_DEMO_ORDER = {
     weddingDate: '2026-06-06T15:30:00.000Z',
     weddingTime: '5:30 PM',
     venue: 'Villa Aurelia Gardens',
-    venueAddress: 'Largo di Porta San Pancrazio, 1, 00153 Rome, Italy',
     venueMapUrl:
       'https://www.google.com/maps?q=Villa%20Aurelia%20Rome&output=embed',
     message: 'A garden promise sealed in soft light.',

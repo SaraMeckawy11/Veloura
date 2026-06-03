@@ -38,7 +38,7 @@ export function containInvitationPhoto(source) {
   };
 }
 
-export function formatInvitationTime(value) {
+export function formatInvitationTime(value, preference = '12h') {
   const raw = `${value || ''}`.trim();
   if (!raw) return '';
 
@@ -50,13 +50,16 @@ export function formatInvitationTime(value) {
   const meridiem = match[3]?.toUpperCase();
 
   if (meridiem) {
-    hours = hours % 12 || 12;
-    return `${hours}:${minutes}`;
+    if (meridiem === 'PM' && hours < 12) hours += 12;
+    if (meridiem === 'AM' && hours === 12) hours = 0;
   }
 
-  if (hours === 0) return `12:${minutes}`;
-  if (hours > 12) return `${hours - 12}:${minutes}`;
-  return `${hours}:${minutes}`;
+  if (preference === '24h') {
+    return `${String(hours).padStart(2, '0')}:${minutes}`;
+  }
+
+  const suffix = hours >= 12 ? 'PM' : 'AM';
+  return `${hours % 12 || 12}:${minutes} ${suffix}`;
 }
 
 function buildOptimizedImageUrl(src, transform) {

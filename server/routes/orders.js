@@ -22,7 +22,6 @@ const CURRENCY = process.env.PRICE_CURRENCY || 'USD';
 const CLIENT_URL = getClientUrl();
 const HIDEABLE_WEDDING_FIELDS = new Set([
   'weddingTime',
-  'venueAddress',
   'venueMapUrl',
   'message',
   'secondLanguage',
@@ -32,6 +31,7 @@ const WEDDING_DETAIL_FIELDS = new Set([
   'brideName',
   'weddingDate',
   'weddingTime',
+  'timeFormat',
   'venue',
   'venueAddress',
   'venueMapUrl',

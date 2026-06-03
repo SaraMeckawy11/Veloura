@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { getPaypal } from '../lib/paypal';
 import InvitationPhoto from '../invitations/InvitationPhoto';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
+import registry from '../invitations/registry';
+import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
 import '../styles/OrderFlow.css';
@@ -17,6 +19,25 @@ const DEFAULT_ENVELOPE_MESSAGE = 'Thank you for being part of the moments that b
 
 const normalizeEmail = (value = '') => value.trim().toLowerCase();
 const isValidEmail = (value = '') => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+const formatOrderTime = (value = '', preference = '12h') => {
+  const raw = `${value || ''}`.trim();
+  const match = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?(?:\s*([AaPp][Mm]))?$/);
+  if (!match) return raw;
+
+  let hours = Number(match[1]);
+  const minutes = match[2];
+  const meridiem = match[3]?.toUpperCase();
+
+  if (meridiem === 'PM' && hours < 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+
+  if (preference === '24h') {
+    return `${String(hours).padStart(2, '0')}:${minutes}`;
+  }
+
+  const suffix = hours >= 12 ? 'PM' : 'AM';
+  return `${hours % 12 || 12}:${minutes} ${suffix}`;
+};
 
 // Today as YYYY-MM-DD in local time — used as the min for the wedding date picker
 const todayISO = (() => {
@@ -77,12 +98,21 @@ const PHOTO_FIT_OPTIONS = [
 // never asked for details that won't appear on their invitation.
 // (Unknown/remote templates default to showing every optional field.)
 const TEMPLATE_OPTIONAL_FIELD_SUPPORT = {
-  'boarding-pass': { message: true, venueAddress: true, coupleMessage: true },
-  'coastal-breeze': { message: true, venueAddress: true, coupleMessage: true },
-  'fountain-reverie-v1': { message: true, venueAddress: true, coupleMessage: true },
-  'fountain-reverie-v2': { message: true, venueAddress: true, coupleMessage: true },
-  'gazebo-garden': { message: true, venueAddress: true, coupleMessage: true },
-  'theater': { message: false, venueAddress: false, coupleMessage: true },
+  'boarding-pass': { message: true, coupleMessage: true },
+  'coastal-breeze': { message: true, coupleMessage: true },
+  'fountain-reverie-v1': { message: true, coupleMessage: true },
+  'fountain-reverie-v2': { message: true, coupleMessage: true },
+  'gazebo-garden': { message: true, coupleMessage: true },
+  'theater': { message: false, coupleMessage: true },
+};
+
+const TEMPLATE_DEMO_PERSONAL_MESSAGE = {
+  'boarding-pass': 'Two Souls, One Destination.',
+  'coastal-breeze': 'With the sea as our witness, we begin forever.',
+  'fountain-reverie-v1': 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.',
+  'fountain-reverie-v2': 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.',
+  'gazebo-garden': 'A garden promise sealed in soft light.',
+  'theater': 'Black tie - Dinner & dancing to follow',
 };
 
 // The envelope "A Note" message each design shows in its demo. Surfaced as the
@@ -144,6 +174,8 @@ export default function OrderFlow() {
   const [needsRetry, setNeedsRetry] = useState(false);
   const [paypalSdk, setPaypalSdk] = useState(null);
   const [error, setError] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [fontPickerOpen, setFontPickerOpen] = useState(false);
   const paypalButtonRef = useRef(null);
 
   // Form state — restore from draft
@@ -154,22 +186,27 @@ export default function OrderFlow() {
     brideName: '',
     weddingDate: '',
     weddingTime: '',
+    timeFormat: '12h',
     venue: '',
-    venueAddress: '',
     venueMapUrl: '',
     message: '',
     coupleMessage: '',
+    invitationFont: DEFAULT_INVITATION_FONT,
     language: 'en',
     secondLanguage: '',
   };
   const [form, setForm] = useState(() => {
     const restored = draft?.form || defaultForm;
     return {
+      ...defaultForm,
       ...restored,
+      invitationFont: normalizeInvitationFont(restored.invitationFont),
       message: restored.message === OLD_MESSAGE_HELP_TEXT ? '' : (restored.message || ''),
       coupleMessage: restored.coupleMessage || '',
     };
   });
+  const messageTouchedRef = useRef(Boolean(draft?.form?.message && draft.form.message !== OLD_MESSAGE_HELP_TEXT));
+  const coupleMessageTouchedRef = useRef(Boolean(draft?.form?.coupleMessage));
 
   const [disabledFields, setDisabledFields] = useState(draft?.disabledFields || []);
   // Photos organized by category — restore uploaded photos from draft
@@ -310,7 +347,27 @@ export default function OrderFlow() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!selectedTemplate?.slug) return;
+
+    const personalMessage = TEMPLATE_DEMO_PERSONAL_MESSAGE[selectedTemplate.slug] || '';
+    const envelopeMessage = TEMPLATE_DEMO_ENVELOPE_MESSAGE[selectedTemplate.slug] || DEFAULT_ENVELOPE_MESSAGE;
+
+    setForm(prev => {
+      const next = { ...prev };
+      if (!messageTouchedRef.current && !next.message && personalMessage) {
+        next.message = personalMessage;
+      }
+      if (!coupleMessageTouchedRef.current && !next.coupleMessage && envelopeMessage) {
+        next.coupleMessage = envelopeMessage;
+      }
+      return next;
+    });
+  }, [selectedTemplate?.slug]);
+
   const handleInput = (key, value) => {
+    if (key === 'message') messageTouchedRef.current = true;
+    if (key === 'coupleMessage') coupleMessageTouchedRef.current = true;
     setForm(prev => ({ ...prev, [key]: value }));
   };
 
@@ -449,6 +506,65 @@ export default function OrderFlow() {
   const optionalValue = (key, fallback = undefined) => (
     fieldEnabled(key) && form[key] ? form[key] : fallback
   );
+  const previewOrder = {
+    template: selectedTemplate,
+    preview: true,
+    weddingDetails: {
+      groomName: form.groomName,
+      brideName: form.brideName,
+      weddingDate: form.weddingDate || undefined,
+      weddingTime: optionalValue('weddingTime'),
+      timeFormat: form.timeFormat || '12h',
+      venue: form.venue,
+      venueMapUrl: optionalValue('venueMapUrl'),
+      message: fieldEnabled('message') ? form.message.trim() : undefined,
+      language: form.language,
+      secondLanguage: optionalValue('secondLanguage'),
+    },
+    coupleMessage: fieldEnabled('coupleMessage') ? form.coupleMessage.trim() : undefined,
+    disabledFields,
+    photos: allPhotos,
+    customizations: {
+      invitationFont: normalizeInvitationFont(form.invitationFont),
+    },
+    musicEnabled: false,
+    storyMilestones: storyMilestones.filter(m => m.title || m.date || m.description),
+  };
+  const previewRegistryEntry = selectedTemplate ? registry[selectedTemplate.slug] : null;
+  const PreviewInvitationComponent = previewRegistryEntry?.component;
+  const selectedFontOption = getInvitationFontOption(form.invitationFont);
+
+  useEffect(() => {
+    if (!previewOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setPreviewOpen(false);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [previewOpen]);
+
+  useEffect(() => {
+    if (paypalOrderData && previewOpen) setPreviewOpen(false);
+  }, [paypalOrderData, previewOpen]);
+
+  useEffect(() => {
+    if (!fontPickerOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setFontPickerOpen(false);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [fontPickerOpen]);
 
   // Step 2 → Step 3: just validate and move to review (no order created yet)
   const handleSubmit = (e) => {
@@ -606,14 +722,17 @@ export default function OrderFlow() {
             brideName: form.brideName,
             weddingDate: form.weddingDate || undefined,
             weddingTime: optionalValue('weddingTime'),
+            timeFormat: form.timeFormat || '12h',
             venue: form.venue,
-            venueAddress: optionalValue('venueAddress'),
             venueMapUrl: optionalValue('venueMapUrl'),
-            message: fieldEnabled('message') ? (form.message.trim() || undefined) : undefined,
+            message: fieldEnabled('message') ? form.message.trim() : undefined,
             language: form.language,
             secondLanguage: optionalValue('secondLanguage'),
           },
-          coupleMessage: fieldEnabled('coupleMessage') ? (form.coupleMessage.trim() || undefined) : undefined,
+          coupleMessage: fieldEnabled('coupleMessage') ? form.coupleMessage.trim() : undefined,
+          customizations: {
+            invitationFont: normalizeInvitationFont(form.invitationFont),
+          },
           disabledFields,
           photos: allPhotos.filter(p => !p._uploading && !p._failed),
           musicUrl: music.enabled && music.url && !music.uploading && !music.failed ? music.url : undefined,
@@ -648,17 +767,15 @@ export default function OrderFlow() {
   };
 
   // Only offer optional fields that the chosen invitation design actually shows.
-  // `venueAddress` and `message` are gated on the selected template; unknown
-  // templates fall back to showing the field.
+  // Unknown templates fall back to showing the field.
   const templateFieldSupport = TEMPLATE_OPTIONAL_FIELD_SUPPORT[selectedTemplate?.slug] || {};
   const optionalFields = [
-    { key: 'venueAddress', label: 'Venue Address' },
+    // { key: 'message', label: 'Personal Message' },
     { key: 'coupleMessage', label: 'Envelope Message' },
     { key: 'rsvp', label: 'RSVP Section' },
-    // Personal Message (hero tagline) removed — the demo tagline is used.
     // Removed secondLanguage option
   ].filter(field => {
-    if (field.key === 'venueAddress') return templateFieldSupport.venueAddress !== false;
+    if (field.key === 'message') return templateFieldSupport.message !== false;
     if (field.key === 'coupleMessage') return templateFieldSupport.coupleMessage !== false;
     return true;
   });
@@ -826,6 +943,23 @@ export default function OrderFlow() {
                   <div className="form-field">
                     <label>Wedding Time *</label>
                     <input type="time" required value={form.weddingTime} onChange={e => handleInput('weddingTime', e.target.value)} />
+                    <div className="time-format-toggle" role="group" aria-label="Time format">
+                      <button
+                        type="button"
+                        className={form.timeFormat !== '24h' ? 'active' : ''}
+                        onClick={() => handleInput('timeFormat', '12h')}
+                      >
+                        12h
+                      </button>
+                      <button
+                        type="button"
+                        className={form.timeFormat === '24h' ? 'active' : ''}
+                        onClick={() => handleInput('timeFormat', '24h')}
+                      >
+                        24h
+                      </button>
+                    </div>
+                    <p className="form-hint message-hint">Shown as {formatOrderTime(form.weddingTime || '17:30', form.timeFormat || '12h')} on the invitation.</p>
                   </div>
                   <div className="form-field">
                     <label>Venue Name *</label>
@@ -860,6 +994,24 @@ export default function OrderFlow() {
               <fieldset className="form-section form-section--optional">
                 <legend>Optional Personalizations</legend>
                 <p className="form-hint">All fields below are optional. Toggle off any you don't need — they won't appear on your invitation.</p>
+                <button
+                  type="button"
+                  className="font-select-card"
+                  onClick={() => setFontPickerOpen(true)}
+                >
+                  <span className="font-select-preview" style={{ fontFamily: selectedFontOption.display }}>
+                    Aa
+                  </span>
+                  <span className="font-select-copy">
+                    <span className="font-select-label">Invitation font</span>
+                    <strong>{selectedFontOption.label}</strong>
+                    <span>{selectedFontOption.description}</span>
+                  </span>
+                  <span className="font-select-action">
+                    Change
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
+                  </span>
+                </button>
                 <div className="form-grid">
                   {optionalFields.map(field => (
                     <div key={field.key} className={`form-field ${['message', 'coupleMessage', 'rsvp'].includes(field.key) ? 'form-field--wide' : ''} ${disabledFields.includes(field.key) ? 'field-disabled' : ''}`}>
@@ -872,6 +1024,18 @@ export default function OrderFlow() {
                       {!disabledFields.includes(field.key) && (
                         field.key === 'rsvp' ? (
                           <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
+                        ) : field.key === 'message' ? (
+                          <>
+                            <textarea
+                              className="message-textarea"
+                              value={form[field.key]}
+                              onChange={e => handleInput(field.key, e.target.value)}
+                              rows={3}
+                            />
+                            <p className="form-hint message-hint">
+                              This line appears on the invitation. Edit it, or clear it to remove it.
+                            </p>
+                          </>
                         ) : field.key === 'coupleMessage' ? (
                           <>
                             <textarea
@@ -879,10 +1043,9 @@ export default function OrderFlow() {
                               value={form[field.key]}
                               onChange={e => handleInput(field.key, e.target.value)}
                               rows={5}
-                              placeholder={TEMPLATE_DEMO_ENVELOPE_MESSAGE[selectedTemplate?.slug] || DEFAULT_ENVELOPE_MESSAGE}
                             />
                             <p className="form-hint message-hint">
-                              Shown inside the envelope. Leave blank to keep the demo note.
+                              Shown inside the envelope. Edit it, or clear it to remove this note.
                             </p>
                           </>
                         ) : (
@@ -1109,6 +1272,28 @@ export default function OrderFlow() {
               </div>
 
               <div className="review-section">
+                <h3 className="review-section-title">Invitation Preview</h3>
+                <button
+                  type="button"
+                  className="protected-preview-card"
+                  onClick={() => setPreviewOpen(true)}
+                >
+                  <span className="protected-preview-thumb" aria-hidden="true">
+                    {selectedTemplate.previewImage && <img src={selectedTemplate.previewImage} alt="" />}
+                    <span className="protected-preview-thumb-watermark">Preview</span>
+                  </span>
+                  <span className="protected-preview-copy">
+                    <strong>View watermarked invitation</strong>
+                    <span>Review the generated website before payment. The unpaid preview is protected with visible watermarking and disabled clean-download interactions.</span>
+                  </span>
+                  <span className="protected-preview-action">
+                    Open Preview
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
+                  </span>
+                </button>
+              </div>
+
+              <div className="review-section">
                 <h3 className="review-section-title">Contact Info</h3>
                 <div className="review-grid">
                   <div className="review-item"><span className="review-label">Name</span><span>{form.customerName}</span></div>
@@ -1122,9 +1307,8 @@ export default function OrderFlow() {
                   <div className="review-item"><span className="review-label">Partner 1</span><span>{form.groomName}</span></div>
                   <div className="review-item"><span className="review-label">Partner 2</span><span>{form.brideName}</span></div>
                   {form.weddingDate && <div className="review-item"><span className="review-label">Date</span><span>{new Date(form.weddingDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span></div>}
-                  {form.weddingTime && !disabledFields.includes('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{form.weddingTime}</span></div>}
+                  {form.weddingTime && !disabledFields.includes('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{formatOrderTime(form.weddingTime, form.timeFormat || '12h')}</span></div>}
                   <div className="review-item"><span className="review-label">Venue</span><span>{form.venue}</span></div>
-                  {form.venueAddress && !disabledFields.includes('venueAddress') && <div className="review-item"><span className="review-label">Address</span><span>{form.venueAddress}</span></div>}
                   {form.message && !disabledFields.includes('message') && <div className="review-item"><span className="review-label">Message</span><span>{form.message}</span></div>}
                   {form.coupleMessage && !disabledFields.includes('coupleMessage') && <div className="review-item"><span className="review-label">Envelope Message</span><span>{form.coupleMessage}</span></div>}
                 </div>
@@ -1307,6 +1491,136 @@ export default function OrderFlow() {
           </div>
         )}
       </div>
+
+      {previewOpen && (
+        <div
+          className="invitation-preview-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="invitation-preview-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setPreviewOpen(false);
+          }}
+        >
+          <div className="invitation-preview-panel">
+            <div className="invitation-preview-header">
+              <div>
+                <span className="invitation-preview-eyebrow">Protected preview</span>
+                <h2 id="invitation-preview-title">Review your invitation</h2>
+                <p>Watermarking stays visible until payment is complete.</p>
+              </div>
+              <button
+                type="button"
+                className="invitation-preview-close"
+                onClick={() => setPreviewOpen(false)}
+                aria-label="Close invitation preview"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+
+            <div className="invitation-preview-shell">
+              <div
+                className="invitation-preview-viewport"
+                onContextMenu={(event) => event.preventDefault()}
+                onCopy={(event) => event.preventDefault()}
+                onDragStart={(event) => event.preventDefault()}
+                onSubmitCapture={(event) => event.preventDefault()}
+              >
+                {PreviewInvitationComponent ? (
+                  <Suspense fallback={<div className="invitation-preview-loading">Loading preview...</div>}>
+                    <PreviewInvitationComponent
+                      key={`${selectedTemplate?.slug || 'template'}-preview`}
+                      order={previewOrder}
+                      demo={false}
+                      publicSlug="preview"
+                    />
+                  </Suspense>
+                ) : (
+                  <div className="invitation-preview-unavailable">
+                    <h3>Preview unavailable</h3>
+                    <p>This design cannot be rendered in the order preview yet.</p>
+                  </div>
+                )}
+              </div>
+              <div className="invitation-preview-watermark" aria-hidden="true">
+                {Array.from({ length: 9 }, (_, index) => (
+                  <span key={index}>VELOURA PREVIEW</span>
+                ))}
+              </div>
+              <div className="invitation-preview-center-mark" aria-hidden="true">
+                VELOURA PREVIEW
+              </div>
+            </div>
+
+            <div className="invitation-preview-footer">
+              <span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                Preview-only access
+              </span>
+              <span>No clean download before payment</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {fontPickerOpen && (
+        <div
+          className="font-picker-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="font-picker-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setFontPickerOpen(false);
+          }}
+        >
+          <div className="font-picker-panel">
+            <div className="font-picker-header">
+              <div>
+                <span className="font-picker-eyebrow">Invitation typography</span>
+                <h2 id="font-picker-title">Choose a font style</h2>
+                <p>This applies across the whole invitation website.</p>
+              </div>
+              <button
+                type="button"
+                className="font-picker-close"
+                onClick={() => setFontPickerOpen(false)}
+                aria-label="Close font picker"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+
+            <div className="font-option-grid">
+              {INVITATION_FONT_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`font-option-card ${normalizeInvitationFont(form.invitationFont) === option.value ? 'active' : ''}`}
+                  onClick={() => {
+                    handleInput('invitationFont', option.value);
+                    setFontPickerOpen(false);
+                  }}
+                >
+                  <span className="font-option-sample" style={{ fontFamily: option.display }}>
+                    Amira &amp; Zayn
+                  </span>
+                  <span className="font-option-body" style={{ fontFamily: option.body }}>
+                    Saturday, 20 June 2026
+                  </span>
+                  <span className="font-option-meta">
+                    <strong>{option.label}</strong>
+                    <span>{option.description}</span>
+                  </span>
+                  <span className="font-option-check" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
