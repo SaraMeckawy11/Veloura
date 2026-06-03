@@ -5,6 +5,7 @@ import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
 import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
+import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
@@ -66,7 +67,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const disabledFields = order.disabledFields || [];
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const mapEnabled = fieldEnabled('venueMapUrl');
-  const rsvpEnabled = fieldEnabled('rsvp');
+  const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
@@ -82,7 +83,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     : '';
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime, wd.timeFormat) : '';
   const venue = wd.venue || '';
-  const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
+  const venueAddress = '';
   const message = fieldEnabled('message')
     ? (wd.message !== undefined && wd.message !== null ? wd.message : 'With the sea as our witness, we begin forever.')
     : '';
@@ -92,11 +93,12 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const tideCode = wd.flightNo || `COAST-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
-  const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
+  const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
   const pad = (n) => n.toString().padStart(2, '0');
 
-  const allPhotos = order.photos || [];
+  const allPhotos = getTieredInvitationPhotos(order);
+  const storyMilestones = getTieredStoryMilestones(order);
   const couplePhotos = allPhotos.filter(p => p.label === 'couple');
   const storyPhotos = allPhotos.filter(p => p.label === 'story');
   const galleryPhotos = allPhotos.filter(p => p.label === 'gallery');
@@ -131,7 +133,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   useEffect(() => {
     const memorySources = isReferenceDemo && order.galleryImages?.length
       ? order.galleryImages
-      : (order.photos || [])
+      : allPhotos
         .filter(photo => photo.label === 'gallery' || !photo.label || !['couple', 'story', 'venue'].includes(photo.label))
         .map(photo => photo);
 
@@ -290,10 +292,10 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         </section>
       )}
 
-      {isReferenceDemo && order.storyMilestones?.length ? (
-        <StorySection milestones={order.storyMilestones} images={order.storyImages || []} />
+      {isReferenceDemo && storyMilestones.length ? (
+        <StorySection milestones={storyMilestones} images={order.storyImages || []} />
       ) : storyPhotos.length > 0 ? (
-        <StorySection milestones={order.storyMilestones || []} images={storyPhotos} />
+        <StorySection milestones={storyMilestones} images={storyPhotos} />
       ) : null}
 
       <section className="coastal-section coastal-event-section">

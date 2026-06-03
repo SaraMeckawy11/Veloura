@@ -5,6 +5,7 @@ import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
+import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
@@ -96,7 +97,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
     : '';
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime, wd.timeFormat) : '';
   const venue = wd.venue || '';
-  const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
+  const venueAddress = '';
   const message = fieldEnabled('message')
     ? (wd.message !== undefined && wd.message !== null ? wd.message : 'Two Souls, One Destination.')
     : '';
@@ -105,13 +106,15 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
+  const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
+  const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const flightNo = wd.flightNo || `WD-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const pad = (n) => n.toString().padStart(2, '0');
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
 
   // Categorize photos
-  const allPhotos = order.photos || [];
+  const allPhotos = getTieredInvitationPhotos(order);
+  const storyMilestones = getTieredStoryMilestones(order);
   const couplePhotos = allPhotos.filter(p => p.label === 'couple');
   const storyPhotos = allPhotos.filter(p => p.label === 'story');
   const galleryPhotos = allPhotos.filter(p => p.label === 'gallery');
@@ -261,7 +264,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       )}
 
       {/* ========== OUR STORY ========== */}
-      {isReferenceDemo && order.storyMilestones?.length ? (
+      {isReferenceDemo && storyMilestones.length ? (
         <section className="inv-section-light">
           <p className="inv-section-label-mono">FLIGHT ROUTE</p>
           <motion.h3
@@ -275,7 +278,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           <div className="inv-story-divider" />
           <div className="inv-story-timeline">
             <div className="inv-flight-path" />
-            {order.storyMilestones.map((m, i) => (
+            {storyMilestones.map((m, i) => (
               <motion.div
                 key={i}
                 className={`inv-story-item ${i % 2 === 0 ? 'left' : 'right'}`}
@@ -314,7 +317,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           <div className="inv-story-timeline">
             <div className="inv-flight-path" />
             {storyPhotos.map((photo, i) => {
-              const milestone = order.storyMilestones?.[i];
+              const milestone = storyMilestones?.[i];
               return (
                 <motion.div
                   key={i}
@@ -426,6 +429,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {coupleMessage && <BoardingPassMessageSection message={coupleMessage} />}
 
       {/* ========== RSVP ========== */}
+      {rsvpEnabled && (
       <section className="inv-rsvp-section">
         <div className="inv-rsvp-bg-decor">
           <div className="inv-rsvp-bg-line" />
@@ -530,6 +534,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           </AnimatePresence>
         </motion.div>
       </section>
+      )}
 
       {/* ========== GALLERY ========== */}
       {isReferenceDemo && order.galleryImages?.length ? (

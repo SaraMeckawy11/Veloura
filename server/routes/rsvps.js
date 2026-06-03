@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import Rsvp from '../models/Rsvp.js';
 import Order from '../models/Order.js';
+import { tierAllows } from '../data/pricingTiers.js';
 
 const router = Router();
 
@@ -11,7 +12,7 @@ router.post('/:publicSlug', async (req, res) => {
     if (!order) return res.status(404).json({ error: 'Invitation not found' });
 
     // Check if RSVP is disabled for this invitation
-    if (order.disabledFields?.includes('rsvp')) {
+    if (order.disabledFields?.includes('rsvp') || !tierAllows(order.pricingTier, 'rsvp')) {
       return res.status(403).json({ error: 'RSVP is not enabled for this invitation' });
     }
 

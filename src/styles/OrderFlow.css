@@ -206,6 +206,102 @@
 .step-next { padding: 14px 40px; }
 .step-next:disabled { opacity: 0.5; cursor: not-allowed; }
 
+.tier-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 34px 0 10px;
+}
+
+.tier-choice-card {
+  border: 1px solid rgba(184, 146, 74, 0.24);
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 14px;
+  padding: 24px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 280px;
+  cursor: pointer;
+  color: var(--text);
+  box-shadow: 0 14px 36px rgba(51, 42, 30, 0.08);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tier-choice-card:hover,
+.tier-choice-card.selected {
+  transform: translateY(-3px);
+  border-color: var(--gold);
+  box-shadow: 0 18px 44px rgba(184, 146, 74, 0.18);
+}
+
+.tier-choice-card.featured {
+  border-width: 2px;
+}
+
+.tier-choice-badge {
+  align-self: flex-start;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--sage);
+  background: var(--sage-soft);
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+.tier-choice-card.featured .tier-choice-badge,
+.tier-choice-card.selected .tier-choice-badge {
+  color: var(--white);
+  background: var(--gold);
+}
+
+.tier-choice-name {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+
+.tier-choice-price {
+  font-family: var(--font-display);
+  font-size: 2.35rem;
+  line-height: 1;
+  color: var(--gold);
+  font-weight: 750;
+}
+
+.tier-choice-price span {
+  font-size: 1rem;
+  color: var(--text-light);
+  text-decoration: line-through;
+  margin-right: 8px;
+  font-weight: 400;
+}
+
+.tier-choice-desc {
+  color: var(--text-secondary);
+  line-height: 1.45;
+  font-size: 0.92rem;
+}
+
+.tier-choice-sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.tier-choice-sections span {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  background: rgba(148, 116, 47, 0.08);
+  border: 1px solid rgba(148, 116, 47, 0.14);
+  border-radius: 999px;
+  padding: 6px 9px;
+}
+
 /* Selected template banner */
 .selected-template-banner {
   display: flex;
@@ -1800,6 +1896,14 @@
 }
 
 @media (max-width: 900px) {
+  .tier-choice-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tier-choice-card {
+    min-height: 0;
+  }
+
   .payment-layout {
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;

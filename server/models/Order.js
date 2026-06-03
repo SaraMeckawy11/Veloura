@@ -9,6 +9,7 @@ const orderSchema = new mongoose.Schema({
   // Template chosen
   template:      { type: mongoose.Schema.Types.ObjectId, ref: 'Template', required: true },
   templateName:  { type: String, index: true },
+  pricingTier:   { type: String, enum: ['essential', 'signature', 'luxe'], default: 'signature', index: true },
 
   // Wedding details — filled from the form
   weddingDetails: {

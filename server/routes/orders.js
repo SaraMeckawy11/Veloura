@@ -6,6 +6,7 @@ import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail, sensitiveFieldChangeEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 import { getFallbackTemplate } from '../data/templateFallbacks.js';
+import { getTierAmount, normalizePricingTier, tierAllows } from '../data/pricingTiers.js';
 import {
   paypalApiConfigured,
   createPaypalOrder,
@@ -17,7 +18,7 @@ import { getClientUrl } from '../config/urls.js';
 
 const router = Router();
 
-const PRICE_USD = process.env.PRICE_USD || '45.00';
+const PRICE_USD = process.env.PRICE_USD || '99.00';
 const CURRENCY = process.env.PRICE_CURRENCY || 'USD';
 const CLIENT_URL = getClientUrl();
 const HIDEABLE_WEDDING_FIELDS = new Set([
@@ -54,6 +55,30 @@ function normalizePhotos(photos) {
     : [];
 }
 
+function enforceTierDisabledFields(pricingTier, fields) {
+  const next = normalizeDisabledFields(fields);
+  if (!tierAllows(pricingTier, 'rsvp') && !next.includes('rsvp')) {
+    next.push('rsvp');
+  }
+  return next;
+}
+
+function photoAllowedForTier(photo, pricingTier) {
+  if (photo?.label === 'story') return tierAllows(pricingTier, 'story');
+  if (photo?.label === 'gallery') return tierAllows(pricingTier, 'gallery');
+  if (!photo?.label) return tierAllows(pricingTier, 'gallery');
+  return true;
+}
+
+function normalizeTierPhotos(photos, pricingTier) {
+  return normalizePhotos(photos).filter(photo => photoAllowedForTier(photo, pricingTier));
+}
+
+function normalizeTierStoryMilestones(storyMilestones, pricingTier) {
+  if (!tierAllows(pricingTier, 'story')) return [];
+  return Array.isArray(storyMilestones) ? storyMilestones : [];
+}
+
 function normalizeWeddingDetailValue(field, value) {
   if (field === 'weddingDate') {
     if (!value) return '';
@@ -79,6 +104,7 @@ export function getDisabledWeddingFieldChanges(currentFields = [], nextFields = 
 
 function applyDisabledFields(weddingDetails = {}, disabledFields = []) {
   const cleaned = { ...weddingDetails };
+  delete cleaned.venueAddress;
   for (const field of disabledFields) {
     if (HIDEABLE_WEDDING_FIELDS.has(field)) {
       delete cleaned[field];
@@ -112,8 +138,11 @@ async function ensureTemplateMetadata(order) {
 router.post('/', validateOrderBody, async (req, res) => {
   try {
     const { customerName, customerEmail, templateId, weddingDetails, customizations, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones, coupleMessage } = req.body;
-    const disabledFields = normalizeDisabledFields(req.body.disabledFields);
+    const pricingTier = normalizePricingTier(req.body.pricingTier);
+    const disabledFields = enforceTierDisabledFields(pricingTier, req.body.disabledFields);
     const cleanWeddingDetails = applyDisabledFields(weddingDetails, disabledFields);
+    const orderAmount = getTierAmount(pricingTier, PRICE_USD);
+    const musicAllowed = tierAllows(pricingTier, 'music');
 
     let template = null;
     if (templateId?.match?.(/^[a-f\d]{24}$/i)) {
@@ -140,16 +169,17 @@ router.post('/', validateOrderBody, async (req, res) => {
       customerEmail,
       template: template._id,
       templateName: template.name,
+      pricingTier,
       weddingDetails: cleanWeddingDetails,
       coupleMessage: disabledFields.includes('coupleMessage') ? undefined : coupleMessage,
       customizations: customizations || {},
       disabledFields,
       colorOverrides: colorOverrides || {},
-      photos: normalizePhotos(photos),
-      musicUrl,
-      musicPublicId,
-      musicEnabled: musicEnabled !== undefined ? musicEnabled : Boolean(musicUrl),
-      storyMilestones: storyMilestones || [],
+      photos: normalizeTierPhotos(photos, pricingTier),
+      musicUrl: musicAllowed ? musicUrl : undefined,
+      musicPublicId: musicAllowed ? musicPublicId : undefined,
+      musicEnabled: musicAllowed ? (musicEnabled !== undefined ? musicEnabled : Boolean(musicUrl)) : false,
+      storyMilestones: normalizeTierStoryMilestones(storyMilestones, pricingTier),
     });
     await order.save();
 
@@ -177,15 +207,15 @@ router.post('/', validateOrderBody, async (req, res) => {
     try {
       const paypalOrder = await createPaypalOrder({
         orderId: order._id.toString(),
-        amount: PRICE_USD,
+        amount: orderAmount,
         currency: CURRENCY,
       });
       order.paymentProvider = 'paypal';
       order.paypalOrderId = paypalOrder.id;
-      order.amountPaid = PRICE_USD;
+      order.amountPaid = orderAmount;
       order.currency = CURRENCY;
       await order.save();
-      console.log(`[paypal] order created orderId=${order._id} paypalOrderId=${paypalOrder.id} amount=${PRICE_USD} ${CURRENCY}`);
+      console.log(`[paypal] order created orderId=${order._id} paypalOrderId=${paypalOrder.id} amount=${orderAmount} ${CURRENCY}`);
       return res.status(201).json({
         orderId: order._id,
         paymentProvider: 'paypal',
@@ -364,6 +394,7 @@ router.get('/status/:orderId', async (req, res) => {
       invitationCode: order.paymentStatus === 'paid' ? order.invitationCode : undefined,
       template: order.template,
       templateName: order.templateName || order.template?.name,
+      pricingTier: order.pricingTier,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -387,6 +418,7 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       customerEmail: order.customerEmail,
       template: order.template,
       templateName: order.templateName || order.template?.name,
+      pricingTier: order.pricingTier,
       weddingDetails: order.weddingDetails,
       coupleMessage: order.coupleMessage,
       customizations: order.customizations,
@@ -425,9 +457,11 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     }
 
     const { customizations, colorOverrides, photos, storyMilestones, musicUrl, musicPublicId, musicEnabled, coupleMessage } = req.body;
+    const pricingTier = normalizePricingTier(order.pricingTier);
+    if (order.pricingTier !== pricingTier) order.pricingTier = pricingTier;
     const disabledFields = req.body.disabledFields !== undefined
-      ? normalizeDisabledFields(req.body.disabledFields)
-      : order.disabledFields || [];
+      ? enforceTierDisabledFields(pricingTier, req.body.disabledFields)
+      : enforceTierDisabledFields(pricingTier, order.disabledFields || []);
     const weddingDetails = req.body.weddingDetails
       ? applyDisabledFields(req.body.weddingDetails, disabledFields)
       : undefined;
@@ -474,6 +508,7 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     if (weddingDetails) {
       const existing = order.weddingDetails?.toObject?.() || order.weddingDetails || {};
       order.weddingDetails = { ...existing, ...weddingDetails };
+      order.weddingDetails.venueAddress = undefined;
       if (weddingDetailsChanged) fieldsChanged.push('weddingDetails');
     }
     if (customizations) {
@@ -482,12 +517,19 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     }
     if (req.body.disabledFields !== undefined) { order.disabledFields = disabledFields; fieldsChanged.push('disabledFields'); }
     if (colorOverrides) { order.colorOverrides = { ...order.colorOverrides, ...colorOverrides }; fieldsChanged.push('colorOverrides'); }
-    if (photos) { order.photos = normalizePhotos(photos); fieldsChanged.push('photos'); }
-    if (storyMilestones) { order.storyMilestones = storyMilestones; fieldsChanged.push('storyMilestones'); }
+    if (photos) { order.photos = normalizeTierPhotos(photos, pricingTier); fieldsChanged.push('photos'); }
+    if (storyMilestones) { order.storyMilestones = normalizeTierStoryMilestones(storyMilestones, pricingTier); fieldsChanged.push('storyMilestones'); }
     if (coupleMessage !== undefined) { order.coupleMessage = coupleMessage; fieldsChanged.push('coupleMessage'); }
-    if (musicUrl !== undefined) { order.musicUrl = musicUrl; fieldsChanged.push('musicUrl'); }
-    if (musicPublicId !== undefined) { order.musicPublicId = musicPublicId; fieldsChanged.push('musicPublicId'); }
-    if (musicEnabled !== undefined) { order.musicEnabled = musicEnabled; fieldsChanged.push('musicEnabled'); }
+    if (tierAllows(pricingTier, 'music')) {
+      if (musicUrl !== undefined) { order.musicUrl = musicUrl; fieldsChanged.push('musicUrl'); }
+      if (musicPublicId !== undefined) { order.musicPublicId = musicPublicId; fieldsChanged.push('musicPublicId'); }
+      if (musicEnabled !== undefined) { order.musicEnabled = musicEnabled; fieldsChanged.push('musicEnabled'); }
+    } else if (order.musicUrl || order.musicPublicId || order.musicEnabled) {
+      order.musicUrl = undefined;
+      order.musicPublicId = undefined;
+      order.musicEnabled = false;
+      fieldsChanged.push('music');
+    }
 
     // General edits are unlimited. Track actual wedding-detail edits separately
     // from the limited name/date correction counters.
@@ -590,6 +632,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       customerEmail: order.customerEmail,
       template: order.template,
       templateName: order.templateName || order.template?.name,
+      pricingTier: order.pricingTier,
       weddingDetails: order.weddingDetails,
       coupleMessage: order.coupleMessage,
       customizations: order.customizations,

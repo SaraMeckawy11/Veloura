@@ -1,21 +1,7 @@
 import { Link } from 'react-router-dom';
+import { PRICING_TIERS } from '../lib/pricingTiers';
 import '../styles/Pricing.css';
 import useReveal from '../hooks/useReveal';
-
-const features = [
-  'Any template theme',
-  // 'Animated envelope reveal',
-  'Live countdown timer',
-  'Cinematic splash screen',
-  'Couple photo, names & venue',
-  'RSVP with guest tracking',
-  'Google Maps venue embed',
-  // 'Background music',
-  'Custom subdomain link',
-  'Share button for any platform',
-  'Live forever — no expiry',
-  'Invitation created instantly after payment',
-];
 
 export default function Pricing() {
   const headerRef = useReveal();
@@ -26,31 +12,36 @@ export default function Pricing() {
       <div className="container">
         <div className="section-header reveal" ref={headerRef}>
           <span className="section-label">Pricing</span>
-          <h2 className="section-title">One price, everything included</h2>
+          <h2 className="section-title">Choose the invitation experience</h2>
           <p className="section-subtitle">
-            No hidden fees. No subscriptions. One payment for your complete digital wedding invitation experience.
+            Three one-time plans, each matched to the sections your hosted wedding invitation will include.
           </p>
         </div>
 
         <div className="pricing-wrapper reveal" ref={cardRef}>
-          <div className="pricing-card">
-            <div className="pricing-plan-name">All-Inclusive Package</div>
-            <div className="pricing-amount">
-              <span className="old-price">$119</span>
-              $99
-            </div>
-            <div className="pricing-desc">One-time payment · No subscription · Limited time launch price</div>
+          {PRICING_TIERS.map(tier => (
+            <article key={tier.id} className={`pricing-card ${tier.featured ? 'pricing-card--featured' : ''}`}>
+              <div className="pricing-badge">{tier.badge}</div>
+              <div className="pricing-plan-name">{tier.name}</div>
+              <div className="pricing-amount">
+                <span className="old-price">{tier.oldPrice}</span>
+                {tier.price}
+              </div>
+              <div className="pricing-desc">{tier.description}</div>
 
-            <ul className="pricing-features">
-              {features.map(f => (
-                <li key={f}>{f}</li>
-              ))}
-            </ul>
+              <ul className="pricing-features">
+                {tier.features.map(feature => (
+                  <li key={feature}>{feature}</li>
+                ))}
+              </ul>
 
-            <div className="pricing-cta">
-              <Link to="/order" className="btn btn-gold pricing-cta-btn">Get Started Now</Link>
-            </div>
-          </div>
+              <div className="pricing-cta">
+                <Link to={`/order?tier=${tier.id}`} className="btn btn-gold pricing-cta-btn">
+                  Choose {tier.name}
+                </Link>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>

@@ -3,6 +3,7 @@ import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
+import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
@@ -61,7 +62,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
     () => (weddingDetails.weddingDate ? new Date(weddingDetails.weddingDate) : null),
     [weddingDetails.weddingDate],
   );
-  const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
+  const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
 
   const dayStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' }) : '';
@@ -79,7 +80,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const heroName1 = firstName(name1);
   const heroName2 = firstName(name2);
   const venue = weddingDetails.venue || '';
-  const venueAddress = fieldEnabled('venueAddress') ? (weddingDetails.venueAddress || '') : '';
+  const venueAddress = '';
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(weddingDetails.weddingTime, weddingDetails.timeFormat) : '';
   const coupleMessage = fieldEnabled('coupleMessage')
     ? (order.coupleMessage !== undefined && order.coupleMessage !== null
@@ -87,14 +88,15 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
       : ((demo ? DEFAULT_COUPLE_MESSAGE : weddingDetails.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
 
-  const storyPhotos = (order.photos || []).filter(photo => photo.label === 'story');
-  const galleryPhotos = (order.photos || []).filter(photo => photo.label === 'gallery');
-  const uncategorizedPhotos = (order.photos || []).filter(photo => (
+  const tieredPhotos = getTieredInvitationPhotos(order);
+  const storyPhotos = tieredPhotos.filter(photo => photo.label === 'story');
+  const galleryPhotos = tieredPhotos.filter(photo => photo.label === 'gallery');
+  const uncategorizedPhotos = tieredPhotos.filter(photo => (
     !photo.label || !['couple', 'story', 'gallery', 'venue'].includes(photo.label)
   ));
 
   const storyImages = isReferenceDemo && order.storyImages?.length ? order.storyImages : storyPhotos;
-  const storyMilestones = order.storyMilestones || [];
+  const storyMilestones = getTieredStoryMilestones(order);
   const storyItemCount = Math.min(4, Math.max(storyImages.length, storyMilestones.length));
   const storyItems = Array.from({ length: storyItemCount }, (_, index) => ({
     image: storyImages[index],
@@ -199,7 +201,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 
         {coupleMessage && <TheaterMessageSection message={coupleMessage} />}
 
-        {fieldEnabled('rsvp') && (
+        {fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp') && (
           <RsvpSection
             rsvpForm={rsvpForm}
             setRsvpForm={setRsvpForm}

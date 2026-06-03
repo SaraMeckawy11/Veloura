@@ -4,6 +4,7 @@ import InvitationPhoto from '../invitations/InvitationPhoto';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
 import registry from '../invitations/registry';
 import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
+import { DEFAULT_PRICING_TIER, PRICING_TIERS, getPricingTier, normalizePricingTier, tierAllows, getTierDisabledFields } from '../lib/pricingTiers';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
 import '../styles/OrderFlow.css';
@@ -11,7 +12,6 @@ import '../styles/OrderFlow.css';
 const API = import.meta.env.VITE_API_URL || '/api';
 const STORAGE_KEY = 'veloura_order_draft';
 const PENDING_ORDER_KEY = 'veloura_pending_order_id';
-const DISPLAY_PRICE = '$99';
 const OLD_MESSAGE_HELP_TEXT = 'This text appears as the tagline under your names in the invitation ';
 // The envelope "A Note" message every design reveals in its demo. Used as the
 // placeholder for the optional Envelope Message field.
@@ -163,8 +163,12 @@ const LANGUAGE_OPTIONS = [
 
 export default function OrderFlow() {
   const draft = useRef(loadDraft()).current;
+  const initialTier = normalizePricingTier(
+    draft?.selectedTier || new URLSearchParams(window.location.search).get('tier') || DEFAULT_PRICING_TIER
+  );
 
   const [step, setStep] = useState(draft?.step || 1);
+  const [selectedTier, setSelectedTier] = useState(initialTier);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(draft?.selectedTemplate || null);
   const [loading, setLoading] = useState(true);
@@ -258,6 +262,7 @@ export default function OrderFlow() {
     }
     saveDraft({
       step,
+      selectedTier,
       selectedTemplate,
       form,
       disabledFields,
@@ -265,7 +270,7 @@ export default function OrderFlow() {
       storyMilestones,
       music,
     });
-  }, [step, selectedTemplate, form, disabledFields, photos, storyMilestones, music]);
+  }, [step, selectedTier, selectedTemplate, form, disabledFields, photos, storyMilestones, music]);
 
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
@@ -495,6 +500,18 @@ export default function OrderFlow() {
 
   const storyPreviewStyle = getUploadPreviewStyle(selectedTemplate?.slug, 'story');
   const galleryPreviewStyle = getUploadPreviewStyle(selectedTemplate?.slug, 'gallery');
+  const selectedTierConfig = getPricingTier(selectedTier);
+  const displayPrice = selectedTierConfig.price;
+  const effectiveDisabledFields = [...new Set([...disabledFields, ...getTierDisabledFields(selectedTier)])];
+  const storyIncluded = tierAllows(selectedTier, 'story');
+  const galleryIncluded = tierAllows(selectedTier, 'gallery');
+  const rsvpIncluded = tierAllows(selectedTier, 'rsvp');
+  const musicIncluded = tierAllows(selectedTier, 'music');
+  const photoAllowedForTier = (photo) => {
+    if (photo.label === 'story') return storyIncluded;
+    if (photo.label === 'gallery') return galleryIncluded;
+    return true;
+  };
 
   // Flatten all photos for submission & review (exclude failed/uploading)
   const allPhotos = Object.entries(photos).flatMap(([cat, items]) =>
@@ -502,13 +519,18 @@ export default function OrderFlow() {
       .filter(p => !p._uploading && !p._failed && !p._pendingUpload)
       .map(p => ({ ...p, label: p.label || cat }))
   );
-  const fieldEnabled = (key) => !disabledFields.includes(key);
+  const tieredPhotos = allPhotos.filter(photoAllowedForTier);
+  const cleanedStoryMilestones = storyIncluded
+    ? storyMilestones.filter(m => m.title || m.date || m.description)
+    : [];
+  const fieldEnabled = (key) => !effectiveDisabledFields.includes(key);
   const optionalValue = (key, fallback = undefined) => (
     fieldEnabled(key) && form[key] ? form[key] : fallback
   );
   const previewOrder = {
     template: selectedTemplate,
     preview: true,
+    pricingTier: selectedTier,
     weddingDetails: {
       groomName: form.groomName,
       brideName: form.brideName,
@@ -522,13 +544,13 @@ export default function OrderFlow() {
       secondLanguage: optionalValue('secondLanguage'),
     },
     coupleMessage: fieldEnabled('coupleMessage') ? form.coupleMessage.trim() : undefined,
-    disabledFields,
-    photos: allPhotos,
+    disabledFields: effectiveDisabledFields,
+    photos: tieredPhotos,
     customizations: {
       invitationFont: normalizeInvitationFont(form.invitationFont),
     },
     musicEnabled: false,
-    storyMilestones: storyMilestones.filter(m => m.title || m.date || m.description),
+    storyMilestones: cleanedStoryMilestones,
   };
   const previewRegistryEntry = selectedTemplate ? registry[selectedTemplate.slug] : null;
   const PreviewInvitationComponent = previewRegistryEntry?.component;
@@ -584,7 +606,7 @@ export default function OrderFlow() {
       setError('Your music is still uploading. Please wait a moment before reviewing your order.');
       return;
     }
-    setStep(3);
+    setStep(4);
   };
 
   // Capture the order on the server after the buyer approves it in PayPal.
@@ -717,6 +739,7 @@ export default function OrderFlow() {
           customerName: form.customerName,
           customerEmail,
           templateId: selectedTemplate._id,
+          pricingTier: selectedTier,
           weddingDetails: {
             groomName: form.groomName,
             brideName: form.brideName,
@@ -733,12 +756,12 @@ export default function OrderFlow() {
           customizations: {
             invitationFont: normalizeInvitationFont(form.invitationFont),
           },
-          disabledFields,
-          photos: allPhotos.filter(p => !p._uploading && !p._failed),
-          musicUrl: music.enabled && music.url && !music.uploading && !music.failed ? music.url : undefined,
-          musicPublicId: music.enabled && music.publicId && !music.uploading && !music.failed ? music.publicId : undefined,
-          musicEnabled: Boolean(music.enabled && music.url && !music.uploading && !music.failed),
-          storyMilestones: storyMilestones.filter(m => m.title || m.date || m.description),
+          disabledFields: effectiveDisabledFields,
+          photos: tieredPhotos.filter(p => !p._uploading && !p._failed),
+          musicUrl: musicIncluded && music.enabled && music.url && !music.uploading && !music.failed ? music.url : undefined,
+          musicPublicId: musicIncluded && music.enabled && music.publicId && !music.uploading && !music.failed ? music.publicId : undefined,
+          musicEnabled: Boolean(musicIncluded && music.enabled && music.url && !music.uploading && !music.failed),
+          storyMilestones: cleanedStoryMilestones,
         }),
       });
 
@@ -777,6 +800,7 @@ export default function OrderFlow() {
   ].filter(field => {
     if (field.key === 'message') return templateFieldSupport.message !== false;
     if (field.key === 'coupleMessage') return templateFieldSupport.coupleMessage !== false;
+    if (field.key === 'rsvp') return rsvpIncluded;
     return true;
   });
 
@@ -803,27 +827,80 @@ export default function OrderFlow() {
         <div className="order-progress">
           <div className={`progress-step ${step >= 1 ? 'active' : ''}`}>
             <div className="progress-dot">1</div>
-            <span>Choose Design</span>
+            <span>Choose Plan</span>
           </div>
           <div className="progress-line" />
           <div className={`progress-step ${step >= 2 ? 'active' : ''}`}>
             <div className="progress-dot">2</div>
-            <span>Your Details</span>
+            <span>Choose Design</span>
           </div>
           <div className="progress-line" />
           <div className={`progress-step ${step >= 3 ? 'active' : ''}`}>
             <div className="progress-dot">3</div>
+            <span>Your Details</span>
+          </div>
+          <div className="progress-line" />
+          <div className={`progress-step ${step >= 4 ? 'active' : ''}`}>
+            <div className="progress-dot">4</div>
             <span>Payment</span>
           </div>
         </div>
 
         {error && <div className="order-error">{error}</div>}
 
-        {/* Step 1: Select template */}
+        {/* Step 1: Select pricing tier */}
         {step === 1 && (
           <div className="step-content">
+            <h1 className="step-title">Choose Your Invitation Plan</h1>
+            <p className="step-subtitle">Your plan controls which sections appear on your invitation.</p>
+
+            <div className="tier-choice-grid">
+              {PRICING_TIERS.map(tier => (
+                <button
+                  key={tier.id}
+                  type="button"
+                  className={`tier-choice-card ${selectedTier === tier.id ? 'selected' : ''} ${tier.featured ? 'featured' : ''}`}
+                  onClick={() => setSelectedTier(tier.id)}
+                >
+                  <span className="tier-choice-badge">{tier.badge}</span>
+                  <span className="tier-choice-name">{tier.name}</span>
+                  <span className="tier-choice-price">
+                    <span>{tier.oldPrice}</span>
+                    {tier.price}
+                  </span>
+                  <span className="tier-choice-desc">{tier.description}</span>
+                  <span className="tier-choice-sections">
+                    {tier.sections.rsvp && <span>RSVP</span>}
+                    {tier.sections.story && <span>Story</span>}
+                    {tier.sections.gallery && <span>Gallery</span>}
+                    {tier.sections.music && <span>Music</span>}
+                    {!tier.sections.rsvp && !tier.sections.story && !tier.sections.gallery && <span>Core details</span>}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="step-actions">
+              <button
+                className="btn btn-gold step-next"
+                onClick={() => setStep(2)}
+              >
+                Continue with {selectedTierConfig.name}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Select template */}
+        {step === 2 && (
+          <div className="step-content">
+            <button className="step-back-btn" onClick={() => setStep(1)}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
+              Change plan
+            </button>
             <h1 className="step-title">Choose Your Invitation Design</h1>
-            <p className="step-subtitle">Select the theme that matches your wedding vision</p>
+            <p className="step-subtitle">{selectedTierConfig.name} plan selected. Pick the theme that matches your wedding vision.</p>
 
             <div className="template-grid">
               {templates.map(t => (
@@ -870,7 +947,7 @@ export default function OrderFlow() {
               <button
                 className="btn btn-gold step-next"
                 disabled={!selectedTemplate}
-                onClick={() => setStep(2)}
+                onClick={() => setStep(3)}
               >
                 Continue with {selectedTemplate?.name || '...'}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
@@ -879,10 +956,10 @@ export default function OrderFlow() {
           </div>
         )}
 
-        {/* Step 2: Fill form */}
-        {step === 2 && (
+        {/* Step 3: Fill form */}
+        {step === 3 && (
           <div className="step-content">
-            <button className="step-back-btn" onClick={() => setStep(1)}>
+            <button className="step-back-btn" onClick={() => setStep(2)}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
               Change template
             </button>
@@ -1098,6 +1175,7 @@ export default function OrderFlow() {
               */}
 
               {/* Our Story — each milestone has its own text fields + optional photo */}
+              {storyIncluded && (
               <fieldset className="form-section">
                 <legend>Our Story</legend>
                 <p className="form-hint">Add milestones from your journey together — first date, proposal, and more. Each one appears on your invitation timeline.</p>
@@ -1187,8 +1265,10 @@ export default function OrderFlow() {
                   )}
                 </div>
               </fieldset>
+              )}
 
               {/* Gallery Photos */}
+              {galleryIncluded && (
               <fieldset className="form-section">
                 <legend>Gallery</legend>
                 <p className="form-hint">Additional photos for the gallery section (max 6)</p>
@@ -1229,12 +1309,13 @@ export default function OrderFlow() {
                   ))}
                 </div>
               </fieldset>
+              )}
 
               {/* Submit */}
               <div className="form-submit">
                 <div className="price-summary">
                   <span className="price-label">Total</span>
-                  <span className="price-value">{DISPLAY_PRICE}</span>
+                  <span className="price-value">{displayPrice}</span>
                 </div>
                 <button type="submit" className="btn btn-gold form-pay-btn">
                   Review & Pay
@@ -1245,11 +1326,11 @@ export default function OrderFlow() {
           </div>
         )}
 
-        {/* Step 3: Review & Confirm Payment */}
-        {step === 3 && (
+        {/* Step 4: Review & Confirm Payment */}
+        {step === 4 && (
           <div className="step-content">
             {!paypalOrderData && (
-              <button className="step-back-btn" onClick={() => setStep(2)}>
+              <button className="step-back-btn" onClick={() => setStep(3)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                 Back to Details
               </button>
@@ -1307,18 +1388,19 @@ export default function OrderFlow() {
                   <div className="review-item"><span className="review-label">Partner 1</span><span>{form.groomName}</span></div>
                   <div className="review-item"><span className="review-label">Partner 2</span><span>{form.brideName}</span></div>
                   {form.weddingDate && <div className="review-item"><span className="review-label">Date</span><span>{new Date(form.weddingDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span></div>}
-                  {form.weddingTime && !disabledFields.includes('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{formatOrderTime(form.weddingTime, form.timeFormat || '12h')}</span></div>}
+                  {form.weddingTime && fieldEnabled('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{formatOrderTime(form.weddingTime, form.timeFormat || '12h')}</span></div>}
                   <div className="review-item"><span className="review-label">Venue</span><span>{form.venue}</span></div>
-                  {form.message && !disabledFields.includes('message') && <div className="review-item"><span className="review-label">Message</span><span>{form.message}</span></div>}
-                  {form.coupleMessage && !disabledFields.includes('coupleMessage') && <div className="review-item"><span className="review-label">Envelope Message</span><span>{form.coupleMessage}</span></div>}
+                  <div className="review-item"><span className="review-label">Plan</span><span>{selectedTierConfig.name}</span></div>
+                  {form.message && fieldEnabled('message') && <div className="review-item"><span className="review-label">Message</span><span>{form.message}</span></div>}
+                  {form.coupleMessage && fieldEnabled('coupleMessage') && <div className="review-item"><span className="review-label">Envelope Message</span><span>{form.coupleMessage}</span></div>}
                 </div>
               </div>
 
-              {allPhotos.length > 0 && (
+              {tieredPhotos.length > 0 && (
                 <div className="review-section">
-                  <h3 className="review-section-title">Photos ({allPhotos.length})</h3>
+                  <h3 className="review-section-title">Photos ({tieredPhotos.length})</h3>
                   <div className="review-photos">
-                    {allPhotos.map((p, i) => (
+                    {tieredPhotos.map((p, i) => (
                       <div
                         key={i}
                         className="review-photo-item"
@@ -1334,7 +1416,7 @@ export default function OrderFlow() {
                 </div>
               )}
 
-              {music.url && !music.uploading && !music.failed && music.enabled && (
+              {musicIncluded && music.url && !music.uploading && !music.failed && music.enabled && (
                 <div className="review-section">
                   <h3 className="review-section-title">Background Music</h3>
                   <div className="review-music">
@@ -1351,12 +1433,12 @@ export default function OrderFlow() {
                 <div className="review-submit-info">
                   <div className="price-summary">
                     <span className="price-label">Total</span>
-                    <span className="price-value">{DISPLAY_PRICE}</span>
+                    <span className="price-value">{displayPrice}</span>
                   </div>
                   <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
                 </div>
                 <button className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
-                  {confirming ? 'Preparing Payment…' : `Continue to Payment — ${DISPLAY_PRICE}`}
+                  {confirming ? 'Preparing Payment…' : `Continue to Payment — ${displayPrice}`}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
               </div>
@@ -1401,11 +1483,11 @@ export default function OrderFlow() {
                   <div className="payment-summary-totals">
                     <div className="payment-summary-row">
                       <dt>Subtotal</dt>
-                      <dd>{DISPLAY_PRICE}</dd>
+                      <dd>{displayPrice}</dd>
                     </div>
                     <div className="payment-summary-row payment-summary-grand">
                       <dt>Total due today</dt>
-                      <dd>{DISPLAY_PRICE}</dd>
+                      <dd>{displayPrice}</dd>
                     </div>
                   </div>
                   <button type="button" className="payment-summary-edit" onClick={() => { setPaypalOrderData(null); setPaypalLoading(false); }}>

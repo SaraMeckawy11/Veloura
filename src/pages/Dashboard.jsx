@@ -3,6 +3,9 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { downloadGuestMessagesPdf, downloadGuestResponsesPdf } from '../lib/guestMessagesPdf';
 import InvitationPhoto from '../invitations/InvitationPhoto';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
+import { formatInvitationTime } from '../invitations/shared';
+import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
+import { getPricingTier, tierAllows, getTierDisabledFields } from '../lib/pricingTiers';
 import '../styles/Dashboard.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -35,10 +38,6 @@ const revokeLocalPhotoUrl = (photo) => {
 const DEFAULT_ENVELOPE_MESSAGE = 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.';
 // Optional fields a design actually renders — matches the order flow so the
 // dashboard only offers toggles that affect the chosen invitation.
-const TEMPLATE_FIELD_SUPPORT = {
-  theater: { venueAddress: false },
-};
-
 export default function Dashboard() {
   const { editToken } = useParams();
   const location = useLocation();
@@ -53,6 +52,7 @@ export default function Dashboard() {
   // Edit mode
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
+  const [fontPickerOpen, setFontPickerOpen] = useState(false);
   const [editDisabledFields, setEditDisabledFields] = useState([]);
   const [editPhotos, setEditPhotos] = useState({ venue: [], story: [], gallery: [] });
   const [editStoryMilestones, setEditStoryMilestones] = useState([]);
@@ -97,6 +97,20 @@ export default function Dashboard() {
     };
   }, [editToken]);
 
+  useEffect(() => {
+    if (!fontPickerOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') setFontPickerOpen(false);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [fontPickerOpen]);
+
   // Auto-enter edit mode if route is /edit/:token
   useEffect(() => {
     if (isEditRoute && order && !editing) {
@@ -106,17 +120,27 @@ export default function Dashboard() {
 
   const startEditing = () => {
     const wd = order.weddingDetails || {};
+    const customizations = order.customizations || {};
+    const invitationFont = typeof customizations.get === 'function'
+      ? customizations.get('invitationFont')
+      : customizations.invitationFont;
     setEditForm({
       groomName: wd.groomName || '',
       brideName: wd.brideName || '',
       weddingDate: wd.weddingDate ? wd.weddingDate.slice(0, 10) : '',
       weddingTime: wd.weddingTime || '',
+      timeFormat: wd.timeFormat || '12h',
       venue: wd.venue || '',
-      venueAddress: wd.venueAddress || '',
       venueMapUrl: wd.venueMapUrl || '',
       coupleMessage: order.coupleMessage || '',
+      invitationFont: normalizeInvitationFont(invitationFont || DEFAULT_INVITATION_FONT),
     });
-    setEditDisabledFields(Array.isArray(order.disabledFields) ? order.disabledFields : []);
+    setEditDisabledFields([
+      ...new Set([
+        ...(Array.isArray(order.disabledFields) ? order.disabledFields : []),
+        ...getTierDisabledFields(order.pricingTier),
+      ]),
+    ]);
     // Keep each photo category aligned with the section it renders in.
     const allPhotos = order.photos || [];
     const categorized = { venue: [], story: [], gallery: [] };
@@ -263,8 +287,9 @@ export default function Dashboard() {
   };
 
   // Optional fields can be turned on/off, mirroring the order flow.
-  const isFieldDisabled = (key) => editDisabledFields.includes(key);
+  const isFieldDisabled = (key) => editDisabledFields.includes(key) || getTierDisabledFields(order?.pricingTier).includes(key);
   const toggleEditField = (key) => {
+    if (getTierDisabledFields(order?.pricingTier).includes(key)) return;
     setEditDisabledFields(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
   };
 
@@ -338,6 +363,12 @@ export default function Dashboard() {
     return Object.entries(editPhotos).flatMap(([cat, items]) =>
       items
         .filter(p => p && !p._uploading && !p._failed && p.url && p.publicId)
+        .filter(p => {
+          const label = p.label || cat;
+          if (label === 'story') return tierAllows(order?.pricingTier, 'story');
+          if (label === 'gallery' || !p.label) return tierAllows(order?.pricingTier, 'gallery');
+          return true;
+        })
         .map(p => ({ url: p.url, publicId: p.publicId, label: p.label || cat, fit: normalizePhotoFit(p.fit) }))
     );
   };
@@ -354,8 +385,8 @@ export default function Dashboard() {
       const weddingDetailsPayload = {
         weddingDate: editForm.weddingDate || undefined,
         weddingTime: editForm.weddingTime || undefined,
+        timeFormat: editForm.timeFormat || '12h',
         venue: editForm.venue,
-        venueAddress: editForm.venueAddress || undefined,
         venueMapUrl: editForm.venueMapUrl || undefined,
       };
       // Include name fields if they were editable (grace period)
@@ -370,15 +401,24 @@ export default function Dashboard() {
           description: (m.description || '').trim(),
         }))
         .filter(m => m.date || m.title || m.description);
+      const effectiveDisabledFields = [
+        ...new Set([
+          ...editDisabledFields,
+          ...getTierDisabledFields(order?.pricingTier),
+        ]),
+      ];
       const res = await fetch(`${API}/orders/edit/${editToken}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           weddingDetails: weddingDetailsPayload,
           coupleMessage: editForm.coupleMessage?.trim() || '',
-          disabledFields: editDisabledFields,
+          customizations: {
+            invitationFont: normalizeInvitationFont(editForm.invitationFont),
+          },
+          disabledFields: effectiveDisabledFields,
           photos: flattenEditPhotos(),
-          storyMilestones: cleanedMilestones,
+          storyMilestones: tierAllows(order?.pricingTier, 'story') ? cleanedMilestones : [],
         }),
       });
       const data = await res.json();
@@ -464,7 +504,11 @@ export default function Dashboard() {
 
   const inviteUrl = `${window.location.origin}/i/${order.publicSlug}`;
   const wd = order.weddingDetails || {};
-  const venueAddressSupported = (TEMPLATE_FIELD_SUPPORT[order.template?.slug] || {}).venueAddress !== false;
+  const orderTier = getPricingTier(order.pricingTier);
+  const storyIncluded = tierAllows(order.pricingTier, 'story');
+  const galleryIncluded = tierAllows(order.pricingTier, 'gallery');
+  const rsvpIncluded = tierAllows(order.pricingTier, 'rsvp');
+  const selectedFontOption = getInvitationFontOption(editForm.invitationFont);
   const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
   const galleryPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'gallery');
   const isPhotoUploading = Object.values(photoUploading).some(Boolean);
@@ -591,24 +635,28 @@ export default function Dashboard() {
                 <div className="form-field">
                   <label>Wedding Time</label>
                   <input type="time" value={editForm.weddingTime} onChange={e => handleEditInput('weddingTime', e.target.value)} />
+                  <div className="time-format-toggle" role="group" aria-label="Time format">
+                    <button
+                      type="button"
+                      className={editForm.timeFormat !== '24h' ? 'active' : ''}
+                      onClick={() => handleEditInput('timeFormat', '12h')}
+                    >
+                      12h
+                    </button>
+                    <button
+                      type="button"
+                      className={editForm.timeFormat === '24h' ? 'active' : ''}
+                      onClick={() => handleEditInput('timeFormat', '24h')}
+                    >
+                      24h
+                    </button>
+                  </div>
+                  <p className="form-hint">Shown as {formatInvitationTime(editForm.weddingTime || '17:30', editForm.timeFormat || '12h')} on the invitation.</p>
                 </div>
                 <div className="form-field">
                   <label>Venue Name</label>
                   <input type="text" value={editForm.venue} onChange={e => handleEditInput('venue', e.target.value)} />
                 </div>
-                {venueAddressSupported && (
-                  <div className={`form-field ${isFieldDisabled('venueAddress') ? 'field-disabled' : ''}`}>
-                    <div className="dash-field-header">
-                      <label>Venue Address</label>
-                      <button type="button" className="dash-field-toggle" onClick={() => toggleEditField('venueAddress')}>
-                        {isFieldDisabled('venueAddress') ? 'Enable' : 'Disable'}
-                      </button>
-                    </div>
-                    {!isFieldDisabled('venueAddress') && (
-                      <input type="text" value={editForm.venueAddress} onChange={e => handleEditInput('venueAddress', e.target.value)} />
-                    )}
-                  </div>
-                )}
                 <div className={`form-field ${isFieldDisabled('venueMapUrl') ? 'field-disabled' : ''}`}>
                   <div className="dash-field-header">
                     <label>Google Maps Link</label>
@@ -620,6 +668,24 @@ export default function Dashboard() {
                     <input type="url" value={editForm.venueMapUrl} onChange={e => handleEditInput('venueMapUrl', e.target.value)} />
                   )}
                 </div>
+                <div className="form-field full-width">
+                  <label>Invitation Font</label>
+                  <button
+                    type="button"
+                    className="font-select-card dash-font-select-card"
+                    onClick={() => setFontPickerOpen(true)}
+                  >
+                    <span className="font-select-preview" style={{ fontFamily: selectedFontOption.display }}>
+                      Aa
+                    </span>
+                    <span className="font-select-copy">
+                      <span className="font-select-label">Current style</span>
+                      <strong>{selectedFontOption.label}</strong>
+                      <span>{selectedFontOption.description}</span>
+                    </span>
+                    <span className="font-select-action">Change</span>
+                  </button>
+                </div>
                 <div className={`form-field full-width ${isFieldDisabled('coupleMessage') ? 'field-disabled' : ''}`}>
                   <div className="dash-field-header">
                     <label>Envelope Message</label>
@@ -630,10 +696,11 @@ export default function Dashboard() {
                   {!isFieldDisabled('coupleMessage') && (
                     <>
                       <textarea rows={4} value={editForm.coupleMessage} placeholder={DEFAULT_ENVELOPE_MESSAGE} onChange={e => handleEditInput('coupleMessage', e.target.value)} />
-                      <p className="form-hint">Shown inside the envelope. Leave blank to keep the demo note.</p>
+                      <p className="form-hint">Shown inside the envelope. Edit it, or clear it to remove this note.</p>
                     </>
                   )}
                 </div>
+                {rsvpIncluded && (
                 <div className={`form-field full-width ${isFieldDisabled('rsvp') ? 'field-disabled' : ''}`}>
                   <div className="dash-field-header">
                     <label>RSVP Section</label>
@@ -647,8 +714,10 @@ export default function Dashboard() {
                       : 'Guests can RSVP directly from your invitation.'}
                   </p>
                 </div>
+                )}
               </div>
 
+              {storyIncluded && (
               <div className="edit-story-section">
                 <label className="edit-photos-label">Our Story</label>
                 <p className="form-hint">Add or edit the milestones from your journey together. Each milestone has its own photo. Leave blank to skip this section on the invitation.</p>
@@ -721,7 +790,9 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
+              )}
 
+              {galleryIncluded && (
               <div className="edit-photos-section">
                 <label className="edit-photos-label">Photos</label>
                 <p className="form-hint">Manage the photos shown in your invitation gallery.</p>
@@ -770,6 +841,7 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
+              )}
 
               <div className="edit-actions">
                 <button className="btn btn-gold" onClick={handleSaveEdit} disabled={saving || isPhotoUploading}>
@@ -816,7 +888,7 @@ export default function Dashboard() {
             {wd.weddingTime && (
               <div className="detail-item">
                 <span className="detail-label">Time</span>
-                <span className="detail-value">{wd.weddingTime}</span>
+                <span className="detail-value">{formatInvitationTime(wd.weddingTime, wd.timeFormat)}</span>
               </div>
             )}
             {wd.venue && (
@@ -825,12 +897,10 @@ export default function Dashboard() {
                 <span className="detail-value">{wd.venue}</span>
               </div>
             )}
-            {wd.venueAddress && (
-              <div className="detail-item">
-                <span className="detail-label">Address</span>
-                <span className="detail-value">{wd.venueAddress}</span>
-              </div>
-            )}
+            <div className="detail-item">
+              <span className="detail-label">Plan</span>
+              <span className="detail-value">{orderTier.name}</span>
+            </div>
             <div className="detail-item">
               <span className="detail-label">Template</span>
               <span className="detail-value">{order.templateName || order.template?.name}</span>
@@ -928,6 +998,48 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+      {fontPickerOpen && (
+        <div
+          className="font-picker-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="dashboard-font-picker-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setFontPickerOpen(false);
+          }}
+        >
+          <div className="font-picker-panel">
+            <div className="font-picker-header">
+              <div>
+                <span className="font-picker-eyebrow">Invitation style</span>
+                <h3 id="dashboard-font-picker-title">Choose a font</h3>
+              </div>
+              <button type="button" className="font-picker-close" onClick={() => setFontPickerOpen(false)} aria-label="Close font picker">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+            <div className="font-option-grid">
+              {INVITATION_FONT_OPTIONS.map(option => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`font-option-card ${normalizeInvitationFont(editForm.invitationFont) === option.value ? 'active' : ''}`}
+                  onClick={() => {
+                    handleEditInput('invitationFont', option.value);
+                    setFontPickerOpen(false);
+                  }}
+                >
+                  <span className="font-option-sample" style={{ fontFamily: option.display }}>Aa</span>
+                  <span className="font-option-copy">
+                    <strong>{option.label}</strong>
+                    <span>{option.description}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

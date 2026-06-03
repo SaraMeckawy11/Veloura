@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
+import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import './gazebo-garden.css';
 import gardenEnvelope from '../../assets/gardenPavilion/garden-pavilion-envelope-transparent.png';
@@ -126,7 +127,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const disabledFields = order.disabledFields || [];
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const mapEnabled = fieldEnabled('venueMapUrl');
-  const rsvpEnabled = fieldEnabled('rsvp');
+  const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
   const name1 = wd.groomName || 'Partner 1';
   const name2 = wd.brideName || 'Partner 2';
   const coupleNames = `${name1} & ${name2}`;
@@ -137,7 +138,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
     : '';
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime, wd.timeFormat) : '';
   const venue = wd.venue || '';
-  const venueAddress = fieldEnabled('venueAddress') ? (wd.venueAddress || '') : '';
+  const venueAddress = '';
   const message = fieldEnabled('message')
     ? (wd.message !== undefined && wd.message !== null ? wd.message : 'A garden promise sealed in soft light.')
     : '';
@@ -148,12 +149,12 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
     : '';
   const heroDate = compactDateStr || fullDateStr;
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
-  const shouldPlayMusic = Boolean(order.musicUrl && order.musicEnabled !== false);
+  const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (value) => String(value).padStart(2, '0');
 
-  const orderPhotos = order.photos || [];
+  const orderPhotos = getTieredInvitationPhotos(order);
   const storyPhotos = orderPhotos.filter(photo => photo.label === 'story');
-  const storyMilestones = order.storyMilestones || [];
+  const storyMilestones = getTieredStoryMilestones(order);
   const storyCount = demo
     ? Math.max(DEFAULT_STORY.length, storyMilestones.length, storyPhotos.length)
     : Math.max(storyMilestones.length, storyPhotos.length);
