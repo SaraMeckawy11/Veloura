@@ -78,6 +78,8 @@ export default function Dashboard() {
   useEffect(() => {
     let cancelled = false;
     const refreshRsvps = () => {
+      // Don't poll while the tab is hidden — avoids needless background load.
+      if (document.visibilityState !== 'visible') return;
       fetch(`${API}/rsvps/dashboard/${editToken}`)
         .then(r => r.json())
         .then(data => {
@@ -85,15 +87,14 @@ export default function Dashboard() {
         })
         .catch(() => {});
     };
-    const refreshWhenVisible = () => {
-      if (document.visibilityState === 'visible') refreshRsvps();
-    };
-    const interval = window.setInterval(refreshRsvps, 5000);
-    document.addEventListener('visibilitychange', refreshWhenVisible);
+    // Refresh on a relaxed interval (RSVPs are not real-time critical) and
+    // immediately when the owner returns to the tab.
+    const interval = window.setInterval(refreshRsvps, 30000);
+    document.addEventListener('visibilitychange', refreshRsvps);
     return () => {
       cancelled = true;
       window.clearInterval(interval);
-      document.removeEventListener('visibilitychange', refreshWhenVisible);
+      document.removeEventListener('visibilitychange', refreshRsvps);
     };
   }, [editToken]);
 
@@ -508,6 +509,16 @@ export default function Dashboard() {
   const storyIncluded = tierAllows(order.pricingTier, 'story');
   const galleryIncluded = tierAllows(order.pricingTier, 'gallery');
   const rsvpIncluded = tierAllows(order.pricingTier, 'rsvp');
+  const coupleMessageIncluded = tierAllows(order.pricingTier, 'coupleMessage');
+  const countdownIncluded = tierAllows(order.pricingTier, 'countdown');
+  const planSections = [
+    { label: 'Core details', included: true },
+    { label: 'Countdown', included: countdownIncluded },
+    { label: 'Envelope note', included: coupleMessageIncluded },
+    { label: 'Our Story', included: storyIncluded },
+    { label: 'Gallery', included: galleryIncluded },
+    { label: 'RSVP', included: rsvpIncluded },
+  ];
   const selectedFontOption = getInvitationFontOption(editForm.invitationFont);
   const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
   const galleryPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'gallery');
@@ -686,6 +697,7 @@ export default function Dashboard() {
                     <span className="font-select-action">Change</span>
                   </button>
                 </div>
+                {coupleMessageIncluded && (
                 <div className={`form-field full-width ${isFieldDisabled('coupleMessage') ? 'field-disabled' : ''}`}>
                   <div className="dash-field-header">
                     <label>Envelope Message</label>
@@ -700,6 +712,7 @@ export default function Dashboard() {
                     </>
                   )}
                 </div>
+                )}
                 {rsvpIncluded && (
                 <div className={`form-field full-width ${isFieldDisabled('rsvp') ? 'field-disabled' : ''}`}>
                   <div className="dash-field-header">
@@ -910,6 +923,22 @@ export default function Dashboard() {
               <span className="detail-value">{order.expiresAt ? new Date(order.expiresAt).toLocaleDateString() : '—'}</span>
             </div>
           </div>
+
+          <div className="dash-plan-summary">
+            <span className="dash-plan-summary-title">Included in your {orderTier.name} plan</span>
+            <div className="dash-plan-chips">
+              {planSections.map(s => (
+                <span key={s.label} className={`dash-plan-chip ${s.included ? 'is-on' : 'is-off'}`}>
+                  {s.included ? (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  ) : (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                  )}
+                  {s.label}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* RSVP list */}
@@ -1029,7 +1058,7 @@ export default function Dashboard() {
                     setFontPickerOpen(false);
                   }}
                 >
-                  <span className="font-option-sample" style={{ fontFamily: option.display }}>Aa</span>
+                  <span className="font-option-sample" style={{ fontFamily: option.script }}>Aa</span>
                   <span className="font-option-copy">
                     <strong>{option.label}</strong>
                     <span>{option.description}</span>

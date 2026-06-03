@@ -240,6 +240,48 @@
   font-weight: 500;
 }
 
+/* Plan summary — reflects which sections the order's tier includes */
+.dash-plan-summary {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-light);
+}
+.dash-plan-summary-title {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+.dash-plan-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dash-plan-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px 6px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+.dash-plan-chip.is-on {
+  color: var(--sage);
+  background: var(--sage-soft);
+  border-color: rgba(126, 155, 118, 0.25);
+}
+.dash-plan-chip.is-off {
+  color: var(--text-light);
+  background: var(--bg-alt);
+  border-color: var(--border-light);
+}
+.dash-plan-chip.is-off svg { opacity: 0.6; }
+
 /* RSVP table */
 .rsvp-table-wrap { overflow-x: auto; }
 
@@ -566,7 +608,9 @@
   background: var(--gold);
   color: var(--white);
 }
-.font-select-card {
+/* Font picker styles are scoped to .dash-page so they don't collide with the
+   order flow's same-named .font-* classes (which use a different layout). */
+.dash-page .font-select-card {
   width: 100%;
   border: 1px solid rgba(184, 146, 74, 0.22);
   background: var(--white);
@@ -580,7 +624,7 @@
   color: var(--text);
   cursor: pointer;
 }
-.font-select-preview {
+.dash-page .font-select-preview {
   width: 64px;
   height: 64px;
   border-radius: 10px;
@@ -590,23 +634,23 @@
   background: rgba(184, 146, 74, 0.09);
   font-size: 1.75rem;
 }
-.font-select-copy,
-.font-select-action {
+.dash-page .font-select-copy,
+.dash-page .font-select-action {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-.font-select-label,
-.font-select-copy span:last-child {
+.dash-page .font-select-label,
+.dash-page .font-select-copy span:last-child {
   font-size: 0.78rem;
   color: var(--text-secondary);
 }
-.font-select-action {
+.dash-page .font-select-action {
   color: var(--gold);
   font-weight: 700;
   font-size: 0.84rem;
 }
-.font-picker-modal {
+.dash-page .font-picker-modal {
   position: fixed;
   inset: 0;
   z-index: 80;
@@ -616,7 +660,7 @@
   background: rgba(28, 24, 18, 0.48);
   backdrop-filter: blur(8px);
 }
-.font-picker-panel {
+.dash-page .font-picker-panel {
   width: min(760px, 100%);
   max-height: min(760px, 88vh);
   overflow: auto;
@@ -625,14 +669,14 @@
   box-shadow: 0 28px 80px rgba(33, 28, 22, 0.24);
   padding: 24px;
 }
-.font-picker-header {
+.dash-page .font-picker-header {
   display: flex;
   justify-content: space-between;
   gap: 16px;
   align-items: flex-start;
   margin-bottom: 20px;
 }
-.font-picker-eyebrow {
+.dash-page .font-picker-eyebrow {
   display: block;
   font-size: 0.68rem;
   letter-spacing: 0.14em;
@@ -641,12 +685,12 @@
   font-weight: 800;
   margin-bottom: 6px;
 }
-.font-picker-header h3 {
+.dash-page .font-picker-header h3 {
   font-family: var(--font-display);
   font-size: 1.45rem;
   margin: 0;
 }
-.font-picker-close {
+.dash-page .font-picker-close {
   width: 38px;
   height: 38px;
   border: 1px solid var(--border-light);
@@ -656,12 +700,12 @@
   place-items: center;
   cursor: pointer;
 }
-.font-option-grid {
+.dash-page .font-option-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
-.font-option-card {
+.dash-page .font-option-card {
   border: 1px solid var(--border-light);
   background: var(--bg);
   border-radius: 12px;
@@ -673,11 +717,11 @@
   text-align: left;
   cursor: pointer;
 }
-.font-option-card.active {
+.dash-page .font-option-card.active {
   border-color: var(--gold);
   background: rgba(184, 146, 74, 0.1);
 }
-.font-option-sample {
+.dash-page .font-option-sample {
   width: 58px;
   height: 58px;
   display: grid;
@@ -687,12 +731,12 @@
   background: var(--white);
   font-size: 1.55rem;
 }
-.font-option-copy {
+.dash-page .font-option-copy {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-.font-option-copy span {
+.dash-page .font-option-copy span {
   color: var(--text-secondary);
   font-size: 0.8rem;
   line-height: 1.35;
@@ -938,25 +982,25 @@
 }
 
 @media (max-width: 640px) {
-  .font-select-card {
+  .dash-page .font-select-card {
     grid-template-columns: 54px 1fr;
   }
 
-  .font-select-preview {
+  .dash-page .font-select-preview {
     width: 54px;
     height: 54px;
   }
 
-  .font-select-action {
+  .dash-page .font-select-action {
     grid-column: 1 / -1;
     flex-direction: row;
   }
 
-  .font-picker-modal {
+  .dash-page .font-picker-modal {
     padding: 12px;
   }
 
-  .font-option-grid {
+  .dash-page .font-option-grid {
     grid-template-columns: 1fr;
   }
 }

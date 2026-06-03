@@ -4,10 +4,26 @@ export const INVITATION_FONT_OPTIONS = [
   {
     value: 'classic',
     label: 'Classic Editorial',
-    description: 'Elegant serif titles with clean guest details.',
+    description: 'Refined Playfair headings with clean, modern details.',
+    display: "'Playfair Display', Georgia, serif",
+    body: "'Inter', Arial, sans-serif",
+    script: "'Playfair Display', Georgia, serif",
+  },
+  {
+    value: 'romantic',
+    label: 'Romantic Calligraphy',
+    description: 'Flowing Great Vibes script over soft serif text.',
+    display: "'Cormorant Garamond', Georgia, serif",
+    body: "'Cormorant Garamond', Georgia, serif",
+    script: "'Great Vibes', 'Cormorant Garamond', cursive",
+  },
+  {
+    value: 'timeless',
+    label: 'Timeless Romance',
+    description: 'Graceful Dancing Script names with classic serif.',
     display: "'Cormorant Garamond', Georgia, serif",
     body: "'Inter', Arial, sans-serif",
-    script: "'Cormorant Garamond', Georgia, serif",
+    script: "'Dancing Script', 'Cormorant Garamond', cursive",
   },
   {
     value: 'modern',
@@ -16,22 +32,6 @@ export const INVITATION_FONT_OPTIONS = [
     display: "'Inter', Arial, sans-serif",
     body: "'Inter', Arial, sans-serif",
     script: "'Inter', Arial, sans-serif",
-  },
-  {
-    value: 'romantic',
-    label: 'Romantic Serif',
-    description: 'Soft wedding stationery feel with graceful headings.',
-    display: "'Cormorant Garamond', Georgia, serif",
-    body: "'Cormorant Garamond', Georgia, serif",
-    script: "'Cormorant Garamond', Georgia, serif",
-  },
-  {
-    value: 'timeless',
-    label: 'Timeless Formal',
-    description: 'Formal, refined, and ceremony-forward.',
-    display: "Georgia, 'Times New Roman', serif",
-    body: "Georgia, 'Times New Roman', serif",
-    script: "Georgia, 'Times New Roman', serif",
   },
 ];
 

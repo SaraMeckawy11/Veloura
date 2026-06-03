@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
+import { useState, useEffect, useRef, useCallback, Suspense, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import { getPaypal } from '../lib/paypal';
 import InvitationPhoto from '../invitations/InvitationPhoto';
 import InvitationPreviewFrame from '../components/InvitationPreviewFrame';
@@ -820,32 +821,32 @@ export default function OrderFlow() {
     <div className="order-page">
       <div className="order-container">
         {/* Header */}
-        <a href="/" className="order-back-link">
+        <Link to="/" className="order-back-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
           Back to Home
-        </a>
+        </Link>
 
         {/* Progress bar */}
-        <div className="order-progress">
-          <div className={`progress-step ${step >= 1 ? 'active' : ''}`}>
-            <div className="progress-dot">1</div>
-            <span>Choose Plan</span>
-          </div>
-          <div className="progress-line" />
-          <div className={`progress-step ${step >= 2 ? 'active' : ''}`}>
-            <div className="progress-dot">2</div>
-            <span>Choose Design</span>
-          </div>
-          <div className="progress-line" />
-          <div className={`progress-step ${step >= 3 ? 'active' : ''}`}>
-            <div className="progress-dot">3</div>
-            <span>Your Details</span>
-          </div>
-          <div className="progress-line" />
-          <div className={`progress-step ${step >= 4 ? 'active' : ''}`}>
-            <div className="progress-dot">4</div>
-            <span>Payment</span>
-          </div>
+        <div className="order-progress" role="list" aria-label="Order progress">
+          {['Choose Plan', 'Choose Design', 'Your Details', 'Payment'].map((label, index) => {
+            const stepNumber = index + 1;
+            const state = step > stepNumber ? 'completed' : step === stepNumber ? 'current' : 'upcoming';
+            return (
+              <Fragment key={label}>
+                {index > 0 && <div className={`progress-line ${step > index ? 'filled' : ''}`} aria-hidden="true" />}
+                <div className={`progress-step ${state}`} role="listitem" aria-current={state === 'current' ? 'step' : undefined}>
+                  <div className="progress-dot">
+                    {state === 'completed' ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                    ) : (
+                      stepNumber
+                    )}
+                  </div>
+                  <span>{label}</span>
+                </div>
+              </Fragment>
+            );
+          })}
         </div>
 
         {error && <div className="order-error">{error}</div>}
@@ -1697,7 +1698,7 @@ export default function OrderFlow() {
                     setFontPickerOpen(false);
                   }}
                 >
-                  <span className="font-option-sample" style={{ fontFamily: option.display }}>
+                  <span className="font-option-sample" style={{ fontFamily: option.script }}>
                     Amira &amp; Zayn
                   </span>
                   <span className="font-option-body" style={{ fontFamily: option.body }}>

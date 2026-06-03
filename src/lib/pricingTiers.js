@@ -5,9 +5,9 @@ export const PRICING_TIERS = [
     id: 'essential',
     name: 'Essential',
     badge: 'Simple & elegant',
-    price: '$29',
+    price: '$39',
     oldPrice: '$59',
-    amount: '29.00',
+    amount: '39.00',
     description: 'A polished invitation with the core details your guests need.',
     features: [
       'Any launch invitation design',
@@ -30,9 +30,9 @@ export const PRICING_TIERS = [
     id: 'signature',
     name: 'Signature',
     badge: 'Most popular',
-    price: '$59',
+    price: '$69',
     oldPrice: '$99',
-    amount: '59.00',
+    amount: '69.00',
     description: 'The complete guest-ready invitation with every interactive section.',
     featured: true,
     features: [

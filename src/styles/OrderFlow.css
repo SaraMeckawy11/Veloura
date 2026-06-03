@@ -23,7 +23,7 @@
 /* Progress bar */
 .order-progress {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 0;
   margin-bottom: 48px;
@@ -33,18 +33,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  width: 84px;
+  flex: 0 0 auto;
 }
 .progress-step span {
-  font-size: 0.75rem;
+  font-size: 0.76rem;
+  line-height: 1.3;
+  text-align: center;
   color: var(--text-light);
   font-weight: 500;
+  transition: color var(--transition);
 }
-.progress-step.active span { color: var(--gold); }
+.progress-step.current span { color: var(--gold); font-weight: 600; }
+.progress-step.completed span { color: var(--text-secondary); }
 
 .progress-dot {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: var(--white);
   border: 2px solid var(--border);
@@ -52,7 +58,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
   line-height: 1;
   font-feature-settings: 'tnum' 1, 'lnum' 1;
@@ -61,18 +67,32 @@
   transition: var(--transition);
 }
 
-.progress-step.active .progress-dot {
+/* Completed steps: filled gold with a check */
+.progress-step.completed .progress-dot {
   border-color: var(--gold);
   background: var(--gold);
   color: var(--white);
 }
+/* Current step: gold ring, emphasized */
+.progress-step.current .progress-dot {
+  border-color: var(--gold);
+  background: var(--white);
+  color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(184, 146, 74, 0.15);
+}
 
+/* Connector lines sit centred on the 38px dots (labels are below the dots) */
 .progress-line {
-  width: 80px;
+  flex: 1 1 auto;
+  max-width: 64px;
   height: 2px;
   background: var(--border);
-  margin: 0 8px;
-  margin-bottom: 24px;
+  margin: 19px -6px 0;
+  border-radius: 2px;
+  transition: background var(--transition);
+}
+.progress-line.filled {
+  background: var(--gold);
 }
 
 /* Error */
@@ -1347,8 +1367,8 @@
    renders responsively as it would on a phone, centered in the preview. */
 .invitation-preview-device {
   position: relative;
-  width: min(384px, 100%);
-  height: min(80vh, 800px);
+  width: min(390px, 100%);
+  height: min(80vh, 844px);
   border-radius: 26px;
   overflow: hidden;
   background: #fff;
@@ -1574,9 +1594,15 @@
 
 .font-option-sample {
   color: var(--text);
-  font-size: clamp(1.6rem, 4vw, 2.15rem);
-  font-weight: 600;
-  line-height: 1.05;
+  font-size: clamp(1.5rem, 3.4vw, 1.95rem);
+  font-weight: 500;
+  line-height: 1.3;
+  /* Script fonts have tall ascenders/descenders — give them room so the
+     calligraphy isn't clipped in the option card. */
+  padding-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .font-option-body {
@@ -1994,7 +2020,9 @@
   .form-grid--contact { grid-template-columns: 1fr; }
   .template-grid { grid-template-columns: 1fr 1fr; }
   .form-submit { flex-direction: column; text-align: center; }
-  .progress-line { width: 40px; }
+  .progress-step { width: 68px; }
+  .progress-step span { font-size: 0.68rem; }
+  .progress-line { max-width: 36px; }
   .review-grid { grid-template-columns: 1fr; }
   .review-section { padding: 18px 16px; }
   .protected-preview-card { grid-template-columns: 80px minmax(0, 1fr); }
