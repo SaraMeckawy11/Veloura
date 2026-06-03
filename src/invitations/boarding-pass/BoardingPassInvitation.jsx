@@ -387,6 +387,8 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
               )}
             </div>
 
+            <GuestNote lines={guestPolicyLines} className="inv-details-policy" />
+
             {(() => {
               if (!mapEnabled) return null;
               const embedSrc = buildMapEmbedUrl(wd.venueMapUrl, [venue, venueAddress].filter(Boolean).join(', '));
@@ -410,8 +412,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                 </div>
               );
             })()}
-
-            <GuestNote lines={guestPolicyLines} className="inv-details-policy" />
 
             {!isReferenceDemo && venuePhotos.length > 0 && (
               <div className="inv-venue-photos-wrap">
@@ -528,7 +528,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       )}
 
       {/* ========== GALLERY ========== */}
-      {isReferenceDemo && order.galleryImages?.length ? (
+      {invitationTierAllows(order, 'gallery') && isReferenceDemo && order.galleryImages?.length ? (
         <section className="inv-section-dark">
           <motion.h2
             className="inv-section-label text-gold"

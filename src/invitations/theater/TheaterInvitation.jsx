@@ -87,6 +87,8 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
     : '';
   const guestPolicyLines = getGuestPolicyLines(weddingDetails, disabledFields);
 
+  const storyAllowed = invitationTierAllows(order, 'story');
+  const galleryAllowed = invitationTierAllows(order, 'gallery');
   const tieredPhotos = getTieredInvitationPhotos(order);
   const storyPhotos = tieredPhotos.filter(photo => photo.label === 'story');
   const galleryPhotos = tieredPhotos.filter(photo => photo.label === 'gallery');
@@ -94,7 +96,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
     !photo.label || !['couple', 'story', 'gallery', 'venue'].includes(photo.label)
   ));
 
-  const storyImages = isReferenceDemo && order.storyImages?.length ? order.storyImages : storyPhotos;
+  const storyImages = storyAllowed && isReferenceDemo && order.storyImages?.length ? order.storyImages : storyPhotos;
   const storyMilestones = getTieredStoryMilestones(order);
   const storyItemCount = Math.min(4, Math.max(storyImages.length, storyMilestones.length));
   const storyItems = Array.from({ length: storyItemCount }, (_, index) => ({
@@ -103,7 +105,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   })).filter(item => item.image || item.date || item.title || item.description || item.body);
 
   const galleryImages = (
-    isReferenceDemo && order.galleryImages?.length
+    galleryAllowed && isReferenceDemo && order.galleryImages?.length
       ? order.galleryImages
       : [...galleryPhotos, ...uncategorizedPhotos]
   ).filter(byUniquePhoto);

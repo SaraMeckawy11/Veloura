@@ -350,13 +350,13 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                 </div>
               )}
             </dl>
+            <GuestNote lines={guestPolicyLines} className="fountain-details-policy" />
             {embedSrc && (
               <div className="fountain-map">
                 <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
                 <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
-            <GuestNote lines={guestPolicyLines} className="fountain-details-policy" />
           </motion.div>
 
         </div>
@@ -466,7 +466,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
         </>
       )}
 
-      {isReferenceDemo && order.galleryImages?.length ? (
+      {invitationTierAllows(order, 'gallery') && isReferenceDemo && order.galleryImages?.length ? (
         <GallerySection images={order.galleryImages} />
       ) : allGallery.length > 0 ? (
         <GallerySection images={allGallery} />

@@ -153,12 +153,16 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (value) => String(value).padStart(2, '0');
 
+  const storyAllowed = invitationTierAllows(order, 'story');
+  const galleryAllowed = invitationTierAllows(order, 'gallery');
   const orderPhotos = getTieredInvitationPhotos(order);
   const storyPhotos = orderPhotos.filter(photo => photo.label === 'story');
   const storyMilestones = getTieredStoryMilestones(order);
-  const storyCount = demo
-    ? Math.max(DEFAULT_STORY.length, storyMilestones.length, storyPhotos.length)
-    : Math.max(storyMilestones.length, storyPhotos.length);
+  const storyCount = !storyAllowed
+    ? 0
+    : demo
+      ? Math.max(DEFAULT_STORY.length, storyMilestones.length, storyPhotos.length)
+      : Math.max(storyMilestones.length, storyPhotos.length);
   const storyItems = Array.from({ length: storyCount }, (_, index) => {
     const item = storyMilestones[index] || {};
     const fallback = DEFAULT_STORY[index % DEFAULT_STORY.length];
@@ -181,7 +185,9 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       .filter(photo => photo.label === 'gallery' || !photo.label || !['couple', 'story', 'venue'].includes(photo.label))
       .filter(Boolean);
 
-  const gallerySources = order.galleryImages?.length ? order.galleryImages : galleryPhotos;
+  const gallerySources = !galleryAllowed
+    ? []
+    : order.galleryImages?.length ? order.galleryImages : galleryPhotos;
 
   const galleryItems = gallerySources.length
     ? gallerySources.map((src, index) => ({

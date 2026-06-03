@@ -329,13 +329,13 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                 </div>
               )}
             </dl>
+            <GuestNote lines={guestPolicyLines} className="coastal-details-policy" />
             {embedSrc && (
               <div className="coastal-map">
                 <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
                 <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
-            <GuestNote lines={guestPolicyLines} className="coastal-details-policy" />
           </motion.div>
 
           <motion.div
@@ -468,7 +468,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       </section>
       )}
 
-      {isReferenceDemo && order.galleryImages?.length ? (
+      {invitationTierAllows(order, 'gallery') && isReferenceDemo && order.galleryImages?.length ? (
         <GallerySection images={order.galleryImages} />
       ) : allGallery.length > 0 ? (
         <GallerySection images={allGallery} />
