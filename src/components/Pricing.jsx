@@ -45,7 +45,7 @@ export default function Pricing() {
           <span className="section-label">Pricing</span>
           <h2 className="section-title">Choose the invitation experience</h2>
           <p className="section-subtitle">
-            Three one-time plans, each matched to the sections your hosted wedding invitation will include.
+            Two one-time plans, each matched to the sections your hosted wedding invitation will include.
           </p>
         </div>
 
@@ -66,6 +66,17 @@ export default function Pricing() {
                 ))}
               </ul>
 
+              {tier.demoCards?.length > 0 && (
+                <div className="pricing-demo-box" aria-label={`${tier.name} invitation examples`}>
+                  {tier.demoCards.map(card => (
+                    <div className="pricing-demo-card" key={card.invitation}>
+                      <strong>{card.invitation}</strong>
+                      <span>{card.fields.join(' + ')}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="pricing-cta">
                 <Link to={`/order?tier=${tier.id}`} className="btn btn-gold pricing-cta-btn">
                   Choose {tier.name}
@@ -76,7 +87,7 @@ export default function Pricing() {
         </div>
         {pricingCatalog?.displayIsConverted && (
           <p className="pricing-currency-note">
-            Egyptian prices are displayed in EGP using the configured USD exchange rate. Secure checkout is processed in USD by PayPal.
+            Prices are shown in EGP for Egypt. Secure checkout is processed in USD by PayPal.
           </p>
         )}
       </div>

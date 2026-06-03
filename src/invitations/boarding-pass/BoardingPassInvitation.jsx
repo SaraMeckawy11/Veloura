@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLine, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -107,6 +107,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
+  const guestPolicyLine = getGuestPolicyLine(wd);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const flightNo = wd.flightNo || `WD-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const pad = (n) => n.toString().padStart(2, '0');
@@ -444,6 +445,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           <h3 className="inv-rsvp-title">Confirm Your Seat</h3>
           <div className="inv-gold-divider" style={{ marginBottom: 12 }} />
           <p className="inv-rsvp-subtitle">Reserve your place on this flight of love</p>
+          <p className="inv-rsvp-policy">{guestPolicyLine}</p>
 
           <AnimatePresence mode="wait">
             {!rsvpSubmitted ? (

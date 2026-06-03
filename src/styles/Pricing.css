@@ -4,10 +4,10 @@
 
 .pricing-wrapper {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   align-items: stretch;
-  max-width: 1040px;
+  max-width: 860px;
   margin: 0 auto;
 }
 
@@ -115,6 +115,37 @@
   color: var(--sage);
   font-weight: 700;
   line-height: 18px;
+}
+
+.pricing-demo-box {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  margin: 0 0 22px;
+  background: rgba(250, 247, 240, 0.78);
+  border: 1px solid rgba(184, 146, 74, 0.16);
+  border-radius: 12px;
+}
+
+.pricing-demo-card {
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+  background: var(--white);
+  border: 1px solid rgba(184, 146, 74, 0.16);
+  border-radius: 8px;
+}
+
+.pricing-demo-card strong {
+  color: var(--text);
+  font-size: 0.82rem;
+  line-height: 1.25;
+}
+
+.pricing-demo-card span {
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  line-height: 1.35;
 }
 
 .pricing-cta {

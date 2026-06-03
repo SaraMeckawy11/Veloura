@@ -5,8 +5,8 @@ export const PRICING_TIERS = [
     id: 'essential',
     name: 'Essential',
     badge: 'Simple & elegant',
-    price: '$39',
-    oldPrice: '$59',
+    price: 'EGP 2,070',
+    oldPrice: 'EGP 3,130',
     amount: '39.00',
     oldAmount: '59.00',
     description: 'A polished invitation with the core details your guests need.',
@@ -18,6 +18,10 @@ export const PRICING_TIERS = [
       'Google Maps location link',
       'Custom invitation font',
       'Private owner dashboard',
+    ],
+    demoCards: [
+      { invitation: 'Garden Pavilion', fields: ['Splash', 'Names', 'Date'] },
+      { invitation: 'Boarding Pass', fields: ['Venue', 'Map', 'Countdown'] },
     ],
     sections: {
       countdown: true,
@@ -32,8 +36,8 @@ export const PRICING_TIERS = [
     id: 'signature',
     name: 'Signature',
     badge: 'Most popular',
-    price: '$69',
-    oldPrice: '$99',
+    price: 'EGP 3,660',
+    oldPrice: 'EGP 5,250',
     amount: '69.00',
     oldAmount: '99.00',
     description: 'The best-value guest-ready invitation with the sections couples ask for most.',
@@ -46,6 +50,11 @@ export const PRICING_TIERS = [
       'RSVP section with guest tracking',
       'All interactive sections',
     ],
+    demoCards: [
+      { invitation: 'Fountain Reverie', fields: ['Story', 'Gallery', 'RSVP'] },
+      { invitation: 'Coastal Breeze', fields: ['Envelope note', 'Guest policy', 'Map'] },
+      { invitation: 'Theater', fields: ['Memories', 'Details', 'RSVP'] },
+    ],
     sections: {
       countdown: true,
       coupleMessage: true,
@@ -55,35 +64,10 @@ export const PRICING_TIERS = [
       music: false,
     },
   },
-  {
-    id: 'luxe',
-    name: 'Luxe',
-    badge: 'Premium',
-    price: '$99',
-    oldPrice: '$149',
-    amount: '99.00',
-    oldAmount: '149.00',
-    description: 'A fuller keepsake experience with music and premium finishing touches.',
-    features: [
-      'Everything in Signature',
-      'Background music upload',
-      'Expanded photo-led experience',
-      'Priority invitation polish',
-      'Premium keepsake presentation',
-      'Best for larger weddings',
-    ],
-    sections: {
-      countdown: true,
-      coupleMessage: true,
-      story: true,
-      gallery: true,
-      rsvp: true,
-      music: true,
-    },
-  },
 ];
 
 export function normalizePricingTier(value) {
+  if (value === 'luxe') return 'signature';
   return PRICING_TIERS.some(tier => tier.id === value) ? value : DEFAULT_PRICING_TIER;
 }
 

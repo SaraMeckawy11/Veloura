@@ -22,6 +22,8 @@ const orderSchema = new mongoose.Schema({
     venueAddress: { type: String },
     venueMapUrl:  { type: String },
     message:      { type: String },                       // custom message / invite text
+    childrenPolicy: { type: String, enum: ['welcome', 'adults-only'], default: 'welcome' },
+    plusOnePolicy: { type: String, enum: ['welcome', 'named-only'], default: 'named-only' },
     language:     { type: String, default: 'en' },
     secondLanguage: { type: String },                     // bilingual support
   },

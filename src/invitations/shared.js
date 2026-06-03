@@ -62,6 +62,26 @@ export function formatInvitationTime(value, preference = '12h') {
   return `${hours % 12 || 12}:${minutes} ${suffix}`;
 }
 
+export function getGuestPolicyLine(weddingDetails = {}) {
+  const childrenPolicy = weddingDetails.childrenPolicy || 'welcome';
+  const plusOnePolicy = weddingDetails.plusOnePolicy || 'named-only';
+  const lines = [];
+
+  lines.push(
+    childrenPolicy === 'adults-only'
+      ? 'We kindly ask for an adults-only celebration.'
+      : 'Children are welcome to join the celebration.'
+  );
+
+  lines.push(
+    plusOnePolicy === 'welcome'
+      ? 'Plus ones are warmly welcome.'
+      : 'Please RSVP only for the guests named on your invitation.'
+  );
+
+  return lines.join(' ');
+}
+
 function buildOptimizedImageUrl(src, transform) {
   if (!src || src.startsWith('data:') || src.startsWith('blob:') || !src.includes(CLOUDINARY_UPLOAD_SEGMENT)) {
     return src;

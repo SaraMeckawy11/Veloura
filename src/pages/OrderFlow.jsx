@@ -106,6 +106,23 @@ const PHOTO_FIT_OPTIONS = [
   { value: 'contain', label: 'Contain', hint: 'Keep most of the photo visible' },
 ];
 
+const GUEST_POLICY_OPTIONS = {
+  children: [
+    { value: 'welcome', label: 'Children welcome', text: 'Children are welcome to join the celebration.' },
+    { value: 'adults-only', label: 'Adults only', text: 'We kindly ask for an adults-only celebration.' },
+  ],
+  plusOne: [
+    { value: 'welcome', label: 'Plus ones welcome', text: 'Plus ones are warmly welcome.' },
+    { value: 'named-only', label: 'Named guests only', text: 'Please RSVP only for the guests named on your invitation.' },
+  ],
+};
+
+function getGuestPolicyText(weddingDetails = {}) {
+  const children = GUEST_POLICY_OPTIONS.children.find(option => option.value === weddingDetails.childrenPolicy);
+  const plusOne = GUEST_POLICY_OPTIONS.plusOne.find(option => option.value === weddingDetails.plusOnePolicy);
+  return [children?.text, plusOne?.text].filter(Boolean).join(' ');
+}
+
 // Which optional fields each invitation design actually renders. Fields that
 // a template does not display are hidden from the order form so the user is
 // never asked for details that won't appear on their invitation.
@@ -209,6 +226,8 @@ export default function OrderFlow() {
     venueMapUrl: '',
     message: '',
     coupleMessage: '',
+    childrenPolicy: 'welcome',
+    plusOnePolicy: 'named-only',
     invitationFont: DEFAULT_INVITATION_FONT,
     language: 'en',
     secondLanguage: '',
@@ -574,6 +593,8 @@ export default function OrderFlow() {
       venue: form.venue,
       venueMapUrl: optionalValue('venueMapUrl'),
       message: fieldEnabled('message') ? form.message.trim() : undefined,
+      childrenPolicy: rsvpIncluded ? form.childrenPolicy : undefined,
+      plusOnePolicy: rsvpIncluded ? form.plusOnePolicy : undefined,
       language: form.language,
       secondLanguage: optionalValue('secondLanguage'),
     },
@@ -789,6 +810,8 @@ export default function OrderFlow() {
             venue: form.venue,
             venueMapUrl: optionalValue('venueMapUrl'),
             message: fieldEnabled('message') ? form.message.trim() : undefined,
+            childrenPolicy: rsvpIncluded ? form.childrenPolicy : undefined,
+            plusOnePolicy: rsvpIncluded ? form.plusOnePolicy : undefined,
             language: form.language,
             secondLanguage: optionalValue('secondLanguage'),
           },
@@ -916,8 +939,17 @@ export default function OrderFlow() {
                     {tier.sections.story && <span>Our Story</span>}
                     {tier.sections.gallery && <span>Gallery</span>}
                     {tier.sections.rsvp && <span>RSVP</span>}
-                    {tier.sections.music && <span>Music</span>}
                   </span>
+                  {tier.demoCards?.length > 0 && (
+                    <span className="tier-choice-demos" aria-label={`${tier.name} examples`}>
+                      {tier.demoCards.map(card => (
+                        <span className="tier-choice-demo-card" key={card.invitation}>
+                          <strong>{card.invitation}</strong>
+                          <small>{card.fields.join(' + ')}</small>
+                        </span>
+                      ))}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -1143,7 +1175,34 @@ export default function OrderFlow() {
                       </div>
                       {!disabledFields.includes(field.key) && (
                         field.key === 'rsvp' ? (
-                          <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
+                          <div className="guest-policy-panel">
+                            <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
+                            <div className="guest-policy-grid">
+                              <label className="guest-policy-choice">
+                                <span>Children</span>
+                                <select
+                                  value={form.childrenPolicy}
+                                  onChange={e => handleInput('childrenPolicy', e.target.value)}
+                                >
+                                  {GUEST_POLICY_OPTIONS.children.map(option => (
+                                    <option key={option.value} value={option.value}>{option.label}</option>
+                                  ))}
+                                </select>
+                              </label>
+                              <label className="guest-policy-choice">
+                                <span>Plus ones</span>
+                                <select
+                                  value={form.plusOnePolicy}
+                                  onChange={e => handleInput('plusOnePolicy', e.target.value)}
+                                >
+                                  {GUEST_POLICY_OPTIONS.plusOne.map(option => (
+                                    <option key={option.value} value={option.value}>{option.label}</option>
+                                  ))}
+                                </select>
+                              </label>
+                            </div>
+                            <p className="guest-policy-preview">{getGuestPolicyText(form)}</p>
+                          </div>
                         ) : field.key === 'message' ? (
                           <>
                             <textarea
@@ -1219,7 +1278,7 @@ export default function OrderFlow() {
 
               {/* Our Story — each milestone has its own text fields + optional photo */}
               {storyIncluded && (
-              <fieldset className="form-section">
+              <fieldset className="form-section story-form-section">
                 <legend>Our Story</legend>
                 <p className="form-hint">Add milestones from your journey together — first date, proposal, and more. Each one appears on your invitation timeline.</p>
                 {uploadError && <p className="photo-error">{uploadError}</p>}
@@ -1408,8 +1467,8 @@ export default function OrderFlow() {
                     <span className="protected-preview-thumb-watermark">Preview</span>
                   </span>
                   <span className="protected-preview-copy">
-                    <strong>View protected invitation</strong>
-                    <span>Open a responsive preview before payment. It keeps the same mobile proportions guests will see, with light watermarking and clean-download actions disabled.</span>
+                    <strong>Preview invitation</strong>
+                    <span>Open the mobile guest view.</span>
                   </span>
                   <span className="protected-preview-action">
                     View
@@ -1435,6 +1494,12 @@ export default function OrderFlow() {
                   {form.weddingTime && fieldEnabled('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{formatOrderTime(form.weddingTime, form.timeFormat || '12h')}</span></div>}
                   <div className="review-item"><span className="review-label">Venue</span><span>{form.venue}</span></div>
                   <div className="review-item"><span className="review-label">Plan</span><span>{selectedTierConfig.name}</span></div>
+                  {rsvpIncluded && fieldEnabled('rsvp') && (
+                    <div className="review-item review-item--wide">
+                      <span className="review-label">Guest Policy</span>
+                      <span>{getGuestPolicyText(form)}</span>
+                    </div>
+                  )}
                   {form.coupleMessage && fieldEnabled('coupleMessage') && <div className="review-item review-item--wide"><span className="review-label">Envelope Message</span><span className="review-item-message">{form.coupleMessage}</span></div>}
                 </div>
               </div>
@@ -1646,8 +1711,7 @@ export default function OrderFlow() {
               </button>
               <div className="invitation-preview-heading">
                 <span className="invitation-preview-eyebrow">Protected preview</span>
-                <h2 id="invitation-preview-title">Review your invitation</h2>
-                <p>Responsive mobile preview with light protection until payment is complete.</p>
+                <h2 id="invitation-preview-title">Invitation Preview</h2>
               </div>
               <button
                 type="button"
@@ -1702,9 +1766,9 @@ export default function OrderFlow() {
             <div className="invitation-preview-footer">
               <span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                Preview-only access
+                Preview only
               </span>
-              <span>No clean download before payment</span>
+              <span>Watermarked until payment</span>
             </div>
           </div>
         </div>

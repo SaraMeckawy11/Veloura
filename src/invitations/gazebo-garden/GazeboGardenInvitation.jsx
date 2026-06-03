@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLine, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -147,6 +147,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
+  const guestPolicyLine = getGuestPolicyLine(wd);
   const heroDate = compactDateStr || fullDateStr;
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
@@ -408,6 +409,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       {rsvpEnabled && (
       <section id="rsvp" className="gazebo-section gazebo-rsvp-section">
         <SectionTitle eyebrow="Kindly reply" title="Reserve your place" />
+        <p className="gazebo-rsvp-policy">{guestPolicyLine}</p>
         <AnimatePresence mode="wait">
           {!rsvpSubmitted ? (
             <motion.form

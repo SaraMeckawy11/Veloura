@@ -29,23 +29,10 @@ export const PRICING_TIERS = [
       music: false,
     },
   },
-  {
-    id: 'luxe',
-    name: 'Luxe',
-    amount: '99.00',
-    oldAmount: '149.00',
-    sections: {
-      countdown: true,
-      coupleMessage: true,
-      story: true,
-      gallery: true,
-      rsvp: true,
-      music: true,
-    },
-  },
 ];
 
 export function normalizePricingTier(value) {
+  if (value === 'luxe') return 'signature';
   return PRICING_TIERS.some(tier => tier.id === value) ? value : DEFAULT_PRICING_TIER;
 }
 

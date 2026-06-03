@@ -1054,6 +1054,18 @@
   line-height: 1.2;
 }
 
+.coastal-rsvp-policy {
+  width: min(360px, 100%);
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  color: rgba(20, 53, 83, 0.78);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(31, 95, 143, 0.14);
+  border-radius: 8px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
 .coastal-rsvp-card {
   position: relative;
   padding: clamp(28px, 4.5vw, 48px);
