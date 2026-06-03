@@ -589,6 +589,12 @@ export default function OrderFlow() {
   const previewRegistryEntry = selectedTemplate ? registry[selectedTemplate.slug] : null;
   const PreviewInvitationComponent = previewRegistryEntry?.component;
   const selectedFontOption = getInvitationFontOption(form.invitationFont);
+  const goToStep = useCallback((nextStep) => {
+    setStep(nextStep);
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    });
+  }, []);
 
   useEffect(() => {
     if (!previewOpen) return undefined;
@@ -640,7 +646,7 @@ export default function OrderFlow() {
       setError('Your music is still uploading. Please wait a moment before reviewing your order.');
       return;
     }
-    setStep(4);
+    goToStep(4);
   };
 
   // Capture the order on the server after the buyer approves it in PayPal.
@@ -910,6 +916,7 @@ export default function OrderFlow() {
                     {tier.sections.story && <span>Our Story</span>}
                     {tier.sections.gallery && <span>Gallery</span>}
                     {tier.sections.rsvp && <span>RSVP</span>}
+                    {tier.sections.music && <span>Music</span>}
                   </span>
                 </button>
               ))}
@@ -919,7 +926,7 @@ export default function OrderFlow() {
               {paymentCurrencyNote && <p className="tier-currency-note">{paymentCurrencyNote}</p>}
               <button
                 className="btn btn-gold step-next"
-                onClick={() => setStep(2)}
+                onClick={() => goToStep(2)}
               >
                 Continue with {selectedTierConfig.name}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
@@ -931,7 +938,7 @@ export default function OrderFlow() {
         {/* Step 2: Select template */}
         {step === 2 && (
           <div className="step-content">
-            <button className="step-back-btn" onClick={() => setStep(1)}>
+            <button className="step-back-btn" onClick={() => goToStep(1)}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
               Change plan
             </button>
@@ -983,7 +990,7 @@ export default function OrderFlow() {
               <button
                 className="btn btn-gold step-next"
                 disabled={!selectedTemplate}
-                onClick={() => setStep(3)}
+                onClick={() => goToStep(3)}
               >
                 Continue with {selectedTemplate?.name || '...'}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
@@ -995,7 +1002,7 @@ export default function OrderFlow() {
         {/* Step 3: Fill form */}
         {step === 3 && (
           <div className="step-content">
-            <button className="step-back-btn" onClick={() => setStep(2)}>
+            <button className="step-back-btn" onClick={() => goToStep(2)}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
               Change template
             </button>
@@ -1367,7 +1374,7 @@ export default function OrderFlow() {
         {step === 4 && (
           <div className="step-content">
             {!paypalOrderData && (
-              <button className="step-back-btn" onClick={() => setStep(3)}>
+              <button className="step-back-btn" onClick={() => goToStep(3)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                 Back to Details
               </button>
@@ -1401,11 +1408,11 @@ export default function OrderFlow() {
                     <span className="protected-preview-thumb-watermark">Preview</span>
                   </span>
                   <span className="protected-preview-copy">
-                    <strong>View watermarked invitation</strong>
-                    <span>Review the generated website before payment. The unpaid preview is protected with visible watermarking and disabled clean-download interactions.</span>
+                    <strong>View protected invitation</strong>
+                    <span>Open a responsive preview before payment. It keeps the same mobile proportions guests will see, with light watermarking and clean-download actions disabled.</span>
                   </span>
                   <span className="protected-preview-action">
-                    Open Preview
+                    View
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
                   </span>
                 </button>
@@ -1640,7 +1647,7 @@ export default function OrderFlow() {
               <div className="invitation-preview-heading">
                 <span className="invitation-preview-eyebrow">Protected preview</span>
                 <h2 id="invitation-preview-title">Review your invitation</h2>
-                <p>Watermarking stays visible until payment is complete.</p>
+                <p>Responsive mobile preview with light protection until payment is complete.</p>
               </div>
               <button
                 type="button"
@@ -1653,6 +1660,10 @@ export default function OrderFlow() {
             </div>
 
             <div className="invitation-preview-shell">
+              <div className="invitation-preview-device-label" aria-hidden="true">
+                <span>Mobile guest view</span>
+                <span>390 x 844</span>
+              </div>
               <div
                 className="invitation-preview-device"
                 onContextMenu={(event) => event.preventDefault()}

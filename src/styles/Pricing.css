@@ -4,10 +4,10 @@
 
 .pricing-wrapper {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
   align-items: stretch;
-  max-width: 760px;
+  max-width: 1040px;
   margin: 0 auto;
 }
 
@@ -15,7 +15,7 @@
   background: var(--white);
   border: 1px solid rgba(184, 146, 74, 0.22);
   border-radius: var(--radius-lg);
-  padding: 32px 28px;
+  padding: 30px 24px;
   text-align: left;
   position: relative;
   box-shadow: var(--shadow-sm);

@@ -231,9 +231,9 @@
 
 .tier-choice-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-  max-width: 680px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 1040px;
   margin: 34px auto 10px;
 }
 
@@ -241,12 +241,12 @@
   border: 1px solid rgba(184, 146, 74, 0.24);
   background: rgba(255, 255, 255, 0.94);
   border-radius: 14px;
-  padding: 24px;
+  padding: 22px;
   text-align: left;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-height: 280px;
+  min-height: 304px;
   cursor: pointer;
   color: var(--text);
   box-shadow: 0 14px 36px rgba(51, 42, 30, 0.08);
@@ -262,6 +262,7 @@
 
 .tier-choice-card.featured {
   border-width: 2px;
+  box-shadow: 0 18px 48px rgba(184, 146, 74, 0.14);
 }
 
 .tier-choice-badge {
@@ -290,7 +291,7 @@
 
 .tier-choice-price {
   font-family: var(--font-display);
-  font-size: 2.35rem;
+  font-size: clamp(2rem, 3vw, 2.35rem);
   line-height: 1;
   color: var(--gold);
   font-weight: 750;
@@ -1179,14 +1180,16 @@
 .protected-preview-card {
   width: 100%;
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) auto;
-  gap: 16px;
+  grid-template-columns: 82px minmax(0, 1fr) auto;
+  gap: 15px;
   align-items: center;
   text-align: left;
-  padding: 14px;
-  background: linear-gradient(180deg, rgba(184, 146, 74, 0.06), rgba(255, 255, 255, 0.9));
-  border: 1px solid rgba(184, 146, 74, 0.22);
-  border-radius: 12px;
+  padding: 16px;
+  background:
+    linear-gradient(135deg, rgba(184, 146, 74, 0.08), rgba(255, 255, 255, 0.92)),
+    var(--white);
+  border: 1px solid rgba(184, 146, 74, 0.24);
+  border-radius: 14px;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -1199,12 +1202,13 @@
 
 .protected-preview-thumb {
   position: relative;
-  width: 96px;
-  aspect-ratio: 4 / 5;
+  width: 82px;
+  aspect-ratio: 390 / 844;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 13px;
   background: var(--bg-alt);
   border: 1px solid var(--border-light);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.72);
 }
 
 .protected-preview-thumb img {
@@ -1216,12 +1220,12 @@
 
 .protected-preview-thumb-watermark {
   position: absolute;
-  inset: auto -20px 28px -20px;
-  padding: 5px 0;
-  transform: rotate(-22deg);
-  background: rgba(255, 255, 255, 0.76);
-  color: rgba(45, 42, 38, 0.62);
-  font-size: 0.62rem;
+  inset: auto -24px 30px -24px;
+  padding: 4px 0;
+  transform: rotate(-24deg);
+  background: rgba(255, 255, 255, 0.58);
+  color: rgba(45, 42, 38, 0.48);
+  font-size: 0.56rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-align: center;
@@ -1251,8 +1255,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 42px;
-  padding: 0 16px;
+  min-height: 40px;
+  padding: 0 15px;
   border-radius: 999px;
   background: var(--white);
   border: 1px solid rgba(184, 146, 74, 0.3);
@@ -1275,8 +1279,8 @@
 }
 
 .invitation-preview-panel {
-  width: min(100%, 640px);
-  max-height: min(94vh, 920px);
+  width: min(100%, 720px);
+  max-height: min(96vh, 980px);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
@@ -1365,23 +1369,38 @@
 
 .invitation-preview-shell {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-rows: auto minmax(0, auto);
+  gap: 12px;
   justify-content: center;
-  align-items: center;
+  align-items: start;
   min-height: 0;
-  padding: 24px 20px;
+  overflow: auto;
+  padding: 20px;
   background:
     radial-gradient(120% 90% at 50% 0%, rgba(184, 146, 74, 0.10), transparent 60%),
     var(--bg-alt);
 }
 
-/* Phone-shaped device frame. Sized to a mobile aspect ratio so the invitation
-   renders responsively as it would on a phone, centered in the preview. */
+.invitation-preview-device-label {
+  width: min(390px, 100%);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-light);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Phone-shaped device frame. The aspect ratio is fixed so iframe viewport units
+   match a real mobile guest view instead of a cropped modal height. */
 .invitation-preview-device {
   position: relative;
   width: min(390px, 100%);
-  height: min(80vh, 844px);
-  max-height: 844px;
+  height: auto;
+  aspect-ratio: 390 / 844;
   border-radius: 26px;
   overflow: hidden;
   background: #fff;
@@ -1412,10 +1431,10 @@
   z-index: 20;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 40px 18px;
+  gap: 52px 20px;
   align-content: center;
   overflow: hidden;
-  opacity: 0.12;
+  opacity: 0.075;
   mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
 }
 
@@ -1425,10 +1444,10 @@
   justify-content: center;
   min-height: 40px;
   transform: rotate(-28deg);
-  color: rgba(72, 58, 32, 0.26);
-  border: 1px solid rgba(184, 146, 74, 0.12);
-  background: rgba(255, 255, 255, 0.14);
-  font-size: 0.66rem;
+  color: rgba(72, 58, 32, 0.22);
+  border: 1px solid rgba(184, 146, 74, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -1441,12 +1460,12 @@
   top: 50%;
   z-index: 21;
   transform: translate(-50%, -50%) rotate(-24deg);
-  padding: 12px 22px;
-  color: rgba(45, 42, 38, 0.1);
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(184, 146, 74, 0.08);
+  padding: 10px 18px;
+  color: rgba(45, 42, 38, 0.065);
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(184, 146, 74, 0.05);
   border-radius: 999px;
-  font-size: clamp(1rem, 4vw, 1.85rem);
+  font-size: clamp(0.9rem, 3.2vw, 1.45rem);
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -1986,6 +2005,7 @@
 @media (max-width: 900px) {
   .tier-choice-grid {
     grid-template-columns: minmax(0, 1fr);
+    max-width: 560px;
   }
 
   .tier-choice-card {
@@ -2075,7 +2095,6 @@
     border-radius: 14px;
   }
   .invitation-preview-shell { padding: 14px 12px; }
-  .invitation-preview-device { height: min(72vh, 720px); }
   .invitation-preview-footer {
     flex-direction: column;
     align-items: flex-start;

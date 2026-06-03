@@ -45,7 +45,7 @@ export default function Pricing() {
           <span className="section-label">Pricing</span>
           <h2 className="section-title">Choose the invitation experience</h2>
           <p className="section-subtitle">
-            Two one-time plans, each matched to the sections your hosted wedding invitation will include.
+            Three one-time plans, each matched to the sections your hosted wedding invitation will include.
           </p>
         </div>
 
