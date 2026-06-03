@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
 import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
+import GuestNote from '../GuestNote';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -334,11 +335,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                 <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
-            {guestPolicyLines.length > 0 && (
-              <div className="coastal-details-policy">
-                {guestPolicyLines.map(line => <p key={line}>{line}</p>)}
-              </div>
-            )}
+            <GuestNote lines={guestPolicyLines} className="coastal-details-policy" />
           </motion.div>
 
           <motion.div

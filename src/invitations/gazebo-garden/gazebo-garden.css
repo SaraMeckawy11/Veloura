@@ -593,18 +593,66 @@
 
 .gazebo-details-policy {
   grid-column: 1 / -1;
-  display: grid;
-  gap: 8px;
-  margin-top: 0.3rem;
-  padding: 12px 14px;
-  color: rgba(59, 72, 52, 0.78);
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid rgba(108, 135, 82, 0.18);
-  border-radius: 12px;
+  margin-top: 0.5rem;
+  padding: 18px 20px;
+  text-align: center;
+  color: rgba(59, 72, 52, 0.82);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(239, 248, 220, 0.72));
+  border: 1px solid rgba(108, 135, 82, 0.2);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(108, 135, 82, 0.08);
 }
 
-.gazebo-details-policy p {
-  margin: 0;
+.gazebo-details-policy .gp-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #6c8752;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.gazebo-details-policy .gp-kicker::before,
+.gazebo-details-policy .gp-kicker::after {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+.gazebo-details-policy .gp-list {
+  list-style: none;
+  margin: 12px auto 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  max-width: 26rem;
+}
+
+.gazebo-details-policy .gp-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+
+.gazebo-details-policy .gp-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  margin-top: 1px;
+  color: #6c8752;
+  background: rgba(108, 135, 82, 0.14);
+  border-radius: 50%;
+}
+
+.gazebo-details-policy .gp-text {
   font-size: 0.86rem;
   line-height: 1.55;
 }

@@ -113,7 +113,7 @@ const GUEST_POLICY_OPTIONS = {
   ],
   plusOne: [
     { value: 'welcome', label: 'Guests may bring someone', text: 'You are warmly welcome to bring a guest with you.' },
-    { value: 'named-only', label: 'Named guests only', text: 'We have reserved a place for the guests named on your invitation.' },
+    { value: 'named-only', label: 'Named guests only', text: 'To keep our celebration intimate, we kindly ask that only the guests named on your invitation join us.' },
   ],
 };
 
@@ -126,10 +126,10 @@ function getGuestPolicyText(weddingDetails = {}) {
 }
 
 function getFontCategory(option) {
-  if (option.script !== option.display) return 'Script';
-  if (option.body.includes('Arial') || option.body.includes('Inter') || option.body.includes('Montserrat') || option.body.includes('Nunito') || option.body.includes('Josefin')) {
-    return 'Modern';
-  }
+  // Calligraphy/handwriting styles list `cursive` as their generic fallback.
+  if (option.script.includes('cursive')) return 'Script';
+  // Otherwise classify by the heading face the couple actually sees.
+  if (/Inter|Montserrat|Nunito|Josefin/.test(option.display)) return 'Modern';
   return 'Serif';
 }
 
@@ -637,16 +637,33 @@ export default function OrderFlow() {
   const previewRegistryEntry = selectedTemplate ? registry[selectedTemplate.slug] : null;
   const PreviewInvitationComponent = previewRegistryEntry?.component;
   const selectedFontOption = getInvitationFontOption(form.invitationFont);
+  // Tracks how many forward steps we've pushed onto history since mount so the
+  // in-page back buttons can pop (history.back) instead of pushing — keeping
+  // the device/browser back button perfectly in sync with the visual steps.
+  const stepDepthRef = useRef(0);
   const goToStep = useCallback((nextStep) => {
     setStep(nextStep);
     // Push a history entry per step so the device/browser back button walks
     // back through the order flow instead of leaving for the home page.
+    stepDepthRef.current += 1;
     try {
       window.history.pushState({ orderStep: nextStep }, '');
     } catch { /* history unavailable */ }
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     });
+  }, []);
+
+  // In-page "back" controls: pop history so they behave identically to the
+  // device back button. Falls back to a plain step change if there is no
+  // earlier order entry to return to (e.g. a draft restored mid-flow).
+  const goBack = useCallback((fallbackStep) => {
+    if (stepDepthRef.current > 0) {
+      window.history.back();
+    } else {
+      setStep(fallbackStep);
+      requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }));
+    }
   }, []);
 
   // Keep the order step in sync with browser history. The current step is
@@ -659,6 +676,7 @@ export default function OrderFlow() {
     const onPopState = (event) => {
       const previousStep = event.state?.orderStep;
       if (previousStep) {
+        stepDepthRef.current = Math.max(0, stepDepthRef.current - 1);
         setStep(previousStep);
         requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
       }
@@ -1013,7 +1031,7 @@ export default function OrderFlow() {
         {/* Step 2: Select template */}
         {step === 2 && (
           <div className="step-content">
-            <button className="step-back-btn" onClick={() => goToStep(1)}>
+            <button className="step-back-btn" onClick={() => goBack(1)}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
               Change plan
             </button>
@@ -1077,7 +1095,7 @@ export default function OrderFlow() {
         {/* Step 3: Fill form */}
         {step === 3 && (
           <div className="step-content">
-            <button className="step-back-btn" onClick={() => goToStep(2)}>
+            <button className="step-back-btn" onClick={() => goBack(2)}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
               Change template
             </button>
@@ -1243,10 +1261,6 @@ export default function OrderFlow() {
                           placeholder="…or write your own note about bringing a guest."
                         />
                       </article>
-                    </div>
-                    <div className="guest-policy-live-preview">
-                      <span>How it reads on your invitation</span>
-                      <p>{getGuestPolicyText(form) || 'Your guest guidance will appear here.'}</p>
                     </div>
                     </>
                     )}
@@ -1518,7 +1532,7 @@ export default function OrderFlow() {
         {step === 4 && (
           <div className="step-content">
             {!paypalOrderData && (
-              <button className="step-back-btn" onClick={() => goToStep(3)}>
+              <button className="step-back-btn" onClick={() => goBack(3)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                 Back to Details
               </button>
@@ -1786,18 +1800,7 @@ export default function OrderFlow() {
         >
           <div className="invitation-preview-panel">
             <div className="invitation-preview-header">
-              <button
-                type="button"
-                className="invitation-preview-back"
-                onClick={() => setPreviewOpen(false)}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
-                Back
-              </button>
-              <div className="invitation-preview-heading">
-                <span className="invitation-preview-eyebrow">Protected preview</span>
-                <h2 id="invitation-preview-title">Invitation Preview</h2>
-              </div>
+              <h2 id="invitation-preview-title">Preview</h2>
               <button
                 type="button"
                 className="invitation-preview-close"
@@ -1809,10 +1812,6 @@ export default function OrderFlow() {
             </div>
 
             <div className="invitation-preview-shell">
-              <div className="invitation-preview-device-label" aria-hidden="true">
-                <span>Mobile guest view</span>
-                <span>390 x 844</span>
-              </div>
               <div
                 className="invitation-preview-device"
                 onContextMenu={(event) => event.preventDefault()}
@@ -1837,24 +1836,10 @@ export default function OrderFlow() {
                     <p>This design cannot be rendered in the order preview yet.</p>
                   </div>
                 )}
-                <div className="invitation-preview-watermark" aria-hidden="true">
-                  {Array.from({ length: 9 }, (_, index) => (
-                    <span key={index}>VELOURA PREVIEW</span>
-                  ))}
-                </div>
-                <div className="invitation-preview-center-mark" aria-hidden="true">
-                  VELOURA PREVIEW
-                </div>
               </div>
             </div>
 
-            <div className="invitation-preview-footer">
-              <span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-                Preview only
-              </span>
-              <span>Watermarked until payment</span>
-            </div>
+            <p className="invitation-preview-footer">This is exactly how your invitation will look. Final version is delivered after payment.</p>
           </div>
         </div>
       )}

@@ -19,6 +19,17 @@ const DEMO_PREVIEW_IMAGES = {
   'Boarding Pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=300&h=300&fit=crop&q=80',
 };
 
+// Maps the demo display name to its template slug so each square can open the
+// live demo (carrying the tier so the demo shows only that plan's sections).
+const DEMO_SLUGS = {
+  'Coastal Breeze': 'coastal-breeze',
+  'Fountain Reverie I': 'fountain-reverie-v1',
+  'Fountain Reverie II': 'fountain-reverie-v2',
+  'Garden Pavilion': 'gazebo-garden',
+  'Theater': 'theater',
+  'Boarding Pass': 'boarding-pass',
+};
+
 function getPricingQuery() {
   const params = new URLSearchParams();
   try {
@@ -30,7 +41,18 @@ function getPricingQuery() {
   return params.toString();
 }
 
-export default function Pricing() {
+// The sections each plan unlocks, shown as chips under the design squares so
+// buyers see exactly which fields a tier's invitations include.
+function getTierFieldChips(tier) {
+  const chips = ['Names, date & venue', 'Countdown', 'Map'];
+  if (tier.sections?.coupleMessage) chips.push('Envelope note');
+  if (tier.sections?.story) chips.push('Our Story');
+  if (tier.sections?.gallery) chips.push('Gallery');
+  if (tier.sections?.rsvp) chips.push('RSVP');
+  return chips;
+}
+
+export default function Pricing({ showCta = true }) {
   const headerRef = useReveal();
   const cardRef = useReveal();
   const [pricingCatalog, setPricingCatalog] = useState(null);
@@ -79,44 +101,45 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <div className="pricing-cta">
-                <Link to={`/order?tier=${tier.id}`} className="btn btn-gold pricing-cta-btn">
-                  Choose {tier.name}
-                </Link>
+              <div className="pricing-demos">
+                <span className="pricing-demos-label">Designs in this plan</span>
+                <div className="pricing-demos-grid">
+                  {tier.demoCards?.map(card => {
+                    const slug = DEMO_SLUGS[card.invitation];
+                    const href = slug ? `/demo/${slug}?tier=${tier.id}` : null;
+                    return (
+                      <Link
+                        to={href || '#'}
+                        className="pricing-demo-sq"
+                        key={card.invitation}
+                        title={`Preview ${card.invitation} (${tier.name})`}
+                        aria-label={`Preview the ${card.invitation} design in the ${tier.name} plan`}
+                      >
+                        {DEMO_PREVIEW_IMAGES[card.invitation] ? (
+                          <img src={DEMO_PREVIEW_IMAGES[card.invitation]} alt={`${card.invitation} invitation preview`} loading="lazy" />
+                        ) : (
+                          <span className="pricing-demo-sq-initial" aria-hidden="true">{card.invitation.charAt(0)}</span>
+                        )}
+                        <span className="pricing-demo-sq-name">{card.invitation}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+                <ul className="pricing-demos-fields" aria-label={`Fields included in ${tier.name}`}>
+                  {getTierFieldChips(tier).map(field => (
+                    <li key={field}>{field}</li>
+                  ))}
+                </ul>
               </div>
-            </article>
-          ))}
-        </div>
 
-        <div className="pricing-demo-showcase reveal" aria-label="Invitation demos by plan">
-          {tiers.map(tier => (
-            <section className="pricing-demo-tier" key={`${tier.id}-demos`}>
-              <div className="pricing-demo-tier-header">
-                <span>{tier.name}</span>
-                <strong>Included invitation demos</strong>
-              </div>
-              <div className="pricing-demo-row">
-                {tier.demoCards?.map(card => (
-                  <article className="pricing-demo-card" key={card.invitation}>
-                    <div className="pricing-demo-thumb">
-                      {DEMO_PREVIEW_IMAGES[card.invitation] ? (
-                        <img src={DEMO_PREVIEW_IMAGES[card.invitation]} alt={`${card.invitation} invitation preview`} loading="lazy" />
-                      ) : (
-                        <span aria-hidden="true">{card.invitation.charAt(0)}</span>
-                      )}
-                    </div>
-                    <div className="pricing-demo-card-body">
-                      <strong>{card.invitation}</strong>
-                      <ul className="pricing-demo-fields">
-                        {card.fields.map(field => (
-                          <li key={field}>{field}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
+              {showCta && (
+                <div className="pricing-cta">
+                  <Link to={`/order?tier=${tier.id}`} className="btn btn-gold pricing-cta-btn">
+                    Choose {tier.name}
+                  </Link>
+                </div>
+              )}
+            </article>
           ))}
         </div>
         {pricingCatalog?.displayIsConverted && (

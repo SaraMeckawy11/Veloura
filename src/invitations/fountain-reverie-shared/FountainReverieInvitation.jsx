@@ -5,6 +5,7 @@ import FountainSplash from './FountainSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
 import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
+import GuestNote from '../GuestNote';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -355,11 +356,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                 <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
-            {guestPolicyLines.length > 0 && (
-              <div className="fountain-details-policy">
-                {guestPolicyLines.map(line => <p key={line}>{line}</p>)}
-              </div>
-            )}
+            <GuestNote lines={guestPolicyLines} className="fountain-details-policy" />
           </motion.div>
 
         </div>

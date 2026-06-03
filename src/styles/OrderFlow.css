@@ -1505,66 +1505,29 @@
 .invitation-preview-header {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 18px;
+  justify-content: center;
+  position: relative;
+  padding: 14px 18px;
   border-bottom: 1px solid var(--border-light);
-}
-
-.invitation-preview-heading {
-  flex: 1;
-  min-width: 0;
-}
-
-.invitation-preview-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex: 0 0 auto;
-  align-self: flex-start;
-  padding: 8px 14px 8px 11px;
-  color: var(--text-secondary);
-  background: var(--bg-alt);
-  border: 1px solid var(--border-light);
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: var(--transition);
-}
-
-.invitation-preview-back:hover {
-  color: var(--gold);
-  border-color: rgba(184, 146, 74, 0.4);
-}
-
-.invitation-preview-eyebrow {
-  display: inline-block;
-  margin-bottom: 3px;
-  color: var(--gold);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .invitation-preview-header h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.22rem;
+  font-size: 1.1rem;
   line-height: 1.15;
   font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--text);
 }
 
-.invitation-preview-header p {
-  margin: 4px 0 0;
-  color: var(--text-secondary);
-  font-size: 0.86rem;
-}
-
 .invitation-preview-close {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 auto;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1582,43 +1545,27 @@
 
 .invitation-preview-shell {
   position: relative;
-  display: grid;
-  grid-template-rows: auto minmax(0, auto);
-  gap: 12px;
+  display: flex;
   justify-content: center;
-  align-items: start;
+  align-items: flex-start;
   min-height: 0;
   overflow: auto;
-  padding: 20px;
-  background:
-    radial-gradient(120% 90% at 50% 0%, rgba(184, 146, 74, 0.10), transparent 60%),
-    var(--bg-alt);
-}
-
-.invitation-preview-device-label {
-  width: min(390px, 100%);
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--text-light);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  padding: 22px 20px;
+  background: var(--bg-alt);
 }
 
 /* Phone-shaped device frame. The aspect ratio is fixed so iframe viewport units
    match a real mobile guest view instead of a cropped modal height. */
 .invitation-preview-device {
   position: relative;
-  width: min(390px, 100%);
+  width: min(380px, 100%);
   height: auto;
   aspect-ratio: 390 / 844;
-  border-radius: 26px;
+  border-radius: 28px;
   overflow: hidden;
   background: #fff;
-  border: 1px solid rgba(45, 42, 38, 0.14);
-  box-shadow: 0 22px 60px rgba(45, 42, 38, 0.26);
+  border: 6px solid #1c1a17;
+  box-shadow: 0 26px 64px rgba(45, 42, 38, 0.28);
   user-select: none;
   -webkit-user-select: none;
 }
@@ -1635,54 +1582,6 @@
 .invitation-preview-device img,
 .invitation-preview-device video {
   -webkit-user-drag: none;
-}
-
-.invitation-preview-watermark {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 52px 20px;
-  align-content: center;
-  overflow: hidden;
-  opacity: 0.075;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
-}
-
-.invitation-preview-watermark span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  transform: rotate(-28deg);
-  color: rgba(72, 58, 32, 0.22);
-  border: 1px solid rgba(184, 146, 74, 0.08);
-  background: rgba(255, 255, 255, 0.08);
-  font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.invitation-preview-center-mark {
-  pointer-events: none;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 21;
-  transform: translate(-50%, -50%) rotate(-24deg);
-  padding: 10px 18px;
-  color: rgba(45, 42, 38, 0.065);
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(184, 146, 74, 0.05);
-  border-radius: 999px;
-  font-size: clamp(0.9rem, 3.2vw, 1.45rem);
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 
 .invitation-preview-loading,
@@ -1709,20 +1608,13 @@
 }
 
 .invitation-preview-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px 22px;
+  margin: 0;
+  padding: 13px 22px;
   border-top: 1px solid var(--border-light);
   color: var(--text-light);
-  font-size: 0.78rem;
-}
-
-.invitation-preview-footer span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .font-picker-modal {
@@ -2498,11 +2390,7 @@
     max-height: 94vh;
     border-radius: 14px;
   }
-  .invitation-preview-shell { padding: 14px 12px; }
-  .invitation-preview-footer {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  .invitation-preview-shell { padding: 16px 12px; }
   .music-upload-card { grid-template-columns: 44px minmax(0, 1fr); }
   .music-upload-actions {
     grid-column: 1 / -1;

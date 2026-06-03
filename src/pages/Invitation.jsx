@@ -1,6 +1,7 @@
 import { useEffect, useState, Suspense } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import registry from '../invitations/registry';
+import { normalizePricingTier } from '../lib/pricingTiers';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -10,6 +11,7 @@ const API = import.meta.env.VITE_API_URL || '/api';
  */
 export default function Invitation({ demo = false, templateSlug: demoSlug }) {
   const { publicSlug } = useParams();
+  const [searchParams] = useSearchParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -23,8 +25,11 @@ export default function Invitation({ demo = false, templateSlug: demoSlug }) {
         setLoading(false);
         return;
       }
+      // A ?tier= param (from the pricing squares) scopes the demo to that
+      // plan's sections so each preview reflects what the tier actually includes.
+      const tierParam = searchParams.get('tier');
       entry.demoData().then(data => {
-        setOrder(data);
+        setOrder(tierParam ? { ...data, pricingTier: normalizePricingTier(tierParam) } : data);
         setTemplateSlug(demoSlug);
         setLoading(false);
       });
@@ -41,7 +46,7 @@ export default function Invitation({ demo = false, templateSlug: demoSlug }) {
         setLoading(false);
       })
       .catch(() => { setError('Invitation not found'); setLoading(false); });
-  }, [publicSlug, demo, demoSlug]);
+  }, [publicSlug, demo, demoSlug, searchParams]);
 
   if (loading) {
     return (

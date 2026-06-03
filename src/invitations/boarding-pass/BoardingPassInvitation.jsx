@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
+import GuestNote from '../GuestNote';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -410,11 +411,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
               );
             })()}
 
-            {guestPolicyLines.length > 0 && (
-              <div className="inv-details-policy">
-                {guestPolicyLines.map(line => <p key={line}>{line}</p>)}
-              </div>
-            )}
+            <GuestNote lines={guestPolicyLines} className="inv-details-policy" />
 
             {!isReferenceDemo && venuePhotos.length > 0 && (
               <div className="inv-venue-photos-wrap">

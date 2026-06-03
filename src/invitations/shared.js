@@ -75,7 +75,7 @@ export function getGuestPolicyLines(weddingDetails = {}, disabledFields = []) {
   const plusOneText = weddingDetails.plusOnePolicyText?.trim()
     || (plusOnePolicy === 'welcome'
       ? 'You are warmly welcome to bring a guest with you.'
-      : 'We have reserved a place for the guests named on your invitation.');
+      : 'To keep our celebration intimate, we kindly ask that only the guests named on your invitation join us.');
 
   return [childrenText, plusOneText].filter(Boolean);
 }

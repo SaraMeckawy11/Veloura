@@ -16,7 +16,7 @@ export default function Home() {
       <FeaturesBar />
       <Designs />
       <HowItWorks />
-      <Pricing />
+      <Pricing showCta={false} />
       <FAQ />
       <Contact />
       <Footer />

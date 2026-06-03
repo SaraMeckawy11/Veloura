@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
+import GuestNote from '../GuestNote';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -387,11 +388,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               <DetailItem label="Venue" value={venue || 'Garden venue'} />
               {venueAddress && <DetailItem label="Address" value={venueAddress} />}
             </div>
-            {guestPolicyLines.length > 0 && (
-              <div className="gazebo-details-policy">
-                {guestPolicyLines.map(line => <p key={line}>{line}</p>)}
-              </div>
-            )}
+            <GuestNote lines={guestPolicyLines} className="gazebo-details-policy" />
 
             {embedSrc && (
               <a className="gazebo-map-frame" href={openMapHref} target="_blank" rel="noreferrer" aria-label="Open location map">

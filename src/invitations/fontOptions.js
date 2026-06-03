@@ -1,6 +1,8 @@
 export const DEFAULT_INVITATION_FONT = 'classic';
 
-export const INVITATION_FONT_OPTIONS = [
+// Every font definition ever offered. Kept complete so any value stored on an
+// existing order still resolves, even if it's no longer shown in the picker.
+const ALL_FONT_DEFS = [
   {
     value: 'classic',
     label: 'Classic Editorial',
@@ -203,15 +205,42 @@ export const INVITATION_FONT_OPTIONS = [
   },
 ];
 
+// Curated picker list — a deliberately varied set (distinct serifs, sans, and
+// several visually different scripts) so the choices don't all look alike. The
+// demo's original font ('classic') is first so it appears as the default pick.
+// Resolution still falls back to ALL_FONT_DEFS, so removed styles keep working.
+const FONT_PICKER_ORDER = [
+  'classic',        // demo original — refined Playfair serif
+  'heirloom',       // classic Garamond book serif
+  'couture',        // high-contrast Bodoni fashion serif
+  'regal',          // Cinzel Roman capitals
+  'estate',         // thin elegant Prata serif
+  'monogram',       // bold DM Serif Display
+  'artful-serif',   // expressive Fraunces serif
+  'marquee',        // Marcellus cinematic serif
+  'modern',         // clean Inter sans
+  'contemporary',   // geometric Montserrat sans
+  'modern-luxe',    // tall Josefin Sans
+  'romantic',       // flowing Great Vibes script
+  'enchanted',      // delicate Parisienne script
+  'formal-script',  // formal Pinyon calligraphy
+  'whimsical',      // casual Sacramento hand
+  'timeless',       // bouncy Dancing Script
+];
+
+export const INVITATION_FONT_OPTIONS = FONT_PICKER_ORDER
+  .map(value => ALL_FONT_DEFS.find(option => option.value === value))
+  .filter(Boolean);
+
 export function normalizeInvitationFont(value) {
-  return INVITATION_FONT_OPTIONS.some(option => option.value === value)
+  return ALL_FONT_DEFS.some(option => option.value === value)
     ? value
     : DEFAULT_INVITATION_FONT;
 }
 
 export function getInvitationFontOption(value) {
   const normalized = normalizeInvitationFont(value);
-  return INVITATION_FONT_OPTIONS.find(option => option.value === normalized) || INVITATION_FONT_OPTIONS[0];
+  return ALL_FONT_DEFS.find(option => option.value === normalized) || ALL_FONT_DEFS[0];
 }
 
 export function readInvitationFont(order) {
