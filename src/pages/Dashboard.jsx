@@ -134,6 +134,10 @@ export default function Dashboard() {
       venue: wd.venue || '',
       venueMapUrl: wd.venueMapUrl || '',
       coupleMessage: order.coupleMessage || '',
+      childrenPolicy: wd.childrenPolicy || 'welcome',
+      plusOnePolicy: wd.plusOnePolicy || 'named-only',
+      childrenPolicyText: wd.childrenPolicyText || '',
+      plusOnePolicyText: wd.plusOnePolicyText || '',
       invitationFont: normalizeInvitationFont(invitationFont || DEFAULT_INVITATION_FONT),
     });
     setEditDisabledFields([
@@ -389,6 +393,10 @@ export default function Dashboard() {
         timeFormat: editForm.timeFormat || '12h',
         venue: editForm.venue,
         venueMapUrl: editForm.venueMapUrl || undefined,
+        childrenPolicy: editForm.childrenPolicy || 'welcome',
+        plusOnePolicy: editForm.plusOnePolicy || 'named-only',
+        childrenPolicyText: editForm.childrenPolicyText?.trim() || undefined,
+        plusOnePolicyText: editForm.plusOnePolicyText?.trim() || undefined,
       };
       // Include name fields if they were editable (grace period)
       if (nameEditable) {
@@ -679,6 +687,38 @@ export default function Dashboard() {
                     <input type="url" value={editForm.venueMapUrl} onChange={e => handleEditInput('venueMapUrl', e.target.value)} />
                   )}
                 </div>
+                <div className={`form-field full-width ${isFieldDisabled('guestPolicy') ? 'field-disabled' : ''}`}>
+                  <div className="dash-field-header">
+                    <label>Guest Guidance</label>
+                    <button type="button" className="dash-field-toggle" onClick={() => toggleEditField('guestPolicy')}>
+                      {isFieldDisabled('guestPolicy') ? 'Enable' : 'Disable'}
+                    </button>
+                  </div>
+                  {isFieldDisabled('guestPolicy') ? (
+                    <p className="form-hint">Hidden — guests won’t see any children or guest note on your invitation.</p>
+                  ) : (
+                    <div className="dash-guest-policy-grid">
+                      <div className="dash-guest-policy-card">
+                        <span className="dash-guest-policy-label">Children</span>
+                        <textarea
+                          rows={2}
+                          value={editForm.childrenPolicyText}
+                          placeholder="e.g. Little ones are warmly welcome to share in the celebration."
+                          onChange={e => handleEditInput('childrenPolicyText', e.target.value)}
+                        />
+                      </div>
+                      <div className="dash-guest-policy-card">
+                        <span className="dash-guest-policy-label">Bringing a guest</span>
+                        <textarea
+                          rows={2}
+                          value={editForm.plusOnePolicyText}
+                          placeholder="e.g. You are warmly welcome to bring a guest with you."
+                          onChange={e => handleEditInput('plusOnePolicyText', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <div className="form-field full-width">
                   <label>Invitation Font</label>
                   <button
@@ -882,10 +922,6 @@ export default function Dashboard() {
             <div className="stat-value">{rsvpData?.summary?.totalResponses || 0}</div>
             <div className="stat-label">Total Responses</div>
           </div>
-          <div className="stat-card stat-guests">
-            <div className="stat-value">{rsvpData?.summary?.totalGuests || 0}</div>
-            <div className="stat-label">Total Guests</div>
-          </div>
         </div>
 
         {/* Wedding details */}
@@ -959,7 +995,6 @@ export default function Dashboard() {
                   <tr>
                     <th>Guest Name</th>
                     <th>Status</th>
-                    <th>Guests</th>
                     <th>Date</th>
                   </tr>
                 </thead>
@@ -975,7 +1010,6 @@ export default function Dashboard() {
                           {r.attending === 'yes' ? 'Attending' : r.attending === 'no' ? 'Not Attending' : 'Maybe'}
                         </span>
                       </td>
-                      <td>{r.guestCount}</td>
                       <td className="rsvp-date">{new Date(r.respondedAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
@@ -1045,6 +1079,21 @@ export default function Dashboard() {
               </div>
               <button type="button" className="font-picker-close" onClick={() => setFontPickerOpen(false)} aria-label="Close font picker">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+            <div className="font-picker-current">
+              <div className="font-picker-current-copy">
+                <span className="font-picker-current-label">Selected</span>
+                <strong style={{ fontFamily: selectedFontOption.script }}>{selectedFontOption.label}</strong>
+              </div>
+              <button
+                type="button"
+                className="font-picker-reset"
+                disabled={normalizeInvitationFont(editForm.invitationFont) === DEFAULT_INVITATION_FONT}
+                onClick={() => handleEditInput('invitationFont', DEFAULT_INVITATION_FONT)}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+                Revert to original
               </button>
             </div>
             <div className="font-option-grid">

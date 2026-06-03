@@ -112,8 +112,8 @@ const GUEST_POLICY_OPTIONS = {
     { value: 'adults-only', label: 'Adults only', text: 'With love, we kindly request an adults-only celebration.' },
   ],
   plusOne: [
-    { value: 'welcome', label: 'Plus ones welcome', text: 'We would be delighted to welcome your invited plus one.' },
-    { value: 'named-only', label: 'Named guests only', text: 'We kindly ask that RSVPs include only the guests named on the invitation.' },
+    { value: 'welcome', label: 'Guests may bring someone', text: 'You are warmly welcome to bring a guest with you.' },
+    { value: 'named-only', label: 'Named guests only', text: 'We have reserved a place for the guests named on your invitation.' },
   ],
 };
 
@@ -203,11 +203,16 @@ const LANGUAGE_OPTIONS = [
 
 export default function OrderFlow() {
   const draft = useRef(loadDraft()).current;
+  // A `tier` query param means the buyer just chose a plan on the home/pricing
+  // page — that explicit choice must win over any saved draft tier and land
+  // them on step 1 so they can see the plan they picked already selected.
+  const urlTierParam = new URLSearchParams(window.location.search).get('tier');
+  const hasUrlTier = Boolean(urlTierParam && normalizePricingTier(urlTierParam) === urlTierParam);
   const initialTier = normalizePricingTier(
-    draft?.selectedTier || new URLSearchParams(window.location.search).get('tier') || DEFAULT_PRICING_TIER
+    urlTierParam || draft?.selectedTier || DEFAULT_PRICING_TIER
   );
 
-  const [step, setStep] = useState(draft?.step || 1);
+  const [step, setStep] = useState(hasUrlTier ? 1 : (draft?.step || 1));
   const [selectedTier, setSelectedTier] = useState(initialTier);
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(draft?.selectedTemplate || null);
@@ -634,9 +639,33 @@ export default function OrderFlow() {
   const selectedFontOption = getInvitationFontOption(form.invitationFont);
   const goToStep = useCallback((nextStep) => {
     setStep(nextStep);
+    // Push a history entry per step so the device/browser back button walks
+    // back through the order flow instead of leaving for the home page.
+    try {
+      window.history.pushState({ orderStep: nextStep }, '');
+    } catch { /* history unavailable */ }
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     });
+  }, []);
+
+  // Keep the order step in sync with browser history. The current step is
+  // seeded into history on mount; the device back button then restores the
+  // previous step rather than discarding the whole order flow.
+  useEffect(() => {
+    try {
+      window.history.replaceState({ orderStep: step }, '');
+    } catch { /* history unavailable */ }
+    const onPopState = (event) => {
+      const previousStep = event.state?.orderStep;
+      if (previousStep) {
+        setStep(previousStep);
+        requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -1153,48 +1182,74 @@ export default function OrderFlow() {
                       <p className="form-hint message-hint form-hint-disabled">The map will be hidden from your invitation.</p>
                     )}
                   </div>
-                  <div className="guest-policy-editor form-field--wide">
+                  <div className={`guest-policy-editor form-field--wide ${disabledFields.includes('guestPolicy') ? 'guest-policy-editor--off' : ''}`}>
                     <div className="guest-policy-editor-header">
                       <div>
                         <span className="guest-policy-kicker">Guest guidance</span>
-                        <h3>Children &amp; Plus-One Wording</h3>
+                        <h3>Children &amp; Guest Wording</h3>
+                        <p>A short, polite note telling guests who is invited. Shown in your invitation details.</p>
                       </div>
-                      <p>This appears in the invitation details for every plan.</p>
+                      <button
+                        type="button"
+                        className={`guest-policy-switch ${disabledFields.includes('guestPolicy') ? 'is-off' : 'is-on'}`}
+                        role="switch"
+                        aria-checked={!disabledFields.includes('guestPolicy')}
+                        onClick={() => toggleField('guestPolicy')}
+                      >
+                        <span className="guest-policy-switch-track"><span className="guest-policy-switch-thumb" /></span>
+                        {disabledFields.includes('guestPolicy') ? 'Off' : 'On'}
+                      </button>
                     </div>
+                    {disabledFields.includes('guestPolicy') ? (
+                      <p className="form-hint message-hint form-hint-disabled">Guest guidance is hidden — guests won’t see any children or plus-one note on your invitation.</p>
+                    ) : (
+                    <>
                     <div className="guest-policy-card-grid">
                       <article className="guest-policy-card">
                         <div className="guest-policy-card-head">
                           <span>Children</span>
-                          <button type="button" onClick={() => setPolicyPickerOpen('children')}>
-                            Choose wording
-                          </button>
                         </div>
+                        <button
+                          type="button"
+                          className="guest-policy-choose"
+                          onClick={() => setPolicyPickerOpen('children')}
+                        >
+                          Tap to choose suggested wording
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
+                        </button>
                         <textarea
                           rows={2}
                           value={form.childrenPolicyText}
                           onChange={e => handleInput('childrenPolicyText', e.target.value)}
-                          placeholder="Write the children guidance guests should see."
+                          placeholder="…or write your own note about children."
                         />
                       </article>
                       <article className="guest-policy-card">
                         <div className="guest-policy-card-head">
-                          <span>Plus ones</span>
-                          <button type="button" onClick={() => setPolicyPickerOpen('plusOne')}>
-                            Choose wording
-                          </button>
+                          <span>Bringing a guest</span>
                         </div>
+                        <button
+                          type="button"
+                          className="guest-policy-choose"
+                          onClick={() => setPolicyPickerOpen('plusOne')}
+                        >
+                          Tap to choose suggested wording
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
+                        </button>
                         <textarea
                           rows={2}
                           value={form.plusOnePolicyText}
                           onChange={e => handleInput('plusOnePolicyText', e.target.value)}
-                          placeholder="Write the plus-one guidance guests should see."
+                          placeholder="…or write your own note about bringing a guest."
                         />
                       </article>
                     </div>
                     <div className="guest-policy-live-preview">
-                      <span>Invitation preview text</span>
-                      <p>{getGuestPolicyText(form)}</p>
+                      <span>How it reads on your invitation</span>
+                      <p>{getGuestPolicyText(form) || 'Your guest guidance will appear here.'}</p>
                     </div>
+                    </>
+                    )}
                   </div>
                 </div>
               </fieldset>
@@ -1876,9 +1931,20 @@ export default function OrderFlow() {
             </div>
 
             <div className="font-picker-current">
-              <span className="font-picker-current-label">Selected</span>
-              <strong style={{ fontFamily: selectedFontOption.script }}>Amira &amp; Zayn</strong>
-              <span style={{ fontFamily: selectedFontOption.body }}>{selectedFontOption.label}</span>
+              <div className="font-picker-current-copy">
+                <span className="font-picker-current-label">Selected</span>
+                <strong style={{ fontFamily: selectedFontOption.script }}>Amira &amp; Zayn</strong>
+                <span style={{ fontFamily: selectedFontOption.body }}>{selectedFontOption.label}</span>
+              </div>
+              <button
+                type="button"
+                className="font-picker-reset"
+                disabled={normalizeInvitationFont(form.invitationFont) === DEFAULT_INVITATION_FONT}
+                onClick={() => handleInput('invitationFont', DEFAULT_INVITATION_FONT)}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+                Revert to original
+              </button>
             </div>
 
             <div className="font-option-grid">

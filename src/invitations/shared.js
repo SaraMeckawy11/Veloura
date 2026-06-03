@@ -62,7 +62,10 @@ export function formatInvitationTime(value, preference = '12h') {
   return `${hours % 12 || 12}:${minutes} ${suffix}`;
 }
 
-export function getGuestPolicyLines(weddingDetails = {}) {
+export function getGuestPolicyLines(weddingDetails = {}, disabledFields = []) {
+  // The couple can hide the whole guest-guidance block from the order form
+  // or dashboard via the "guestPolicy" disable toggle.
+  if (Array.isArray(disabledFields) && disabledFields.includes('guestPolicy')) return [];
   const childrenPolicy = weddingDetails.childrenPolicy || 'welcome';
   const plusOnePolicy = weddingDetails.plusOnePolicy || 'named-only';
   const childrenText = weddingDetails.childrenPolicyText?.trim()
@@ -71,8 +74,8 @@ export function getGuestPolicyLines(weddingDetails = {}) {
       : 'Little ones are warmly welcome to share in the celebration.');
   const plusOneText = weddingDetails.plusOnePolicyText?.trim()
     || (plusOnePolicy === 'welcome'
-      ? 'We would be delighted to welcome your invited plus one.'
-      : 'We kindly ask that RSVPs include only the guests named on the invitation.');
+      ? 'You are warmly welcome to bring a guest with you.'
+      : 'We have reserved a place for the guests named on your invitation.');
 
   return [childrenText, plusOneText].filter(Boolean);
 }

@@ -3,8 +3,21 @@ import { Link } from 'react-router-dom';
 import { PRICING_TIERS } from '../lib/pricingTiers';
 import '../styles/Pricing.css';
 import useReveal from '../hooks/useReveal';
+import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
+import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
+
+// Small demo thumbnails keyed by the invitation display name used in
+// PRICING_TIERS.demoCards, so each plan can show the real design preview.
+const DEMO_PREVIEW_IMAGES = {
+  'Coastal Breeze': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&h=300&fit=crop&q=80',
+  'Fountain Reverie I': fountainHero1Preview,
+  'Fountain Reverie II': fountainHero2Preview,
+  'Garden Pavilion': '/assets/gazebo-watercolor-poster1.jpg',
+  'Theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=300&h=300&fit=crop&q=80',
+  'Boarding Pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=300&h=300&fit=crop&q=80',
+};
 
 function getPricingQuery() {
   const params = new URLSearchParams();
@@ -85,8 +98,21 @@ export default function Pricing() {
               <div className="pricing-demo-row">
                 {tier.demoCards?.map(card => (
                   <article className="pricing-demo-card" key={card.invitation}>
-                    <strong>{card.invitation}</strong>
-                    <span>{card.fields.join(' / ')}</span>
+                    <div className="pricing-demo-thumb">
+                      {DEMO_PREVIEW_IMAGES[card.invitation] ? (
+                        <img src={DEMO_PREVIEW_IMAGES[card.invitation]} alt={`${card.invitation} invitation preview`} loading="lazy" />
+                      ) : (
+                        <span aria-hidden="true">{card.invitation.charAt(0)}</span>
+                      )}
+                    </div>
+                    <div className="pricing-demo-card-body">
+                      <strong>{card.invitation}</strong>
+                      <ul className="pricing-demo-fields">
+                        {card.fields.map(field => (
+                          <li key={field}>{field}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </article>
                 ))}
               </div>

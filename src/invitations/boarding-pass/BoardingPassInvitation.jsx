@@ -9,7 +9,6 @@ import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllo
 import InvitationPhoto from '../InvitationPhoto';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
-import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -107,7 +106,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
-  const guestPolicyLines = getGuestPolicyLines(wd);
+  const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const flightNo = wd.flightNo || `WD-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const pad = (n) => n.toString().padStart(2, '0');
@@ -467,29 +466,17 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                       <input type="text" required className="kiosk-input" value={rsvpForm.guestName} onChange={e => setRsvpForm({ ...rsvpForm, guestName: e.target.value })} placeholder="Your full name" />
                     </div>
 
-                    <div className="inv-rsvp-row">
-                      <div className="inv-form-field">
-                        <label className="data-label">PASSENGERS</label>
-                        <GuestCountField
-                          id="bp-passengers"
-                          theme="boarding"
-                          label="Number of passengers"
-                          value={rsvpForm.guestCount}
-                          onChange={count => setRsvpForm({ ...rsvpForm, guestCount: count })}
-                        />
-                      </div>
-                      <div className="inv-form-field">
-                        <label className="data-label">WILL YOU BE BOARDING?</label>
-                        <div className="inv-radio-group">
-                          <button type="button" className={`inv-radio-btn ${rsvpForm.attending === 'yes' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
-                            YES
-                          </button>
-                          <button type="button" className={`inv-radio-btn ${rsvpForm.attending === 'no' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                            NO
-                          </button>
-                        </div>
+                    <div className="inv-form-field">
+                      <label className="data-label">WILL YOU BE BOARDING?</label>
+                      <div className="inv-radio-group">
+                        <button type="button" className={`inv-radio-btn ${rsvpForm.attending === 'yes' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                          YES
+                        </button>
+                        <button type="button" className={`inv-radio-btn ${rsvpForm.attending === 'no' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                          NO
+                        </button>
                       </div>
                     </div>
 

@@ -13,7 +13,6 @@ import coastalHero from '../../assets/coastal/hero1.png';
 import cruiseShip from '../../assets/coastal/cruise-ship-clean.webp';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
-import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -92,7 +91,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLines = getGuestPolicyLines(wd);
+  const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const tideCode = wd.flightNo || `COAST-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -409,17 +408,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                       value={rsvpForm.guestName}
                       onChange={event => setRsvpForm({ ...rsvpForm, guestName: event.target.value })}
                       placeholder="Your full name"
-                    />
-                  </div>
-
-                  <div className="coastal-field">
-                    <label htmlFor="rsvp-guests">Guests</label>
-                    <GuestCountField
-                      id="rsvp-guests"
-                      theme="coastal"
-                      label="Number of guests"
-                      value={rsvpForm.guestCount}
-                      onChange={count => setRsvpForm({ ...rsvpForm, guestCount: count })}
                     />
                   </div>
 

@@ -6,11 +6,9 @@ import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
-import rsvpSeats from '../../assets/theater/rsvp/seats_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
 import storyTitle from '../../assets/theater/story/title7_transparent.png';
 import theaterEnvelope from '../../assets/theater/theater-envelope-transparent.png';
-import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -87,7 +85,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : weddingDetails.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLines = getGuestPolicyLines(weddingDetails);
+  const guestPolicyLines = getGuestPolicyLines(weddingDetails, disabledFields);
 
   const tieredPhotos = getTieredInvitationPhotos(order);
   const storyPhotos = tieredPhotos.filter(photo => photo.label === 'story');
@@ -432,18 +430,6 @@ function RsvpSection({
               subtitle="with regret"
             />
           </div>
-
-          <label className="theater-guests-field">
-            <img src={rsvpSeats} alt="" aria-hidden="true" />
-            <span>Number of guests attending</span>
-            <GuestCountField
-              id="theater-guests"
-              theme="theater"
-              label="Number of guests"
-              value={rsvpForm.guestCount}
-              onChange={count => setRsvpForm({ ...rsvpForm, guestCount: count })}
-            />
-          </label>
 
           <label className="theater-message-field">
             <span>Message for the bride and groom</span>

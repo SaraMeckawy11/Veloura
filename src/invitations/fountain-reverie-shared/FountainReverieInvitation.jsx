@@ -10,7 +10,6 @@ import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllo
 import InvitationPhoto from '../InvitationPhoto';
 import sectionSeparator from '../../assets/Fountain Reverie/decorative_components/elegant_vintage_ornamental_flourish_transparent.png';
 import envelopeMessage from '../../assets/Fountain Reverie/envelope_message.png';
-import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -127,7 +126,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLines = getGuestPolicyLines(wd);
+  const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
   const initials = `${name1[0] || 'A'}${name2[0] || 'Z'}`.toUpperCase();
@@ -411,16 +410,6 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                       placeholder="e.g. Olivia Rossi"
                     />
                   </label>
-                  <div className="fountain-rsvp-panel-field">
-                    <span>Number of guests</span>
-                    <GuestCountField
-                      id="fountain-rsvp-guests"
-                      theme="fountain"
-                      label="Number of guests"
-                      value={rsvpForm.guestCount}
-                      onChange={count => setRsvpForm({ ...rsvpForm, guestCount: count })}
-                    />
-                  </div>
                     <fieldset className="fountain-rsvp-panel-choice">
                       <legend>Will you attend?</legend>
                       <div role="radiogroup" aria-label="Will you attend?">

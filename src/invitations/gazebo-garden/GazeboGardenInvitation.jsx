@@ -8,7 +8,6 @@ import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllo
 import InvitationPhoto from '../InvitationPhoto';
 import './gazebo-garden.css';
 import gardenEnvelope from '../../assets/gardenPavilion/garden-pavilion-envelope-transparent.png';
-import GuestCountField from '../GuestCountField';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -147,7 +146,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLines = getGuestPolicyLines(wd);
+  const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const heroDate = compactDateStr || fullDateStr;
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
@@ -248,7 +247,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
     event.preventDefault();
     setRsvpError('');
 
-    if (!rsvpForm.guestName.trim() || !rsvpForm.guestCount || !rsvpForm.attending) {
+    if (!rsvpForm.guestName.trim() || !rsvpForm.attending) {
       setRsvpError('Please complete the required fields.');
       return;
     }
@@ -436,16 +435,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                     required
                   />
                 </label>
-                <div className="gazebo-rsvp-guest-field">
-                  <span>Guest count</span>
-                  <GuestCountField
-                    id="gazebo-guests"
-                    theme="gazebo"
-                    label="Guest count"
-                    value={rsvpForm.guestCount}
-                    onChange={count => updateRsvpField('guestCount', count)}
-                  />
-                </div>
               </div>
 
               <fieldset>

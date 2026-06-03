@@ -700,6 +700,94 @@
   place-items: center;
   cursor: pointer;
 }
+.dash-guest-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.dash-guest-policy-card {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg, #fff);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+}
+.dash-guest-policy-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.dash-guest-policy-card textarea {
+  width: 100%;
+  min-height: 64px;
+  resize: vertical;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+@media (max-width: 600px) {
+  .dash-guest-policy-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dash-page .font-picker-current {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(184, 146, 74, 0.12), rgba(255, 255, 255, 0.6));
+  border: 1px solid var(--border-light);
+}
+.dash-page .font-picker-current-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.dash-page .font-picker-current-label {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.dash-page .font-picker-current strong {
+  font-size: 1.2rem;
+  color: var(--text);
+}
+.dash-page .font-picker-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  color: var(--gold);
+  background: var(--white);
+  border: 1px solid rgba(184, 146, 74, 0.4);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.dash-page .font-picker-reset:hover:not(:disabled) {
+  color: var(--white);
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.dash-page .font-picker-reset:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .dash-page .font-option-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
