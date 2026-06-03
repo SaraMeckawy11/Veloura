@@ -571,8 +571,8 @@ body:has(.theater-theme),
   text-wrap: balance;
 }
 
-/* Guest policy ("Good to know") gets its own readable band — the old slot on
-   the printed details plate was too small to show more than one line. */
+/* Guest policy ("For our cherished guests") gets its own readable band — the old
+   slot on the printed details plate was too small to show more than one line. */
 .theater-guest-note {
   width: min(640px, 100vw);
   margin: 0 auto;

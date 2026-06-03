@@ -1,8 +1,8 @@
-// Shared "Good to know" guest-policy block rendered in the details section of
-// the card-based invitation designs. Each design passes its own theme class so
-// the surrounding CSS can style the kicker, list, and icons to match the
-// palette. The label intentionally differs from the envelope "A Note" message
-// to avoid two sections reading as the same thing.
+// Shared "For our cherished guests" guest-policy block rendered in the details
+// section of the card-based invitation designs. Each design passes its own theme
+// class so the surrounding CSS can style the kicker, list, and icons to match the
+// palette. The label intentionally differs from the envelope "A Note" message to
+// avoid two sections reading as the same thing.
 
 const ChildrenIcon = (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -20,7 +20,7 @@ const GuestIcon = (
 
 export const GUEST_NOTE_ICONS = [ChildrenIcon, GuestIcon];
 
-export default function GuestNote({ lines, className = '', label = 'Good to know' }) {
+export default function GuestNote({ lines, className = '', label = 'For our cherished guests' }) {
   if (!lines?.length) return null;
   return (
     <div className={`gp-note ${className}`.trim()}>
