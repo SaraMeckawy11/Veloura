@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLine, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -87,7 +87,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : weddingDetails.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLine = getGuestPolicyLine(weddingDetails);
+  const guestPolicyLines = getGuestPolicyLines(weddingDetails);
 
   const tieredPhotos = getTieredInvitationPhotos(order);
   const storyPhotos = tieredPhotos.filter(photo => photo.label === 'story');
@@ -198,6 +198,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           timeStr={timeStr}
           venue={venue}
           embedSrc={embedSrc}
+          guestPolicyLines={guestPolicyLines}
         />
 
         {coupleMessage && <TheaterMessageSection message={coupleMessage} />}
@@ -209,7 +210,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
             rsvpSubmitted={rsvpSubmitted}
             rsvpError={rsvpError}
             handleRsvp={handleRsvp}
-            guestPolicyLine={guestPolicyLine}
           />
         )}
 
@@ -357,6 +357,7 @@ function DetailsSection({
   timeStr,
   venue,
   embedSrc,
+  guestPolicyLines,
 }) {
   return (
     <section className="theater-details" aria-label="Wedding details">
@@ -384,7 +385,11 @@ function DetailsSection({
         ) : null}
       </div>
       <div className="theater-details-invite">
-        <p>Join us for an evening of love, light, and unforgettable moments.</p>
+        {guestPolicyLines?.length ? (
+          guestPolicyLines.map(line => <p key={line}>{line}</p>)
+        ) : (
+          <p>Join us for an evening of love, light, and unforgettable moments.</p>
+        )}
       </div>
     </section>
   );
@@ -396,7 +401,6 @@ function RsvpSection({
   rsvpSubmitted,
   rsvpError,
   handleRsvp,
-  guestPolicyLine,
 }) {
   return (
     <section className="theater-rsvp" aria-labelledby="theater-rsvp-title">
@@ -404,7 +408,6 @@ function RsvpSection({
 
       {!rsvpSubmitted ? (
         <form className="theater-rsvp-form" onSubmit={handleRsvp}>
-          <p className="theater-rsvp-policy">{guestPolicyLine}</p>
           <label className="theater-name-field">
             <span>Name</span>
             <input

@@ -117,37 +117,6 @@
   line-height: 18px;
 }
 
-.pricing-demo-box {
-  display: grid;
-  gap: 8px;
-  padding: 10px;
-  margin: 0 0 22px;
-  background: rgba(250, 247, 240, 0.78);
-  border: 1px solid rgba(184, 146, 74, 0.16);
-  border-radius: 12px;
-}
-
-.pricing-demo-card {
-  display: grid;
-  gap: 4px;
-  padding: 10px 11px;
-  background: var(--white);
-  border: 1px solid rgba(184, 146, 74, 0.16);
-  border-radius: 8px;
-}
-
-.pricing-demo-card strong {
-  color: var(--text);
-  font-size: 0.82rem;
-  line-height: 1.25;
-}
-
-.pricing-demo-card span {
-  color: var(--text-secondary);
-  font-size: 0.74rem;
-  line-height: 1.35;
-}
-
 .pricing-cta {
   margin-top: auto;
 }
@@ -155,6 +124,83 @@
 .pricing-cta-btn {
   width: 100%;
   justify-content: center;
+}
+
+.pricing-demo-showcase {
+  max-width: 1040px;
+  margin: 24px auto 0;
+  padding: 14px;
+  display: grid;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(184, 146, 74, 0.18);
+  border-radius: 14px;
+  box-shadow: 0 16px 42px rgba(45, 42, 38, 0.06);
+}
+
+.pricing-demo-tier {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.pricing-demo-tier-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 14px;
+  background: var(--white);
+  border: 1px solid rgba(184, 146, 74, 0.16);
+  border-radius: 10px;
+}
+
+.pricing-demo-tier-header span {
+  color: var(--gold);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pricing-demo-tier-header strong {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  line-height: 1.2;
+}
+
+.pricing-demo-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.pricing-demo-card {
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px;
+  background: var(--white);
+  border: 1px solid rgba(184, 146, 74, 0.17);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(45, 42, 38, 0.04);
+}
+
+.pricing-demo-card strong {
+  color: var(--text);
+  font-size: 0.78rem;
+  line-height: 1.18;
+}
+
+.pricing-demo-card span {
+  color: var(--text-secondary);
+  font-size: 0.64rem;
+  line-height: 1.25;
 }
 
 .pricing-currency-note {
@@ -176,10 +222,26 @@
   .pricing-card--featured {
     transform: none;
   }
+
+  .pricing-demo-tier {
+    grid-template-columns: 1fr;
+  }
+
+  .pricing-demo-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
   .pricing-card {
     padding: 30px 22px;
+  }
+
+  .pricing-demo-showcase {
+    padding: 12px;
+  }
+
+  .pricing-demo-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

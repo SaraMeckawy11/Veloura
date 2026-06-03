@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLine, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -92,7 +92,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLine = getGuestPolicyLine(wd);
+  const guestPolicyLines = getGuestPolicyLines(wd);
   const tideCode = wd.flightNo || `COAST-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -335,6 +335,11 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                 <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
+            {guestPolicyLines.length > 0 && (
+              <div className="coastal-details-policy">
+                {guestPolicyLines.map(line => <p key={line}>{line}</p>)}
+              </div>
+            )}
           </motion.div>
 
           <motion.div
@@ -380,7 +385,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
               <span>{fullDateStr || 'Date to be announced'}</span>
               <strong>{venue || 'By the sea'}</strong>
             </div>
-            <p className="coastal-rsvp-policy">{guestPolicyLine}</p>
           </div>
 
           <AnimatePresence mode="wait">

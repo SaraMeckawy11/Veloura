@@ -807,17 +807,21 @@
   letter-spacing: 0.04em;
 }
 
-.inv-rsvp-policy {
-  max-width: 520px;
-  margin: -28px auto 28px;
+.inv-details-policy {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
   padding: 12px 14px;
   color: var(--bp-fg);
   background: rgba(255, 255, 255, 0.78);
   border: 1px dashed rgba(184, 146, 74, 0.34);
   border-radius: 8px;
+}
+
+.inv-details-policy p {
+  margin: 0;
   font-size: 0.86rem;
   line-height: 1.5;
-  text-align: center;
 }
 .inv-rsvp-wrap {
   max-width: 560px;

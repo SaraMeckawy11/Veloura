@@ -62,24 +62,23 @@ export function formatInvitationTime(value, preference = '12h') {
   return `${hours % 12 || 12}:${minutes} ${suffix}`;
 }
 
-export function getGuestPolicyLine(weddingDetails = {}) {
+export function getGuestPolicyLines(weddingDetails = {}) {
   const childrenPolicy = weddingDetails.childrenPolicy || 'welcome';
   const plusOnePolicy = weddingDetails.plusOnePolicy || 'named-only';
-  const lines = [];
+  const childrenText = weddingDetails.childrenPolicyText?.trim()
+    || (childrenPolicy === 'adults-only'
+      ? 'With love, we kindly request an adults-only celebration.'
+      : 'Little ones are warmly welcome to share in the celebration.');
+  const plusOneText = weddingDetails.plusOnePolicyText?.trim()
+    || (plusOnePolicy === 'welcome'
+      ? 'We would be delighted to welcome your invited plus one.'
+      : 'We kindly ask that RSVPs include only the guests named on the invitation.');
 
-  lines.push(
-    childrenPolicy === 'adults-only'
-      ? 'We kindly ask for an adults-only celebration.'
-      : 'Children are welcome to join the celebration.'
-  );
+  return [childrenText, plusOneText].filter(Boolean);
+}
 
-  lines.push(
-    plusOnePolicy === 'welcome'
-      ? 'Plus ones are warmly welcome.'
-      : 'Please RSVP only for the guests named on your invitation.'
-  );
-
-  return lines.join(' ');
+export function getGuestPolicyLine(weddingDetails = {}) {
+  return getGuestPolicyLines(weddingDetails).join(' ');
 }
 
 function buildOptimizedImageUrl(src, transform) {

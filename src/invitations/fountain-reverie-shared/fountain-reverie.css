@@ -2503,14 +2503,19 @@
   line-height: 1.28;
 }
 
-.fountain-rsvp-panel-header .fountain-rsvp-panel-policy {
-  max-width: 480px;
-  margin: 12px auto 0;
+.fountain-details-policy {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
   padding: 11px 14px;
   color: rgba(79, 66, 31, 0.78);
   background: rgba(255, 251, 244, 0.78);
   border: 1px solid rgba(148, 116, 47, 0.18);
   border-radius: 10px;
+}
+
+.fountain-details-policy p {
+  margin: 0;
   font-family: var(--font-body);
   font-size: 0.84rem;
   line-height: 1.5;

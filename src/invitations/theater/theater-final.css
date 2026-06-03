@@ -601,23 +601,6 @@ body:has(.theater-theme),
   overflow: visible;
 }
 
-.theater-rsvp-policy {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -7%;
-  margin: 0;
-  padding: 0.55rem 0.7rem;
-  color: rgba(255, 241, 210, 0.86);
-  background: rgba(72, 8, 18, 0.72);
-  border: 1px solid rgba(218, 185, 112, 0.24);
-  border-radius: 0.5rem;
-  font-family: var(--font-body);
-  font-size: clamp(0.66rem, 1.8vw, 0.82rem);
-  line-height: 1.35;
-  text-align: center;
-}
-
 .theater-rsvp-form label,
 .theater-rsvp-choice {
   margin: 0;

@@ -23,22 +23,34 @@ export default function InvitationPreviewFrame({ className, title = 'Invitation 
       idoc.documentElement.lang = document.documentElement.lang || 'en';
       idoc.documentElement.style.height = '100%';
       idoc.documentElement.style.width = '100%';
-      idoc.documentElement.style.fontSize = '14px';
+      idoc.documentElement.style.fontSize = '9px';
       idoc.body.style.margin = '0';
       idoc.body.style.minHeight = '100%';
       idoc.body.style.width = '100%';
-      idoc.body.style.fontSize = '14px';
+      idoc.body.style.fontSize = '9px';
       idoc.body.style.background = '#fff';
       idoc.body.style.overflowX = 'hidden';
       idoc.body.style.overflowY = 'auto';
       idoc.body.style.webkitUserSelect = 'none';
       idoc.body.style.userSelect = 'none';
+      idoc.body.classList.add('invitation-preview-render');
 
       if (!idoc.querySelector('meta[name="viewport"]')) {
         const meta = idoc.createElement('meta');
         meta.name = 'viewport';
         meta.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
         idoc.head.appendChild(meta);
+      }
+
+      if (!idoc.getElementById('veloura-preview-text-scale')) {
+        const style = idoc.createElement('style');
+        style.id = 'veloura-preview-text-scale';
+        style.textContent = `
+          html { font-size: 9px !important; }
+          body.invitation-preview-render { font-size: 9px !important; }
+          body.invitation-preview-render * { text-size-adjust: 82%; -webkit-text-size-adjust: 82%; }
+        `;
+        idoc.head.appendChild(style);
       }
 
       // Keep the unpaid preview protected: no clean copy / drag / context menu.

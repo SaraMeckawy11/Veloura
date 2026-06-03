@@ -66,23 +66,31 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              {tier.demoCards?.length > 0 && (
-                <div className="pricing-demo-box" aria-label={`${tier.name} invitation examples`}>
-                  {tier.demoCards.map(card => (
-                    <div className="pricing-demo-card" key={card.invitation}>
-                      <strong>{card.invitation}</strong>
-                      <span>{card.fields.join(' + ')}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
               <div className="pricing-cta">
                 <Link to={`/order?tier=${tier.id}`} className="btn btn-gold pricing-cta-btn">
                   Choose {tier.name}
                 </Link>
               </div>
             </article>
+          ))}
+        </div>
+
+        <div className="pricing-demo-showcase reveal" aria-label="Invitation demos by plan">
+          {tiers.map(tier => (
+            <section className="pricing-demo-tier" key={`${tier.id}-demos`}>
+              <div className="pricing-demo-tier-header">
+                <span>{tier.name}</span>
+                <strong>Included invitation demos</strong>
+              </div>
+              <div className="pricing-demo-row">
+                {tier.demoCards?.map(card => (
+                  <article className="pricing-demo-card" key={card.invitation}>
+                    <strong>{card.invitation}</strong>
+                    <span>{card.fields.join(' / ')}</span>
+                  </article>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
         {pricingCatalog?.displayIsConverted && (

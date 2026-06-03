@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import FountainSplash from './FountainSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, getGuestPolicyLine, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -127,7 +127,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLine = getGuestPolicyLine(wd);
+  const guestPolicyLines = getGuestPolicyLines(wd);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
   const initials = `${name1[0] || 'A'}${name2[0] || 'Z'}`.toUpperCase();
@@ -356,6 +356,11 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                 <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
+            {guestPolicyLines.length > 0 && (
+              <div className="fountain-details-policy">
+                {guestPolicyLines.map(line => <p key={line}>{line}</p>)}
+              </div>
+            )}
           </motion.div>
 
         </div>
@@ -382,7 +387,6 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                 <h2>RSVP</h2>
                 <strong>Kindly Respond</strong>
                 <p>We cannot wait to celebrate with you.<br />Please let us know by replying below.</p>
-                <p className="fountain-rsvp-panel-policy">{guestPolicyLine}</p>
               </div>
               <AnimatePresence mode="wait">
                 {!rsvpSubmitted ? (

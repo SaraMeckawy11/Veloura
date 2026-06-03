@@ -108,19 +108,29 @@ const PHOTO_FIT_OPTIONS = [
 
 const GUEST_POLICY_OPTIONS = {
   children: [
-    { value: 'welcome', label: 'Children welcome', text: 'Children are welcome to join the celebration.' },
-    { value: 'adults-only', label: 'Adults only', text: 'We kindly ask for an adults-only celebration.' },
+    { value: 'welcome', label: 'Children welcome', text: 'Little ones are warmly welcome to share in the celebration.' },
+    { value: 'adults-only', label: 'Adults only', text: 'With love, we kindly request an adults-only celebration.' },
   ],
   plusOne: [
-    { value: 'welcome', label: 'Plus ones welcome', text: 'Plus ones are warmly welcome.' },
-    { value: 'named-only', label: 'Named guests only', text: 'Please RSVP only for the guests named on your invitation.' },
+    { value: 'welcome', label: 'Plus ones welcome', text: 'We would be delighted to welcome your invited plus one.' },
+    { value: 'named-only', label: 'Named guests only', text: 'We kindly ask that RSVPs include only the guests named on the invitation.' },
   ],
 };
 
 function getGuestPolicyText(weddingDetails = {}) {
-  const children = GUEST_POLICY_OPTIONS.children.find(option => option.value === weddingDetails.childrenPolicy);
-  const plusOne = GUEST_POLICY_OPTIONS.plusOne.find(option => option.value === weddingDetails.plusOnePolicy);
-  return [children?.text, plusOne?.text].filter(Boolean).join(' ');
+  const children = weddingDetails.childrenPolicyText?.trim()
+    || GUEST_POLICY_OPTIONS.children.find(option => option.value === weddingDetails.childrenPolicy)?.text;
+  const plusOne = weddingDetails.plusOnePolicyText?.trim()
+    || GUEST_POLICY_OPTIONS.plusOne.find(option => option.value === weddingDetails.plusOnePolicy)?.text;
+  return [children, plusOne].filter(Boolean).join(' ');
+}
+
+function getFontCategory(option) {
+  if (option.script !== option.display) return 'Script';
+  if (option.body.includes('Arial') || option.body.includes('Inter') || option.body.includes('Montserrat') || option.body.includes('Nunito') || option.body.includes('Josefin')) {
+    return 'Modern';
+  }
+  return 'Serif';
 }
 
 // Which optional fields each invitation design actually renders. Fields that
@@ -211,6 +221,7 @@ export default function OrderFlow() {
   const [error, setError] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [fontPickerOpen, setFontPickerOpen] = useState(false);
+  const [policyPickerOpen, setPolicyPickerOpen] = useState(null);
   const paypalButtonRef = useRef(null);
 
   // Form state — restore from draft
@@ -228,6 +239,8 @@ export default function OrderFlow() {
     coupleMessage: '',
     childrenPolicy: 'welcome',
     plusOnePolicy: 'named-only',
+    childrenPolicyText: GUEST_POLICY_OPTIONS.children[0].text,
+    plusOnePolicyText: GUEST_POLICY_OPTIONS.plusOne[1].text,
     invitationFont: DEFAULT_INVITATION_FONT,
     language: 'en',
     secondLanguage: '',
@@ -419,6 +432,13 @@ export default function OrderFlow() {
     setForm(prev => ({ ...prev, [key]: value }));
   };
 
+  const applyGuestPolicyPreset = (group, option) => {
+    const textKey = group === 'children' ? 'childrenPolicyText' : 'plusOnePolicyText';
+    const valueKey = group === 'children' ? 'childrenPolicy' : 'plusOnePolicy';
+    setForm(prev => ({ ...prev, [valueKey]: option.value, [textKey]: option.text }));
+    setPolicyPickerOpen(null);
+  };
+
   const toggleField = (key) => {
     setDisabledFields(prev =>
       prev.includes(key) ? prev.filter(f => f !== key) : [...prev, key]
@@ -593,8 +613,10 @@ export default function OrderFlow() {
       venue: form.venue,
       venueMapUrl: optionalValue('venueMapUrl'),
       message: fieldEnabled('message') ? form.message.trim() : undefined,
-      childrenPolicy: rsvpIncluded ? form.childrenPolicy : undefined,
-      plusOnePolicy: rsvpIncluded ? form.plusOnePolicy : undefined,
+      childrenPolicy: form.childrenPolicy,
+      plusOnePolicy: form.plusOnePolicy,
+      childrenPolicyText: form.childrenPolicyText?.trim(),
+      plusOnePolicyText: form.plusOnePolicyText?.trim(),
       language: form.language,
       secondLanguage: optionalValue('secondLanguage'),
     },
@@ -810,8 +832,10 @@ export default function OrderFlow() {
             venue: form.venue,
             venueMapUrl: optionalValue('venueMapUrl'),
             message: fieldEnabled('message') ? form.message.trim() : undefined,
-            childrenPolicy: rsvpIncluded ? form.childrenPolicy : undefined,
-            plusOnePolicy: rsvpIncluded ? form.plusOnePolicy : undefined,
+            childrenPolicy: form.childrenPolicy,
+            plusOnePolicy: form.plusOnePolicy,
+            childrenPolicyText: form.childrenPolicyText?.trim(),
+            plusOnePolicyText: form.plusOnePolicyText?.trim(),
             language: form.language,
             secondLanguage: optionalValue('secondLanguage'),
           },
@@ -940,16 +964,6 @@ export default function OrderFlow() {
                     {tier.sections.gallery && <span>Gallery</span>}
                     {tier.sections.rsvp && <span>RSVP</span>}
                   </span>
-                  {tier.demoCards?.length > 0 && (
-                    <span className="tier-choice-demos" aria-label={`${tier.name} examples`}>
-                      {tier.demoCards.map(card => (
-                        <span className="tier-choice-demo-card" key={card.invitation}>
-                          <strong>{card.invitation}</strong>
-                          <small>{card.fields.join(' + ')}</small>
-                        </span>
-                      ))}
-                    </span>
-                  )}
                 </button>
               ))}
             </div>
@@ -1139,6 +1153,49 @@ export default function OrderFlow() {
                       <p className="form-hint message-hint form-hint-disabled">The map will be hidden from your invitation.</p>
                     )}
                   </div>
+                  <div className="guest-policy-editor form-field--wide">
+                    <div className="guest-policy-editor-header">
+                      <div>
+                        <span className="guest-policy-kicker">Guest guidance</span>
+                        <h3>Children &amp; Plus-One Wording</h3>
+                      </div>
+                      <p>This appears in the invitation details for every plan.</p>
+                    </div>
+                    <div className="guest-policy-card-grid">
+                      <article className="guest-policy-card">
+                        <div className="guest-policy-card-head">
+                          <span>Children</span>
+                          <button type="button" onClick={() => setPolicyPickerOpen('children')}>
+                            Choose wording
+                          </button>
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={form.childrenPolicyText}
+                          onChange={e => handleInput('childrenPolicyText', e.target.value)}
+                          placeholder="Write the children guidance guests should see."
+                        />
+                      </article>
+                      <article className="guest-policy-card">
+                        <div className="guest-policy-card-head">
+                          <span>Plus ones</span>
+                          <button type="button" onClick={() => setPolicyPickerOpen('plusOne')}>
+                            Choose wording
+                          </button>
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={form.plusOnePolicyText}
+                          onChange={e => handleInput('plusOnePolicyText', e.target.value)}
+                          placeholder="Write the plus-one guidance guests should see."
+                        />
+                      </article>
+                    </div>
+                    <div className="guest-policy-live-preview">
+                      <span>Invitation preview text</span>
+                      <p>{getGuestPolicyText(form)}</p>
+                    </div>
+                  </div>
                 </div>
               </fieldset>
 
@@ -1175,34 +1232,7 @@ export default function OrderFlow() {
                       </div>
                       {!disabledFields.includes(field.key) && (
                         field.key === 'rsvp' ? (
-                          <div className="guest-policy-panel">
-                            <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
-                            <div className="guest-policy-grid">
-                              <label className="guest-policy-choice">
-                                <span>Children</span>
-                                <select
-                                  value={form.childrenPolicy}
-                                  onChange={e => handleInput('childrenPolicy', e.target.value)}
-                                >
-                                  {GUEST_POLICY_OPTIONS.children.map(option => (
-                                    <option key={option.value} value={option.value}>{option.label}</option>
-                                  ))}
-                                </select>
-                              </label>
-                              <label className="guest-policy-choice">
-                                <span>Plus ones</span>
-                                <select
-                                  value={form.plusOnePolicy}
-                                  onChange={e => handleInput('plusOnePolicy', e.target.value)}
-                                >
-                                  {GUEST_POLICY_OPTIONS.plusOne.map(option => (
-                                    <option key={option.value} value={option.value}>{option.label}</option>
-                                  ))}
-                                </select>
-                              </label>
-                            </div>
-                            <p className="guest-policy-preview">{getGuestPolicyText(form)}</p>
-                          </div>
+                          <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
                         ) : field.key === 'message' ? (
                           <>
                             <textarea
@@ -1494,7 +1524,7 @@ export default function OrderFlow() {
                   {form.weddingTime && fieldEnabled('weddingTime') && <div className="review-item"><span className="review-label">Time</span><span>{formatOrderTime(form.weddingTime, form.timeFormat || '12h')}</span></div>}
                   <div className="review-item"><span className="review-label">Venue</span><span>{form.venue}</span></div>
                   <div className="review-item"><span className="review-label">Plan</span><span>{selectedTierConfig.name}</span></div>
-                  {rsvpIncluded && fieldEnabled('rsvp') && (
+                  {getGuestPolicyText(form) && (
                     <div className="review-item review-item--wide">
                       <span className="review-label">Guest Policy</span>
                       <span>{getGuestPolicyText(form)}</span>
@@ -1774,6 +1804,50 @@ export default function OrderFlow() {
         </div>
       )}
 
+      {policyPickerOpen && (
+        <div
+          className="policy-picker-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="policy-picker-title"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setPolicyPickerOpen(null);
+          }}
+        >
+          <div className="policy-picker-panel">
+            <div className="policy-picker-header">
+              <div>
+                <span className="policy-picker-eyebrow">Guest wording</span>
+                <h2 id="policy-picker-title">
+                  {policyPickerOpen === 'children' ? 'Children guidance' : 'Plus-one guidance'}
+                </h2>
+              </div>
+              <button
+                type="button"
+                className="policy-picker-close"
+                onClick={() => setPolicyPickerOpen(null)}
+                aria-label="Close guest wording picker"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+            <div className="policy-option-list">
+              {GUEST_POLICY_OPTIONS[policyPickerOpen].map(option => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={`policy-option-card ${form[policyPickerOpen === 'children' ? 'childrenPolicy' : 'plusOnePolicy'] === option.value ? 'active' : ''}`}
+                  onClick={() => applyGuestPolicyPreset(policyPickerOpen, option)}
+                >
+                  <strong>{option.label}</strong>
+                  <span>{option.text}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {fontPickerOpen && (
         <div
           className="font-picker-modal"
@@ -1789,7 +1863,7 @@ export default function OrderFlow() {
               <div>
                 <span className="font-picker-eyebrow">Invitation typography</span>
                 <h2 id="font-picker-title">Choose a font style</h2>
-                <p>This applies across the whole invitation website.</p>
+                <p>Preview the name style and reading text before applying it.</p>
               </div>
               <button
                 type="button"
@@ -1799,6 +1873,12 @@ export default function OrderFlow() {
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
+            </div>
+
+            <div className="font-picker-current">
+              <span className="font-picker-current-label">Selected</span>
+              <strong style={{ fontFamily: selectedFontOption.script }}>Amira &amp; Zayn</strong>
+              <span style={{ fontFamily: selectedFontOption.body }}>{selectedFontOption.label}</span>
             </div>
 
             <div className="font-option-grid">
@@ -1812,11 +1892,12 @@ export default function OrderFlow() {
                     setFontPickerOpen(false);
                   }}
                 >
+                  <span className="font-option-category">{getFontCategory(option)}</span>
                   <span className="font-option-sample" style={{ fontFamily: option.script }}>
                     Amira &amp; Zayn
                   </span>
                   <span className="font-option-body" style={{ fontFamily: option.body }}>
-                    Saturday, 20 June 2026
+                    Saturday, 20 June 2026 · Garden Pavilion
                   </span>
                   <span className="font-option-meta">
                     <strong>{option.label}</strong>
