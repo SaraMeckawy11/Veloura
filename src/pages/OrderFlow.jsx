@@ -1586,7 +1586,15 @@ export default function OrderFlow() {
         >
           <div className="invitation-preview-panel">
             <div className="invitation-preview-header">
-              <div>
+              <button
+                type="button"
+                className="invitation-preview-back"
+                onClick={() => setPreviewOpen(false)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
+                Back
+              </button>
+              <div className="invitation-preview-heading">
                 <span className="invitation-preview-eyebrow">Protected preview</span>
                 <h2 id="invitation-preview-title">Review your invitation</h2>
                 <p>Watermarking stays visible until payment is complete.</p>

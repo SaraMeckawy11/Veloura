@@ -9,7 +9,6 @@ export const PRICING_TIERS = [
       rsvp: false,
       story: false,
       gallery: false,
-      music: false,
     },
   },
   {
@@ -20,18 +19,6 @@ export const PRICING_TIERS = [
       rsvp: true,
       story: true,
       gallery: true,
-      music: false,
-    },
-  },
-  {
-    id: 'luxe',
-    name: 'Luxe',
-    amount: '149.00',
-    sections: {
-      rsvp: true,
-      story: true,
-      gallery: true,
-      music: true,
     },
   },
 ];
