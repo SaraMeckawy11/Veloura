@@ -434,7 +434,6 @@ export default function Dashboard() {
     setSaveMsg('');
     try {
       await downloadGuestResponsesPdf({
-        themeSlug: order.template?.slug,
         coupleNames: [wd.groomName, wd.brideName].filter(Boolean).join(' & ') || 'Our Wedding',
         responses,
       });
