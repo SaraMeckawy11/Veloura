@@ -806,19 +806,20 @@
   position: relative;
   z-index: 2;
   display: grid;
-  gap: 1.4rem;
-  max-width: 60rem;
+  gap: clamp(1.1rem, 2.5vw, 1.55rem);
+  max-width: 44rem;
   margin: 0 auto;
-  border-color: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(215, 182, 106, 0.24);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 249, 232, 0.7)),
-    radial-gradient(circle at 86% 12%, rgba(245, 200, 192, 0.18), transparent 30%);
-  padding: clamp(1.25rem, 3vw, 2rem);
+    radial-gradient(circle at 92% 8%, rgba(245, 200, 192, 0.2), transparent 34%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 249, 232, 0.86));
+  padding: clamp(1.35rem, 3.4vw, 2.35rem);
+  box-shadow: 0 26px 70px rgba(90, 102, 64, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.74);
 }
 
 .gazebo-rsvp-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1.25rem;
 }
 
@@ -836,8 +837,10 @@
 .gazebo-rsvp-card legend,
 .gazebo-rsvp-guest-field > span {
   color: #314234;
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .gazebo-rsvp-guest-field {
@@ -850,13 +853,13 @@
 .gazebo-rsvp-card select,
 .gazebo-rsvp-card textarea {
   width: 100%;
-  border: 1px solid rgba(215, 182, 106, 0.34);
-  border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(139, 115, 50, 0.22);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.94);
   color: #314234;
   font: inherit;
   outline: none;
-  padding: 0.9rem 1rem;
+  padding: 0.98rem 1rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
   transition: border 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
@@ -877,25 +880,39 @@
 .gazebo-attending-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  gap: 0.65rem;
+  border-radius: 0.8rem;
+  background: rgba(234, 222, 190, 0.42);
+  padding: 0.35rem;
 }
 
 .gazebo-attending-grid label {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 3.3rem;
-  border: 1px solid rgba(215, 182, 106, 0.32);
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.62);
+  justify-content: center;
+  min-height: 3.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.62rem;
+  background: rgba(255, 255, 255, 0.66);
+  color: rgba(49, 66, 52, 0.82);
   cursor: pointer;
   padding: 0.9rem 1rem;
-  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+  text-align: center;
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.gazebo-attending-grid label span {
+  position: relative;
+  z-index: 1;
+  font-size: 0.95rem;
+  font-weight: 800;
 }
 
 .gazebo-attending-grid label.active {
-  border-color: transparent;
-  background: linear-gradient(135deg, #caa45a, #8b6331);
+  border-color: rgba(139, 115, 50, 0.2);
+  background: linear-gradient(135deg, #b99244, #7f5c2e);
+  box-shadow: 0 14px 28px rgba(139, 99, 49, 0.22);
   color: white;
   transform: translateY(-1px);
 }
@@ -909,8 +926,9 @@
 }
 
 .gazebo-rsvp-submit {
-  justify-self: start;
-  margin-top: 0.25rem;
+  justify-self: stretch;
+  margin-top: 0.35rem;
+  min-height: 3.35rem;
 }
 
 .gazebo-rsvp-error {
@@ -1243,10 +1261,13 @@
 .gazebo-message-section {
   padding-top: clamp(2.2rem, 4vw, 3.4rem);
   padding-bottom: clamp(2.2rem, 4vw, 3.4rem);
-  background:
+  isolation: isolate;
+  background-color: #fffaf0;
+  background-image:
     radial-gradient(circle at 16% 12%, rgba(205, 238, 250, 0.28), transparent 28%),
     radial-gradient(circle at 84% 84%, rgba(246, 213, 207, 0.24), transparent 30%),
-    linear-gradient(180deg, rgba(255, 250, 240, 0.68), rgba(239, 248, 232, 0.72));
+    linear-gradient(180deg, #fffaf0 0%, #f4f9ec 100%);
+  transform: translateZ(0);
 }
 
 .gazebo-message-section .gazebo-section-title {
@@ -1256,15 +1277,27 @@
 .gazebo-note-envelope {
   position: relative;
   z-index: 2;
+  isolation: isolate;
   width: min(720px, 100%);
   margin: 0 auto;
   filter: drop-shadow(0 26px 38px rgba(90, 102, 64, 0.16));
+  transform: translateZ(0);
+}
+
+.gazebo-note-envelope::before {
+  position: absolute;
+  inset: 6% 4% 7%;
+  z-index: -1;
+  border-radius: 0.75rem;
+  background: #fff7e7;
+  content: "";
 }
 
 .gazebo-note-envelope-image {
   display: block;
   width: 100%;
   height: auto;
+  backface-visibility: hidden;
 }
 
 .gazebo-note-envelope-copy {
@@ -1272,8 +1305,11 @@
   left: 50%;
   top: 26%;
   width: 60%;
+  border-radius: 0.5rem;
+  background: rgba(255, 247, 231, 0.82);
   color: #314234;
   font-family: "Cormorant Garamond", Georgia, serif;
+  padding: 0.3rem 0.6rem 0.55rem;
   text-align: center;
   transform: translateX(-50%);
 }

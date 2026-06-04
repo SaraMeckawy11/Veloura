@@ -133,6 +133,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
   const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
+  const useEnvelopeSplash = variant === 'v1';
   const initials = `${name1[0] || 'A'}${name2[0] || 'Z'}`.toUpperCase();
   const pad = (n) => n.toString().padStart(2, '0');
 
@@ -248,7 +249,11 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
       {showSplash && (
-        <FountainSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
+        useEnvelopeSplash ? (
+          <FountainEnvelopeSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
+        ) : (
+          <FountainSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
+        )
       )}
 
       <section className="fountain-hero">

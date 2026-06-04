@@ -433,7 +433,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
             >
               <div className="gazebo-rsvp-grid">
                 <label>
-                  <span>Guest name</span>
+                  <span>Name</span>
                   <input
                     value={rsvpForm.guestName}
                     onChange={event => updateRsvpField('guestName', event.target.value)}
@@ -470,7 +470,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                 <textarea
                   value={rsvpForm.message}
                   onChange={event => updateRsvpField('message', event.target.value)}
-                  placeholder="Share a note for the couple"
+                  placeholder="Share a wish, dietary note, or song request"
                   rows={3}
                 />
               </label>

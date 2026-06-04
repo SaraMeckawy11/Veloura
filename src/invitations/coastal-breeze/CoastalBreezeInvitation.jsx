@@ -95,7 +95,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
-  const tideCode = wd.flightNo || `COAST-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
   const pad = (n) => n.toString().padStart(2, '0');
@@ -311,7 +310,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="coastal-kicker">{tideCode}</span>
+            <span className="coastal-kicker">Venue</span>
             <h3>{venue || 'The Shoreline'}</h3>
             <dl>
               <div>
