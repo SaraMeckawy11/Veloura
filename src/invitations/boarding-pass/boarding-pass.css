@@ -221,7 +221,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 16px;
+  padding: 28px 6px;
   overflow: hidden;
 }
 .inv-hero-bg {
@@ -314,7 +314,7 @@
 .inv-boarding-card {
   position: relative;
   z-index: 20;
-  max-width: 1340px;
+  max-width: 1460px;
   width: 100%;
   animation: inv-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -327,7 +327,7 @@
 .bp-hero-ticket {
   position: relative;
   width: 100%;
-  max-width: min(1340px, 98vw);
+  max-width: min(1460px, 99vw);
   margin: 0 auto;
   aspect-ratio: 1024 / 1536;
   container-type: inline-size;
@@ -355,6 +355,7 @@
   pointer-events: none;
 }
 .bp-hero-name {
+  position: relative;
   font-family: var(--font-display);
   font-size: clamp(1.05rem, 6.1cqw, 2.05rem);
   font-weight: 600;
@@ -364,6 +365,9 @@
   line-height: 1.06;
   text-indent: 0.16em;
 }
+/* Groom name nudged up, bride name nudged down (independent offsets) */
+.bp-hero-name:nth-child(1) { top: -32px; }
+.bp-hero-name:nth-child(2) { top: 40px; }
 
 /* Detail rows — aligned to the right of baked-in icons */
 .bp-hero-detail {
@@ -377,7 +381,7 @@
   text-align: left;
   pointer-events: none;
 }
-.bp-hero-detail--date { top: 65.8%; }
+.bp-hero-detail--date { top: 65.4%; }
 .bp-hero-detail--time { top: 72.3%; }
 .bp-hero-detail--venue { top: 79.3%; }
 .bp-hero-detail-label {
@@ -400,9 +404,9 @@
 /* Confirmed rubber-stamp overlay */
 .bp-hero-stamp {
   position: absolute;
-  right: 4.5%;
-  bottom: 4.5%;
-  width: 27%;
+  right: 19%;
+  bottom: 2.5%;
+  width: 36%;
   height: auto;
   pointer-events: none;
   transform-origin: center;
