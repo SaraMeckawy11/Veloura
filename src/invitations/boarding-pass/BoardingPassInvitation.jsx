@@ -244,7 +244,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             transition={{ duration: 0.6 }}
           >
             <h2 className="inv-section-label">Boarding In</h2>
-            <div className="inv-gold-divider" style={{ marginBottom: 40 }} />
+            <div className="inv-gold-divider" />
             <div className="inv-countdown-grid">
               <FlapDigit value={pad(timeLeft.days)} label="DAYS" />
               <span className="inv-colon">:</span>
@@ -262,6 +262,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {!isReferenceDemo && couplePhotos.length > 0 && (
         <section className="inv-section-light">
           <h2 className="inv-section-label">The Couple</h2>
+          <div className="inv-gold-divider" />
           <div className="inv-couple-gallery">
             {couplePhotos.map((p, i) => (
               <div key={i} className="airplane-window inv-couple-photo-item">

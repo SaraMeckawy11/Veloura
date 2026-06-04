@@ -168,7 +168,7 @@
   width: 80px;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--bp-gold), transparent);
-  margin: 0 auto;
+  margin: 0 auto 38px;
 }
 
 /* --- Boarding Pass Card --- */
@@ -314,7 +314,7 @@
 .inv-boarding-card {
   position: relative;
   z-index: 20;
-  max-width: 1040px;
+  max-width: 1180px;
   width: 100%;
   animation: inv-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -327,7 +327,7 @@
 .bp-hero-ticket {
   position: relative;
   width: 100%;
-  max-width: min(880px, 98vw);
+  max-width: min(1000px, 98vw);
   margin: 0 auto;
   aspect-ratio: 1122 / 1402;
   container-type: inline-size;
@@ -347,11 +347,11 @@
   position: absolute;
   left: 13%;
   right: 5%;
-  top: 21%;
+  top: 24%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.15em;
+  gap: 1.75em;
   pointer-events: none;
 }
 .bp-hero-name {
@@ -368,8 +368,8 @@
 /* Detail rows — aligned to the right of baked-in icons */
 .bp-hero-detail {
   position: absolute;
-  left: 40%;
-  right: 3.5%;
+  left: 48%;
+  right: 3%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
@@ -377,9 +377,9 @@
   text-align: left;
   pointer-events: none;
 }
-.bp-hero-detail--date { top: 72%; }
-.bp-hero-detail--time { top: 79.4%; }
-.bp-hero-detail--venue { top: 88.6%; }
+.bp-hero-detail--date { top: 73%; }
+.bp-hero-detail--time { top: 81.5%; }
+.bp-hero-detail--venue { top: 91%; }
 .bp-hero-detail-label {
   font-family: var(--font-mono);
   font-size: clamp(0.38rem, 1.7cqw, 0.6rem);
@@ -562,7 +562,7 @@
   letter-spacing: 0.02em;
   line-height: 1.1;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   color: var(--bp-navy);
   text-transform: none;
 }
@@ -583,7 +583,7 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  margin-top: 40px;
+  margin-top: 0;
 }
 @media (min-width: 768px) {
   .inv-countdown-grid { gap: 32px; }
@@ -599,7 +599,7 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
-    margin: 32px auto 0;
+    margin: 0 auto;
   }
 
   .inv-countdown-grid .inv-colon {
@@ -787,7 +787,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   max-width: 1080px;
-  margin: 48px auto 0;
+  margin: 0 auto;
 }
 @media (min-width: 768px) {
   .inv-gallery-grid {
@@ -1388,7 +1388,7 @@ textarea.kiosk-input {
   font-weight: 400;
   color: var(--bp-navy);
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   letter-spacing: 0.02em;
   line-height: 1.1;
 }
@@ -1399,7 +1399,7 @@ textarea.kiosk-input {
   width: 80px;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--bp-gold), transparent);
-  margin: 0 auto 72px;
+  margin: 0 auto 38px;
 }
 .inv-story-timeline {
   position: relative;
@@ -1542,7 +1542,7 @@ textarea.kiosk-input {
   justify-content: center;
   flex-wrap: wrap;
   max-width: 640px;
-  margin: 16px auto 0;
+  margin: 0 auto;
 }
 .inv-couple-photo-item {
   width: 240px;
@@ -1657,7 +1657,7 @@ textarea.kiosk-input {
 }
 
 .inv-message-title {
-  margin: 8px 0 12px;
+  margin: 8px 0 16px;
   color: var(--bp-navy);
   font-family: var(--font-script);
   font-size: clamp(2.1rem, 6vw, 3rem);
@@ -1669,7 +1669,7 @@ textarea.kiosk-input {
 .inv-envelope {
   position: relative;
   width: min(720px, 100%);
-  margin: clamp(18px, 3vw, 30px) auto 0;
+  margin: 0 auto;
   filter: drop-shadow(0 26px 36px hsla(208, 34%, 28%, 0.18));
 }
 
