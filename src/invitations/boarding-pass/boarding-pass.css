@@ -405,8 +405,8 @@
 .bp-hero-stamp {
   position: absolute;
   right: 13%;
-  bottom: 1.5%;
-  width: 32%;
+  bottom: 0.3%;
+  width: 29%;
   height: auto;
   pointer-events: none;
   transform-origin: center;
