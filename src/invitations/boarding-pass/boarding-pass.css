@@ -327,9 +327,10 @@
 .bp-hero-ticket {
   position: relative;
   width: 100%;
-  max-width: 440px;
+  max-width: 540px;
   margin: 0 auto;
   aspect-ratio: 1122 / 1402;
+  container-type: inline-size;
   filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.16));
 }
 .bp-hero-ticket-img {
@@ -346,21 +347,22 @@
   position: absolute;
   left: 13%;
   right: 5%;
-  top: 23%;
+  top: 22.5%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.04em;
+  gap: 0.08em;
   pointer-events: none;
 }
 .bp-hero-name {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 7vw, 2.35rem);
-  font-weight: 600;
+  font-size: clamp(1.5rem, 8.4cqw, 2.65rem);
+  font-weight: 500;
   letter-spacing: 0.14em;
   color: var(--bp-navy);
   text-transform: uppercase;
-  line-height: 1.04;
+  line-height: 1.02;
+  text-indent: 0.14em;
 }
 
 /* Detail rows — aligned to the right of baked-in icons */
@@ -371,7 +373,7 @@
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 0.05em;
+  gap: 0.1em;
   text-align: left;
   pointer-events: none;
 }
@@ -380,19 +382,19 @@
 .bp-hero-detail--venue { top: 89.5%; }
 .bp-hero-detail-label {
   font-family: var(--font-mono);
-  font-size: clamp(0.42rem, 1.3vw, 0.62rem);
+  font-size: clamp(0.42rem, 1.9cqw, 0.66rem);
   letter-spacing: 0.18em;
   color: var(--bp-gold-dark);
   text-transform: uppercase;
 }
 .bp-hero-detail-value {
   font-family: var(--font-display);
-  font-size: clamp(0.78rem, 2.2vw, 1.15rem);
+  font-size: clamp(0.78rem, 2.6cqw, 1.08rem);
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.12;
   color: var(--bp-navy);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
 .inv-boarding-inner {
@@ -522,15 +524,15 @@
 
 /* --- Section Dark BG (Countdown, Gallery, Event Details) --- */
 .inv-section-dark {
-  background: var(--bp-secondary);
-  color: var(--bp-secondary-fg);
+  background: var(--bp-bg);
+  color: var(--bp-fg);
   padding: 96px 24px;
   text-align: center;
   position: relative;
   overflow: hidden;
 }
 .inv-section-dark .data-label {
-  color: var(--bp-muted);
+  color: var(--bp-muted-fg);
 }
 /* Decorative corner accents */
 .inv-corner-tl, .inv-corner-tr, .inv-corner-bl, .inv-corner-br {
@@ -689,7 +691,10 @@
   color: var(--bp-fg);
 }
 .inv-section-dark .inv-colon {
-  color: var(--bp-muted);
+  color: var(--bp-gold);
+}
+.inv-section-dark .inv-flap-label {
+  color: var(--bp-muted-fg);
 }
 
 /* --- Event Details --- */
@@ -732,6 +737,10 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+.inv-event-details--centered {
+  align-items: center;
+  text-align: center;
 }
 .inv-event-details .data-label { margin-bottom: 4px; }
 .inv-event-details p {
@@ -1558,10 +1567,10 @@ textarea.kiosk-input {
 }
 
 .inv-section-dark {
+  color: var(--bp-fg);
   background:
-    radial-gradient(ellipse at 16% 0%, hsla(202, 30%, 62%, 0.42), transparent 36rem),
-    radial-gradient(ellipse at 86% 100%, hsla(39, 43%, 64%, 0.18), transparent 28rem),
-    linear-gradient(145deg, hsl(208, 30%, 44%), hsl(206, 26%, 54%));
+    radial-gradient(circle at 50% 48%, hsla(203, 30%, 86%, 0.52), transparent 24rem),
+    linear-gradient(180deg, hsl(202, 30%, 95%), hsl(38, 44%, 97%));
 }
 
 .inv-section-light {

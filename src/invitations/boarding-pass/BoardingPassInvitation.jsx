@@ -346,17 +346,17 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="boarding-pass-card inv-event-card-inner">
-            <div className="inv-event-details">
+            <div className="inv-event-details inv-event-details--centered">
+              <div>
+                <p className="data-label">DESTINATION</p>
+                <p className="font-mono-data inv-event-value">{venue}</p>
+              </div>
               {dateStr && (
                 <div>
                   <p className="data-label">DATE</p>
                   <p className="font-mono-data inv-event-value">{dateStr}</p>
                 </div>
               )}
-              <div>
-                <p className="data-label">TERMINAL</p>
-                <p className="font-mono-data inv-event-value">{venue}</p>
-              </div>
               <div>
                 <p className="data-label">BOARDING</p>
                 <p className="font-mono-data inv-event-value">{timeStr || 'See invitation'}</p>
