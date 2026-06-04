@@ -749,32 +749,27 @@
 
 .coastal-event-layout {
   display: grid;
-  grid-template-columns: minmax(300px, 0.95fr) minmax(300px, 1.05fr);
-  gap: clamp(24px, 5vw, 60px);
-  width: min(1040px, 100%);
+  grid-template-columns: minmax(0, 620px);
+  justify-content: center;
+  gap: clamp(22px, 4vw, 40px);
+  width: min(680px, 100%);
   margin: 0 auto;
   align-items: center;
 }
 
 .coastal-event-card {
   position: relative;
-  padding: clamp(30px, 5vw, 52px);
-  border-radius: 4px;
-  background:
-    linear-gradient(180deg, rgba(255, 253, 247, 0.95), rgba(248, 234, 212, 0.85)),
-    radial-gradient(circle at 100% 0%, rgba(130, 192, 191, 0.18), transparent 16rem);
-  border: 1px solid rgba(176, 125, 77, 0.24);
-  box-shadow: 0 28px 76px rgba(20, 53, 83, 0.12);
-  overflow: hidden;
+  padding: 0;
+  text-align: center;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
 }
 
 .coastal-event-card::before {
-  content: '';
-  position: absolute;
-  inset: 12px;
-  border: 1px solid rgba(176, 125, 77, 0.18);
-  border-radius: 2px;
-  pointer-events: none;
+  content: none;
 }
 
 .coastal-event-card > * {
@@ -794,8 +789,10 @@
 
 .coastal-event-card dl {
   display: grid;
-  gap: 22px;
+  gap: 18px;
   margin: 0;
+  justify-items: center;
+  text-align: center;
 }
 
 .coastal-event-card dt {
@@ -840,11 +837,14 @@
 }
 
 .coastal-event-art {
+  order: -1;
   position: relative;
+  width: min(440px, 100%);
+  margin: 0 auto;
   border-radius: 4px;
   overflow: hidden;
   background: #eff8fa;
-  box-shadow: 0 30px 84px rgba(20, 53, 83, 0.14);
+  box-shadow: 0 24px 64px rgba(20, 53, 83, 0.12);
 }
 
 .coastal-event-art > img {
