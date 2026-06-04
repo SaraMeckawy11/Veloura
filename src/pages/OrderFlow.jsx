@@ -11,6 +11,7 @@ import { migrateGuestPolicyFields } from '../lib/guestPolicyFields';
 import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
+import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -178,7 +179,7 @@ const TEMPLATE_PREVIEW_IMAGES = {
   'fountain-reverie-v1': fountainHero1Preview,
   'fountain-reverie-v2': fountainHero2Preview,
   'gazebo-garden': '/assets/gazebo-watercolor-poster1.jpg',
-  'boarding-pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
+  'boarding-pass': boardingPassPreview,
   'theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop&q=80',
 };
 

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
+import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
@@ -78,8 +79,9 @@ const designs = [
     name: 'Boarding Pass',
     category: 'launch',
     description: 'A playful travel-ticket design for destination-inspired celebrations.',
-    image: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=600&h=400&fit=crop&q=80',
-    overlay: 'linear-gradient(135deg, rgba(66,165,245,0.3), rgba(13,71,161,0.4))',
+    image: boardingPassPreview,
+    overlay: 'linear-gradient(135deg, rgba(66,165,245,0.08), rgba(13,71,161,0.1))',
+    hidePreviewText: true,
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/boarding-pass',

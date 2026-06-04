@@ -6,6 +6,7 @@ import useReveal from '../hooks/useReveal';
 import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
+import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -17,7 +18,7 @@ const DEMO_PREVIEW_IMAGES = {
   'Fountain Reverie II': fountainHero2Preview,
   'Garden Pavilion': '/assets/gazebo-watercolor-poster1.jpg',
   'Theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=300&h=300&fit=crop&q=80',
-  'Boarding Pass': 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=300&h=300&fit=crop&q=80',
+  'Boarding Pass': boardingPassPreview,
 };
 
 // Maps the demo display name to its template slug so each square can open the
