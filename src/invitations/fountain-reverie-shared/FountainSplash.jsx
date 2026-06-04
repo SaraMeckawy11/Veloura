@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import doorImage from '../../assets/Fountain Reverie/door.png';
 import './fountain-reverie.css';
 
-const AUTO_OPEN_MIN_MS = 1200;
+const AUTO_OPEN_MIN_MS = 700;
 const AUTO_OPEN_FALLBACK_MS = 1500;
 
 export default function FountainSplash({ onReady, onDismiss }) {
@@ -30,8 +30,8 @@ export default function FountainSplash({ onReady, onDismiss }) {
     if (!readyRef.current || openingRef.current) return;
     openingRef.current = true;
     setOpening(true);
-    setTimeout(() => setFading(true), 4600);
-    setTimeout(() => onDismissRef.current(), 5200);
+    setTimeout(() => setFading(true), 3000);
+    setTimeout(() => onDismissRef.current(), 3550);
   }, []);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function FountainSplash({ onReady, onDismiss }) {
     };
   }, [handleOpen, markReady]);
 
-  const swingDuration = 4.4;
+  const swingDuration = 2.9;
   const swingEase = [0.45, 0, 0.2, 1];
 
   return (
@@ -149,14 +149,6 @@ export default function FountainSplash({ onReady, onDismiss }) {
           />
         </div>
 
-        <motion.div
-          className="fountain-splash-copy"
-          animate={opening ? { opacity: 0, y: -16 } : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: 'easeOut' }}
-        >
-          <span className="fountain-splash-eyebrow">You are invited to</span>
-          <p className="fountain-splash-script">the wedding</p>
-        </motion.div>
       </motion.div>
     </AnimatePresence>
   );

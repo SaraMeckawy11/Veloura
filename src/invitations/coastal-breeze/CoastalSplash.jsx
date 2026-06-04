@@ -37,8 +37,8 @@ export default function CoastalSplash({ onReady, onDismiss }) {
     openingRef.current = true;
     setOpening(true);
     // Let the opened door settle, then dissolve promptly over the invitation below.
-    setTimeout(() => setFading(true), 2850);
-    setTimeout(() => onDismissRef.current(), 3400);
+    setTimeout(() => setFading(true), 2600);
+    setTimeout(() => onDismissRef.current(), 3100);
   }, []);
 
   useEffect(() => {
@@ -179,14 +179,6 @@ export default function CoastalSplash({ onReady, onDismiss }) {
           </div>
         </div>
 
-        <motion.div
-          className="coastal-splash-copy"
-          animate={opening ? { opacity: 0, y: -16 } : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: 'easeOut' }}
-        >
-          <span className="coastal-splash-eyebrow">You are invited to</span>
-          <p className="coastal-splash-script">the wedding</p>
-        </motion.div>
       </motion.div>
     </AnimatePresence>
   );

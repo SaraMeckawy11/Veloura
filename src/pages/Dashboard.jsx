@@ -698,6 +698,7 @@ export default function Dashboard() {
                         <p className="form-hint" style={{ margin: 0 }}>Hidden — guests won’t see a note about children.</p>
                       ) : (
                         <textarea
+                          className="dash-guidance-textarea"
                           rows={3}
                           value={editForm.childrenPolicyText}
                           placeholder="e.g. Little ones are warmly welcome to share in the celebration."
@@ -716,6 +717,7 @@ export default function Dashboard() {
                         <p className="form-hint" style={{ margin: 0 }}>Hidden — guests won’t see a note about bringing a guest.</p>
                       ) : (
                         <textarea
+                          className="dash-guidance-textarea"
                           rows={3}
                           value={editForm.plusOnePolicyText}
                           placeholder="e.g. You are warmly welcome to bring a guest with you."
@@ -753,7 +755,7 @@ export default function Dashboard() {
                   </div>
                   {!isFieldDisabled('coupleMessage') && (
                     <>
-                      <textarea rows={5} value={editForm.coupleMessage} placeholder={DEFAULT_ENVELOPE_MESSAGE} onChange={e => handleEditInput('coupleMessage', e.target.value)} />
+                      <textarea className="message-textarea message-textarea--tall" rows={5} value={editForm.coupleMessage} placeholder={DEFAULT_ENVELOPE_MESSAGE} onChange={e => handleEditInput('coupleMessage', e.target.value)} />
                       <p className="form-hint">Shown inside the envelope. Edit it, or clear it to remove this note.</p>
                     </>
                   )}

@@ -440,22 +440,22 @@ function RsvpSection({
             <RsvpChoice
               active={rsvpForm.attending === 'yes'}
               onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
-              title="Accepts"
+              title="Accept"
               subtitle="with pleasure"
             />
             <RsvpChoice
               active={rsvpForm.attending === 'no'}
               onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
-              title="Declines"
+              title="Decline"
               subtitle="with regret"
             />
           </div>
 
           <label className="theater-message-field">
-            <span>Message for the bride and groom</span>
+            <span>Message for the couple</span>
             <textarea
-              rows={2}
-              placeholder="Share a wish, a memory, or a song…"
+              rows={3}
+              placeholder="Share a wish, memory, or song request"
               value={rsvpForm.message}
               onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
             />

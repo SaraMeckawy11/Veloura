@@ -643,9 +643,9 @@ body:has(.theater-theme),
 
 .theater-rsvp-form {
   left: 13%;
-  top: 24%;
+  top: 23%;
   width: 74%;
-  height: 60%;
+  height: 63%;
   overflow: visible;
 }
 
@@ -689,7 +689,7 @@ body:has(.theater-theme),
 .theater-rsvp-choice {
   position: absolute;
   left: 7.6%;
-  top: 27%;
+  top: 29%;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 19.5%;
@@ -738,7 +738,7 @@ body:has(.theater-theme),
 }
 
 .theater-rsvp-choice strong {
-  font-size: clamp(0.6rem, 1.82vw, 1.1rem);
+  font-size: clamp(0.64rem, 1.9vw, 1.08rem);
 }
 
 .theater-rsvp-choice small {
@@ -785,9 +785,9 @@ body:has(.theater-theme),
 .theater-message-field {
   position: absolute;
   left: 7.5%;
-  top: 62.5%;
+  top: 58.5%;
   display: grid;
-  gap: 0.5em;
+  gap: 0.42em;
   width: 85%;
   text-align: center;
 }
@@ -797,7 +797,7 @@ body:has(.theater-theme),
 }
 
 .theater-message-field textarea {
-  min-height: clamp(40px, 9vw, 64px);
+  min-height: clamp(56px, 10.5vw, 78px);
   padding: 0.45em 0.6em;
   border: 1px solid rgba(47, 27, 19, 0.35);
   border-radius: 4px;
@@ -811,7 +811,7 @@ body:has(.theater-theme),
 }
 
 .theater-message-field textarea::placeholder {
-  color: rgba(75, 36, 20, 0.55);
+  color: rgba(75, 36, 20, 0.48);
   font-style: italic;
 }
 
@@ -834,7 +834,7 @@ body:has(.theater-theme),
 .theater-rsvp-submit {
   position: absolute;
   left: 8%;
-  top: 92%;
+  top: 91%;
   width: 70%;
   height: 22%;
   padding: 0;

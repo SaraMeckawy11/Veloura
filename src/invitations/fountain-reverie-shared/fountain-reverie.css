@@ -3537,3 +3537,60 @@
     font-size: clamp(1.6rem, 6.6vw, 2.1rem);
   }
 }
+
+/* Dashboard-requested invitation polish -------------------------------- */
+.fountain-details-policy .gp-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 18px;
+  max-width: 38rem;
+}
+
+.fountain-details-policy .gp-item {
+  flex: 0 1 auto;
+  max-width: 18rem;
+}
+
+.fountain-rsvp-panel {
+  padding-bottom: clamp(36px, 5vw, 58px);
+}
+
+.fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  margin-bottom: clamp(30px, 4.8vw, 44px);
+}
+
+.fountain-rsvp-panel-form {
+  gap: clamp(18px, 2.8vw, 26px);
+}
+
+.fountain-rsvp-panel-field,
+.fountain-rsvp-panel-choice {
+  gap: 11px;
+}
+
+.fountain-rsvp-panel-choice > div {
+  gap: clamp(14px, 2.4vw, 20px);
+}
+
+.fountain-rsvp-panel-submit {
+  margin-top: clamp(8px, 1.5vw, 14px);
+}
+
+.fountain-footer h2 {
+  font-size: clamp(1.28rem, 3.4vw, 2.15rem);
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 680px) {
+  .fountain-details-policy .gp-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    max-width: 24rem;
+  }
+
+  .fountain-details-policy .gp-item {
+    max-width: none;
+  }
+}

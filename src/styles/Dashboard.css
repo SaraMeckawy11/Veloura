@@ -451,13 +451,23 @@
   border-radius: 8px;
   font-size: 0.9rem;
   color: var(--text-primary);
-  background: var(--bg-alt);
+  background: var(--white, #fff);
   outline: none;
   transition: border-color 0.2s;
+}
+.edit-form .form-field input::placeholder,
+.edit-form .form-field textarea::placeholder {
+  color: var(--text-light);
+  opacity: 1;
+}
+.edit-form .message-textarea:placeholder-shown,
+.edit-form .dash-guidance-textarea:placeholder-shown {
+  color: var(--text);
 }
 .edit-form .form-field input:focus,
 .edit-form .form-field textarea:focus {
   border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184,146,74,0.08);
 }
 
 /* Locked fields (couple names) */
@@ -627,18 +637,20 @@
 .dash-page .font-picker-panel {
   width: min(760px, 100%);
   max-height: min(760px, 88vh);
-  overflow: auto;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
   background: var(--white);
   border-radius: 18px;
   box-shadow: 0 28px 80px rgba(33, 28, 22, 0.24);
-  padding: 24px;
 }
 .dash-page .font-picker-header {
   display: flex;
   justify-content: space-between;
   gap: 16px;
   align-items: flex-start;
-  margin-bottom: 20px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--border-light);
 }
 .dash-page .font-picker-eyebrow {
   display: block;
@@ -715,11 +727,9 @@
   gap: 10px 16px;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  border-radius: 12px;
+  padding: 14px 18px;
   background: linear-gradient(90deg, rgba(184, 146, 74, 0.12), rgba(255, 255, 255, 0.6));
-  border: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
 }
 .dash-page .font-picker-current-copy {
   display: flex;
@@ -742,7 +752,9 @@
 .dash-page .font-picker-reset {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
+  min-height: 38px;
   padding: 8px 14px;
   color: var(--gold);
   background: var(--white);
@@ -750,6 +762,7 @@
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -759,13 +772,20 @@
   border-color: var(--gold);
 }
 .dash-page .font-picker-reset:disabled {
-  opacity: 0.45;
+  color: var(--text-light);
+  background: var(--bg-alt);
+  border-color: var(--border-light);
+  opacity: 1;
   cursor: not-allowed;
 }
 .dash-page .font-option-grid {
+  min-height: 0;
+  overflow: auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  padding: 18px;
+  background: var(--bg-alt);
 }
 .dash-page .font-option-card {
   border: 1px solid var(--border-light);

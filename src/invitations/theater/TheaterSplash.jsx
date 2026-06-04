@@ -34,8 +34,8 @@ export default function TheaterSplash({ onReady, onDismiss }) {
     setReady(true);
     window.clearTimeout(fadeTimerRef.current);
     window.clearTimeout(exitTimerRef.current);
-    fadeTimerRef.current = window.setTimeout(() => setFading(true), 2850);
-    exitTimerRef.current = window.setTimeout(() => dismissRef.current?.(), 3400);
+    fadeTimerRef.current = window.setTimeout(() => setFading(true), 2600);
+    exitTimerRef.current = window.setTimeout(() => dismissRef.current?.(), 3100);
   }, []);
 
   useEffect(() => () => {
