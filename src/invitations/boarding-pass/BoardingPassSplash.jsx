@@ -34,7 +34,7 @@ const STARS = [
   { id: 9, left: 6, top: 75, delay: 1.1, dur: 1.9 },
 ];
 
-const AUTO_OPEN_MIN_MS = 800;
+const AUTO_OPEN_MIN_MS = 350;
 const AUTO_OPEN_FALLBACK_MS = 1500;
 
 export default function BoardingPassSplash({ onReady, onDismiss }) {
@@ -59,7 +59,7 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
     if (!readyRef.current || dismissedRef.current) return;
     dismissedRef.current = true;
     setDismissed(true);
-    setTimeout(() => onDismissRef.current(), 1300);
+    setTimeout(() => onDismissRef.current(), 950);
   }, []);
 
   useEffect(() => {

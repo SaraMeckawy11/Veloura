@@ -450,7 +450,7 @@
   border: 1px solid var(--border-light);
   border-radius: 8px;
   font-size: 0.9rem;
-  color: var(--text-primary);
+  color: var(--text);
   background: var(--white, #fff);
   outline: none;
   transition: border-color 0.2s;
@@ -460,12 +460,15 @@
   color: var(--text-light);
   opacity: 1;
 }
-.edit-form .message-textarea:placeholder-shown,
-.edit-form .dash-guidance-textarea:placeholder-shown {
+/* Envelope + guest-guidance placeholders read like editable copy (as in the
+   order flow), not a greyed-out hint. Scoped under .form-field so they outrank
+   the generic textarea placeholder rule above. */
+.edit-form .form-field .message-textarea:placeholder-shown,
+.edit-form .form-field .dash-guidance-textarea:placeholder-shown {
   color: var(--text);
 }
-.edit-form .message-textarea::placeholder,
-.edit-form .dash-guidance-textarea::placeholder {
+.edit-form .form-field .message-textarea::placeholder,
+.edit-form .form-field .dash-guidance-textarea::placeholder {
   color: var(--text);
   opacity: 1;
 }

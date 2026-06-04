@@ -5,7 +5,7 @@ import envelopeAnimationUrl from '../../assets/envelope_animation.html?url';
 
 const FRAME_COUNT = 73;
 const FRAMES_PER_SECOND = 20;
-const END_PADDING_MS = 320;
+const END_PADDING_MS = 140;
 const FALLBACK_DISMISS_MS = 4600;
 const ANIMATION_DISMISS_MS = Math.ceil((FRAME_COUNT / FRAMES_PER_SECOND) * 1000) + END_PADDING_MS;
 
@@ -41,7 +41,7 @@ export default function GazeboSplash({ onReady, onDismiss }) {
     // Let the opened envelope settle, then dissolve the splash so the hero
     // section underneath is revealed (only after the animation has played).
     setFading(true);
-    window.setTimeout(() => onDismissRef.current(), 700);
+    window.setTimeout(() => onDismissRef.current(), 420);
   }, []);
 
   const scheduleDismiss = useCallback((delay) => {

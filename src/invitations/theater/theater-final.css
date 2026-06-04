@@ -689,7 +689,7 @@ body:has(.theater-theme),
 .theater-rsvp-choice {
   position: absolute;
   left: 7.6%;
-  top: 62%;
+  top: 33%;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 14%;
@@ -709,14 +709,14 @@ body:has(.theater-theme),
 
 .theater-rsvp-choice button {
   display: grid;
-  grid-template-columns: 24% minmax(0, 1fr);
+  grid-template-columns: 22% minmax(0, 1fr);
   align-items: center;
-  gap: 8%;
-  min-height: clamp(38px, 7vw, 60px);
-  padding: 0.45em 0.55em;
-  border: 1px solid rgba(116, 23, 15, 0.2);
-  border-radius: 6px;
-  background: rgba(255, 248, 230, 0.34);
+  gap: 9%;
+  min-height: clamp(48px, 8.4vw, 68px);
+  padding: 0.6em 0.7em;
+  border: 1px solid rgba(116, 23, 15, 0.28);
+  border-radius: 9px;
+  background: rgba(255, 248, 230, 0.46);
   color: var(--theater-ink);
   font-family: var(--font-marquee);
   letter-spacing: 0.08em;
@@ -724,6 +724,7 @@ body:has(.theater-theme),
   text-align: left;
   text-transform: uppercase;
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(83, 35, 18, 0.06);
   transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
 
@@ -803,9 +804,9 @@ body:has(.theater-theme),
 .theater-message-field {
   position: absolute;
   left: 7.5%;
-  top: 37%;
+  top: 55%;
   display: grid;
-  gap: 0.36em;
+  gap: 0.5em;
   width: 85%;
   text-align: center;
 }

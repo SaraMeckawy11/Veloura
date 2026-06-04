@@ -30,8 +30,8 @@ export default function FountainSplash({ onReady, onDismiss }) {
     if (!readyRef.current || openingRef.current) return;
     openingRef.current = true;
     setOpening(true);
-    setTimeout(() => setFading(true), 1850);
-    setTimeout(() => onDismissRef.current(), 2300);
+    setTimeout(() => setFading(true), 900);
+    setTimeout(() => onDismissRef.current(), 1250);
   }, []);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function FountainSplash({ onReady, onDismiss }) {
     };
   }, [handleOpen, markReady]);
 
-  const swingDuration = 1.85;
+  const swingDuration = 1.0;
   const swingEase = [0.45, 0, 0.2, 1];
 
   return (
