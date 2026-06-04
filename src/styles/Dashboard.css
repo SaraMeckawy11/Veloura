@@ -677,6 +677,16 @@
   border: 1px solid var(--border-light);
   border-radius: 12px;
 }
+.dash-guest-policy-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.dash-guest-policy-card--off {
+  background: var(--bg-alt);
+  border-style: dashed;
+}
 .dash-guest-policy-label {
   font-size: 0.8rem;
   font-weight: 700;

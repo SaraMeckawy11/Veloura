@@ -1280,7 +1280,7 @@
   margin: 12px 0 18px;
   color: var(--fountain-bronze);
   font-family: var(--font-script);
-  font-size: clamp(2.8rem, 6vw, 4.6rem);
+  font-size: clamp(2rem, 4.2vw, 3rem);
   font-weight: 400;
   letter-spacing: 0;
   line-height: 0.98;
@@ -2268,7 +2268,7 @@
 
 .fountain-footer h2 {
   color: var(--fountain-bronze);
-  font-size: clamp(3.1rem, 7vw, 5rem);
+  font-size: clamp(2.1rem, 4.6vw, 3.2rem);
 }
 
 .fountain-footer p:last-child {
@@ -2505,14 +2505,14 @@
 
 .fountain-details-policy {
   margin-top: 18px;
-  padding: 18px 20px;
+  padding: 16px 4px 2px;
   text-align: center;
   color: rgba(79, 66, 31, 0.82);
-  background:
-    linear-gradient(180deg, rgba(255, 251, 244, 0.92), rgba(252, 245, 233, 0.86));
-  border: 1px solid rgba(148, 116, 47, 0.22);
-  border-radius: 14px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 10px 26px rgba(148, 116, 47, 0.07);
+  background: none;
+  border: 0;
+  border-top: 1px solid rgba(148, 116, 47, 0.2);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .fountain-details-policy .gp-kicker {

@@ -6,6 +6,7 @@ import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
 import { formatInvitationTime } from '../invitations/shared';
 import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
 import { getPricingTier, tierAllows, getTierDisabledFields } from '../lib/pricingTiers';
+import { migrateGuestPolicyFields } from '../lib/guestPolicyFields';
 import '../styles/Dashboard.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -140,12 +141,14 @@ export default function Dashboard() {
       plusOnePolicyText: wd.plusOnePolicyText || '',
       invitationFont: normalizeInvitationFont(invitationFont || DEFAULT_INVITATION_FONT),
     });
-    setEditDisabledFields([
-      ...new Set([
-        ...(Array.isArray(order.disabledFields) ? order.disabledFields : []),
-        ...getTierDisabledFields(order.pricingTier),
-      ]),
-    ]);
+    setEditDisabledFields(
+      migrateGuestPolicyFields([
+        ...new Set([
+          ...(Array.isArray(order.disabledFields) ? order.disabledFields : []),
+          ...getTierDisabledFields(order.pricingTier),
+        ]),
+      ])
+    );
     // Keep each photo category aligned with the section it renders in.
     const allPhotos = order.photos || [];
     const categorized = { venue: [], story: [], gallery: [] };
@@ -678,37 +681,49 @@ export default function Dashboard() {
                     <input type="url" value={editForm.venueMapUrl} onChange={e => handleEditInput('venueMapUrl', e.target.value)} />
                   )}
                 </div>
-                <div className={`form-field full-width ${isFieldDisabled('guestPolicy') ? 'field-disabled' : ''}`}>
+                <div className="form-field full-width">
                   <div className="dash-field-header">
                     <label>Guest Guidance</label>
-                    <button type="button" className="dash-field-toggle" onClick={() => toggleEditField('guestPolicy')}>
-                      {isFieldDisabled('guestPolicy') ? 'Enable' : 'Disable'}
-                    </button>
                   </div>
-                  {isFieldDisabled('guestPolicy') ? (
-                    <p className="form-hint">Hidden — guests won’t see any children or guest note on your invitation.</p>
-                  ) : (
-                    <div className="dash-guest-policy-grid">
-                      <div className="dash-guest-policy-card">
+                  <p className="form-hint" style={{ margin: '0 0 4px' }}>Turn each note on or off and edit the wording shown on your invitation.</p>
+                  <div className="dash-guest-policy-grid">
+                    <div className={`dash-guest-policy-card ${isFieldDisabled('childrenNote') ? 'dash-guest-policy-card--off' : ''}`}>
+                      <div className="dash-guest-policy-card-head">
                         <span className="dash-guest-policy-label">Children</span>
+                        <button type="button" className="dash-field-toggle" onClick={() => toggleEditField('childrenNote')}>
+                          {isFieldDisabled('childrenNote') ? 'Enable' : 'Disable'}
+                        </button>
+                      </div>
+                      {isFieldDisabled('childrenNote') ? (
+                        <p className="form-hint" style={{ margin: 0 }}>Hidden — guests won’t see a note about children.</p>
+                      ) : (
                         <textarea
                           rows={3}
                           value={editForm.childrenPolicyText}
                           placeholder="e.g. Little ones are warmly welcome to share in the celebration."
                           onChange={e => handleEditInput('childrenPolicyText', e.target.value)}
                         />
-                      </div>
-                      <div className="dash-guest-policy-card">
+                      )}
+                    </div>
+                    <div className={`dash-guest-policy-card ${isFieldDisabled('plusOneNote') ? 'dash-guest-policy-card--off' : ''}`}>
+                      <div className="dash-guest-policy-card-head">
                         <span className="dash-guest-policy-label">Bringing a guest</span>
+                        <button type="button" className="dash-field-toggle" onClick={() => toggleEditField('plusOneNote')}>
+                          {isFieldDisabled('plusOneNote') ? 'Enable' : 'Disable'}
+                        </button>
+                      </div>
+                      {isFieldDisabled('plusOneNote') ? (
+                        <p className="form-hint" style={{ margin: 0 }}>Hidden — guests won’t see a note about bringing a guest.</p>
+                      ) : (
                         <textarea
                           rows={3}
                           value={editForm.plusOnePolicyText}
                           placeholder="e.g. You are warmly welcome to bring a guest with you."
                           onChange={e => handleEditInput('plusOnePolicyText', e.target.value)}
                         />
-                      </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
                 <div className="form-field full-width">
                   <label>Invitation Font</label>

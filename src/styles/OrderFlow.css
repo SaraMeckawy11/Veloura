@@ -824,6 +824,36 @@
   font-weight: 700;
 }
 
+/* Per-note on/off switch in each guest-guidance card header. */
+.guest-policy-card-head .guest-policy-card-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 11px 4px 6px;
+  color: var(--text-light);
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.guest-policy-card-head .guest-policy-card-toggle.is-on {
+  color: var(--gold);
+  border-color: rgba(184, 146, 74, 0.4);
+}
+.guest-policy-card-toggle .guest-policy-switch-track { width: 28px; height: 16px; }
+.guest-policy-card-toggle .guest-policy-switch-thumb { width: 12px; height: 12px; }
+.guest-policy-card-toggle.is-on .guest-policy-switch-track { background: var(--gold); }
+.guest-policy-card-toggle.is-on .guest-policy-switch-thumb { transform: translateX(12px); }
+
+.guest-policy-card--off {
+  background: var(--bg-alt);
+  border-style: dashed;
+}
+
 .guest-policy-card textarea {
   min-height: 74px;
   resize: vertical;

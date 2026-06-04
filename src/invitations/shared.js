@@ -63,21 +63,30 @@ export function formatInvitationTime(value, preference = '12h') {
 }
 
 export function getGuestPolicyLines(weddingDetails = {}, disabledFields = []) {
-  // The couple can hide the whole guest-guidance block from the order form
-  // or dashboard via the "guestPolicy" disable toggle.
-  if (Array.isArray(disabledFields) && disabledFields.includes('guestPolicy')) return [];
-  const childrenPolicy = weddingDetails.childrenPolicy || 'welcome';
-  const plusOnePolicy = weddingDetails.plusOnePolicy || 'named-only';
-  const childrenText = weddingDetails.childrenPolicyText?.trim()
-    || (childrenPolicy === 'adults-only'
-      ? 'With love, we kindly request an adults-only celebration.'
-      : 'Little ones are warmly welcome to share in the celebration.');
-  const plusOneText = weddingDetails.plusOnePolicyText?.trim()
-    || (plusOnePolicy === 'welcome'
-      ? 'You are warmly welcome to bring a guest with you.'
-      : 'To keep our celebration intimate, we kindly ask that only the guests named on your invitation join us.');
+  // Each guidance message can be hidden on its own ("childrenNote" / "plusOneNote").
+  // The legacy "guestPolicy" key hid both at once, so it still does.
+  const disabled = Array.isArray(disabledFields) ? disabledFields : [];
+  const allHidden = disabled.includes('guestPolicy');
+  const childrenHidden = allHidden || disabled.includes('childrenNote');
+  const plusOneHidden = allHidden || disabled.includes('plusOneNote');
 
-  return [childrenText, plusOneText].filter(Boolean);
+  const lines = [];
+  if (!childrenHidden) {
+    const childrenPolicy = weddingDetails.childrenPolicy || 'welcome';
+    lines.push(weddingDetails.childrenPolicyText?.trim()
+      || (childrenPolicy === 'adults-only'
+        ? 'With love, we kindly request an adults-only celebration.'
+        : 'Little ones are warmly welcome to share in the celebration.'));
+  }
+  if (!plusOneHidden) {
+    const plusOnePolicy = weddingDetails.plusOnePolicy || 'named-only';
+    lines.push(weddingDetails.plusOnePolicyText?.trim()
+      || (plusOnePolicy === 'welcome'
+        ? 'You are warmly welcome to bring a guest with you.'
+        : 'To keep our celebration intimate, we kindly ask that only the guests named on your invitation join us.'));
+  }
+
+  return lines.filter(Boolean);
 }
 
 export function getGuestPolicyLine(weddingDetails = {}) {

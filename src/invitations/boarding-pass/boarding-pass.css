@@ -809,13 +809,14 @@
 
 .inv-details-policy {
   margin-top: 18px;
-  padding: 18px 20px;
+  padding: 16px 4px 2px;
   text-align: center;
   color: var(--bp-fg);
-  background: rgba(255, 255, 255, 0.84);
-  border: 1px solid rgba(184, 146, 74, 0.3);
-  border-radius: 12px;
-  box-shadow: 0 10px 26px rgba(13, 71, 161, 0.06);
+  background: none;
+  border: 0;
+  border-top: 1px solid rgba(184, 146, 74, 0.3);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .inv-details-policy .gp-kicker {

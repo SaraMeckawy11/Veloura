@@ -7,6 +7,7 @@ import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
 import registry from '../invitations/registry';
 import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
 import { DEFAULT_PRICING_TIER, PRICING_TIERS, getPricingTier, normalizePricingTier, tierAllows, getTierDisabledFields } from '../lib/pricingTiers';
+import { migrateGuestPolicyFields } from '../lib/guestPolicyFields';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
 import '../styles/OrderFlow.css';
@@ -263,7 +264,7 @@ export default function OrderFlow() {
   const messageTouchedRef = useRef(Boolean(draft?.form?.message && draft.form.message !== OLD_MESSAGE_HELP_TEXT));
   const coupleMessageTouchedRef = useRef(Boolean(draft?.form?.coupleMessage));
 
-  const [disabledFields, setDisabledFields] = useState(draft?.disabledFields || []);
+  const [disabledFields, setDisabledFields] = useState(migrateGuestPolicyFields(draft?.disabledFields || []));
   // Photos organized by category — restore uploaded photos from draft
   // Mark any _pendingUpload photos as failed (upload was lost on reload, user must re-add)
   const initPhotos = (() => {
@@ -1200,70 +1201,86 @@ export default function OrderFlow() {
                       <p className="form-hint message-hint form-hint-disabled">The map will be hidden from your invitation.</p>
                     )}
                   </div>
-                  <div className={`guest-policy-editor form-field--wide ${disabledFields.includes('guestPolicy') ? 'guest-policy-editor--off' : ''}`}>
+                  <div className="guest-policy-editor form-field--wide">
                     <div className="guest-policy-editor-header">
                       <div>
                         <span className="guest-policy-kicker">Guest guidance</span>
                         <h3>Children &amp; Guest Wording</h3>
-                        <p>A short, polite note telling guests who is invited. Shown in your invitation details.</p>
+                        <p>Short, polite notes telling guests who is invited. Turn each note on or off and edit the wording — shown in your invitation details.</p>
                       </div>
-                      <button
-                        type="button"
-                        className={`guest-policy-switch ${disabledFields.includes('guestPolicy') ? 'is-off' : 'is-on'}`}
-                        role="switch"
-                        aria-checked={!disabledFields.includes('guestPolicy')}
-                        onClick={() => toggleField('guestPolicy')}
-                      >
-                        <span className="guest-policy-switch-track"><span className="guest-policy-switch-thumb" /></span>
-                        {disabledFields.includes('guestPolicy') ? 'Off' : 'On'}
-                      </button>
                     </div>
-                    {disabledFields.includes('guestPolicy') ? (
-                      <p className="form-hint message-hint form-hint-disabled">Guest guidance is hidden — guests won’t see any children or plus-one note on your invitation.</p>
-                    ) : (
-                    <>
                     <div className="guest-policy-card-grid">
-                      <article className="guest-policy-card">
+                      <article className={`guest-policy-card ${disabledFields.includes('childrenNote') ? 'guest-policy-card--off' : ''}`}>
                         <div className="guest-policy-card-head">
                           <span>Children</span>
+                          <button
+                            type="button"
+                            className={`guest-policy-card-toggle ${disabledFields.includes('childrenNote') ? 'is-off' : 'is-on'}`}
+                            role="switch"
+                            aria-checked={!disabledFields.includes('childrenNote')}
+                            onClick={() => toggleField('childrenNote')}
+                          >
+                            <span className="guest-policy-switch-track"><span className="guest-policy-switch-thumb" /></span>
+                            {disabledFields.includes('childrenNote') ? 'Off' : 'On'}
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          className="guest-policy-choose"
-                          onClick={() => setPolicyPickerOpen('children')}
-                        >
-                          Tap to choose suggested wording
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
-                        </button>
-                        <textarea
-                          rows={2}
-                          value={form.childrenPolicyText}
-                          onChange={e => handleInput('childrenPolicyText', e.target.value)}
-                          placeholder="…or write your own note about children."
-                        />
+                        {disabledFields.includes('childrenNote') ? (
+                          <p className="form-hint message-hint form-hint-disabled">Hidden — guests won’t see a note about children.</p>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              className="guest-policy-choose"
+                              onClick={() => setPolicyPickerOpen('children')}
+                            >
+                              Tap to choose suggested wording
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
+                            </button>
+                            <textarea
+                              rows={2}
+                              value={form.childrenPolicyText}
+                              onChange={e => handleInput('childrenPolicyText', e.target.value)}
+                              placeholder="…or write your own note about children."
+                            />
+                          </>
+                        )}
                       </article>
-                      <article className="guest-policy-card">
+                      <article className={`guest-policy-card ${disabledFields.includes('plusOneNote') ? 'guest-policy-card--off' : ''}`}>
                         <div className="guest-policy-card-head">
                           <span>Bringing a guest</span>
+                          <button
+                            type="button"
+                            className={`guest-policy-card-toggle ${disabledFields.includes('plusOneNote') ? 'is-off' : 'is-on'}`}
+                            role="switch"
+                            aria-checked={!disabledFields.includes('plusOneNote')}
+                            onClick={() => toggleField('plusOneNote')}
+                          >
+                            <span className="guest-policy-switch-track"><span className="guest-policy-switch-thumb" /></span>
+                            {disabledFields.includes('plusOneNote') ? 'Off' : 'On'}
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          className="guest-policy-choose"
-                          onClick={() => setPolicyPickerOpen('plusOne')}
-                        >
-                          Tap to choose suggested wording
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
-                        </button>
-                        <textarea
-                          rows={2}
-                          value={form.plusOnePolicyText}
-                          onChange={e => handleInput('plusOnePolicyText', e.target.value)}
-                          placeholder="…or write your own note about bringing a guest."
-                        />
+                        {disabledFields.includes('plusOneNote') ? (
+                          <p className="form-hint message-hint form-hint-disabled">Hidden — guests won’t see a note about bringing a guest.</p>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              className="guest-policy-choose"
+                              onClick={() => setPolicyPickerOpen('plusOne')}
+                            >
+                              Tap to choose suggested wording
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
+                            </button>
+                            <textarea
+                              rows={2}
+                              value={form.plusOnePolicyText}
+                              onChange={e => handleInput('plusOnePolicyText', e.target.value)}
+                              placeholder="…or write your own note about bringing a guest."
+                            />
+                          </>
+                        )}
                       </article>
                     </div>
-                    </>
-                    )}
                   </div>
                 </div>
               </fieldset>

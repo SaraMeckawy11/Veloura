@@ -594,13 +594,14 @@
 .gazebo-details-policy {
   grid-column: 1 / -1;
   margin-top: 0.5rem;
-  padding: 18px 20px;
+  padding: 16px 4px 2px;
   text-align: center;
   color: rgba(59, 72, 52, 0.82);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(239, 248, 220, 0.72));
-  border: 1px solid rgba(108, 135, 82, 0.2);
-  border-radius: 14px;
-  box-shadow: 0 10px 24px rgba(108, 135, 82, 0.08);
+  background: none;
+  border: 0;
+  border-top: 1px solid rgba(108, 135, 82, 0.2);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .gazebo-details-policy .gp-kicker {
