@@ -116,7 +116,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const [rsvpForm, setRsvpForm] = useState({
     guestName: '',
     guestCount: '1',
-    attending: '',
+    attending: 'yes',
     message: '',
   });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);

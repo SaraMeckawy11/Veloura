@@ -879,11 +879,11 @@
 
 .gazebo-attending-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.65rem;
-  border-radius: 0.8rem;
-  background: rgba(234, 222, 190, 0.42);
-  padding: 0.35rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: clamp(1.6rem, 4vw, 2.4rem);
+  padding: 0;
+  background: transparent;
 }
 
 .gazebo-attending-grid label {
@@ -891,29 +891,58 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 3.5rem;
-  border: 1px solid transparent;
-  border-radius: 0.62rem;
-  background: rgba(255, 255, 255, 0.66);
-  color: rgba(49, 66, 52, 0.82);
+  min-height: 3.6rem;
+  overflow: hidden;
+  border: 1px solid rgba(150, 119, 54, 0.24);
+  border-radius: 0.7rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 235, 0.82));
+  color: rgba(49, 66, 52, 0.86);
   cursor: pointer;
-  padding: 0.9rem 1rem;
+  padding: 0.9rem 0.8rem;
   text-align: center;
   transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.gazebo-attending-grid label::before {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.44), transparent);
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 180ms ease, transform 320ms ease;
+  content: "";
 }
 
 .gazebo-attending-grid label span {
   position: relative;
   z-index: 1;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 800;
 }
 
+.gazebo-attending-grid label:hover,
+.gazebo-attending-grid label:focus-within {
+  border-color: rgba(139, 115, 50, 0.42);
+  box-shadow: 0 12px 26px rgba(90, 102, 64, 0.12);
+  transform: translateY(-1px);
+}
+
+.gazebo-attending-grid label:hover::before,
+.gazebo-attending-grid label:focus-within::before {
+  opacity: 1;
+  transform: translateX(50%);
+}
+
 .gazebo-attending-grid label.active {
-  border-color: rgba(139, 115, 50, 0.2);
-  background: linear-gradient(135deg, #b99244, #7f5c2e);
-  box-shadow: 0 14px 28px rgba(139, 99, 49, 0.22);
-  color: white;
+  border-color: rgba(118, 86, 38, 0.62);
+  background:
+    linear-gradient(135deg, #d4b46a 0%, #9d7135 58%, #73512b 100%);
+  box-shadow:
+    0 16px 34px rgba(139, 99, 49, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38);
+  color: #fffdf4;
   transform: translateY(-1px);
 }
 
@@ -1166,9 +1195,23 @@
     letter-spacing: 0.08em;
   }
 
-  .gazebo-rsvp-grid,
-  .gazebo-attending-grid {
+  .gazebo-rsvp-grid {
     grid-template-columns: 1fr;
+  }
+
+  .gazebo-attending-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 1.35rem;
+  }
+
+  .gazebo-attending-grid label {
+    min-height: 3.25rem;
+    padding: 0.78rem 0.5rem;
+  }
+
+  .gazebo-attending-grid label span {
+    font-size: 0.78rem;
   }
 
   .gazebo-rsvp-submit {
@@ -1277,20 +1320,10 @@
 .gazebo-note-envelope {
   position: relative;
   z-index: 2;
-  isolation: isolate;
   width: min(720px, 100%);
   margin: 0 auto;
   filter: drop-shadow(0 26px 38px rgba(90, 102, 64, 0.16));
   transform: translateZ(0);
-}
-
-.gazebo-note-envelope::before {
-  position: absolute;
-  inset: 6% 4% 7%;
-  z-index: -1;
-  border-radius: 0.75rem;
-  background: #fff7e7;
-  content: "";
 }
 
 .gazebo-note-envelope-image {
@@ -1305,11 +1338,10 @@
   left: 50%;
   top: 26%;
   width: 60%;
-  border-radius: 0.5rem;
-  background: rgba(255, 247, 231, 0.82);
+  background: transparent;
   color: #314234;
   font-family: "Cormorant Garamond", Georgia, serif;
-  padding: 0.3rem 0.6rem 0.55rem;
+  padding: 0;
   text-align: center;
   transform: translateX(-50%);
 }
