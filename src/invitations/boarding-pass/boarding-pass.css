@@ -351,7 +351,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(3.6rem, 17cqw, 8.5rem);
+  gap: clamp(3.9rem, 18.8cqw, 9rem);
   pointer-events: none;
 }
 .bp-hero-name {
