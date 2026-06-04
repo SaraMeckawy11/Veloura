@@ -327,7 +327,7 @@
 .bp-hero-ticket {
   position: relative;
   width: 100%;
-  max-width: min(1000px, 98vw);
+  max-width: min(1200px, 98vw);
   margin: 0 auto;
   aspect-ratio: 1122 / 1402;
   container-type: inline-size;
@@ -351,7 +351,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.75em;
+  gap: clamp(2.6rem, 10cqw, 5rem);
   pointer-events: none;
 }
 .bp-hero-name {
@@ -368,7 +368,7 @@
 /* Detail rows — aligned to the right of baked-in icons */
 .bp-hero-detail {
   position: absolute;
-  left: 48%;
+  left: 45%;
   right: 3%;
   transform: translateY(-50%);
   display: flex;
@@ -377,9 +377,9 @@
   text-align: left;
   pointer-events: none;
 }
-.bp-hero-detail--date { top: 73%; }
+.bp-hero-detail--date { top: 71.5%; }
 .bp-hero-detail--time { top: 81.5%; }
-.bp-hero-detail--venue { top: 91%; }
+.bp-hero-detail--venue { top: 89.5%; }
 .bp-hero-detail-label {
   font-family: var(--font-mono);
   font-size: clamp(0.38rem, 1.7cqw, 0.6rem);
