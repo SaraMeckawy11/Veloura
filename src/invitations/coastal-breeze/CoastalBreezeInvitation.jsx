@@ -302,7 +302,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       ) : null}
 
       <section className="coastal-section coastal-event-section">
-        <SectionTitle eyebrow="The Big Day" title="Ceremony" script="& Reception" />
+        <SectionTitle title="Event details" subtitle="where love gathers" />
         <div className="coastal-event-layout">
           <motion.div
             className="coastal-event-card"
@@ -338,16 +338,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                 <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
-          </motion.div>
-
-          <motion.div
-            className="coastal-event-art"
-            initial={{ opacity: 0, x: 28 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <img src={ceremonyArch} alt="" />
           </motion.div>
         </div>
 
@@ -494,7 +484,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   );
 }
 
-function SectionTitle({ eyebrow, title, script, light = false }) {
+function SectionTitle({ eyebrow, title, script, subtitle, light = false }) {
   return (
     <div className={`coastal-section-title${light ? ' coastal-section-title-light' : ''}`}>
       {eyebrow && <span>{eyebrow}</span>}
@@ -502,6 +492,7 @@ function SectionTitle({ eyebrow, title, script, light = false }) {
         {title}
         {script && <span className="script">{script}</span>}
       </h2>
+      {subtitle && <p className="coastal-section-subtitle">{subtitle}</p>}
       <FlourishSvg className="coastal-section-divider" />
     </div>
   );

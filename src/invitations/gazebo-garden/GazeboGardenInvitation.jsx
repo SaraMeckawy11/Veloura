@@ -392,7 +392,8 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               {message && <p>{message}</p>}
             </div>
             <div className="gazebo-detail-list">
-              <DetailItem label="Date & time" value={fullDateTime || 'To be announced'} />
+              <DetailItem label="Date" value={fullDateStr || 'To be announced'} />
+              {timeStr && <DetailItem label="Time" value={timeStr} />}
               <DetailItem label="Venue" value={venue || 'Garden venue'} />
               {venueAddress && <DetailItem label="Address" value={venueAddress} />}
             </div>

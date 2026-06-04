@@ -53,7 +53,17 @@
       "Bash(node -e \"const v=require\\('./node_modules/.package-lock.json'\\); \")",
       "Bash(node -e \"try{require.resolve\\('@resvg/resvg-js'\\);console.log\\('resvg: yes'\\)}catch{console.log\\('resvg: no'\\)}\")",
       "Bash(node -e \"try{require.resolve\\('jimp'\\);console.log\\('jimp: yes'\\)}catch{console.log\\('jimp: no'\\)}\")",
-      "Bash(awk '{print $5}')"
+      "Bash(awk '{print $5}')",
+      "Bash(git commit -m 'Lower prices, gate more sections, mobile-accurate preview frame' -m '- Reduce prices: Essential $59->$29, Signature $99->$59 \\(display + the *)",
+      "Bash(git rev-list *)",
+      "Bash(sed -n '810,835p' src/invitations/boarding-pass/boarding-pass.css)",
+      "Bash(sed -n '1057,1080p' src/invitations/coastal-breeze/coastal-breeze.css)",
+      "Bash(sed -n '594,618p' src/invitations/gazebo-garden/gazebo-garden.css)",
+      "Bash(sed -n '554,575p' src/invitations/theater/theater-final.css)",
+      "Bash(git commit --amend -m 'Raise tiers, add note to Essential, fix pricing card width & preview' -m '- Bump tier prices \\(Essential 39->49, Signature 69->74\\) and unlock the envelope \"A Note\" message in Essential; highlight the Signature RSVP dashboard guest-tracking tools. *)",
+      "Bash(awk 'NR>=3400 && NR<=3560 && \\(/@media/ || /@container/ || /@supports/\\)' src/invitations/fountain-reverie-shared/fountain-reverie.css)",
+      "Bash(awk 'NR>=1 && NR<=3557' src/invitations/fountain-reverie-shared/fountain-reverie.css)",
+      "Bash(awk -F: '$1>=3300 && $1<=3650')"
     ]
   }
 }
