@@ -978,33 +978,89 @@ textarea.kiosk-input {
 
 /* RSVP toggle buttons */
 .inv-radio-group {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  margin-top: 12px;
 }
 .inv-radio-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: flex-start;
+  min-height: 52px;
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  letter-spacing: 0.1em;
-  padding: 10px 20px;
-  border: 2px solid var(--bp-border);
-  border-radius: 4px;
-  background: transparent;
-  color: var(--bp-muted-fg);
+  letter-spacing: 0.08em;
+  padding: 12px 14px 12px 42px;
+  border: 1px solid hsla(208, 28%, 27%, 0.16);
+  border-radius: 6px;
+  background: hsla(38, 46%, 98%, 0.72);
+  color: hsla(208, 28%, 27%, 0.78);
   cursor: pointer;
-  transition: all 0.25s;
+  box-shadow: 0 8px 20px hsla(208, 28%, 27%, 0.05);
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
   text-transform: uppercase;
 }
+
+.inv-radio-btn svg {
+  display: none;
+}
+
+.inv-radio-btn::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 13px;
+  height: 13px;
+  border: 1px solid hsla(39, 43%, 43%, 0.48);
+  border-radius: 50%;
+  background: transparent;
+  transform: translateY(-50%);
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.inv-radio-btn::after {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--bp-gold-dark);
+  opacity: 0;
+  transform: translateY(-50%) scale(0.7);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
 .inv-radio-btn:hover {
-  border-color: var(--bp-gold);
-  color: var(--bp-gold);
+  border-color: hsla(39, 43%, 43%, 0.36);
+  background: hsla(38, 46%, 98%, 0.94);
+  box-shadow: 0 12px 28px hsla(208, 28%, 27%, 0.08);
+  color: var(--bp-fg);
+  transform: translateY(-1px);
 }
 .inv-radio-btn.active {
-  background: var(--bp-secondary);
-  color: var(--bp-secondary-fg);
-  border-color: var(--bp-secondary);
+  background: hsla(38, 46%, 98%, 0.98);
+  color: var(--bp-fg);
+  border-color: hsla(39, 43%, 43%, 0.52);
+  box-shadow:
+    0 14px 30px hsla(39, 43%, 43%, 0.12),
+    inset 0 0 0 1px hsla(39, 43%, 43%, 0.1);
+}
+
+.inv-radio-btn.active::before {
+  border-color: hsla(39, 43%, 43%, 0.68);
+  background: hsla(39, 44%, 76%, 0.34);
+  box-shadow: 0 0 0 4px hsla(39, 43%, 58%, 0.09);
+}
+
+.inv-radio-btn.active::after {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
 }
 
 /* RSVP submit */

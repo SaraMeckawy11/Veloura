@@ -467,12 +467,12 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
                     <div className="inv-form-field">
                       <label className="data-label">WILL YOU BE BOARDING?</label>
-                      <div className="inv-radio-group">
-                        <button type="button" className={`inv-radio-btn ${rsvpForm.attending === 'yes' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}>
+                      <div className="inv-radio-group" role="radiogroup" aria-label="Will you be boarding?">
+                        <button type="button" role="radio" aria-checked={rsvpForm.attending === 'yes'} className={`inv-radio-btn ${rsvpForm.attending === 'yes' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
                           YES
                         </button>
-                        <button type="button" className={`inv-radio-btn ${rsvpForm.attending === 'no' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}>
+                        <button type="button" role="radio" aria-checked={rsvpForm.attending === 'no'} className={`inv-radio-btn ${rsvpForm.attending === 'no' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                           NO
                         </button>
