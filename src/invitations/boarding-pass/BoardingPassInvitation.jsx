@@ -221,8 +221,8 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
               <span className="bp-hero-detail-value">{dateStrShort || 'TBD'}</span>
             </div>
             <div className="bp-hero-detail bp-hero-detail--time">
-              <span className="bp-hero-detail-value">{timeStr || 'TBD'}</span>
               <span className="bp-hero-detail-label">BOARDING</span>
+              <span className="bp-hero-detail-value">{timeStr || 'TBD'}</span>
             </div>
             <div className="bp-hero-detail bp-hero-detail--venue">
               <span className="bp-hero-detail-value">{venue || 'TBD'}</span>
