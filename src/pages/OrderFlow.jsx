@@ -8,6 +8,7 @@ import registry from '../invitations/registry';
 import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
 import { DEFAULT_PRICING_TIER, PRICING_TIERS, getPricingTier, normalizePricingTier, tierAllows, getTierDisabledFields } from '../lib/pricingTiers';
 import { migrateGuestPolicyFields } from '../lib/guestPolicyFields';
+import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
 import '../styles/OrderFlow.css';
@@ -173,7 +174,7 @@ const normalizePhotoFit = (value) => {
   return VALID_PHOTO_FITS.has(value) ? value : DEFAULT_PHOTO_FIT;
 };
 const TEMPLATE_PREVIEW_IMAGES = {
-  'coastal-breeze': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80',
+  'coastal-breeze': coastalSplashPreview,
   'fountain-reverie-v1': fountainHero1Preview,
   'fountain-reverie-v2': fountainHero2Preview,
   'gazebo-garden': '/assets/gazebo-watercolor-poster1.jpg',

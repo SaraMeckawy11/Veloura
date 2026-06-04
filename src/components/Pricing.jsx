@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { PRICING_TIERS } from '../lib/pricingTiers';
 import '../styles/Pricing.css';
 import useReveal from '../hooks/useReveal';
+import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
 
@@ -11,7 +12,7 @@ const API = import.meta.env.VITE_API_URL || '/api';
 // Small demo thumbnails keyed by the invitation display name used in
 // PRICING_TIERS.demoCards, so each plan can show the real design preview.
 const DEMO_PREVIEW_IMAGES = {
-  'Coastal Breeze': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&h=300&fit=crop&q=80',
+  'Coastal Breeze': coastalSplashPreview,
   'Fountain Reverie I': fountainHero1Preview,
   'Fountain Reverie II': fountainHero2Preview,
   'Garden Pavilion': '/assets/gazebo-watercolor-poster1.jpg',
