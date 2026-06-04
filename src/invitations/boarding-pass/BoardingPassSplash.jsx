@@ -59,7 +59,7 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
     if (!readyRef.current || dismissedRef.current) return;
     dismissedRef.current = true;
     setDismissed(true);
-    setTimeout(() => onDismissRef.current(), 1100);
+    setTimeout(() => onDismissRef.current(), 1300);
   }, []);
 
   useEffect(() => {

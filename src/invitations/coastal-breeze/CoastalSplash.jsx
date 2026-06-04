@@ -37,8 +37,8 @@ export default function CoastalSplash({ onReady, onDismiss }) {
     openingRef.current = true;
     setOpening(true);
     // Let the opened door settle, then dissolve promptly over the invitation below.
-    setTimeout(() => setFading(true), 1200);
-    setTimeout(() => onDismissRef.current(), 1600);
+    setTimeout(() => setFading(true), 1850);
+    setTimeout(() => onDismissRef.current(), 2300);
   }, []);
 
   useEffect(() => {

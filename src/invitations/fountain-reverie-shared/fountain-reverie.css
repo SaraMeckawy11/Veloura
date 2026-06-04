@@ -2504,13 +2504,12 @@
 }
 
 .fountain-details-policy {
-  margin-top: 18px;
-  padding: 16px 4px 2px;
+  margin-top: 14px;
+  padding: 4px 4px 2px;
   text-align: center;
   color: rgba(79, 66, 31, 0.82);
   background: none;
   border: 0;
-  border-top: 1px solid rgba(148, 116, 47, 0.2);
   border-radius: 0;
   box-shadow: none;
 }

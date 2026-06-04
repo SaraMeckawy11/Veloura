@@ -588,7 +588,7 @@ function GallerySection({ images }) {
     let offset = 0;
     let previousTime = 0;
     let isInteracting = false;
-    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
+    let pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 34 : 44;
 
     const wrapOffset = (value) => {
       if (!distance) return 0;
@@ -606,7 +606,7 @@ function GallerySection({ images }) {
     };
 
     const updateSpeed = () => {
-      pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 28 : 36;
+      pixelsPerSecond = window.matchMedia('(max-width: 680px)').matches ? 34 : 44;
     };
 
     const animate = (time) => {

@@ -41,7 +41,7 @@ export default function GazeboSplash({ onReady, onDismiss }) {
     // Let the opened envelope settle, then dissolve the splash so the hero
     // section underneath is revealed (only after the animation has played).
     setFading(true);
-    window.setTimeout(() => onDismissRef.current(), 560);
+    window.setTimeout(() => onDismissRef.current(), 700);
   }, []);
 
   const scheduleDismiss = useCallback((delay) => {

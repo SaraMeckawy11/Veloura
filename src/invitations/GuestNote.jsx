@@ -20,10 +20,11 @@ const GuestIcon = (
 
 export const GUEST_NOTE_ICONS = [ChildrenIcon, GuestIcon];
 
-export default function GuestNote({ lines, className = '' }) {
+export default function GuestNote({ lines, className = '', label = 'For our cherished guests' }) {
   if (!lines?.length) return null;
   return (
     <div className={`gp-note ${className}`.trim()}>
+      <span className="gp-kicker">{label}</span>
       <ul className="gp-list">
         {lines.map((line, index) => (
           <li className="gp-item" key={line}>
