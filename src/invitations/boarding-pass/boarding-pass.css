@@ -404,8 +404,8 @@
 /* Confirmed rubber-stamp overlay */
 .bp-hero-stamp {
   position: absolute;
-  right: 13%;
-  bottom: 0.3%;
+  right: calc(13% + 2px);
+  bottom: calc(0.3% + 2px);
   width: 29%;
   height: auto;
   pointer-events: none;
