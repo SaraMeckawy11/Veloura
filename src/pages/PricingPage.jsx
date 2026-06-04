@@ -7,7 +7,7 @@ export default function PricingPage() {
   return (
     <>
       <Navbar />
-      <Pricing />
+      <Pricing showCta={false} />
       <FAQ />
       <Footer />
     </>

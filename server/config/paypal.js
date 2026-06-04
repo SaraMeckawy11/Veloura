@@ -86,8 +86,12 @@ export async function createPaypalOrder({ orderId, amount, currency = 'USD' }) {
 }
 
 export async function capturePaypalOrder(paypalOrderId) {
+  // PayPal-Request-Id makes capture idempotent on PayPal's side: if the same
+  // order is captured twice (double-click, network retry), PayPal returns the
+  // original capture result instead of charging again.
   return paypalFetch(`/v2/checkout/orders/${paypalOrderId}/capture`, {
     method: 'POST',
+    headers: { 'PayPal-Request-Id': `capture-${paypalOrderId}` },
     body: JSON.stringify({}),
   });
 }

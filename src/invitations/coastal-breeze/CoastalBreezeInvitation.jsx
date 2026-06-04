@@ -749,6 +749,9 @@ function GallerySection({ images }) {
           loading="eager"
           fetchPriority={groupIndex === 0 && index < uniqueImages.length ? 'high' : 'auto'}
         />
+        <span className="coastal-gallery-frame" aria-hidden>
+          <span className="coastal-gallery-shell" />
+        </span>
       </figure>
     );
   });

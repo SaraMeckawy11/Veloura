@@ -182,6 +182,15 @@ const TEMPLATE_PREVIEW_IMAGES = {
   'theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop&q=80',
 };
 
+// Slugs that render with the home Designs.jsx overlay+text treatment instead of
+// a plain preview image, so the card matches the home collection exactly.
+const TEMPLATE_PREVIEW_CARDS = {
+  'coastal-breeze': {
+    overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
+    previewText: 'Coastal Breeze',
+  },
+};
+
 const LANGUAGE_OPTIONS = [
   { value: '', label: 'None' },
   { value: 'ar', label: 'Arabic' },
@@ -230,6 +239,9 @@ export default function OrderFlow() {
   const [fontPickerOpen, setFontPickerOpen] = useState(false);
   const [policyPickerOpen, setPolicyPickerOpen] = useState(null);
   const paypalButtonRef = useRef(null);
+  // Guards against a second capture call while one is already in flight or done,
+  // so a buyer who triggers approval twice is never charged/captured twice.
+  const captureInFlightRef = useRef(false);
 
   // Form state — restore from draft
   const defaultForm = {
@@ -743,6 +755,8 @@ export default function OrderFlow() {
 
   // Capture the order on the server after the buyer approves it in PayPal.
   const captureAndFinish = useCallback(async () => {
+    if (captureInFlightRef.current) return;
+    captureInFlightRef.current = true;
     try {
       const res = await fetch(`${API}/orders/capture/${paypalOrderData.orderId}`, {
         method: 'POST',
@@ -759,6 +773,9 @@ export default function OrderFlow() {
       }
       goToSuccessPage(paypalOrderData.orderId);
     } catch (captureErr) {
+      // Allow a retry only on failure — a successful capture keeps the guard set
+      // so the success navigation can't be undone by a stray second approval.
+      captureInFlightRef.current = false;
       setError(captureErr.message || 'Could not finalise payment');
     }
   }, [paypalOrderData, goToSuccessPage]);
@@ -1048,7 +1065,14 @@ export default function OrderFlow() {
                   onClick={() => setSelectedTemplate(t)}
                 >
                   <div className="template-option-image">
-                    {t.previewImage ? (
+                    {TEMPLATE_PREVIEW_CARDS[t.slug] && t.previewImage ? (
+                      <div
+                        className="template-option-design-image"
+                        style={{ backgroundImage: `${TEMPLATE_PREVIEW_CARDS[t.slug].overlay}, url(${t.previewImage})` }}
+                      >
+                        <span className="template-option-design-text">{TEMPLATE_PREVIEW_CARDS[t.slug].previewText}</span>
+                      </div>
+                    ) : t.previewImage ? (
                       <img
                         src={t.previewImage}
                         alt={t.name}
@@ -1538,7 +1562,7 @@ export default function OrderFlow() {
                   {paymentCurrencyNote && <span className="price-note">{paymentCurrencyNote}</span>}
                 </div>
                 <button type="submit" className="btn btn-gold form-pay-btn">
-                  Review & Pay
+                  Review
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
               </div>

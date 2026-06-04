@@ -1190,6 +1190,68 @@
   height: 100%;
 }
 
+/* Botanical matted frame — gives each memory the feel of a framed garden print. */
+.gazebo-memory-frame {
+  position: absolute;
+  inset: 0.55rem;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: 0.34rem;
+  border: 1px solid rgba(255, 255, 251, 0.62);
+  box-shadow:
+    inset 0 0 0 1px rgba(117, 142, 72, 0.34),
+    inset 0 0 24px rgba(69, 88, 59, 0.1);
+  transition: border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.gazebo-memory-card:hover .gazebo-memory-frame {
+  border-color: rgba(255, 255, 251, 0.82);
+  box-shadow:
+    inset 0 0 0 1px rgba(117, 142, 72, 0.46),
+    inset 0 0 28px rgba(69, 88, 59, 0.14);
+}
+
+/* Small leaf sprig tucked in the bottom-left corner of the mat. */
+.gazebo-memory-sprig,
+.gazebo-memory-sprig::before,
+.gazebo-memory-sprig::after {
+  position: absolute;
+  width: 0.7rem;
+  height: 0.4rem;
+  background: linear-gradient(135deg, rgba(142, 176, 111, 0.92), rgba(117, 142, 72, 0.62));
+  border-radius: 100% 0 100% 0;
+}
+
+.gazebo-memory-sprig {
+  left: 1rem;
+  bottom: 1.2rem;
+  z-index: 4;
+  transform: rotate(22deg);
+  opacity: 0.82;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.gazebo-memory-sprig::before {
+  content: '';
+  left: -0.5rem;
+  bottom: -0.34rem;
+  width: 0.6rem;
+  transform: rotate(-26deg);
+}
+
+.gazebo-memory-sprig::after {
+  content: '';
+  left: 0.45rem;
+  bottom: -0.3rem;
+  width: 0.55rem;
+  transform: rotate(62deg);
+}
+
+.gazebo-memory-card:hover .gazebo-memory-sprig {
+  opacity: 0.95;
+  transform: rotate(22deg) translateY(-1px);
+}
+
 .gazebo-footer {
   position: relative;
   overflow: hidden;

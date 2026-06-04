@@ -94,6 +94,7 @@ export default function Pricing({ showCta = true }) {
                 <span className="old-price">{tier.oldDisplayPrice || tier.oldPrice}</span>
                 {tier.displayPrice || tier.price}
               </div>
+              {tier.tagline && <div className="pricing-tagline">{tier.tagline}</div>}
               <div className="pricing-desc">{tier.description}</div>
 
               <ul className="pricing-features">

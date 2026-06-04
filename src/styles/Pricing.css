@@ -74,6 +74,14 @@
   margin-right: 8px;
 }
 
+.pricing-tagline {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
 .pricing-desc {
   font-size: 0.92rem;
   color: var(--text-secondary);
