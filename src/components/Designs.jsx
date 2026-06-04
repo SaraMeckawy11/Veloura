@@ -6,41 +6,7 @@ import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
 const designs = [
-    {
-      name: 'Coastal Breeze',
-      category: 'launch',
-      description: 'Coastal blues, watercolor details, and effortless seaside romance.',
-      image: coastalSplashPreview,
-      overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
-      badge: 'Available',
-      badgeClass: 'badge-launch',
-      demoPath: '/demo/coastal-breeze',
-    },
-    {
-      name: 'Fountain Reverie I',
-      category: 'launch',
-      description: 'A sunlit garden fountain design with ornate gold typography and an elegant door reveal.',
-      image: fountainHero1Preview,
-      overlay: 'linear-gradient(135deg, rgba(148,116,47,0.12), rgba(245,223,207,0.18))',
-      imageClassName: 'design-card-image--fountain',
-      hidePreviewText: true,
-      badge: 'Available',
-      badgeClass: 'badge-launch',
-      demoPath: '/demo/fountain-reverie-v1',
-    },
-    {
-      name: 'Fountain Reverie II',
-      category: 'launch',
-      description: 'A brighter floral fountain scene framed by garden pillars, soft gold, and romantic script.',
-      image: fountainHero2Preview,
-      overlay: 'linear-gradient(135deg, rgba(91,72,28,0.12), rgba(135,145,108,0.14))',
-      imageClassName: 'design-card-image--fountain',
-      hidePreviewText: true,
-      badge: 'Available',
-      badgeClass: 'badge-launch',
-      demoPath: '/demo/fountain-reverie-v2',
-    },
-    {
+  {
     name: 'Garden Pavilion',
     previewName: (
       <>
@@ -56,6 +22,40 @@ const designs = [
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/gazebo-garden',
+  },
+  {
+    name: 'Coastal Breeze',
+    category: 'launch',
+    description: 'Coastal blues, watercolor details, and effortless seaside romance.',
+    image: coastalSplashPreview,
+    overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/coastal-breeze',
+  },
+  {
+    name: 'Fountain Reverie I',
+    category: 'launch',
+    description: 'A sunlit garden fountain design with ornate gold typography and an elegant door reveal.',
+    image: fountainHero1Preview,
+    overlay: 'linear-gradient(135deg, rgba(148,116,47,0.12), rgba(245,223,207,0.18))',
+    imageClassName: 'design-card-image--fountain',
+    hidePreviewText: true,
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/fountain-reverie-v1',
+  },
+  {
+    name: 'Fountain Reverie II',
+    category: 'launch',
+    description: 'A brighter floral fountain scene framed by garden pillars, soft gold, and romantic script.',
+    image: fountainHero2Preview,
+    overlay: 'linear-gradient(135deg, rgba(91,72,28,0.12), rgba(135,145,108,0.14))',
+    imageClassName: 'design-card-image--fountain',
+    hidePreviewText: true,
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/fountain-reverie-v2',
   },
   {
     name: 'Theater',

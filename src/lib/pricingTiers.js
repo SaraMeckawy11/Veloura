@@ -21,10 +21,10 @@ export const PRICING_TIERS = [
       'Private owner dashboard',
     ],
     demoCards: [
+      { invitation: 'Garden Pavilion', fields: ['Core details', 'Countdown', 'Map'] },
       { invitation: 'Coastal Breeze', fields: ['Core details', 'Countdown', 'Map'] },
       { invitation: 'Fountain Reverie I', fields: ['Core details', 'Countdown', 'Map'] },
       { invitation: 'Fountain Reverie II', fields: ['Core details', 'Countdown', 'Map'] },
-      { invitation: 'Garden Pavilion', fields: ['Core details', 'Countdown', 'Map'] },
       { invitation: 'Theater', fields: ['Core details', 'Countdown', 'Map'] },
       { invitation: 'Boarding Pass', fields: ['Core details', 'Countdown', 'Map'] },
     ],
@@ -56,10 +56,10 @@ export const PRICING_TIERS = [
       'All interactive sections',
     ],
     demoCards: [
+      { invitation: 'Garden Pavilion', fields: ['Story', 'Guest policy', 'RSVP'] },
       { invitation: 'Coastal Breeze', fields: ['Envelope note', 'Story', 'RSVP'] },
       { invitation: 'Fountain Reverie I', fields: ['Envelope note', 'Gallery', 'RSVP'] },
       { invitation: 'Fountain Reverie II', fields: ['Story', 'Gallery', 'RSVP'] },
-      { invitation: 'Garden Pavilion', fields: ['Story', 'Guest policy', 'RSVP'] },
       { invitation: 'Theater', fields: ['Memories', 'Details', 'RSVP'] },
       { invitation: 'Boarding Pass', fields: ['Story route', 'Gallery', 'RSVP'] },
     ],

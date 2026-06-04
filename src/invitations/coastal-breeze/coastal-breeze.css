@@ -1551,45 +1551,31 @@
   position: relative;
   flex: 0 0 clamp(220px, 22vw, 300px);
   height: clamp(280px, 30vw, 400px);
-  box-sizing: border-box;
   margin: 0;
   overflow: hidden;
-  border: 1px solid rgba(176, 125, 77, 0.28);
+  border: 1px solid rgba(32, 91, 137, 0.18);
   border-radius: 6px;
-  background: rgba(255, 253, 247, 0.94);
-  padding: clamp(5px, 0.7vw, 8px);
+  background: linear-gradient(180deg, rgba(255, 253, 247, 0.96), rgba(238, 248, 250, 0.9));
   box-shadow:
-    0 16px 34px rgba(20, 53, 83, 0.12),
-    0 0 0 6px rgba(255, 253, 247, 0.54),
-    0 1px 0 rgba(255, 255, 255, 0.7) inset;
+    0 18px 42px rgba(20, 53, 83, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
   transition: transform 0.45s ease, box-shadow 0.45s ease;
   scroll-snap-align: center;
-}
-
-.coastal-gallery-card::after {
-  content: '';
-  position: absolute;
-  inset: clamp(8px, 1vw, 11px);
-  border: 1px solid rgba(255, 255, 255, 0.58);
-  border-radius: 4px;
-  pointer-events: none;
-  z-index: 2;
 }
 
 .coastal-gallery-card:hover {
   transform: translateY(-6px);
   box-shadow:
-    0 26px 58px rgba(20, 53, 83, 0.2),
-    0 0 0 6px rgba(255, 253, 247, 0.64),
-    0 1px 0 rgba(255, 255, 255, 0.7) inset;
+    0 28px 60px rgba(20, 53, 83, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .coastal-gallery-card > .invitation-photo {
-  border-radius: 4px;
-  --invitation-photo-pad: 0.24rem;
+  border-radius: 6px;
+  --invitation-photo-pad: 0;
   --invitation-photo-scale: 1.12;
   --invitation-photo-hover-scale: 1.16;
-  --invitation-photo-surface: linear-gradient(180deg, rgba(255, 253, 247, 0.96), rgba(240, 246, 250, 0.92));
+  --invitation-photo-surface: transparent;
   --invitation-photo-overlay-top: rgba(255, 255, 255, 0.08);
   --invitation-photo-overlay-bottom: rgba(247, 241, 228, 0.26);
   --invitation-photo-shadow: rgba(20, 53, 83, 0.2);
