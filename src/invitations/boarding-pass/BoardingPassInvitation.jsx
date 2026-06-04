@@ -11,6 +11,10 @@ import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
+import heroEmpty from '../../assets/boardingPass/heroEmpty.png';
+import confirmedStamp from '../../assets/boardingPass/confirmed_stamp_transparent.png';
+import confirmYourSeatTitle from '../../assets/boardingPass/confirm_your_seat_title_transparent.png';
+import loveFlightStamp from '../../assets/boardingPass/love_flight_stamp_transparent.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -97,6 +101,12 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const dateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
     : '';
+  const weekdayStr = weddingDate
+    ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' })
+    : '';
+  const dateStrShort = weddingDate
+    ? `${weddingDate.getDate()} ${weddingDate.toLocaleDateString('en-US', { month: 'long' })} ${weddingDate.getFullYear()}`
+    : '';
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime, wd.timeFormat) : '';
   const venue = wd.venue || '';
   const venueAddress = '';
@@ -111,7 +121,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
   const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
-  const flightNo = wd.flightNo || `WD-${weddingDate ? weddingDate.getFullYear() : '2026'}`;
   const pad = (n) => n.toString().padStart(2, '0');
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
 
@@ -169,57 +178,26 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
         >
-          <div className="boarding-pass-card">
-            <div className="inv-boarding-inner">
-              {/* Main content — left 70% */}
-              <div className="inv-boarding-main">
-                <div className="inv-boarding-header">
-                  <span className="data-label text-gold">BOARDING PASS</span>
-                  <span className="data-label">{flightNo}</span>
-                </div>
-                <h1 className="inv-couple-names">
-                  {name1}<span className="inv-ampersand">&amp;</span>{name2}
-                </h1>
-                <div className="inv-gold-divider" style={{ margin: '12px 0 16px' }} />
-                <p className="inv-tagline">{message}</p>
-                <div className="inv-data-grid">
-                  <div className="inv-data-item">
-                    <p className="data-label">FLIGHT</p>
-                    <p className="data-value font-mono-data">{dateStr}</p>
-                  </div>
-                  <div className="inv-data-item">
-                    <p className="data-label">DESTINATION</p>
-                    <p className="data-value font-mono-data" style={{ fontSize: '0.85rem' }}>{venue}</p>
-                  </div>
-                  <div className="inv-data-item">
-                    <p className="data-label">GATE</p>
-                    <p className="data-value font-mono-data">{timeStr || 'TBD'}</p>
-                  </div>
-                  <div className="inv-data-item">
-                    <p className="data-label">SEAT</p>
-                    <p className="data-value font-mono-data">FOREVER</p>
-                  </div>
-                </div>
-              </div>
+          <div className="bp-hero-ticket">
+            <img src={heroEmpty} alt="" className="bp-hero-ticket-img" />
 
-              {/* Perforation + stub */}
-              <div className="inv-perf-container">
-                <div className="inv-perf-circle-top" />
-                <div className="inv-perf-line" />
-                <div className="inv-perf-circle-bottom" />
-              </div>
+            {/* Couple names */}
+            <div className="bp-hero-names">
+              <span className="bp-hero-name">{name1}</span>
+              <span className="bp-hero-name">{name2}</span>
+            </div>
 
-              <div className="inv-boarding-stub">
-                <motion.div
-                  className="stamp"
-                  initial={{ scale: 1.5, opacity: 0, rotate: -15 }}
-                  animate={{ scale: 1, opacity: 1, rotate: -15 }}
-                  transition={{ duration: 0.6, type: 'spring', stiffness: 300, damping: 15, delay: 1.2 }}
-                >
-                  CONFIRMED
-                </motion.div>
-                <div className="data-label" style={{ marginTop: '16px' }}>{flightNo}</div>
-              </div>
+            {/* Detail rows aligned with baked-in icons */}
+            <div className="bp-hero-detail bp-hero-detail--date">
+              <span className="bp-hero-detail-label">{weekdayStr || 'SATURDAY'}</span>
+              <span className="bp-hero-detail-value">{dateStrShort || 'TBD'}</span>
+            </div>
+            <div className="bp-hero-detail bp-hero-detail--time">
+              <span className="bp-hero-detail-value">{timeStr || 'TBD'}</span>
+              <span className="bp-hero-detail-label">BOARDING</span>
+            </div>
+            <div className="bp-hero-detail bp-hero-detail--venue">
+              <span className="bp-hero-detail-value">{venue || 'TBD'}</span>
             </div>
           </div>
         </motion.div>
@@ -368,11 +346,13 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="boarding-pass-card inv-event-card-inner">
-            <div className="inv-event-header">
-              <span className="data-label text-gold">FLIGHT NO: {flightNo}</span>
-            </div>
-            <h3 className="inv-event-title">CEREMONY</h3>
             <div className="inv-event-details">
+              {dateStr && (
+                <div>
+                  <p className="data-label">DATE</p>
+                  <p className="font-mono-data inv-event-value">{dateStr}</p>
+                </div>
+              )}
               <div>
                 <p className="data-label">TERMINAL</p>
                 <p className="font-mono-data inv-event-value">{venue}</p>
@@ -445,10 +425,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <p className="inv-section-label-mono">BOARDING PASS</p>
-          <h3 className="inv-rsvp-title">Confirm Your Seat</h3>
-          <div className="inv-gold-divider" style={{ marginBottom: 12 }} />
-          <p className="inv-rsvp-subtitle">Reserve your place on this flight of love</p>
+          <img src={confirmYourSeatTitle} alt="Confirm Your Seat — Reserve your place on this flight of love" className="bp-rsvp-title-img" />
 
           <AnimatePresence mode="wait">
             {!rsvpSubmitted ? (
@@ -456,7 +433,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                 <form onSubmit={handleRsvp} className="inv-rsvp-card-enhanced">
                   <div className="inv-rsvp-card-header">
                     <span className="data-label text-gold">PASSENGER CHECK-IN</span>
-                    <span className="data-label">{flightNo}</span>
                   </div>
 
                   <div className="inv-rsvp-fields">
@@ -470,11 +446,11 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                       <div className="inv-radio-group" role="radiogroup" aria-label="Will you be boarding?">
                         <button type="button" role="radio" aria-checked={rsvpForm.attending === 'yes'} className={`inv-radio-btn ${rsvpForm.attending === 'yes' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
-                          YES
+                          YES, COUNT ME IN
                         </button>
                         <button type="button" role="radio" aria-checked={rsvpForm.attending === 'no'} className={`inv-radio-btn ${rsvpForm.attending === 'no' ? 'active' : ''}`} onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                          NO
+                          WILL TOAST FROM AFAR
                         </button>
                       </div>
                     </div>
@@ -486,6 +462,14 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                   </div>
 
                   {rsvpError && <p className="inv-rsvp-error">{rsvpError}</p>}
+
+                  <div className="bp-rsvp-note-row">
+                    <img src={loveFlightStamp} alt="" className="bp-rsvp-note-stamp" aria-hidden />
+                    <div className="bp-rsvp-thanks">
+                      <span className="bp-rsvp-thanks-label">THANK YOU &#9829;</span>
+                      <span className="bp-rsvp-thanks-text">We can&rsquo;t wait to celebrate with you!</span>
+                    </div>
+                  </div>
 
                   <div className="inv-rsvp-card-footer">
                     <div className="inv-rsvp-perf-line" />
@@ -505,14 +489,14 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                 transition={{ duration: 0.6, type: 'spring', stiffness: 200, damping: 20 }}
               >
                 <div className="inv-rsvp-card-enhanced inv-rsvp-success-card">
-                  <motion.div
-                    className="stamp inv-stamp-anim"
-                    initial={{ scale: 1.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
+                  <motion.img
+                    src={confirmedStamp}
+                    alt="Confirmed"
+                    className="bp-rsvp-success-stamp"
+                    initial={{ scale: 1.5, opacity: 0, rotate: -12 }}
+                    animate={{ scale: 1, opacity: 1, rotate: -12 }}
                     transition={{ delay: 0.3, duration: 0.5, type: 'spring', stiffness: 300, damping: 15 }}
-                  >
-                    CONFIRMED
-                  </motion.div>
+                  />
                   <div style={{ marginTop: '24px' }}>
                     <p className="data-label">PASSENGER</p>
                     <p className="inv-success-name">{rsvpForm.guestName}</p>
