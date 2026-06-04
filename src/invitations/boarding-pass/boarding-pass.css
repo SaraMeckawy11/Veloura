@@ -314,7 +314,7 @@
 .inv-boarding-card {
   position: relative;
   z-index: 20;
-  max-width: 760px;
+  max-width: 900px;
   width: 100%;
   animation: inv-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -327,7 +327,7 @@
 .bp-hero-ticket {
   position: relative;
   width: 100%;
-  max-width: 580px;
+  max-width: min(700px, 96vw);
   margin: 0 auto;
   aspect-ratio: 1122 / 1402;
   container-type: inline-size;
@@ -347,11 +347,11 @@
   position: absolute;
   left: 13%;
   right: 5%;
-  top: 21.6%;
+  top: 23.3%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.04em;
+  gap: 0.24em;
   pointer-events: none;
 }
 .bp-hero-name {
@@ -368,8 +368,8 @@
 /* Detail rows — aligned to the right of baked-in icons */
 .bp-hero-detail {
   position: absolute;
-  left: 41%;
-  right: 6%;
+  left: 49%;
+  right: 3.5%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
@@ -377,9 +377,9 @@
   text-align: left;
   pointer-events: none;
 }
-.bp-hero-detail--date { top: 72.5%; }
-.bp-hero-detail--time { top: 80%; }
-.bp-hero-detail--venue { top: 89.5%; }
+.bp-hero-detail--date { top: 74%; }
+.bp-hero-detail--time { top: 81.6%; }
+.bp-hero-detail--venue { top: 91%; }
 .bp-hero-detail-label {
   font-family: var(--font-mono);
   font-size: clamp(0.42rem, 1.9cqw, 0.66rem);
@@ -558,8 +558,8 @@
 .inv-section-label {
   font-family: var(--font-script);
   font-size: clamp(2.1rem, 6vw, 3rem);
-  font-weight: 500;
-  letter-spacing: 0.03em;
+  font-weight: 400;
+  letter-spacing: 0.02em;
   line-height: 1.1;
   text-align: center;
   margin-bottom: 10px;
@@ -789,18 +789,18 @@
 .inv-gallery-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 22px;
-  max-width: 940px;
+  gap: 24px;
+  max-width: 1080px;
   margin: 48px auto 0;
 }
 @media (min-width: 768px) {
   .inv-gallery-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 34px;
+    gap: 40px;
   }
 }
 .inv-gallery-item {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -980,15 +980,16 @@
   padding: 0;
   display: grid;
   gap: 10px;
-  max-width: 26rem;
+  max-width: 30rem;
 }
 
 .inv-details-policy .gp-item {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-  text-align: center;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  text-align: left;
 }
 
 .inv-details-policy .gp-icon {
@@ -1005,6 +1006,7 @@
 }
 
 .inv-details-policy .gp-text {
+  flex: 0 1 auto;
   font-size: 0.86rem;
   line-height: 1.5;
 }
@@ -1384,16 +1386,21 @@ textarea.kiosk-input {
 
 /* --- Story Timeline --- */
 .inv-story-title {
-  font-family: var(--font-display);
-  font-size: 2.4rem;
-  font-weight: 300;
-  color: var(--bp-fg);
+  font-family: var(--font-script);
+  font-size: clamp(2.1rem, 6vw, 3rem);
+  font-weight: 400;
+  background: linear-gradient(180deg, var(--bp-gold-light) 0%, var(--bp-gold) 45%, var(--bp-gold-dark) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--bp-gold-dark);
   text-align: center;
-  margin-bottom: 16px;
-  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
 }
 @media (min-width: 768px) {
-  .inv-story-title { font-size: 3rem; }
+  .inv-story-title { font-size: clamp(2.4rem, 4.6vw, 3.2rem); }
 }
 .inv-story-divider {
   width: 80px;
@@ -1572,16 +1579,16 @@ textarea.kiosk-input {
    colour transitions between sections are seamless (no hard banding seams). */
 .inv-page {
   background:
-    radial-gradient(ellipse 70% 22% at 12% 6%, hsla(203, 30%, 88%, 0.55), transparent 70%),
-    radial-gradient(ellipse 60% 20% at 88% 30%, hsla(39, 44%, 78%, 0.26), transparent 70%),
-    radial-gradient(ellipse 70% 22% at 16% 70%, hsla(203, 28%, 88%, 0.42), transparent 70%),
-    radial-gradient(ellipse 60% 20% at 84% 92%, hsla(39, 44%, 78%, 0.22), transparent 70%),
+    radial-gradient(ellipse 78% 20% at 12% 7%, hsla(203, 34%, 86%, 0.54), transparent 72%),
+    radial-gradient(ellipse 68% 18% at 88% 31%, hsla(39, 48%, 77%, 0.28), transparent 72%),
+    radial-gradient(ellipse 76% 20% at 14% 67%, hsla(203, 32%, 88%, 0.46), transparent 72%),
+    radial-gradient(ellipse 68% 18% at 86% 91%, hsla(39, 46%, 78%, 0.24), transparent 72%),
     linear-gradient(180deg,
-      hsl(38, 44%, 97%) 0%,
-      hsl(201, 30%, 95%) 30%,
-      hsl(38, 43%, 96%) 58%,
-      hsl(201, 29%, 95%) 82%,
-      hsl(38, 44%, 97%) 100%);
+      hsl(38, 46%, 98%) 0%,
+      hsl(203, 34%, 96%) 24%,
+      hsl(42, 42%, 96%) 49%,
+      hsl(201, 32%, 95%) 76%,
+      hsl(38, 46%, 98%) 100%);
 }
 
 .inv-section-dark,
@@ -1591,21 +1598,39 @@ textarea.kiosk-input {
   background: transparent;
 }
 
+.inv-section-dark,
+.inv-section-light,
+.inv-rsvp-section,
+.inv-message-section,
+.inv-footer {
+  box-shadow:
+    inset 0 1px 0 hsla(38, 48%, 100%, 0.38),
+    inset 0 -1px 0 hsla(208, 22%, 58%, 0.05);
+}
+
 .inv-section-dark {
   color: var(--bp-fg);
-  background: radial-gradient(ellipse 78% 60% at 50% 50%, hsla(203, 32%, 86%, 0.34), transparent 72%);
+  background:
+    linear-gradient(180deg, hsla(203, 36%, 92%, 0.42), hsla(38, 46%, 97%, 0.2) 48%, hsla(203, 36%, 92%, 0.32)),
+    radial-gradient(ellipse 78% 60% at 50% 50%, hsla(203, 34%, 86%, 0.34), transparent 72%);
 }
 
 .inv-section-light {
-  background: radial-gradient(ellipse 78% 60% at 50% 50%, hsla(39, 40%, 82%, 0.22), transparent 72%);
+  background:
+    linear-gradient(180deg, hsla(38, 48%, 98%, 0.1), hsla(42, 46%, 91%, 0.25) 48%, hsla(38, 48%, 98%, 0.12)),
+    radial-gradient(ellipse 78% 60% at 50% 50%, hsla(39, 42%, 82%, 0.24), transparent 72%);
 }
 
 .inv-rsvp-section {
-  background: radial-gradient(ellipse 80% 64% at 50% 45%, hsla(203, 32%, 86%, 0.34), transparent 72%);
+  background:
+    linear-gradient(180deg, hsla(203, 36%, 91%, 0.38), hsla(38, 48%, 97%, 0.28) 54%, hsla(203, 36%, 92%, 0.32)),
+    radial-gradient(ellipse 80% 64% at 50% 45%, hsla(203, 34%, 86%, 0.36), transparent 72%);
 }
 
 .inv-footer {
-  background: radial-gradient(ellipse 90% 80% at 50% 0%, hsla(203, 30%, 87%, 0.36), transparent 70%);
+  background:
+    linear-gradient(180deg, hsla(203, 34%, 92%, 0.32), hsla(38, 46%, 98%, 0.26)),
+    radial-gradient(ellipse 90% 80% at 50% 0%, hsla(203, 32%, 87%, 0.36), transparent 70%);
 }
 
 .inv-message-section {
@@ -1614,17 +1639,19 @@ textarea.kiosk-input {
   padding: clamp(72px, 10vw, 118px) 16px clamp(78px, 10vw, 126px);
   text-align: center;
   background:
-    radial-gradient(ellipse 60% 50% at 18% 16%, hsla(203, 32%, 84%, 0.42), transparent 70%),
-    radial-gradient(ellipse 55% 46% at 86% 86%, hsla(39, 44%, 78%, 0.2), transparent 70%);
+    linear-gradient(180deg, hsla(38, 48%, 98%, 0.18), hsla(203, 34%, 92%, 0.26) 52%, hsla(38, 46%, 97%, 0.16)),
+    radial-gradient(ellipse 60% 50% at 18% 16%, hsla(203, 32%, 84%, 0.4), transparent 70%),
+    radial-gradient(ellipse 55% 46% at 86% 86%, hsla(39, 44%, 78%, 0.22), transparent 70%);
 }
 
 .inv-message-title {
   margin: 8px 0 12px;
   color: var(--bp-navy);
   font-family: var(--font-script);
-  font-size: clamp(2.8rem, 7vw, 4.4rem);
+  font-size: clamp(2.1rem, 6vw, 3rem);
   font-weight: 400;
-  line-height: 0.95;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
 }
 
 .inv-envelope {
