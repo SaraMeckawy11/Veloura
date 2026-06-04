@@ -24,7 +24,7 @@
     radial-gradient(ellipse 58% 24% at 50% 92%, rgba(177, 37, 61, 0.16), transparent 68%),
     repeating-linear-gradient(90deg, rgba(176, 125, 77, 0.05) 0 1px, transparent 1px 18px),
     linear-gradient(180deg, #fff8e8 0%, #f4dfb7 56%, #eed1a2 100%);
-  animation: theater-splash-stage-rise 2.7s ease-out both;
+  animation: theater-splash-stage-rise 1.85s ease-out both;
   animation-play-state: paused;
 }
 
@@ -90,7 +90,7 @@
   left: 0;
   background-position: left center;
   transform-origin: 0 50%;
-  animation: theater-splash-open-left 2.75s cubic-bezier(0.62, 0, 0.18, 1) both;
+  animation: theater-splash-open-left 1.85s cubic-bezier(0.62, 0, 0.18, 1) both;
   animation-play-state: paused;
 }
 
@@ -98,7 +98,7 @@
   right: 0;
   background-position: right center;
   transform-origin: 100% 50%;
-  animation: theater-splash-open-right 2.75s cubic-bezier(0.62, 0, 0.18, 1) both;
+  animation: theater-splash-open-right 1.85s cubic-bezier(0.62, 0, 0.18, 1) both;
   animation-play-state: paused;
 }
 

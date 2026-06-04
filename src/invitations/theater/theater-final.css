@@ -689,10 +689,10 @@ body:has(.theater-theme),
 .theater-rsvp-choice {
   position: absolute;
   left: 7.6%;
-  top: 29%;
+  top: 62%;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 19.5%;
+  gap: 14%;
   width: 84.8%;
 }
 
@@ -700,21 +700,23 @@ body:has(.theater-theme),
   content: "";
   position: absolute;
   left: 50%;
-  top: 1%;
+  top: 6%;
   width: 3.6%;
-  height: 78%;
+  height: 70%;
   transform: translateX(-50%);
   background: url("../../assets/theater/rsvp/verticalSeparator_transparent.png") center / contain no-repeat;
 }
 
 .theater-rsvp-choice button {
   display: grid;
-  grid-template-columns: 23% minmax(0, 1fr);
+  grid-template-columns: 24% minmax(0, 1fr);
   align-items: center;
-  gap: 7%;
-  padding: 0;
-  border: 0;
-  background: transparent;
+  gap: 8%;
+  min-height: clamp(38px, 7vw, 60px);
+  padding: 0.45em 0.55em;
+  border: 1px solid rgba(116, 23, 15, 0.2);
+  border-radius: 6px;
+  background: rgba(255, 248, 230, 0.34);
   color: var(--theater-ink);
   font-family: var(--font-marquee);
   letter-spacing: 0.08em;
@@ -722,6 +724,7 @@ body:has(.theater-theme),
   text-align: left;
   text-transform: uppercase;
   cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
 }
 
 .theater-rsvp-choice button > span {
@@ -737,8 +740,23 @@ body:has(.theater-theme),
     url("../../assets/theater/rsvp/circle_transparent.png") center / contain no-repeat;
 }
 
+.theater-rsvp-choice button:hover,
+.theater-rsvp-choice button:focus-visible {
+  border-color: rgba(116, 23, 15, 0.42);
+  background: rgba(255, 248, 230, 0.62);
+  box-shadow: 0 6px 16px rgba(83, 35, 18, 0.12);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.theater-rsvp-choice button.active {
+  border-color: rgba(116, 23, 15, 0.62);
+  background: rgba(255, 238, 205, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(116, 23, 15, 0.16);
+}
+
 .theater-rsvp-choice strong {
-  font-size: clamp(0.64rem, 1.9vw, 1.08rem);
+  font-size: clamp(0.66rem, 1.92vw, 1.08rem);
 }
 
 .theater-rsvp-choice small {
@@ -785,9 +803,9 @@ body:has(.theater-theme),
 .theater-message-field {
   position: absolute;
   left: 7.5%;
-  top: 58.5%;
+  top: 37%;
   display: grid;
-  gap: 0.42em;
+  gap: 0.36em;
   width: 85%;
   text-align: center;
 }
@@ -797,7 +815,7 @@ body:has(.theater-theme),
 }
 
 .theater-message-field textarea {
-  min-height: clamp(56px, 10.5vw, 78px);
+  min-height: clamp(50px, 9.2vw, 72px);
   padding: 0.45em 0.6em;
   border: 1px solid rgba(47, 27, 19, 0.35);
   border-radius: 4px;
@@ -823,7 +841,7 @@ body:has(.theater-theme),
 .theater-rsvp-error {
   position: absolute;
   left: 8%;
-  bottom: 16%;
+  bottom: 11%;
   width: 84%;
   margin: 0;
   color: var(--theater-red);

@@ -3539,42 +3539,78 @@
 }
 
 /* Dashboard-requested invitation polish -------------------------------- */
+.fountain-event-card dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+  gap: clamp(12px, 2.4vw, 24px);
+  align-items: start;
+}
+
+.fountain-event-card dl > div {
+  min-width: 0;
+  text-align: center;
+}
+
+.fountain-event-card dd {
+  overflow-wrap: anywhere;
+}
+
 .fountain-details-policy .gp-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
-  gap: 10px 18px;
-  max-width: 38rem;
+  gap: clamp(14px, 2.4vw, 24px);
+  max-width: 44rem;
 }
 
 .fountain-details-policy .gp-item {
-  flex: 0 1 auto;
-  max-width: 18rem;
+  flex: 1 1 0;
+  max-width: 20rem;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 116, 47, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.54);
 }
 
 .fountain-rsvp-panel {
-  padding-bottom: clamp(36px, 5vw, 58px);
+  padding-bottom: clamp(42px, 6vw, 66px);
 }
 
 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
-  margin-bottom: clamp(30px, 4.8vw, 44px);
+  margin-bottom: clamp(36px, 5.5vw, 52px);
 }
 
 .fountain-rsvp-panel-form {
-  gap: clamp(18px, 2.8vw, 26px);
+  gap: clamp(24px, 3.4vw, 34px);
 }
 
 .fountain-rsvp-panel-field,
 .fountain-rsvp-panel-choice {
-  gap: 11px;
+  gap: 13px;
 }
 
 .fountain-rsvp-panel-choice > div {
-  gap: clamp(14px, 2.4vw, 20px);
+  gap: clamp(16px, 2.8vw, 26px);
+}
+
+.fountain-rsvp-panel-choice button {
+  min-height: 72px;
+  padding: 10px 12px;
+}
+
+.fountain-rsvp-panel-field input,
+.fountain-rsvp-panel-field textarea {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.fountain-rsvp-panel-field textarea {
+  min-height: 104px;
 }
 
 .fountain-rsvp-panel-submit {
-  margin-top: clamp(8px, 1.5vw, 14px);
+  margin-top: clamp(12px, 2vw, 20px);
 }
 
 .fountain-footer h2 {
@@ -3583,6 +3619,10 @@
 }
 
 @media (max-width: 680px) {
+  .fountain-event-card dl {
+    grid-template-columns: 1fr;
+  }
+
   .fountain-details-policy .gp-list {
     display: grid;
     grid-template-columns: 1fr;
@@ -3592,5 +3632,6 @@
 
   .fountain-details-policy .gp-item {
     max-width: none;
+    border-radius: 16px;
   }
 }

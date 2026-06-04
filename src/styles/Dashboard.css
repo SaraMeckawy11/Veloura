@@ -464,6 +464,11 @@
 .edit-form .dash-guidance-textarea:placeholder-shown {
   color: var(--text);
 }
+.edit-form .message-textarea::placeholder,
+.edit-form .dash-guidance-textarea::placeholder {
+  color: var(--text);
+  opacity: 1;
+}
 .edit-form .form-field input:focus,
 .edit-form .form-field textarea:focus {
   border-color: var(--gold);

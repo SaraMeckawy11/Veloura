@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import splashCurtainUrl from '../../assets/theater/splashCurtain.webp';
 import './theater-splash.css';
 
-const AUTO_OPEN_MIN_MS = 800;
+const AUTO_OPEN_MIN_MS = 300;
 const AUTO_OPEN_FALLBACK_MS = 1500;
 
 export default function TheaterSplash({ onReady, onDismiss }) {
@@ -34,8 +34,8 @@ export default function TheaterSplash({ onReady, onDismiss }) {
     setReady(true);
     window.clearTimeout(fadeTimerRef.current);
     window.clearTimeout(exitTimerRef.current);
-    fadeTimerRef.current = window.setTimeout(() => setFading(true), 2600);
-    exitTimerRef.current = window.setTimeout(() => dismissRef.current?.(), 3100);
+    fadeTimerRef.current = window.setTimeout(() => setFading(true), 1850);
+    exitTimerRef.current = window.setTimeout(() => dismissRef.current?.(), 2300);
   }, []);
 
   useEffect(() => () => {

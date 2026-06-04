@@ -10,7 +10,7 @@ const BIRDS = [
   { id: 2, top: 40, delay: 10, duration: 19, scale: 0.8 },
 ];
 
-const AUTO_OPEN_MIN_MS = 800;
+const AUTO_OPEN_MIN_MS = 300;
 const AUTO_OPEN_FALLBACK_MS = 1500;
 
 export default function CoastalSplash({ onReady, onDismiss }) {
@@ -37,8 +37,8 @@ export default function CoastalSplash({ onReady, onDismiss }) {
     openingRef.current = true;
     setOpening(true);
     // Let the opened door settle, then dissolve promptly over the invitation below.
-    setTimeout(() => setFading(true), 2600);
-    setTimeout(() => onDismissRef.current(), 3100);
+    setTimeout(() => setFading(true), 1850);
+    setTimeout(() => onDismissRef.current(), 2300);
   }, []);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function CoastalSplash({ onReady, onDismiss }) {
     };
   }, [handleOpen, markReady]);
 
-  const swingDuration = 2.7;
+  const swingDuration = 1.85;
   const swingEase = [0.45, 0, 0.2, 1];
 
   return (
