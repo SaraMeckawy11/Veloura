@@ -314,7 +314,7 @@
 .inv-boarding-card {
   position: relative;
   z-index: 20;
-  max-width: 900px;
+  max-width: 1040px;
   width: 100%;
   animation: inv-slide-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -327,11 +327,11 @@
 .bp-hero-ticket {
   position: relative;
   width: 100%;
-  max-width: min(700px, 96vw);
+  max-width: min(880px, 98vw);
   margin: 0 auto;
   aspect-ratio: 1122 / 1402;
   container-type: inline-size;
-  filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.16));
+  filter: drop-shadow(0 28px 72px rgba(0, 0, 0, 0.18));
 }
 .bp-hero-ticket-img {
   display: block;
@@ -347,11 +347,11 @@
   position: absolute;
   left: 13%;
   right: 5%;
-  top: 23.3%;
+  top: 21%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.24em;
+  gap: 1.15em;
   pointer-events: none;
 }
 .bp-hero-name {
@@ -368,7 +368,7 @@
 /* Detail rows — aligned to the right of baked-in icons */
 .bp-hero-detail {
   position: absolute;
-  left: 49%;
+  left: 40%;
   right: 3.5%;
   transform: translateY(-50%);
   display: flex;
@@ -377,19 +377,19 @@
   text-align: left;
   pointer-events: none;
 }
-.bp-hero-detail--date { top: 74%; }
-.bp-hero-detail--time { top: 81.6%; }
-.bp-hero-detail--venue { top: 91%; }
+.bp-hero-detail--date { top: 72%; }
+.bp-hero-detail--time { top: 79.4%; }
+.bp-hero-detail--venue { top: 88.6%; }
 .bp-hero-detail-label {
   font-family: var(--font-mono);
-  font-size: clamp(0.42rem, 1.9cqw, 0.66rem);
+  font-size: clamp(0.38rem, 1.7cqw, 0.6rem);
   letter-spacing: 0.18em;
   color: var(--bp-gold-dark);
   text-transform: uppercase;
 }
 .bp-hero-detail-value {
   font-family: var(--font-display);
-  font-size: clamp(0.78rem, 2.6cqw, 1.08rem);
+  font-size: clamp(0.68rem, 2.25cqw, 0.94rem);
   font-weight: 600;
   line-height: 1.12;
   color: var(--bp-navy);
@@ -563,11 +563,7 @@
   line-height: 1.1;
   text-align: center;
   margin-bottom: 10px;
-  background: linear-gradient(180deg, var(--bp-gold-light) 0%, var(--bp-gold) 45%, var(--bp-gold-dark) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: var(--bp-gold-dark);
+  color: var(--bp-navy);
   text-transform: none;
 }
 .inv-section-label-mono {
@@ -986,10 +982,10 @@
 .inv-details-policy .gp-item {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   gap: 10px;
-  text-align: left;
+  text-align: center;
 }
 
 .inv-details-policy .gp-icon {
@@ -1009,6 +1005,7 @@
   flex: 0 1 auto;
   font-size: 0.86rem;
   line-height: 1.5;
+  text-align: center;
 }
 .inv-rsvp-wrap {
   max-width: 560px;
@@ -1389,11 +1386,7 @@ textarea.kiosk-input {
   font-family: var(--font-script);
   font-size: clamp(2.1rem, 6vw, 3rem);
   font-weight: 400;
-  background: linear-gradient(180deg, var(--bp-gold-light) 0%, var(--bp-gold) 45%, var(--bp-gold-dark) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: var(--bp-gold-dark);
+  color: var(--bp-navy);
   text-align: center;
   margin-bottom: 10px;
   letter-spacing: 0.02em;
@@ -1579,16 +1572,17 @@ textarea.kiosk-input {
    colour transitions between sections are seamless (no hard banding seams). */
 .inv-page {
   background:
-    radial-gradient(ellipse 78% 20% at 12% 7%, hsla(203, 34%, 86%, 0.54), transparent 72%),
-    radial-gradient(ellipse 68% 18% at 88% 31%, hsla(39, 48%, 77%, 0.28), transparent 72%),
-    radial-gradient(ellipse 76% 20% at 14% 67%, hsla(203, 32%, 88%, 0.46), transparent 72%),
-    radial-gradient(ellipse 68% 18% at 86% 91%, hsla(39, 46%, 78%, 0.24), transparent 72%),
+    radial-gradient(ellipse 82% 22% at 10% 5%, hsla(203, 40%, 85%, 0.6), transparent 70%),
+    radial-gradient(ellipse 70% 20% at 90% 28%, hsla(39, 52%, 78%, 0.32), transparent 70%),
+    radial-gradient(ellipse 80% 22% at 12% 58%, hsla(203, 38%, 87%, 0.5), transparent 70%),
+    radial-gradient(ellipse 72% 20% at 88% 82%, hsla(39, 50%, 79%, 0.28), transparent 70%),
     linear-gradient(180deg,
-      hsl(38, 46%, 98%) 0%,
-      hsl(203, 34%, 96%) 24%,
-      hsl(42, 42%, 96%) 49%,
-      hsl(201, 32%, 95%) 76%,
-      hsl(38, 46%, 98%) 100%);
+      hsl(38, 48%, 98.5%) 0%,
+      hsl(203, 38%, 95.5%) 22%,
+      hsl(42, 44%, 96.5%) 46%,
+      hsl(201, 36%, 94.5%) 70%,
+      hsl(40, 46%, 97%) 88%,
+      hsl(38, 48%, 98.5%) 100%);
 }
 
 .inv-section-dark,
@@ -1603,34 +1597,52 @@ textarea.kiosk-input {
 .inv-rsvp-section,
 .inv-message-section,
 .inv-footer {
+  position: relative;
   box-shadow:
-    inset 0 1px 0 hsla(38, 48%, 100%, 0.38),
-    inset 0 -1px 0 hsla(208, 22%, 58%, 0.05);
+    inset 0 1px 0 hsla(38, 48%, 100%, 0.5),
+    inset 0 -1px 0 hsla(208, 22%, 58%, 0.06);
+}
+
+/* Hairline gradient seam between consecutive sections for crisp,
+   intentional separation without a hard banding line. */
+.inv-section-dark::after,
+.inv-section-light::after,
+.inv-rsvp-section::after,
+.inv-message-section::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(420px, 60%);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, hsla(39, 43%, 58%, 0.28), transparent);
+  pointer-events: none;
 }
 
 .inv-section-dark {
   color: var(--bp-fg);
   background:
-    linear-gradient(180deg, hsla(203, 36%, 92%, 0.42), hsla(38, 46%, 97%, 0.2) 48%, hsla(203, 36%, 92%, 0.32)),
-    radial-gradient(ellipse 78% 60% at 50% 50%, hsla(203, 34%, 86%, 0.34), transparent 72%);
+    linear-gradient(180deg, hsla(203, 40%, 91%, 0.5), hsla(38, 46%, 97%, 0.16) 50%, hsla(203, 40%, 91%, 0.4)),
+    radial-gradient(ellipse 80% 64% at 50% 50%, hsla(203, 38%, 85%, 0.4), transparent 72%);
 }
 
 .inv-section-light {
   background:
-    linear-gradient(180deg, hsla(38, 48%, 98%, 0.1), hsla(42, 46%, 91%, 0.25) 48%, hsla(38, 48%, 98%, 0.12)),
-    radial-gradient(ellipse 78% 60% at 50% 50%, hsla(39, 42%, 82%, 0.24), transparent 72%);
+    linear-gradient(180deg, hsla(38, 50%, 98%, 0.14), hsla(42, 48%, 90%, 0.32) 50%, hsla(38, 50%, 98%, 0.16)),
+    radial-gradient(ellipse 80% 64% at 50% 50%, hsla(39, 46%, 81%, 0.3), transparent 72%);
 }
 
 .inv-rsvp-section {
   background:
-    linear-gradient(180deg, hsla(203, 36%, 91%, 0.38), hsla(38, 48%, 97%, 0.28) 54%, hsla(203, 36%, 92%, 0.32)),
-    radial-gradient(ellipse 80% 64% at 50% 45%, hsla(203, 34%, 86%, 0.36), transparent 72%);
+    linear-gradient(180deg, hsla(203, 40%, 90%, 0.44), hsla(38, 48%, 97%, 0.24) 54%, hsla(203, 40%, 91%, 0.4)),
+    radial-gradient(ellipse 82% 68% at 50% 45%, hsla(203, 38%, 85%, 0.42), transparent 72%);
 }
 
 .inv-footer {
   background:
-    linear-gradient(180deg, hsla(203, 34%, 92%, 0.32), hsla(38, 46%, 98%, 0.26)),
-    radial-gradient(ellipse 90% 80% at 50% 0%, hsla(203, 32%, 87%, 0.36), transparent 70%);
+    linear-gradient(180deg, hsla(203, 38%, 91%, 0.4), hsla(38, 46%, 98%, 0.3)),
+    radial-gradient(ellipse 90% 80% at 50% 0%, hsla(203, 36%, 86%, 0.42), transparent 70%);
 }
 
 .inv-message-section {

@@ -243,7 +243,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="inv-section-label text-gold">Boarding In</h2>
+            <h2 className="inv-section-label">Boarding In</h2>
             <div className="inv-gold-divider" style={{ marginBottom: 40 }} />
             <div className="inv-countdown-grid">
               <FlapDigit value={pad(timeLeft.days)} label="DAYS" />
@@ -261,7 +261,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {/* ========== COUPLE PHOTOS (not in reference template) ========== */}
       {!isReferenceDemo && couplePhotos.length > 0 && (
         <section className="inv-section-light">
-          <h2 className="inv-section-label text-gold">The Couple</h2>
+          <h2 className="inv-section-label">The Couple</h2>
           <div className="inv-couple-gallery">
             {couplePhotos.map((p, i) => (
               <div key={i} className="airplane-window inv-couple-photo-item">
@@ -358,7 +358,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       <section className="inv-section-dark">
         <div className="inv-corner-tl" /><div className="inv-corner-tr" />
         <motion.h2
-          className="inv-section-label text-gold"
+          className="inv-section-label"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -545,7 +545,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {invitationTierAllows(order, 'gallery') && isReferenceDemo && order.galleryImages?.length ? (
         <section className="inv-section-dark" ref={galleryRef}>
           <motion.h2
-            className="inv-section-label text-gold"
+            className="inv-section-label"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -574,7 +574,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       ) : allGallery.length > 0 ? (
         <section className="inv-section-dark" ref={galleryRef}>
           <motion.h2
-            className="inv-section-label text-gold"
+            className="inv-section-label"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
