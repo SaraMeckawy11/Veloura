@@ -327,7 +327,7 @@
 .bp-hero-ticket {
   position: relative;
   width: 100%;
-  max-width: 540px;
+  max-width: 580px;
   margin: 0 auto;
   aspect-ratio: 1122 / 1402;
   container-type: inline-size;
@@ -347,22 +347,22 @@
   position: absolute;
   left: 13%;
   right: 5%;
-  top: 22.5%;
+  top: 21.6%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.08em;
+  gap: 0.04em;
   pointer-events: none;
 }
 .bp-hero-name {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 8.4cqw, 2.65rem);
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-size: clamp(1.05rem, 6.1cqw, 2.05rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
   color: var(--bp-navy);
   text-transform: uppercase;
-  line-height: 1.02;
-  text-indent: 0.14em;
+  line-height: 1.06;
+  text-indent: 0.16em;
 }
 
 /* Detail rows — aligned to the right of baked-in icons */
@@ -557,11 +557,17 @@
 /* --- Section header --- */
 .inv-section-label {
   font-family: var(--font-script);
-  font-size: 1.6rem;
-  letter-spacing: 0.02em;
+  font-size: clamp(2.1rem, 6vw, 3rem);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
   text-align: center;
-  margin-bottom: 8px;
-  color: var(--bp-gold);
+  margin-bottom: 10px;
+  background: linear-gradient(180deg, var(--bp-gold-light) 0%, var(--bp-gold) 45%, var(--bp-gold-dark) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--bp-gold-dark);
   text-transform: none;
 }
 .inv-section-label-mono {
@@ -783,18 +789,18 @@
 .inv-gallery-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  max-width: 800px;
+  gap: 22px;
+  max-width: 940px;
   margin: 48px auto 0;
 }
 @media (min-width: 768px) {
   .inv-gallery-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
+    gap: 34px;
   }
 }
 .inv-gallery-item {
-  aspect-ratio: 1;
+  aspect-ratio: 3 / 4;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -821,7 +827,8 @@
   background: linear-gradient(180deg, var(--bp-blush) 0%, var(--bp-champagne) 100%);
   transition: transform 0.5s ease-out;
 }
-.inv-gallery-item:hover .inv-gallery-blind {
+.inv-gallery-item:hover .inv-gallery-blind,
+.inv-gallery-item.is-demo-open .inv-gallery-blind {
   transform: translateY(-100%);
 }
 .inv-gallery-blind span {
@@ -876,7 +883,7 @@
   display: block;
   width: min(440px, 86%);
   height: auto;
-  margin: 0 auto 20px;
+  margin: 0 auto -18px;
 }
 
 /* RSVP note row — love-flight stamp + thank-you note */
@@ -978,9 +985,10 @@
 
 .inv-details-policy .gp-item {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  text-align: left;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
 }
 
 .inv-details-policy .gp-icon {
@@ -1559,36 +1567,45 @@ textarea.kiosk-input {
 }
 
 /* Envelope-inspired palette and note -------------------------------- */
+/* One continuous page gradient flows behind every section; sections are
+   transparent and add only soft radial glows that fade to nothing, so the
+   colour transitions between sections are seamless (no hard banding seams). */
 .inv-page {
   background:
-    radial-gradient(ellipse at 8% 18%, hsla(203, 28%, 88%, 0.72), transparent 32rem),
-    radial-gradient(ellipse at 92% 58%, hsla(39, 44%, 76%, 0.24), transparent 34rem),
-    linear-gradient(180deg, hsl(38, 44%, 97%), hsl(202, 30%, 94%) 52%, hsl(38, 42%, 96%));
+    radial-gradient(ellipse 70% 22% at 12% 6%, hsla(203, 30%, 88%, 0.55), transparent 70%),
+    radial-gradient(ellipse 60% 20% at 88% 30%, hsla(39, 44%, 78%, 0.26), transparent 70%),
+    radial-gradient(ellipse 70% 22% at 16% 70%, hsla(203, 28%, 88%, 0.42), transparent 70%),
+    radial-gradient(ellipse 60% 20% at 84% 92%, hsla(39, 44%, 78%, 0.22), transparent 70%),
+    linear-gradient(180deg,
+      hsl(38, 44%, 97%) 0%,
+      hsl(201, 30%, 95%) 30%,
+      hsl(38, 43%, 96%) 58%,
+      hsl(201, 29%, 95%) 82%,
+      hsl(38, 44%, 97%) 100%);
+}
+
+.inv-section-dark,
+.inv-section-light,
+.inv-rsvp-section,
+.inv-footer {
+  background: transparent;
 }
 
 .inv-section-dark {
   color: var(--bp-fg);
-  background:
-    radial-gradient(circle at 50% 48%, hsla(203, 30%, 86%, 0.52), transparent 24rem),
-    linear-gradient(180deg, hsl(202, 30%, 95%), hsl(38, 44%, 97%));
+  background: radial-gradient(ellipse 78% 60% at 50% 50%, hsla(203, 32%, 86%, 0.34), transparent 72%);
 }
 
 .inv-section-light {
-  background:
-    radial-gradient(ellipse at 12% 18%, hsla(202, 34%, 88%, 0.52), transparent 30rem),
-    linear-gradient(180deg, hsl(38, 44%, 97%), hsl(202, 30%, 95%));
+  background: radial-gradient(ellipse 78% 60% at 50% 50%, hsla(39, 40%, 82%, 0.22), transparent 72%);
 }
 
 .inv-rsvp-section {
-  background:
-    radial-gradient(circle at 50% 48%, hsla(203, 30%, 86%, 0.52), transparent 24rem),
-    linear-gradient(180deg, hsl(202, 30%, 95%), hsl(38, 44%, 97%));
+  background: radial-gradient(ellipse 80% 64% at 50% 45%, hsla(203, 32%, 86%, 0.34), transparent 72%);
 }
 
 .inv-footer {
-  background:
-    radial-gradient(ellipse at 50% 0%, hsla(203, 28%, 87%, 0.48), transparent 24rem),
-    linear-gradient(180deg, hsl(38, 44%, 97%), hsl(202, 28%, 94%));
+  background: radial-gradient(ellipse 90% 80% at 50% 0%, hsla(203, 30%, 87%, 0.36), transparent 70%);
 }
 
 .inv-message-section {
@@ -1597,9 +1614,8 @@ textarea.kiosk-input {
   padding: clamp(72px, 10vw, 118px) 16px clamp(78px, 10vw, 126px);
   text-align: center;
   background:
-    radial-gradient(ellipse at 18% 18%, hsla(203, 32%, 84%, 0.6), transparent 28rem),
-    radial-gradient(ellipse at 86% 84%, hsla(39, 44%, 76%, 0.22), transparent 26rem),
-    linear-gradient(180deg, hsl(38, 44%, 97%), hsl(202, 32%, 93%));
+    radial-gradient(ellipse 60% 50% at 18% 16%, hsla(203, 32%, 84%, 0.42), transparent 70%),
+    radial-gradient(ellipse 55% 46% at 86% 86%, hsla(39, 44%, 78%, 0.2), transparent 70%);
 }
 
 .inv-message-title {

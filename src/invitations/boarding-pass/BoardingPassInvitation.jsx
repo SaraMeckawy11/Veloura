@@ -51,6 +51,8 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const audioRef = useRef(null);
   const rsvpSubmissionId = useRef(createRsvpSubmissionId());
   const rootRef = useHeroScrollReset(showSplash);
+  const galleryRef = useRef(null);
+  const [demoOpenWindow, setDemoOpenWindow] = useState(false);
 
   // Countdown
   useEffect(() => {
@@ -69,6 +71,32 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
     const interval = setInterval(calc, 1000);
     return () => clearInterval(interval);
   }, [order]);
+
+  // Auto-open one gallery "window blind" once when it scrolls into view so guests
+  // discover that the memory windows are interactive, then let it close again.
+  useEffect(() => {
+    if (showSplash) return;
+    const el = galleryRef.current;
+    if (!el) return;
+    let closeTimer;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setDemoOpenWindow(true);
+            closeTimer = setTimeout(() => setDemoOpenWindow(false), 2400);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.35 }
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      clearTimeout(closeTimer);
+    };
+  }, [showSplash]);
 
   const handleRsvp = async (e) => {
     e.preventDefault();
@@ -515,7 +543,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
       {/* ========== GALLERY ========== */}
       {invitationTierAllows(order, 'gallery') && isReferenceDemo && order.galleryImages?.length ? (
-        <section className="inv-section-dark">
+        <section className="inv-section-dark" ref={galleryRef}>
           <motion.h2
             className="inv-section-label text-gold"
             initial={{ opacity: 0 }}
@@ -529,7 +557,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             {order.galleryImages.map((src, i) => (
               <motion.div
                 key={i}
-                className="airplane-window inv-gallery-item window-blind-container"
+                className={`airplane-window inv-gallery-item window-blind-container${i === 0 && demoOpenWindow ? ' is-demo-open' : ''}`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -544,7 +572,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           </div>
         </section>
       ) : allGallery.length > 0 ? (
-        <section className="inv-section-dark">
+        <section className="inv-section-dark" ref={galleryRef}>
           <motion.h2
             className="inv-section-label text-gold"
             initial={{ opacity: 0 }}
@@ -558,7 +586,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             {allGallery.map((p, i) => (
               <motion.div
                 key={i}
-                className="airplane-window inv-gallery-item window-blind-container"
+                className={`airplane-window inv-gallery-item window-blind-container${i === 0 && demoOpenWindow ? ' is-demo-open' : ''}`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
