@@ -228,15 +228,14 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
               <span className="bp-hero-detail-value">{venue || 'TBD'}</span>
             </div>
 
-            {/* Confirmed rubber-stamp overlay */}
+            {/* Confirmed rubber-stamp overlay — stamps down once the splash is dismissed */}
             <motion.img
               src={confirmedStamp}
               alt="Confirmed"
               className="bp-hero-stamp"
               initial={{ opacity: 0, scale: 2.4, rotate: -28 }}
-              whileInView={{ opacity: 1, scale: 1, rotate: -8 }}
-              viewport={{ once: true, amount: 0.6 }}
-              transition={{ delay: 1.2, type: 'spring', stiffness: 320, damping: 14, mass: 0.7 }}
+              animate={showSplash ? { opacity: 0, scale: 2.4, rotate: -28 } : { opacity: 1, scale: 1, rotate: -8 }}
+              transition={{ delay: showSplash ? 0 : 1, type: 'spring', stiffness: 320, damping: 14, mass: 0.7 }}
             />
           </div>
         </motion.div>

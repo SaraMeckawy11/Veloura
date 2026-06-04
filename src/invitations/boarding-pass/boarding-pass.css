@@ -366,8 +366,8 @@
   text-indent: 0.16em;
 }
 /* Groom name nudged up, bride name nudged down (independent offsets) */
-.bp-hero-name:nth-child(1) { top: -32px; }
-.bp-hero-name:nth-child(2) { top: 40px; }
+.bp-hero-name:nth-child(1) { top: -8px; }
+.bp-hero-name:nth-child(2) { top: 16px; }
 
 /* Detail rows — aligned to the right of baked-in icons */
 .bp-hero-detail {
@@ -404,9 +404,9 @@
 /* Confirmed rubber-stamp overlay */
 .bp-hero-stamp {
   position: absolute;
-  right: 19%;
-  bottom: 2.5%;
-  width: 36%;
+  right: 13%;
+  bottom: 1.5%;
+  width: 32%;
   height: auto;
   pointer-events: none;
   transform-origin: center;
