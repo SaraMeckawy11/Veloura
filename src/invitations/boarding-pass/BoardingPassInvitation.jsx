@@ -11,7 +11,7 @@ import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
-import heroEmpty from '../../assets/boardingPass/heroEmpty.png';
+import heroEmpty from '../../assets/boardingPass/hero1Empty.png';
 import confirmedStamp from '../../assets/boardingPass/confirmed_stamp_transparent.png';
 import confirmYourSeatTitle from '../../assets/boardingPass/confirm_your_seat_title_transparent.png';
 import loveFlightStamp from '../../assets/boardingPass/love_flight_stamp_transparent.png';
@@ -227,6 +227,17 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             <div className="bp-hero-detail bp-hero-detail--venue">
               <span className="bp-hero-detail-value">{venue || 'TBD'}</span>
             </div>
+
+            {/* Confirmed rubber-stamp overlay */}
+            <motion.img
+              src={confirmedStamp}
+              alt="Confirmed"
+              className="bp-hero-stamp"
+              initial={{ opacity: 0, scale: 2.4, rotate: -28 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: -8 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ delay: 1.2, type: 'spring', stiffness: 320, damping: 14, mass: 0.7 }}
+            />
           </div>
         </motion.div>
       </section>
