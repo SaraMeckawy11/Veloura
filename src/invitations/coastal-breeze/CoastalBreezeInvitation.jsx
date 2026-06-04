@@ -435,7 +435,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                   </div>
 
                   <div className="coastal-field coastal-field-full">
-                    <label htmlFor="rsvp-message">Message <span className="coastal-field-optional">(optional)</span></label>
+                    <label htmlFor="rsvp-message">Message</label>
                     <textarea
                       id="rsvp-message"
                       rows={4}

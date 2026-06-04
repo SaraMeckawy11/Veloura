@@ -3585,9 +3585,12 @@
   gap: clamp(32px, 4.6vw, 48px);
 }
 
-.fountain-rsvp-panel-field,
-.fountain-rsvp-panel-choice {
+.fountain-rsvp-panel-field {
   gap: 16px;
+}
+
+.fountain-rsvp-panel-choice {
+  gap: clamp(20px, 3vw, 28px);
 }
 
 .fountain-rsvp-panel-choice > div {
@@ -3595,8 +3598,8 @@
 }
 
 .fountain-rsvp-panel-choice button {
-  min-height: 76px;
-  padding: 12px 14px;
+  min-height: 54px;
+  padding: 9px 14px;
 }
 
 .fountain-rsvp-panel-field input,

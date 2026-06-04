@@ -237,8 +237,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 function TheaterGuestNoteSection({ lines }) {
   if (!lines?.length) return null;
   return (
-    <section className="theater-guest-note" aria-label="For our cherished guests">
-      <span className="theater-guest-note-eyebrow">For our cherished guests</span>
+    <section className="theater-guest-note" aria-label="Guest guidance">
       <ul className="theater-guest-note-list">
         {lines.map((line, index) => (
           <li key={line}>
