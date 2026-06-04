@@ -11,7 +11,7 @@ import { migrateGuestPolicyFields } from '../lib/guestPolicyFields';
 import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
-import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
+import boardingPassPreview from '../assets/boardingPass/thumbnail2.png';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';

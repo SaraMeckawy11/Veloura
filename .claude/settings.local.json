@@ -63,7 +63,8 @@
       "Bash(git commit --amend -m 'Raise tiers, add note to Essential, fix pricing card width & preview' -m '- Bump tier prices \\(Essential 39->49, Signature 69->74\\) and unlock the envelope \"A Note\" message in Essential; highlight the Signature RSVP dashboard guest-tracking tools. *)",
       "Bash(awk 'NR>=3400 && NR<=3560 && \\(/@media/ || /@container/ || /@supports/\\)' src/invitations/fountain-reverie-shared/fountain-reverie.css)",
       "Bash(awk 'NR>=1 && NR<=3557' src/invitations/fountain-reverie-shared/fountain-reverie.css)",
-      "Bash(awk -F: '$1>=3300 && $1<=3650')"
+      "Bash(awk -F: '$1>=3300 && $1<=3650')",
+      "Bash(node -e 'const fs=require\\('\\\\''fs'\\\\''\\);const b=fs.readFileSync\\('\\\\''__TRACKED_VAR__'\\\\''\\);const w=b.readUInt32BE\\(16\\),h=b.readUInt32BE\\(20\\);console.log\\('\\\\''__TRACKED_VAR__'\\\\'',w+'\\\\''x'\\\\''+h,\\(w/h\\).toFixed\\(3\\)\\);')"
     ]
   }
 }
