@@ -118,7 +118,7 @@ const GUEST_POLICY_OPTIONS = {
   ],
   plusOne: [
     { value: 'welcome', label: 'Guests may bring someone', text: 'You are warmly welcome to bring a guest with you.' },
-    { value: 'named-only', label: 'No plus-one', text: 'Please join us without an additional guest unless a plus-one was shared with you.' },
+    { value: 'named-only', label: 'No plus-one', text: 'We can’t wait to celebrate with you and kindly ask that you join us without an additional guest unless a plus-one was shared with you.' },
   ],
 };
 
