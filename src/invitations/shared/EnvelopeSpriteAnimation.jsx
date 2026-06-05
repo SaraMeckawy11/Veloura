@@ -1,0 +1,124 @@
+import { useEffect, useRef } from 'react';
+import spriteUrl from '../../assets/envelope_animation_sprite.webp';
+
+// Lightweight, native canvas player for the shared envelope-opening animation.
+//
+// Previously both the Garden Pavilion and Fountain Reverie splash screens
+// embedded a 1.3MB self-contained HTML file (73 base64-inlined frames) inside
+// an <iframe>. Parsing that much inline markup, spinning up a separate browsing
+// context, and decoding the inlined image all happened before the first frame
+// could paint — which is what made the envelope feel heavy / slow to appear.
+//
+// This component renders the same frames directly on a <canvas> in the host
+// document. The sprite sheet (a single 1MB .webp) is bundled by Vite, so it is
+// hashed, cached, and fetched in parallel like any other asset. No iframe, no
+// base64 parsing — the animation starts the instant the sprite decodes.
+const FRAME_WIDTH = 337;
+const FRAME_HEIGHT = 540;
+const FRAME_COUNT = 73;
+const COLUMNS = 12;
+const FPS = 20;
+
+export default function EnvelopeSpriteAnimation({ className, onReady, onComplete }) {
+  const canvasRef = useRef(null);
+  const onReadyRef = useRef(onReady);
+  const onCompleteRef = useRef(onComplete);
+
+  useEffect(() => {
+    onReadyRef.current = onReady;
+    onCompleteRef.current = onComplete;
+  }, [onReady, onComplete]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return undefined;
+
+    const context = canvas.getContext('2d', { alpha: true });
+    const sprite = new Image();
+    sprite.decoding = 'async';
+
+    let rafId = null;
+    let startTime = null;
+    let lastFrame = -1;
+    let completed = false;
+    let disposed = false;
+
+    const resizeCanvas = () => {
+      const pixelRatio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = Math.ceil(window.innerWidth * pixelRatio);
+      canvas.height = Math.ceil(window.innerHeight * pixelRatio);
+      if (lastFrame >= 0) drawFrame(lastFrame);
+    };
+
+    const drawFrame = (frameIndex) => {
+      const sourceX = (frameIndex % COLUMNS) * FRAME_WIDTH;
+      const sourceY = Math.floor(frameIndex / COLUMNS) * FRAME_HEIGHT;
+      // "cover" the viewport, centered — matches the previous iframe renderer.
+      const scale = Math.max(canvas.width / FRAME_WIDTH, canvas.height / FRAME_HEIGHT);
+      const destWidth = FRAME_WIDTH * scale;
+      const destHeight = FRAME_HEIGHT * scale;
+      const destX = (canvas.width - destWidth) / 2;
+      const destY = (canvas.height - destHeight) / 2;
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(
+        sprite,
+        sourceX,
+        sourceY,
+        FRAME_WIDTH,
+        FRAME_HEIGHT,
+        destX,
+        destY,
+        destWidth,
+        destHeight,
+      );
+    };
+
+    const tick = (now) => {
+      if (disposed) return;
+      if (startTime === null) startTime = now;
+      const elapsed = (now - startTime) / 1000;
+      const frameIndex = Math.min(Math.floor(elapsed * FPS), FRAME_COUNT - 1);
+
+      if (frameIndex !== lastFrame) {
+        drawFrame(frameIndex);
+        lastFrame = frameIndex;
+      }
+
+      if (frameIndex < FRAME_COUNT - 1) {
+        rafId = window.requestAnimationFrame(tick);
+      } else if (!completed) {
+        completed = true;
+        onCompleteRef.current?.();
+      }
+    };
+
+    const handleLoad = () => {
+      if (disposed) return;
+      resizeCanvas();
+      drawFrame(0);
+      onReadyRef.current?.();
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    sprite.addEventListener('load', handleLoad);
+    window.addEventListener('resize', resizeCanvas);
+    sprite.src = spriteUrl;
+
+    return () => {
+      disposed = true;
+      if (rafId) window.cancelAnimationFrame(rafId);
+      sprite.removeEventListener('load', handleLoad);
+      window.removeEventListener('resize', resizeCanvas);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className={className}
+      width={FRAME_WIDTH}
+      height={FRAME_HEIGHT}
+      aria-hidden="true"
+    />
+  );
+}

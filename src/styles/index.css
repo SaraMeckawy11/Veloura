@@ -134,9 +134,15 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 
 .btn-primary:hover {
-  background: var(--navy);
+  background: #423d37;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+  background: var(--text);
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .btn-secondary {

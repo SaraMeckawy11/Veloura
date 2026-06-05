@@ -311,33 +311,40 @@ export default function OrderFlow() {
 
   // --- Auto-save to localStorage on every state change ---
   useEffect(() => {
-    const persistablePhotos = {};
-    for (const cat of Object.keys(photos)) {
-      persistablePhotos[cat] = photos[cat]
-        .map(p => {
-          // Uploaded to Cloudinary — save the real URL
-          if (p.publicId && !p._uploading) {
-            return { url: p.url, publicId: p.publicId, label: p.label, fit: normalizePhotoFit(p.fit) };
-          }
-          // Still uploading or failed — save the thumbnail for reload survival
-          if (p._thumbUrl) {
-            return { url: p._thumbUrl, publicId: '', label: p.label, fit: normalizePhotoFit(p.fit), _pendingUpload: true };
-          }
-          // No thumbnail available (e.g. HEIC couldn't render) — skip
-          return null;
-        })
-        .filter(Boolean);
-    }
-    saveDraft({
-      step,
-      selectedTier,
-      selectedTemplate,
-      form,
-      disabledFields,
-      photos: persistablePhotos,
-      storyMilestones,
-      music,
-    });
+    // Debounce the draft write: serialising the whole draft (including photo
+    // thumbnails) to localStorage is heavy, so doing it synchronously on every
+    // keystroke/selection makes typing and step changes feel laggy. A short
+    // delay coalesces rapid updates into a single write once the user pauses.
+    const handle = setTimeout(() => {
+      const persistablePhotos = {};
+      for (const cat of Object.keys(photos)) {
+        persistablePhotos[cat] = photos[cat]
+          .map(p => {
+            // Uploaded to Cloudinary — save the real URL
+            if (p.publicId && !p._uploading) {
+              return { url: p.url, publicId: p.publicId, label: p.label, fit: normalizePhotoFit(p.fit) };
+            }
+            // Still uploading or failed — save the thumbnail for reload survival
+            if (p._thumbUrl) {
+              return { url: p._thumbUrl, publicId: '', label: p.label, fit: normalizePhotoFit(p.fit), _pendingUpload: true };
+            }
+            // No thumbnail available (e.g. HEIC couldn't render) — skip
+            return null;
+          })
+          .filter(Boolean);
+      }
+      saveDraft({
+        step,
+        selectedTier,
+        selectedTemplate,
+        form,
+        disabledFields,
+        photos: persistablePhotos,
+        storyMilestones,
+        music,
+      });
+    }, 350);
+    return () => clearTimeout(handle);
   }, [step, selectedTier, selectedTemplate, form, disabledFields, photos, storyMilestones, music]);
 
   // Local template definitions used as fallback when API is unavailable
@@ -676,7 +683,7 @@ export default function OrderFlow() {
       window.history.pushState({ orderStep: nextStep }, '');
     } catch { /* history unavailable */ }
     requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, left: 0 });
     });
   }, []);
 
@@ -688,7 +695,7 @@ export default function OrderFlow() {
       window.history.back();
     } else {
       setStep(fallbackStep);
-      requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' }));
+      requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
     }
   }, []);
 
@@ -1033,7 +1040,11 @@ export default function OrderFlow() {
                   type="button"
                   className={`tier-choice-card ${selectedTier === tier.id ? 'selected' : ''} ${tier.featured ? 'featured' : ''}`}
                   onClick={() => setSelectedTier(tier.id)}
+                  aria-pressed={selectedTier === tier.id}
                 >
+                  <span className="tier-choice-check" aria-hidden>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  </span>
                   <span className="tier-choice-badge">{tier.badge}</span>
                   <span className="tier-choice-name">{tier.name}</span>
                   <span className="tier-choice-price">
@@ -1542,7 +1553,7 @@ export default function OrderFlow() {
                 <p className="form-hint">Additional photos for the gallery section (max 6)</p>
                 <div className="photo-upload-area photo-upload-area--gallery">
                   {photos.gallery.length < 6 && (
-                    <label className="photo-upload-btn photo-upload-btn--gallery-add">
+                    <label className="photo-upload-btn photo-upload-btn--gallery-add" style={galleryPreviewStyle}>
                       <span className="photo-upload-plus" aria-hidden>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                       </span>

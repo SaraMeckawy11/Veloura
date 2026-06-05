@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
-import envelopeAnimationUrl from '../../assets/envelope_animation.html?url';
+import EnvelopeSpriteAnimation from '../shared/EnvelopeSpriteAnimation';
 
-const FRAME_COUNT = 73;
-const FRAMES_PER_SECOND = 20;
+// Settle the opened envelope briefly before dissolving, and keep a fallback in
+// case the sprite never loads (offline / decode failure) so the splash can't
+// trap the viewer on a blank screen.
 const END_PADDING_MS = 320;
 const FALLBACK_DISMISS_MS = 4600;
-const ANIMATION_DISMISS_MS = Math.ceil((FRAME_COUNT / FRAMES_PER_SECOND) * 1000) + END_PADDING_MS;
 
 export default function GazeboSplash({ onReady, onDismiss }) {
   const dismissTimerRef = useRef(null);
   const hasOpenedRef = useRef(false);
-  const iframeRef = useRef(null);
   const readyRef = useRef(false);
   const onReadyRef = useRef(onReady);
   const onDismissRef = useRef(onDismiss);
@@ -52,10 +51,16 @@ export default function GazeboSplash({ onReady, onDismiss }) {
     dismissTimerRef.current = window.setTimeout(finishOpening, delay);
   }, [finishOpening]);
 
-  const handleAnimationReady = useCallback(() => {
+  // The sprite has decoded and the first frame painted — reveal the hero
+  // underneath so it is ready by the time the envelope finishes opening.
+  const handleReady = useCallback(() => {
     markReady();
-    scheduleDismiss(ANIMATION_DISMISS_MS);
-  }, [markReady, scheduleDismiss]);
+  }, [markReady]);
+
+  // Last frame drawn — let the open envelope settle, then dissolve the splash.
+  const handleComplete = useCallback(() => {
+    scheduleDismiss(END_PADDING_MS);
+  }, [scheduleDismiss]);
 
   useEffect(() => {
     scheduleDismiss(FALLBACK_DISMISS_MS);
@@ -67,16 +72,6 @@ export default function GazeboSplash({ onReady, onDismiss }) {
     };
   }, [scheduleDismiss]);
 
-  useEffect(() => {
-    const handleMessage = (event) => {
-      if (event.source !== iframeRef.current?.contentWindow) return;
-      if (event.data?.type === 'gazebo-envelope-ready') handleAnimationReady();
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, [handleAnimationReady]);
-
   return (
     <AnimatePresence>
       <motion.div
@@ -87,13 +82,10 @@ export default function GazeboSplash({ onReady, onDismiss }) {
         transition={fading ? { duration: 0.6, ease: 'easeInOut' } : { duration: 0.2 }}
         exit={{ opacity: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }}
       >
-        <iframe
-          ref={iframeRef}
+        <EnvelopeSpriteAnimation
           className="gazebo-splash-envelope-animation"
-          src={envelopeAnimationUrl}
-          title="Envelope opening animation"
-          aria-hidden="true"
-          tabIndex={-1}
+          onReady={handleReady}
+          onComplete={handleComplete}
         />
       </motion.div>
     </AnimatePresence>
