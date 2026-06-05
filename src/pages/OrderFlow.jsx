@@ -1255,21 +1255,22 @@ export default function OrderFlow() {
                       <p className="form-hint message-hint form-hint-disabled">The map will be hidden from your invitation.</p>
                     )}
                   </div>
-                  <div className={`guest-policy-editor form-field--wide ${disabledFields.includes('childrenNote') && disabledFields.includes('plusOneNote') ? 'field-disabled' : ''}`}>
-                    <div className="guest-policy-editor-header">
-                      <div>
-                        <span className="guest-policy-kicker">Guest guidance</span>
-                        <h3>Children &amp; Guest Wording</h3>
-                        <p>Polite notes telling guests who's invited.</p>
-                      </div>
-                      <button type="button" className="field-toggle" onClick={toggleGuestGuidance}>
-                        {disabledFields.includes('childrenNote') && disabledFields.includes('plusOneNote') ? 'Enable' : 'Disable'}
-                      </button>
-                    </div>
-                    {disabledFields.includes('childrenNote') && disabledFields.includes('plusOneNote') ? (
-                      <p className="form-hint message-hint form-hint-disabled">Hidden — guests won’t see any guest guidance notes.</p>
-                    ) : (
-                    <div className="guest-policy-card-grid">
+                </div>
+              </fieldset>
+
+              {/* Guest guidance — its own section */}
+              <fieldset className="form-section">
+                <legend>Guest Guidance</legend>
+                <div className="guest-policy-section-head">
+                  <p className="form-hint">Polite notes telling guests who's invited. Toggle each on or off and edit the wording shown on your invitation.</p>
+                  <button type="button" className="field-toggle" onClick={toggleGuestGuidance}>
+                    {disabledFields.includes('childrenNote') && disabledFields.includes('plusOneNote') ? 'Enable all' : 'Disable all'}
+                  </button>
+                </div>
+                {disabledFields.includes('childrenNote') && disabledFields.includes('plusOneNote') ? (
+                  <p className="form-hint message-hint form-hint-disabled">Hidden — guests won’t see any guest guidance notes.</p>
+                ) : (
+                  <div className="guest-policy-card-grid">
                       <article className={`guest-policy-card ${disabledFields.includes('childrenNote') ? 'guest-policy-card--off' : ''}`}>
                         <div className="guest-policy-card-head">
                           <span>Children</span>
@@ -1341,9 +1342,7 @@ export default function OrderFlow() {
                         )}
                       </article>
                     </div>
-                    )}
-                  </div>
-                </div>
+                )}
               </fieldset>
 
               {/* Optional personalizations — clearly separated so users know what's not required */}
