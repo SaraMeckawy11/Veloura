@@ -380,9 +380,11 @@ export default function OrderFlow() {
         previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
       }));
     setTemplates(fallback);
-    if (!selectedTemplate && fallback.length > 0) {
-      setSelectedTemplate(fallback[0]);
-    }
+    setSelectedTemplate(prev => {
+      if (!prev) return fallback[0] || null;
+      const match = fallback.find(t => t.slug === prev.slug);
+      return match ? { ...prev, ...match } : prev;
+    });
     setLoading(false);
 
     fetch(`${API}/templates`)
@@ -408,11 +410,11 @@ export default function OrderFlow() {
             previewImage: t.previewImage || TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
           }));
         setTemplates(merged);
-        if (selectedTemplate && !merged.some(t => t.slug === selectedTemplate.slug)) {
-          setSelectedTemplate(merged[0] || null);
-        } else if (!selectedTemplate && merged.length > 0) {
-          setSelectedTemplate(merged[0]);
-        }
+        setSelectedTemplate(prev => {
+          if (!prev) return merged[0] || null;
+          const match = merged.find(t => t.slug === prev.slug);
+          return match ? { ...prev, ...match } : (merged[0] || null);
+        });
       })
       .catch(() => {
         // Local templates are already visible; keep the order flow responsive.
