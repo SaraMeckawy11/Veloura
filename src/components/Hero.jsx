@@ -54,7 +54,7 @@ export default function Hero() {
         <div className="hero-visual">
           {/* Floating elements */}
           <div className="float-element rsvp-count">
-            <div className="float-count">142</div>
+            <div className="float-count">186</div>
             <div className="float-label">Guests<br />Confirmed</div>
           </div>
 
