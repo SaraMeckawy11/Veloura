@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
+import coastalSplashPreview from '../assets/coastal/thumbnail.png';
 import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
 import boardingPassPreview from '../assets/boardingPass/thumbnail2.png';
@@ -41,6 +41,7 @@ const designs = [
     description: 'Coastal blues, watercolor details, and effortless seaside romance.',
     image: coastalSplashPreview,
     overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
+    hidePreviewText: true,
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/coastal-breeze',

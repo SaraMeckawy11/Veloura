@@ -1606,7 +1606,11 @@ export default function OrderFlow() {
               <div className="review-section">
                 <h3 className="review-section-title">Selected Design</h3>
                 <div className="review-template">
-                  <img src={selectedTemplate.previewImage} alt={selectedTemplate.name} />
+                  <img
+                    src={selectedTemplate.previewImage}
+                    alt={selectedTemplate.name}
+                    className={selectedTemplate.slug === 'boarding-pass' ? 'review-img--wide' : ''}
+                  />
                   <div>
                     <strong>{selectedTemplate.name}</strong>
                     <p>{selectedTemplate.description}</p>
@@ -1621,8 +1625,8 @@ export default function OrderFlow() {
                   className="protected-preview-card"
                   onClick={() => setPreviewOpen(true)}
                 >
-                  <span className="protected-preview-thumb" aria-hidden="true">
-                    {selectedTemplate.previewImage && <img src={selectedTemplate.previewImage} alt="" />}
+                  <span className={`protected-preview-thumb ${selectedTemplate.slug === 'boarding-pass' ? 'protected-preview-thumb--wide' : ''}`} aria-hidden="true">
+                    {selectedTemplate.previewImage && <img src={selectedTemplate.previewImage} alt="" className={selectedTemplate.slug === 'boarding-pass' ? 'review-img--wide' : ''} />}
                     <span className="protected-preview-thumb-watermark">Preview</span>
                   </span>
                   <span className="protected-preview-copy">

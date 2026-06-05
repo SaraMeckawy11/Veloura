@@ -1362,6 +1362,12 @@
   border-radius: 10px;
   object-fit: cover;
 }
+/* The Boarding Pass thumbnail is a wide landscape image — contain it so the
+   whole boarding pass shows instead of being cropped to a square. */
+.review-template img.review-img--wide {
+  object-fit: contain;
+  background: #e3f2fd;
+}
 .review-template strong {
   display: block;
   margin-bottom: 4px;
@@ -1481,6 +1487,17 @@
   height: 100%;
   display: block;
   object-fit: cover;
+}
+
+/* Boarding Pass preview is a wide landscape thumbnail — match the frame to its
+   aspect ratio so the whole boarding pass shows instead of a cropped slice. */
+.protected-preview-thumb.protected-preview-thumb--wide {
+  aspect-ratio: 1672 / 941;
+  align-self: center;
+  background: #e3f2fd;
+}
+.protected-preview-thumb img.review-img--wide {
+  object-fit: contain;
 }
 
 .protected-preview-thumb-watermark {
