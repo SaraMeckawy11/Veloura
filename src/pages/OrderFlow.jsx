@@ -118,7 +118,7 @@ const GUEST_POLICY_OPTIONS = {
   ],
   plusOne: [
     { value: 'welcome', label: 'Guests may bring someone', text: 'You are warmly welcome to bring a guest with you.' },
-    { value: 'named-only', label: 'Named guests only', text: 'To keep our celebration intimate, we kindly ask that only the guests named on your invitation join us.' },
+    { value: 'named-only', label: 'Invited guests only', text: 'To keep our celebration intimate, we kindly ask that this invitation be reserved for the guests we have personally invited.' },
   ],
 };
 
@@ -128,14 +128,6 @@ function getGuestPolicyText(weddingDetails = {}) {
   const plusOne = weddingDetails.plusOnePolicyText?.trim()
     || GUEST_POLICY_OPTIONS.plusOne.find(option => option.value === weddingDetails.plusOnePolicy)?.text;
   return [children, plusOne].filter(Boolean).join(' ');
-}
-
-function getFontCategory(option) {
-  // Calligraphy/handwriting styles list `cursive` as their generic fallback.
-  if (option.script.includes('cursive')) return 'Script';
-  // Otherwise classify by the heading face the couple actually sees.
-  if (/Inter|Montserrat|Nunito|Josefin/.test(option.display)) return 'Modern';
-  return 'Serif';
 }
 
 // Which optional fields each invitation design actually renders. Fields that
@@ -245,6 +237,7 @@ export default function OrderFlow() {
   // Guards against a second capture call while one is already in flight or done,
   // so a buyer who triggers approval twice is never charged/captured twice.
   const captureInFlightRef = useRef(false);
+  const orderCreationInFlightRef = useRef(false);
 
   // Form state — restore from draft
   const defaultForm = {
@@ -895,12 +888,15 @@ export default function OrderFlow() {
 
   // Step 3: create order + handle payment in one action
   const handleConfirmPayment = async () => {
+    if (orderCreationInFlightRef.current || confirming || paypalLoading || paypalOrderData) return;
+    orderCreationInFlightRef.current = true;
     setConfirming(true);
     setError('');
     const customerEmail = normalizeEmail(form.customerEmail);
 
     if (!isValidEmail(customerEmail)) {
       setError('Please go back and enter a valid email address before payment.');
+      orderCreationInFlightRef.current = false;
       setConfirming(false);
       return;
     }
@@ -952,6 +948,7 @@ export default function OrderFlow() {
         savePendingOrder(data.orderId);
         setPaypalOrderData({ orderId: data.orderId, paypal: data.paypal });
         setPaypalLoading(true);
+        orderCreationInFlightRef.current = false;
         setConfirming(false);
         return;
       }
@@ -964,6 +961,7 @@ export default function OrderFlow() {
       );
     } catch (err) {
       setError(err.message);
+      orderCreationInFlightRef.current = false;
       setConfirming(false);
     }
   };
@@ -1066,6 +1064,7 @@ export default function OrderFlow() {
 
             <div className="step-actions">
               <button
+                type="button"
                 className="btn btn-gold step-next"
                 onClick={() => goToStep(2)}
               >
@@ -1079,7 +1078,7 @@ export default function OrderFlow() {
         {/* Step 2: Select template */}
         {step === 2 && (
           <div className="step-content">
-            <button className="step-back-btn" onClick={() => goBack(1)}>
+            <button type="button" className="step-back-btn" onClick={() => goBack(1)}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
               Change plan
             </button>
@@ -1090,6 +1089,7 @@ export default function OrderFlow() {
               {templates.map(t => (
                 <button
                   key={t._id}
+                  type="button"
                   className={`template-option ${selectedTemplate?._id === t._id ? 'selected' : ''}`}
                   onClick={() => setSelectedTemplate(t)}
                 >
@@ -1136,6 +1136,7 @@ export default function OrderFlow() {
 
             <div className="step-actions">
               <button
+                type="button"
                 className="btn btn-gold step-next"
                 disabled={!selectedTemplate}
                 onClick={() => goToStep(3)}
@@ -1150,7 +1151,7 @@ export default function OrderFlow() {
         {/* Step 3: Fill form */}
         {step === 3 && (
           <div className="step-content">
-            <button className="step-back-btn" onClick={() => goBack(2)}>
+            <button type="button" className="step-back-btn" onClick={() => goBack(2)}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
               Change template
             </button>
@@ -1262,7 +1263,7 @@ export default function OrderFlow() {
               <fieldset className="form-section">
                 <legend>Guest Guidance</legend>
                 <div className="guest-policy-section-head">
-                  <p className="form-hint">Polite notes telling guests who's invited. Toggle each on or off and edit the wording shown on your invitation.</p>
+                  <p className="form-hint">Polite notes telling guests who's invited.</p>
                   <button type="button" className="field-toggle" onClick={toggleGuestGuidance}>
                     {disabledFields.includes('childrenNote') && disabledFields.includes('plusOneNote') ? 'Enable all' : 'Disable all'}
                   </button>
@@ -1610,7 +1611,7 @@ export default function OrderFlow() {
         {step === 4 && (
           <div className="step-content">
             {!paypalOrderData && (
-              <button className="step-back-btn" onClick={() => goBack(3)}>
+              <button type="button" className="step-back-btn" onClick={() => goBack(3)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                 Back to Details
               </button>
@@ -1737,7 +1738,7 @@ export default function OrderFlow() {
                   </div>
                   <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
                 </div>
-                <button className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
+                <button type="button" className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
                   {confirming ? 'Preparing Payment…' : 'Continue to Payment'}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
@@ -2037,19 +2038,15 @@ export default function OrderFlow() {
                     setFontPickerOpen(false);
                   }}
                 >
-                  <span className="font-option-category">{getFontCategory(option)}</span>
                   <span className="font-option-sample" style={{ fontFamily: option.script }}>
                     Amira &amp; Zayn
                   </span>
                   <span className="font-option-body" style={{ fontFamily: option.body }}>
-                    Saturday, 20 June 2026 · Garden Pavilion
+                    Saturday, 20 June 2026
                   </span>
-                  <span className="font-option-meta">
-                    <strong>{option.label}</strong>
-                    <span>{option.description}</span>
-                  </span>
+                  <span className="font-option-name">{option.label}</span>
                   <span className="font-option-check" aria-hidden="true">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
                   </span>
                 </button>
               ))}

@@ -133,12 +133,6 @@ button { cursor: pointer; border: none; font-family: inherit; }
   color: var(--white);
 }
 
-.btn-primary:hover {
-  background: #423d37;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
 .btn-primary:active {
   background: var(--text);
   transform: translateY(0);
@@ -151,22 +145,33 @@ button { cursor: pointer; border: none; font-family: inherit; }
   border: 1px solid var(--border);
 }
 
-.btn-secondary:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
-}
-
 .btn-gold {
   background: var(--gold);
   color: var(--white);
 }
 
-.btn-gold:hover {
-  background: var(--gold-light);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 30px rgba(184, 146, 74, 0.3);
+/* Hover lift/shadow only on real pointer devices. On touch screens these
+   :hover styles would otherwise need a priming tap to apply before the click
+   registers, which felt like buttons needing two presses. */
+@media (hover: hover) {
+  .btn-primary:hover {
+    background: #423d37;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn-gold:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 30px rgba(184, 146, 74, 0.3);
+  }
 }
 
 .btn-sm {
