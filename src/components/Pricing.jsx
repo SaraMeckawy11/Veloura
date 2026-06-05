@@ -147,11 +147,6 @@ export default function Pricing({ showCta = true }) {
             </article>
           ))}
         </div>
-        {pricingCatalog?.displayIsConverted && (
-          <p className="pricing-currency-note">
-            Prices are shown in EGP for Egypt. Secure checkout is processed in USD by PayPal.
-          </p>
-        )}
       </div>
     </section>
   );
