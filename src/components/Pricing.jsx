@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import { PRICING_TIERS } from '../lib/pricingTiers';
 import '../styles/Pricing.css';
 import useReveal from '../hooks/useReveal';
-import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
-import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
-import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
-import boardingPassPreview from '../assets/boardingPass/thumbnail2.png';
+import coastalSplashPreview from '../assets/coastal/thumbnail.png';
+import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
+import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
+import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
+import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -16,7 +17,7 @@ const DEMO_PREVIEW_IMAGES = {
   'Coastal Breeze': coastalSplashPreview,
   'Fountain Reverie I': fountainHero1Preview,
   'Fountain Reverie II': fountainHero2Preview,
-  'Garden Pavilion': '/assets/gazebo-watercolor-poster1.jpg',
+  'Garden Pavilion': GardenPavilionPreview,
   'Theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=300&h=300&fit=crop&q=80',
   'Boarding Pass': boardingPassPreview,
 };

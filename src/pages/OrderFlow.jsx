@@ -8,10 +8,11 @@ import registry from '../invitations/registry';
 import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
 import { DEFAULT_PRICING_TIER, PRICING_TIERS, getPricingTier, normalizePricingTier, tierAllows, getTierDisabledFields } from '../lib/pricingTiers';
 import { migrateGuestPolicyFields } from '../lib/guestPolicyFields';
-import coastalSplashPreview from '../assets/coastal/coastal-closed-door.webp';
-import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
-import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
-import boardingPassPreview from '../assets/boardingPass/thumbnail2.png';
+import coastalSplashPreview from '../assets/coastal/thumbnail.png';
+import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
+import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
+import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
+import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -178,7 +179,7 @@ const TEMPLATE_PREVIEW_IMAGES = {
   'coastal-breeze': coastalSplashPreview,
   'fountain-reverie-v1': fountainHero1Preview,
   'fountain-reverie-v2': fountainHero2Preview,
-  'gazebo-garden': '/assets/gazebo-watercolor-poster1.jpg',
+  'gazebo-garden': GardenPavilionPreview,
   'boarding-pass': boardingPassPreview,
   'theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop&q=80',
 };
@@ -188,7 +189,7 @@ const TEMPLATE_PREVIEW_IMAGES = {
 const TEMPLATE_PREVIEW_CARDS = {
   'coastal-breeze': {
     overlay: 'linear-gradient(135deg, rgba(31,95,143,0.16), rgba(236,134,111,0.12))',
-    previewText: 'Coastal Breeze',
+    // previewText: 'Coastal Breeze',
   },
 };
 
@@ -1609,7 +1610,6 @@ export default function OrderFlow() {
                   <img
                     src={selectedTemplate.previewImage}
                     alt={selectedTemplate.name}
-                    className={selectedTemplate.slug === 'boarding-pass' ? 'review-img--wide' : ''}
                   />
                   <div>
                     <strong>{selectedTemplate.name}</strong>
@@ -1625,8 +1625,8 @@ export default function OrderFlow() {
                   className="protected-preview-card"
                   onClick={() => setPreviewOpen(true)}
                 >
-                  <span className={`protected-preview-thumb ${selectedTemplate.slug === 'boarding-pass' ? 'protected-preview-thumb--wide' : ''}`} aria-hidden="true">
-                    {selectedTemplate.previewImage && <img src={selectedTemplate.previewImage} alt="" className={selectedTemplate.slug === 'boarding-pass' ? 'review-img--wide' : ''} />}
+                  <span className="protected-preview-thumb" aria-hidden="true">
+                    {selectedTemplate.previewImage && <img src={selectedTemplate.previewImage} alt="" />}
                     <span className="protected-preview-thumb-watermark">Preview</span>
                   </span>
                   <span className="protected-preview-copy">

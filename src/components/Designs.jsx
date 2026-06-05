@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import coastalSplashPreview from '../assets/coastal/thumbnail.png';
-import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail1.png';
-import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail2.png';
-import boardingPassPreview from '../assets/boardingPass/thumbnail2.png';
+import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
+import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
+import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
+import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
 import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
@@ -18,8 +19,9 @@ const designs = [
     previewClassName: 'design-preview-text--gazebo',
     category: 'launch',
     description: 'Watercolor garden elegance with soft florals and romantic details.',
-    image: '/assets/gazebo-watercolor-poster1.jpg',
+    image: GardenPavilionPreview,
     overlay: 'linear-gradient(135deg, rgba(91,125,68,0.12), rgba(255,255,245,0.22))',
+    hidePreviewText: true,
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/gazebo-garden',
