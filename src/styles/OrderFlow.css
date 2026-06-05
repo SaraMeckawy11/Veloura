@@ -1972,7 +1972,7 @@
 }
 
 .font-picker-panel {
-  width: min(100%, 640px);
+  width: min(100%, 660px);
   max-height: min(90vh, 720px);
   overflow: hidden;
   display: grid;
@@ -1988,7 +1988,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 20px 14px;
+  padding: 20px 22px 16px;
   border-bottom: 1px solid var(--border-light);
 }
 
@@ -2020,34 +2020,28 @@
 .font-picker-current {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 16px;
+  gap: 12px 18px;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border-light);
+  margin: 14px 16px 0;
+  padding: 14px 16px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
 }
 
 .font-picker-current-copy {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
   flex-wrap: wrap;
-}
-
-.font-picker-current-label {
-  color: var(--gold);
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .font-picker-current strong {
   min-width: 0;
   color: var(--text);
-  font-size: 1.16rem;
+  font-size: 1.22rem;
   line-height: 1.15;
 }
 
@@ -2106,24 +2100,24 @@
   overflow: auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-  padding: 8px;
-  background: var(--white);
+  gap: 10px;
+  margin-top: 14px;
+  padding: 16px;
+  background: var(--bg-alt);
 }
 
 .font-option-card {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 2px 14px;
+  gap: 4px 16px;
   align-items: center;
-  padding: 12px 12px;
+  padding: 15px 16px 15px 18px;
   text-align: left;
   background: var(--white);
-  border: 0;
-  border-bottom: 1px solid var(--border-light);
-  border-radius: 0;
-  transition: background 0.2s ease, color 0.2s ease;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 @media (hover: hover) {
@@ -2133,18 +2127,15 @@
 }
 
 .font-option-card.active {
-  background: rgba(184, 146, 74, 0.08);
-  box-shadow: inset 3px 0 0 var(--gold);
-}
-
-.font-option-card:last-child {
-  border-bottom: 0;
+  background: rgba(184, 146, 74, 0.07);
+  border-color: rgba(184, 146, 74, 0.38);
+  box-shadow: inset 4px 0 0 var(--gold), 0 8px 20px rgba(45, 42, 38, 0.04);
 }
 
 .font-option-sample {
   grid-column: 1;
   color: var(--text);
-  font-size: 1.28rem;
+  font-size: 1.34rem;
   font-weight: 500;
   line-height: 1.2;
   /* Script fonts have tall ascenders/descenders and wide glyphs — let the
@@ -2158,14 +2149,14 @@
 .font-option-body {
   grid-column: 1;
   color: var(--text-light, #908b83);
-  font-size: 0.76rem;
+  font-size: 0.78rem;
 }
 
 .font-option-name {
   grid-column: 1;
-  margin-top: 4px;
+  margin-top: 6px;
   color: var(--text-secondary);
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 600;
   letter-spacing: 0.01em;
 }

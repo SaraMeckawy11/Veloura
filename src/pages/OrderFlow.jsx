@@ -118,7 +118,7 @@ const GUEST_POLICY_OPTIONS = {
   ],
   plusOne: [
     { value: 'welcome', label: 'Guests may bring someone', text: 'You are warmly welcome to bring a guest with you.' },
-    { value: 'named-only', label: 'Invited guests only', text: 'To keep our celebration intimate, we kindly ask that this invitation be reserved for the guests we have personally invited.' },
+    { value: 'named-only', label: 'No additional guests', text: 'To keep our celebration intimate, please attend without an additional guest unless we have personally shared a plus-one with you.' },
   ],
 };
 
@@ -2012,7 +2012,6 @@ export default function OrderFlow() {
 
             <div className="font-picker-current">
               <div className="font-picker-current-copy">
-                <span className="font-picker-current-label">Selected</span>
                 <strong style={{ fontFamily: selectedFontOption.script }}>Amira &amp; Zayn</strong>
                 <span style={{ fontFamily: selectedFontOption.body }}>{selectedFontOption.label}</span>
               </div>
