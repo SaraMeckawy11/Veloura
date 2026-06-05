@@ -1995,7 +1995,18 @@ export default function OrderFlow() {
             <div className="font-picker-header">
               <div>
                 <span className="font-picker-eyebrow">Invitation typography</span>
-                <h2 id="font-picker-title">Choose a font style</h2>
+                <div className="font-picker-title-row">
+                  <h2 id="font-picker-title">Choose a font style</h2>
+                  <button
+                    type="button"
+                    className="font-picker-reset"
+                    disabled={normalizeInvitationFont(form.invitationFont) === DEFAULT_INVITATION_FONT}
+                    onClick={() => handleInput('invitationFont', DEFAULT_INVITATION_FONT)}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+                    Revert to original
+                  </button>
+                </div>
               </div>
               <button
                 type="button"
@@ -2004,18 +2015,6 @@ export default function OrderFlow() {
                 aria-label="Close font picker"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-              </button>
-            </div>
-
-            <div className="font-picker-toolbar">
-              <button
-                type="button"
-                className="font-picker-reset"
-                disabled={normalizeInvitationFont(form.invitationFont) === DEFAULT_INVITATION_FONT}
-                onClick={() => handleInput('invitationFont', DEFAULT_INVITATION_FONT)}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
-                Revert to original
               </button>
             </div>
 
