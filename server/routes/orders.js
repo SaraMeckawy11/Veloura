@@ -126,6 +126,10 @@ function dashboardUrl(editToken) {
   return editToken ? `${CLIENT_URL}/dashboard/${editToken}` : undefined;
 }
 
+function coupleName(weddingDetails = {}) {
+  return [weddingDetails?.groomName, weddingDetails?.brideName].filter(Boolean).join(' & ');
+}
+
 async function ensureTemplateMetadata(order) {
   const update = {};
 
@@ -309,6 +313,7 @@ router.post('/capture/:orderId', async (req, res) => {
         invitationUrl: publicInvitationUrl(order.publicSlug),
         dashboardUrl: dashboardUrl(order.editToken),
         invitationCode: order.invitationCode,
+        coupleName: coupleName(order.weddingDetails),
       });
     }
 
@@ -357,6 +362,7 @@ router.post('/capture/:orderId', async (req, res) => {
       invitationUrl: publicInvitationUrl(order.publicSlug),
       dashboardUrl: dashboardUrl(order.editToken),
       invitationCode: order.invitationCode,
+      coupleName: coupleName(order.weddingDetails),
     });
   } catch (err) {
     console.error('PayPal capture error:', err);
@@ -397,6 +403,7 @@ router.get('/status/:orderId', async (req, res) => {
       editToken: order.paymentStatus === 'paid' ? order.editToken : undefined,
       dashboardUrl: order.paymentStatus === 'paid' ? dashboardUrl(order.editToken) : undefined,
       invitationCode: order.paymentStatus === 'paid' ? order.invitationCode : undefined,
+      coupleName: order.paymentStatus === 'paid' ? coupleName(order.weddingDetails) : undefined,
       template: order.template,
       templateName: order.templateName || order.template?.name,
       pricingTier: order.pricingTier,
@@ -598,7 +605,7 @@ router.post('/lookup', async (req, res) => {
 
     res.json({
       editToken: order.editToken,
-      coupleName: [order.weddingDetails?.groomName, order.weddingDetails?.brideName].filter(Boolean).join(' & '),
+      coupleName: coupleName(order.weddingDetails),
       weddingDate: order.weddingDetails?.weddingDate,
     });
   } catch (err) {

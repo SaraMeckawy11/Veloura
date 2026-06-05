@@ -46,6 +46,8 @@ export default function OrderSuccess() {
 
   const isPaid = order?.paymentStatus === 'paid';
   const invitationUrl = order?.invitationUrl || (order?.publicSlug ? `${window.location.origin}/i/${order.publicSlug}` : '');
+  const coupleName = order?.coupleName || [order?.weddingDetails?.groomName, order?.weddingDetails?.brideName].filter(Boolean).join(' & ');
+  const shareText = `You're invited to ${coupleName ? `${coupleName}'s` : 'our'} wedding! View the invitation here:`;
   const copyLink = async (value, key) => {
     if (!value) return;
     await navigator.clipboard.writeText(value);
@@ -54,16 +56,15 @@ export default function OrderSuccess() {
   };
   const shareInvitation = async () => {
     if (!invitationUrl) return;
-    const intro = 'You\'re invited! View the invitation here:';
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'Wedding Invitation', text: intro, url: invitationUrl });
+        await navigator.share({ title: 'Wedding Invitation', text: shareText, url: invitationUrl });
         return;
       } catch {
         // user cancelled or share unavailable — fall back to copy
       }
     }
-    copyLink(`${intro} ${invitationUrl}`, 'share');
+    copyLink(`${shareText} ${invitationUrl}`, 'share');
   };
 
   if (!isPaid) {
