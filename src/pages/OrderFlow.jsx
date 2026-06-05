@@ -118,7 +118,7 @@ const GUEST_POLICY_OPTIONS = {
   ],
   plusOne: [
     { value: 'welcome', label: 'Guests may bring someone', text: 'You are warmly welcome to bring a guest with you.' },
-    { value: 'named-only', label: 'No additional guests', text: 'To keep our celebration intimate, please attend without an additional guest unless we have personally shared a plus-one with you.' },
+    { value: 'named-only', label: 'No plus-one', text: 'Please join us without an additional guest unless a plus-one was shared with you.' },
   ],
 };
 
@@ -1349,7 +1349,6 @@ export default function OrderFlow() {
               {/* Optional personalizations — clearly separated so users know what's not required */}
               <fieldset className="form-section form-section--optional">
                 <legend>Optional Personalizations</legend>
-                <p className="form-hint">All fields below are optional. Toggle off any you don't need — they won't appear on your invitation.</p>
                 <button
                   type="button"
                   className="font-select-card"
@@ -1361,7 +1360,6 @@ export default function OrderFlow() {
                   <span className="font-select-copy">
                     <span className="font-select-label">Invitation font</span>
                     <strong>{selectedFontOption.label}</strong>
-                    <span>{selectedFontOption.description}</span>
                   </span>
                   <span className="font-select-action">
                     Change
@@ -2000,30 +1998,25 @@ export default function OrderFlow() {
                 <h2 id="font-picker-title">Choose a font style</h2>
                 <p>Preview the name style and reading text before applying it.</p>
               </div>
-              <button
-                type="button"
-                className="font-picker-close"
-                onClick={() => setFontPickerOpen(false)}
-                aria-label="Close font picker"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-              </button>
-            </div>
-
-            <div className="font-picker-current">
-              <div className="font-picker-current-copy">
-                <strong style={{ fontFamily: selectedFontOption.script }}>Amira &amp; Zayn</strong>
-                <span style={{ fontFamily: selectedFontOption.body }}>{selectedFontOption.label}</span>
+              <div className="font-picker-header-actions">
+                <button
+                  type="button"
+                  className="font-picker-reset"
+                  disabled={normalizeInvitationFont(form.invitationFont) === DEFAULT_INVITATION_FONT}
+                  onClick={() => handleInput('invitationFont', DEFAULT_INVITATION_FONT)}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+                  Revert to original
+                </button>
+                <button
+                  type="button"
+                  className="font-picker-close"
+                  onClick={() => setFontPickerOpen(false)}
+                  aria-label="Close font picker"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                </button>
               </div>
-              <button
-                type="button"
-                className="font-picker-reset"
-                disabled={normalizeInvitationFont(form.invitationFont) === DEFAULT_INVITATION_FONT}
-                onClick={() => handleInput('invitationFont', DEFAULT_INVITATION_FONT)}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
-                Revert to original
-              </button>
             </div>
 
             <div className="font-option-grid">
