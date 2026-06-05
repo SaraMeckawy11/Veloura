@@ -1050,7 +1050,6 @@ export default function OrderFlow() {
             </div>
 
             <div className="step-actions">
-              {paymentCurrencyNote && <p className="tier-currency-note">{paymentCurrencyNote}</p>}
               <button
                 className="btn btn-gold step-next"
                 onClick={() => goToStep(2)}
