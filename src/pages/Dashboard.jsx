@@ -300,6 +300,15 @@ export default function Dashboard() {
     if (getTierDisabledFields(order?.pricingTier).includes(key)) return;
     setEditDisabledFields(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
   };
+  const guestGuidanceOff = isFieldDisabled('childrenNote') && isFieldDisabled('plusOneNote');
+  const toggleEditGuestGuidance = () => {
+    setEditDisabledFields(prev => {
+      const bothOff = prev.includes('childrenNote') && prev.includes('plusOneNote');
+      return bothOff
+        ? prev.filter(k => k !== 'childrenNote' && k !== 'plusOneNote')
+        : [...new Set([...prev, 'childrenNote', 'plusOneNote'])];
+    });
+  };
 
   const handleEditPhotoUpload = async (e, category) => {
     const files = e.target.files;
@@ -681,10 +690,17 @@ export default function Dashboard() {
                     <input type="url" value={editForm.venueMapUrl} onChange={e => handleEditInput('venueMapUrl', e.target.value)} />
                   )}
                 </div>
-                <div className="form-field full-width">
+                <div className={`form-field full-width ${guestGuidanceOff ? 'field-disabled' : ''}`}>
                   <div className="dash-field-header">
                     <label>Guest Guidance</label>
+                    <button type="button" className="dash-field-toggle" onClick={toggleEditGuestGuidance}>
+                      {guestGuidanceOff ? 'Enable' : 'Disable'}
+                    </button>
                   </div>
+                  {guestGuidanceOff ? (
+                    <p className="form-hint" style={{ margin: '0 0 4px' }}>Hidden — guests won’t see any guest guidance notes.</p>
+                  ) : (
+                  <>
                   <p className="form-hint" style={{ margin: '0 0 4px' }}>Turn each note on or off and edit the wording shown on your invitation.</p>
                   <div className="dash-guest-policy-grid">
                     <div className={`dash-guest-policy-card ${isFieldDisabled('childrenNote') ? 'dash-guest-policy-card--off' : ''}`}>
@@ -726,6 +742,8 @@ export default function Dashboard() {
                       )}
                     </div>
                   </div>
+                  </>
+                  )}
                 </div>
                 <div className="form-field full-width">
                   <label>Invitation Font</label>

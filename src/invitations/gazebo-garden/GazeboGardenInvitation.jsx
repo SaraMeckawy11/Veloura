@@ -747,9 +747,7 @@ function GazeboGallerySection({ items }) {
         ) : (
           <div className="gazebo-memory-fill" style={{ background: item.tone }} />
         )}
-        <span className="gazebo-memory-frame" aria-hidden>
-          <span className="gazebo-memory-sprig" />
-        </span>
+        <span className="gazebo-memory-frame" aria-hidden />
       </figure>
     );
   });

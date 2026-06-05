@@ -4,8 +4,8 @@ export const PRICING_TIERS = [
   {
     id: 'essential',
     name: 'Essential',
-    amount: '49.00',
-    oldAmount: '69.00',
+    amount: '39.00',
+    oldAmount: '59.00',
     sections: {
       countdown: true,
       coupleMessage: true,
@@ -18,8 +18,8 @@ export const PRICING_TIERS = [
   {
     id: 'signature',
     name: 'Signature',
-    amount: '74.00',
-    oldAmount: '99.00',
+    amount: '69.00',
+    oldAmount: '89.00',
     sections: {
       countdown: true,
       coupleMessage: true,
