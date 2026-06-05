@@ -8,6 +8,7 @@ import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
 import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
+import theaterPreview from '../assets/theater/Thumbnail.png';
 
 const API = import.meta.env.VITE_API_URL || '/api';
 
@@ -18,7 +19,7 @@ const DEMO_PREVIEW_IMAGES = {
   'Fountain Reverie I': fountainHero1Preview,
   'Fountain Reverie II': fountainHero2Preview,
   'Garden Pavilion': GardenPavilionPreview,
-  'Theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=300&h=300&fit=crop&q=80',
+  'Theater': theaterPreview,
   'Boarding Pass': boardingPassPreview,
 };
 

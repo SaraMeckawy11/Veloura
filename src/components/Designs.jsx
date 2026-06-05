@@ -4,6 +4,7 @@ import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
 import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
+import theaterPreview from '../assets/theater/Thumbnail.png';
 import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
@@ -81,8 +82,9 @@ const designs = [
     previewClassName: 'design-preview-text--theater',
     category: 'launch',
     description: 'A velvet-stage wedding with gilded marquee details and a cinematic curtain reveal.',
-    image: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop&q=80',
-    overlay: 'linear-gradient(135deg, rgba(45,7,16,0.62), rgba(201,164,90,0.2))',
+    image: theaterPreview,
+    overlay: 'linear-gradient(135deg, rgba(45,7,16,0.12), rgba(201,164,90,0.12))',
+    hidePreviewText: true,
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/theater',

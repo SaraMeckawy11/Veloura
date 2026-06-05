@@ -13,6 +13,7 @@ import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
 import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
 import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
+import theaterPreview from '../assets/theater/Thumbnail.png';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -181,7 +182,7 @@ const TEMPLATE_PREVIEW_IMAGES = {
   'fountain-reverie-v2': fountainHero2Preview,
   'gazebo-garden': GardenPavilionPreview,
   'boarding-pass': boardingPassPreview,
-  'theater': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop&q=80',
+  'theater': theaterPreview,
 };
 
 // Slugs that render with the home Designs.jsx overlay+text treatment instead of
