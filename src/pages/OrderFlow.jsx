@@ -1996,7 +1996,6 @@ export default function OrderFlow() {
               <div>
                 <span className="font-picker-eyebrow">Invitation typography</span>
                 <h2 id="font-picker-title">Choose a font style</h2>
-                <p>Preview the name style and reading text before applying it.</p>
               </div>
               <div className="font-picker-header-actions">
                 <button
