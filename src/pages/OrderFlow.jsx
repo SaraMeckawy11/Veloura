@@ -605,9 +605,6 @@ export default function OrderFlow() {
     : PRICING_TIERS;
   const selectedTierConfig = pricingTiers.find(tier => tier.id === normalizePricingTier(selectedTier)) || getPricingTier(selectedTier);
   const displayPrice = selectedTierConfig.displayPrice || selectedTierConfig.price;
-  const paymentCurrencyNote = pricingCatalog?.displayIsConverted
-    ? 'PayPal checkout is processed in USD; Egyptian prices are shown as an EGP equivalent.'
-    : '';
   const effectiveDisabledFields = [...new Set([...disabledFields, ...getTierDisabledFields(selectedTier)])];
   const storyIncluded = tierAllows(selectedTier, 'story');
   const galleryIncluded = tierAllows(selectedTier, 'gallery');
@@ -1538,9 +1535,11 @@ export default function OrderFlow() {
                 <p className="form-hint">Additional photos for the gallery section (max 6)</p>
                 <div className="photo-upload-area photo-upload-area--gallery">
                   {photos.gallery.length < 6 && (
-                    <label className="photo-upload-btn photo-upload-btn--template photo-upload-btn--gallery" style={galleryPreviewStyle}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                      Add
+                    <label className="photo-upload-btn photo-upload-btn--gallery-add">
+                      <span className="photo-upload-plus" aria-hidden>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                      </span>
+                      <span className="photo-upload-plus-label">Add photo</span>
                       <input type="file" multiple accept="image/*,.heic,.heif" onChange={e => handlePhotoUpload(e, 'gallery')} style={{ position: 'absolute', width: 0, height: 0, opacity: 0, overflow: 'hidden' }} />
                     </label>
                   )}
@@ -1580,7 +1579,6 @@ export default function OrderFlow() {
                 <div className="price-summary">
                   <span className="price-label">Total</span>
                   <span className="price-value">{displayPrice}</span>
-                  {paymentCurrencyNote && <span className="price-note">{paymentCurrencyNote}</span>}
                 </div>
                 <button type="submit" className="btn btn-gold form-pay-btn">
                   Review
@@ -1707,7 +1705,6 @@ export default function OrderFlow() {
                   <div className="price-summary">
                     <span className="price-label">Total</span>
                     <span className="price-value">{displayPrice}</span>
-                    {paymentCurrencyNote && <span className="price-note">{paymentCurrencyNote}</span>}
                   </div>
                   <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
                 </div>
@@ -1759,12 +1756,6 @@ export default function OrderFlow() {
                       <dt>Subtotal</dt>
                       <dd>{displayPrice}</dd>
                     </div>
-                    {paymentCurrencyNote && (
-                      <div className="payment-summary-row payment-summary-note">
-                        <dt>PayPal</dt>
-                        <dd>USD checkout</dd>
-                      </div>
-                    )}
                     <div className="payment-summary-row payment-summary-grand">
                       <dt>Total due today</dt>
                       <dd>{displayPrice}</dd>

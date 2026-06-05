@@ -1108,6 +1108,34 @@
 
 .photo-upload-area--gallery {
   gap: 16px;
+  align-items: flex-start;
+}
+
+/* Compact "add photo" tile for the gallery — small, so uploaded photos stay
+   the dominant big cards. */
+.photo-upload-area--gallery .photo-upload-btn--gallery-add {
+  width: 104px;
+  aspect-ratio: 1 / 1;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: calc(var(--radius-md) + 2px);
+  background: rgba(184, 146, 74, 0.05);
+}
+.photo-upload-plus {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--gold-bg, rgba(184, 146, 74, 0.12));
+  color: var(--gold);
+}
+.photo-upload-btn--gallery-add:hover .photo-upload-plus {
+  background: rgba(184, 146, 74, 0.18);
 }
 .photo-upload-btn {
   width: var(--upload-preview-width, 88px);
@@ -2509,6 +2537,10 @@
   .photo-upload-area--gallery > .photo-preview--gallery {
     width: 100% !important;
     max-width: 100%;
+  }
+  .photo-upload-area--gallery > .photo-upload-btn--gallery-add {
+    width: 104px;
+    justify-self: start;
   }
 }
 
