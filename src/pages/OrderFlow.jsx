@@ -1246,7 +1246,7 @@ export default function OrderFlow() {
                       <div>
                         <span className="guest-policy-kicker">Guest guidance</span>
                         <h3>Children &amp; Guest Wording</h3>
-                        <p>Short, polite notes telling guests who is invited. Turn each note on or off and edit the wording — shown in your invitation details.</p>
+                        <p>Polite notes telling guests who's invited.</p>
                       </div>
                       <button type="button" className="field-toggle" onClick={toggleGuestGuidance}>
                         {disabledFields.includes('childrenNote') && disabledFields.includes('plusOneNote') ? 'Enable' : 'Disable'}
