@@ -407,7 +407,7 @@ export default function OrderFlow() {
           .filter(t => t.category === 'launch')
           .map(t => ({
             ...t,
-            previewImage: t.previewImage || TEMPLATE_PREVIEW_IMAGES[t.slug] || '',
+            previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || t.previewImage || '',
           }));
         setTemplates(merged);
         setSelectedTemplate(prev => {
