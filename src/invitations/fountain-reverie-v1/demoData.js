@@ -1,3 +1,4 @@
+import { DEFAULT_PLUS_ONE_POLICY_TEXT } from '../shared';
 import gallery1 from '../../assets/gallery-1.png';
 import gallery2 from '../../assets/gallery-2.png';
 import gallery3 from '../../assets/gallery-3.png';
@@ -20,6 +21,8 @@ export const FOUNTAIN_REVERIE_V1_DEMO_ORDER = {
     venueMapUrl:
       'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.1786!2d55.2708!3d25.1972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDExJzUwLjAiTiA1NcKwMTYnMTUuMCJF!5e0!3m2!1sen!2sae!4v1234567890',
     message: 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.',
+    plusOnePolicy: 'named-only',
+    plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,
   },
   storyMilestones: [
     {

@@ -1,3 +1,4 @@
+import { DEFAULT_PLUS_ONE_POLICY_TEXT } from '../shared';
 import gallery1 from '../../assets/gallery-1.png';
 import gallery2 from '../../assets/gallery-2.png';
 import gallery3 from '../../assets/gallery-3.png';
@@ -20,6 +21,8 @@ export const GAZEBO_GARDEN_DEMO_ORDER = {
     venueMapUrl:
       'https://www.google.com/maps?q=Villa%20Aurelia%20Rome&output=embed',
     message: 'A garden promise sealed in soft light.',
+    plusOnePolicy: 'named-only',
+    plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,
     flightNo: 'GAZEBO-2026',
   },
   storyMilestones: [

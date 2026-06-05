@@ -1,6 +1,7 @@
 const CLOUDINARY_UPLOAD_SEGMENT = '/image/upload/';
 const VALID_PHOTO_FITS = new Set(['cover', 'contain']);
 export const DEFAULT_COUPLE_MESSAGE = 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.';
+export const DEFAULT_PLUS_ONE_POLICY_TEXT = 'To keep our celebration intimate, we kindly ask that this invitation be lovingly reserved for the guest count included.';
 
 export function createRsvpSubmissionId() {
   if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
@@ -83,7 +84,7 @@ export function getGuestPolicyLines(weddingDetails = {}, disabledFields = []) {
     lines.push(weddingDetails.plusOnePolicyText?.trim()
       || (plusOnePolicy === 'welcome'
         ? 'You are warmly welcome to bring a guest with you.'
-        : 'To keep our celebration intimate, we kindly ask that only the guests named on your invitation join us.'));
+        : DEFAULT_PLUS_ONE_POLICY_TEXT));
   }
 
   return lines.filter(Boolean);
