@@ -1175,31 +1175,40 @@
   }
 
   .dash-page .font-select-card {
-    grid-template-columns: 54px 1fr;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 13px 14px;
   }
 
   .dash-page .font-select-preview {
-    width: 54px;
-    height: 54px;
+    width: 44px;
+    height: 44px;
   }
 
   .dash-page .font-select-action {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-    flex-direction: row;
+    grid-column: auto;
+    justify-content: flex-end;
   }
 
   .dash-page .font-picker-modal {
     padding: 12px;
   }
 
+  .dash-page .font-picker-panel {
+    border-radius: 10px;
+  }
+
   .dash-page .font-picker-header {
-    flex-direction: column;
+    padding: 18px 16px;
   }
 
   .dash-page .font-picker-header-actions {
-    width: 100%;
-    justify-content: space-between;
+    flex-wrap: wrap-reverse;
+    justify-content: flex-end;
+  }
+
+  .dash-page .font-option-grid {
+    padding: 12px;
   }
 
   .edit-story-body,
