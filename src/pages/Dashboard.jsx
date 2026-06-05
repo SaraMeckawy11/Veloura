@@ -17,12 +17,20 @@ const PHOTO_CATEGORIES = {
 const NON_STORY_CATEGORIES = [
   { key: 'gallery', label: 'Gallery Photos', max: 6 },
 ];
+const DASHBOARD_PHOTO_GROUPS = [
+  { key: 'venue', label: 'Venue' },
+  { key: 'story', label: 'Our Story' },
+  { key: 'gallery', label: 'Gallery' },
+];
 const PHOTO_FIT_OPTIONS = [
   { value: 'cover', label: 'Fill', hint: 'Fill the frame' },
   { value: 'contain', label: 'Fit', hint: 'Keep the whole photo visible' },
 ];
 const normalizePhotoFit = (value) => (
   value === 'contain' || value === 'containFit' || value === 'fit' ? 'contain' : 'cover'
+);
+const getDashboardPhotoCategory = (photo) => (
+  photo?.label && DASHBOARD_PHOTO_GROUPS.some(group => group.key === photo.label) ? photo.label : 'gallery'
 );
 const parseUploadResponse = async (res) => {
   const data = await res.json().catch(() => ({}));
@@ -746,7 +754,7 @@ export default function Dashboard() {
                   )}
                 </div>
                 <div className="form-field full-width">
-                  <label>Invitation Font</label>
+                  <label>Invitation font</label>
                   <button
                     type="button"
                     className="font-select-card dash-font-select-card"
@@ -756,11 +764,13 @@ export default function Dashboard() {
                       Aa
                     </span>
                     <span className="font-select-copy">
-                      <span className="font-select-label">Current style</span>
+                      <span className="font-select-label">Invitation font</span>
                       <strong>{selectedFontOption.label}</strong>
-                      <span>{selectedFontOption.description}</span>
                     </span>
-                    <span className="font-select-action">Change</span>
+                    <span className="font-select-action">
+                      Change
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
+                    </span>
                   </button>
                 </div>
                 {coupleMessageIncluded && (
@@ -1063,11 +1073,30 @@ export default function Dashboard() {
         {/* Photos */}
         {order.photos?.length > 0 && (
           <div className="dash-section">
-            <h2 className="dash-section-title">Uploaded Photos</h2>
-            <div className="dash-photos">
-              {order.photos.map((p, i) => (
-                <img key={i} src={p.url} alt={`Photo ${i + 1}`} className="dash-photo" style={{ objectFit: normalizePhotoFit(p.fit) }} />
-              ))}
+            <h2 className="dash-section-title">Uploaded Photos ({order.photos.length})</h2>
+            <div className="dash-photo-groups">
+              {DASHBOARD_PHOTO_GROUPS.map(group => {
+                const groupPhotos = order.photos.filter(p => getDashboardPhotoCategory(p) === group.key);
+                if (groupPhotos.length === 0) return null;
+                return (
+                  <div className="dash-photo-group" key={group.key}>
+                    <span className="dash-photo-group-title">{group.label} ({groupPhotos.length})</span>
+                    <div className="dash-photos">
+                      {groupPhotos.map((p, i) => (
+                        <div
+                          key={`${group.key}-${i}`}
+                          className="dash-photo-item"
+                          style={getUploadPreviewStyle(order.template?.slug, getDashboardPhotoCategory(p))}
+                        >
+                          <div className="dash-photo">
+                            <InvitationPhoto src={{ ...p, fit: normalizePhotoFit(p.fit) }} alt={`${group.label} ${i + 1}`} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -1085,27 +1114,23 @@ export default function Dashboard() {
           <div className="font-picker-panel">
             <div className="font-picker-header">
               <div>
-                <span className="font-picker-eyebrow">Invitation style</span>
-                <h3 id="dashboard-font-picker-title">Choose a font</h3>
+                <span className="font-picker-eyebrow">Invitation typography</span>
+                <h2 id="dashboard-font-picker-title">Choose a font style</h2>
               </div>
-              <button type="button" className="font-picker-close" onClick={() => setFontPickerOpen(false)} aria-label="Close font picker">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-              </button>
-            </div>
-            <div className="font-picker-current">
-              <div className="font-picker-current-copy">
-                <span className="font-picker-current-label">Selected</span>
-                <strong style={{ fontFamily: selectedFontOption.script }}>{selectedFontOption.label}</strong>
+              <div className="font-picker-header-actions">
+                <button
+                  type="button"
+                  className="font-picker-reset"
+                  disabled={normalizeInvitationFont(editForm.invitationFont) === DEFAULT_INVITATION_FONT}
+                  onClick={() => handleEditInput('invitationFont', DEFAULT_INVITATION_FONT)}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
+                  Revert to original
+                </button>
+                <button type="button" className="font-picker-close" onClick={() => setFontPickerOpen(false)} aria-label="Close font picker">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                </button>
               </div>
-              <button
-                type="button"
-                className="font-picker-reset"
-                disabled={normalizeInvitationFont(editForm.invitationFont) === DEFAULT_INVITATION_FONT}
-                onClick={() => handleEditInput('invitationFont', DEFAULT_INVITATION_FONT)}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
-                Revert to original
-              </button>
             </div>
             <div className="font-option-grid">
               {INVITATION_FONT_OPTIONS.map(option => (
@@ -1118,10 +1143,15 @@ export default function Dashboard() {
                     setFontPickerOpen(false);
                   }}
                 >
-                  <span className="font-option-sample" style={{ fontFamily: option.script }}>Aa</span>
-                  <span className="font-option-copy">
-                    <strong>{option.label}</strong>
-                    <span>{option.description}</span>
+                  <span className="font-option-sample" style={{ fontFamily: option.script }}>
+                    Amira &amp; Zayn
+                  </span>
+                  <span className="font-option-body" style={{ fontFamily: option.body }}>
+                    Saturday, 20 June 2026
+                  </span>
+                  <span className="font-option-name">{option.label}</span>
+                  <span className="font-option-check" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
                   </span>
                 </button>
               ))}
