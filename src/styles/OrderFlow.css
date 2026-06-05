@@ -533,9 +533,10 @@
 .form-field label {
   display: block;
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--text);
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
 .form-field--wide {
   grid-column: 1 / -1;
@@ -544,25 +545,34 @@
 .form-field input,
 .form-field textarea {
   width: 100%;
-  padding: 10px 14px;
+  min-height: 46px;
+  padding: 12px 14px;
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.4;
   color: var(--text);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   transition: var(--transition);
   outline: none;
+  -webkit-appearance: none;
+  appearance: none;
 }
+.form-field textarea { min-height: 80px; }
 .form-field input::placeholder,
 .form-field textarea::placeholder {
   color: var(--text-light);
   opacity: 1;
 }
+.form-field input:hover:not(:focus),
+.form-field textarea:hover:not(:focus) {
+  border-color: rgba(184, 146, 74, 0.5);
+}
 .form-field input:focus,
 .form-field textarea:focus {
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(184,146,74,0.08);
+  box-shadow: 0 0 0 3px rgba(184,146,74,0.16);
 }
 .form-field textarea { resize: vertical; min-height: 80px; }
 .form-field textarea.message-textarea--tall { min-height: 124px; }
@@ -1046,7 +1056,7 @@
 /* Native date/time inputs — consistent height and appearance */
 .form-field input[type="date"],
 .form-field input[type="time"] {
-  min-height: 44px;
+  min-height: 46px;
   line-height: 1.4;
   -webkit-appearance: none;
   appearance: none;
@@ -1164,6 +1174,10 @@
 .photo-upload-btn--gallery,
 .photo-preview--gallery {
   border-radius: calc(var(--radius-md) + 2px);
+}
+.photo-preview--gallery {
+  border: 1px solid var(--border-light, rgba(20, 18, 16, 0.07));
+  box-shadow: 0 4px 16px rgba(20, 18, 16, 0.08);
 }
 
 .photo-upload-btn:hover {
@@ -1305,18 +1319,18 @@
   border-radius: inherit;
 }
 
-/* Review photo labels */
-.review-photo-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+/* Review photo groups (Our Story / Gallery / Venue) */
+.review-photo-group + .review-photo-group {
+  margin-top: 18px;
 }
-.review-photo-label {
-  font-size: 0.65rem;
+.review-photo-group-title {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--text-light);
+  color: var(--gold);
 }
 
 /* Submit */
@@ -1431,13 +1445,12 @@
   color: var(--text-light);
 }
 .review-photos {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 .review-photo-item {
-  width: var(--upload-preview-width, 148px);
+  width: 100%;
 }
 .review-photo {
   width: 100%;
@@ -1445,6 +1458,8 @@
   aspect-ratio: var(--upload-preview-aspect-ratio, 1 / 1);
   border-radius: 10px;
   overflow: hidden;
+  border: 1px solid var(--border-light, rgba(20, 18, 16, 0.07));
+  box-shadow: 0 4px 14px rgba(20, 18, 16, 0.07);
 }
 .review-photo > .invitation-photo {
   width: 100%;
@@ -2528,9 +2543,14 @@
   .template-grid { grid-template-columns: 1fr; }
   .form-section { padding: 20px 16px; }
 
+  /* 16px input text prevents iOS Safari from auto-zooming on focus */
+  .form-field input,
+  .form-field textarea { font-size: 16px; }
+
   .photo-upload-area--gallery {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
   .photo-upload-area--gallery > .photo-upload-btn--gallery,
@@ -2538,9 +2558,9 @@
     width: 100% !important;
     max-width: 100%;
   }
-  .photo-upload-area--gallery > .photo-upload-btn--gallery-add {
-    width: 104px;
-    justify-self: start;
+  .photo-upload-area--gallery .photo-upload-btn--gallery-add {
+    width: 100%;
+    justify-self: stretch;
   }
 }
 

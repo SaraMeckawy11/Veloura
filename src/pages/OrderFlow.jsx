@@ -692,12 +692,19 @@ export default function OrderFlow() {
     }
   }, []);
 
-  // Keep the order step in sync with browser history. The current step is
-  // seeded into history on mount; the device back button then restores the
-  // previous step rather than discarding the whole order flow.
+  // Keep the order step in sync with browser history. On mount we seed one
+  // history entry per step up to the current one, so the device/browser back
+  // button walks back through the earlier steps — even when the flow was
+  // restored from a saved draft directly onto step 2/3/4 (e.g. on mobile, or
+  // after a reload) rather than reached by clicking forward.
   useEffect(() => {
+    const initialStep = step;
     try {
-      window.history.replaceState({ orderStep: step }, '');
+      window.history.replaceState({ orderStep: 1 }, '');
+      for (let s = 2; s <= initialStep; s += 1) {
+        window.history.pushState({ orderStep: s }, '');
+      }
+      stepDepthRef.current = Math.max(0, initialStep - 1);
     } catch { /* history unavailable */ }
     const onPopState = (event) => {
       const previousStep = event.state?.orderStep;
@@ -1670,20 +1677,32 @@ export default function OrderFlow() {
               {tieredPhotos.length > 0 && (
                 <div className="review-section">
                   <h3 className="review-section-title">Photos ({tieredPhotos.length})</h3>
-                  <div className="review-photos">
-                    {tieredPhotos.map((p, i) => (
-                      <div
-                        key={i}
-                        className="review-photo-item"
-                        style={getUploadPreviewStyle(selectedTemplate?.slug, p.label)}
-                      >
-                        <div className="review-photo">
-                          <InvitationPhoto src={p} alt={`Photo ${i + 1}`} />
+                  {[
+                    { key: 'venue', label: 'Venue' },
+                    { key: 'story', label: 'Our Story' },
+                    { key: 'gallery', label: 'Gallery' },
+                  ].map(group => {
+                    const groupPhotos = tieredPhotos.filter(p => (p.label || 'gallery') === group.key);
+                    if (groupPhotos.length === 0) return null;
+                    return (
+                      <div className="review-photo-group" key={group.key}>
+                        <span className="review-photo-group-title">{group.label} ({groupPhotos.length})</span>
+                        <div className="review-photos">
+                          {groupPhotos.map((p, i) => (
+                            <div
+                              key={i}
+                              className="review-photo-item"
+                              style={getUploadPreviewStyle(selectedTemplate?.slug, p.label)}
+                            >
+                              <div className="review-photo">
+                                <InvitationPhoto src={p} alt={`${group.label} ${i + 1}`} />
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                        <span className="review-photo-label">{p.label}</span>
                       </div>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
               )}
 
@@ -1709,7 +1728,7 @@ export default function OrderFlow() {
                   <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
                 </div>
                 <button className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
-                  {confirming ? 'Preparing Payment…' : `Continue to Payment — ${displayPrice}`}
+                  {confirming ? 'Preparing Payment…' : 'Continue to Payment'}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
               </div>

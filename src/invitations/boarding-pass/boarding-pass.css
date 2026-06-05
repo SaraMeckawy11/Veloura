@@ -612,9 +612,11 @@
 
   .inv-countdown-grid {
     width: min(100%, 390px);
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
     margin: 0 auto;
   }
 
@@ -624,6 +626,7 @@
 
   .inv-countdown-grid .inv-flap {
     min-width: 0;
+    flex: 0 0 auto;
     gap: 7px;
   }
 
@@ -633,10 +636,10 @@
   }
 
   .inv-countdown-grid .flap-digit {
-    width: clamp(27px, 8vw, 34px);
-    height: clamp(42px, 11vw, 50px);
+    width: clamp(23px, 6.8vw, 32px);
+    height: clamp(37px, 9.6vw, 48px);
     border-radius: 5px;
-    font-size: clamp(1.12rem, 5vw, 1.45rem);
+    font-size: clamp(1rem, 4.6vw, 1.35rem);
   }
 
   .inv-countdown-grid .inv-flap-label {
