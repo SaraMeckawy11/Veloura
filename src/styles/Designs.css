@@ -96,24 +96,8 @@
   transition: transform 0.5s ease;
 }
 
-.design-card-image--fountain {
-  background-size: cover;
-  background-position: center 32%;
-  filter: saturate(1.22) contrast(1.1) brightness(1.05);
-  image-rendering: -webkit-optimize-contrast;
-  box-shadow:
-    inset 0 0 0 1px rgba(143, 109, 40, 0.22),
-    inset 0 -48px 64px -34px rgba(70, 55, 21, 0.5);
-  transition: transform 0.6s ease, filter 0.6s ease;
-}
-
 .design-card:hover .design-card-image {
   transform: scale(1.05);
-}
-
-.design-card:hover .design-card-image--fountain {
-  transform: scale(1.08);
-  filter: saturate(1.32) contrast(1.14) brightness(1.07);
 }
 
 .design-preview-text {
