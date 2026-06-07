@@ -922,10 +922,10 @@ export default function OrderFlow() {
         }
 
         containers.forEach(container => { container.innerHTML = ''; });
-        const nameField = cardFields.NameField({ placeholder: 'Full name as shown on card' });
+        const nameField = cardFields.NameField({ placeholder: 'Full name' });
         const numberField = cardFields.NumberField({ placeholder: '1234 1234 1234 1234' });
         const expiryField = cardFields.ExpiryField({ placeholder: 'MM / YY' });
-        const cvvField = cardFields.CVVField({ placeholder: '3 or 4 digits' });
+        const cvvField = cardFields.CVVField({ placeholder: '123' });
         renderedFields.push(nameField, numberField, expiryField, cvvField);
 
         await Promise.all([
