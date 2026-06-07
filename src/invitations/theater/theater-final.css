@@ -492,7 +492,7 @@ body:has(.theater-theme),
   top: 31.5%;
   width: 55%;
   text-align: left;
-  transform: translate(8px, 8px);
+  transform: translate(4px, 4px);
 }
 
 .theater-details-venue h2 {
@@ -523,13 +523,13 @@ body:has(.theater-theme),
 .theater-details-date {
   left: 24.5%;
   top: 44.85%;
-  transform: translateX(8px);
+  transform: translateX(4px);
 }
 
 .theater-details-time {
   left: 65%;
   top: 45.55%;
-  transform: translateX(8px);
+  transform: translate(4px, -2px);
 }
 
 .theater-details-date strong,
@@ -559,6 +559,14 @@ body:has(.theater-theme),
   top: 91%;
   width: 58%;
   text-align: center;
+  transform: translateX(2px);
+}
+
+.theater-details-map a {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
 }
 
 .theater-details-invite p {

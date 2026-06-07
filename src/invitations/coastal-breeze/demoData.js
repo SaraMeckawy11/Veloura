@@ -17,8 +17,7 @@ export const COASTAL_BREEZE_DEMO_ORDER = {
     weddingDate: '2026-06-20T17:00:00.000Z',
     weddingTime: '5:00 PM',
     venue: 'Azure Bay Pavilion',
-    venueMapUrl:
-      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.1786!2d55.2708!3d25.1972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDExJzUwLjAiTiA1NcKwMTYnMTUuMCJF!5e0!3m2!1sen!2sae!4v1234567890',
+    venueMapUrl: 'https://maps.google.com/maps?q=Jumeirah%20Beach%2C%20Dubai&z=15&output=embed',
     message: 'With the sea as our witness, we begin forever.',
     plusOnePolicy: 'named-only',
     plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,

@@ -116,6 +116,9 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 
   const mapQuery = [venue, venueAddress].filter(Boolean).join(', ');
   const embedSrc = fieldEnabled('venueMapUrl') ? buildMapEmbedUrl(weddingDetails.venueMapUrl, mapQuery) : null;
+  const openMapHref = weddingDetails.venueMapUrl
+    ? weddingDetails.venueMapUrl
+    : (mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}` : null);
 
   useEffect(() => {
     if (!weddingDate) return undefined;
@@ -203,6 +206,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           timeStr={timeStr}
           venue={venue}
           embedSrc={embedSrc}
+          mapHref={openMapHref}
         />
 
         <TheaterGuestNoteSection lines={guestPolicyLines} />
@@ -383,6 +387,7 @@ function DetailsSection({
   timeStr,
   venue,
   embedSrc,
+  mapHref,
 }) {
   return (
     <section className="theater-details" aria-label="Wedding details">
@@ -399,13 +404,23 @@ function DetailsSection({
       </div>
       <div className="theater-details-map" aria-hidden={!embedSrc}>
         {embedSrc ? (
-          <iframe
-            src={embedSrc}
-            title="Venue location"
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+          <>
+            <iframe
+              src={embedSrc}
+              title="Venue location"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+            {mapHref && (
+              <a
+                href={mapHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open location in Google Maps"
+              />
+            )}
+          </>
         ) : null}
       </div>
       <div className="theater-details-invite">
