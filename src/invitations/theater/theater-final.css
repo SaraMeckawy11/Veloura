@@ -559,7 +559,7 @@ body:has(.theater-theme),
   top: 91%;
   width: 58%;
   text-align: center;
-  transform: translateX(2px);
+  transform: translateX(4px);
 }
 
 .theater-details-map a {
@@ -570,7 +570,8 @@ body:has(.theater-theme),
 }
 
 .theater-details-invite p {
-  margin: 0;
+  margin: 0 auto;
+  max-width: 34ch;
   color: #2f1b13;
   font-family: var(--font-soft);
   font-style: italic;
