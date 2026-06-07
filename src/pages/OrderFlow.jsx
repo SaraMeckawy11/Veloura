@@ -89,13 +89,22 @@ function loadPendingOrder() {
 
 function getPricingQuery() {
   const params = new URLSearchParams();
-  try {
-    params.set('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone || '');
-    params.set('locale', navigator.language || '');
-  } catch {
-    return '';
-  }
+  const region = getPricingRegion();
+  if (!region.timezone && !region.locale) return '';
+  params.set('timezone', region.timezone);
+  params.set('locale', region.locale);
   return params.toString();
+}
+
+function getPricingRegion() {
+  try {
+    return {
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+      locale: navigator.language || '',
+    };
+  } catch {
+    return { timezone: '', locale: '' };
+  }
 }
 
 const PHOTO_CATEGORIES = [
@@ -606,6 +615,7 @@ export default function OrderFlow() {
     : PRICING_TIERS;
   const selectedTierConfig = pricingTiers.find(tier => tier.id === normalizePricingTier(selectedTier)) || getPricingTier(selectedTier);
   const displayPrice = selectedTierConfig.displayPrice || selectedTierConfig.price;
+  const paymentDisplayPrice = paypalOrderData?.pricing?.displayPrice || displayPrice;
   const effectiveDisabledFields = [...new Set([...disabledFields, ...getTierDisabledFields(selectedTier)])];
   const storyIncluded = tierAllows(selectedTier, 'story');
   const galleryIncluded = tierAllows(selectedTier, 'gallery');
@@ -912,6 +922,7 @@ export default function OrderFlow() {
           customerEmail,
           templateId: selectedTemplate._id,
           pricingTier: selectedTier,
+          pricingRegion: getPricingRegion(),
           weddingDetails: {
             groomName: form.groomName,
             brideName: form.brideName,
@@ -947,7 +958,7 @@ export default function OrderFlow() {
       if (data.paymentProvider === 'paypal' && data.paypal?.clientId && data.paypal?.paypalOrderId) {
         // Trigger inline PayPal Buttons render once the target frame is mounted.
         savePendingOrder(data.orderId);
-        setPaypalOrderData({ orderId: data.orderId, paypal: data.paypal });
+        setPaypalOrderData({ orderId: data.orderId, paypal: data.paypal, pricing: data.pricing });
         setPaypalLoading(true);
         orderCreationInFlightRef.current = false;
         setConfirming(false);
@@ -1783,11 +1794,11 @@ export default function OrderFlow() {
                   <div className="payment-summary-totals">
                     <div className="payment-summary-row">
                       <dt>Subtotal</dt>
-                      <dd>{displayPrice}</dd>
+                      <dd>{paymentDisplayPrice}</dd>
                     </div>
                     <div className="payment-summary-row payment-summary-grand">
                       <dt>Total due today</dt>
-                      <dd>{displayPrice}</dd>
+                      <dd>{paymentDisplayPrice}</dd>
                     </div>
                   </div>
                   <button type="button" className="payment-summary-edit" onClick={() => { setPaypalOrderData(null); setPaypalLoading(false); }}>

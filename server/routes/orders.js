@@ -6,7 +6,7 @@ import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail, sensitiveFieldChangeEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 import { getFallbackTemplate } from '../data/templateFallbacks.js';
-import { getTierAmount, normalizePricingTier, tierAllows } from '../data/pricingTiers.js';
+import { getPricingCatalog, getTierAmount, normalizePricingTier, tierAllows } from '../data/pricingTiers.js';
 import {
   paypalApiConfigured,
   createPaypalOrder,
@@ -42,6 +42,33 @@ const WEDDING_DETAIL_FIELDS = new Set([
   'language',
   'secondLanguage',
 ]);
+
+function readCountry(req) {
+  return req.headers['cf-ipcountry']
+    || req.headers['x-vercel-ip-country']
+    || req.headers['x-country-code']
+    || req.headers['x-appengine-country']
+    || '';
+}
+
+function getOrderDisplayPricing(req, pricingTier) {
+  const region = req.body.pricingRegion || {};
+  const catalog = getPricingCatalog({
+    countryCode: readCountry(req),
+    timezone: region.timezone,
+    locale: region.locale || req.headers['accept-language'],
+  });
+  const tier = catalog.tiers.find(item => item.id === pricingTier);
+
+  return {
+    displayCurrency: catalog.displayCurrency,
+    paymentCurrency: catalog.paymentCurrency,
+    displayPrice: tier?.displayPrice,
+    oldDisplayPrice: tier?.oldDisplayPrice,
+    displayIsConverted: catalog.displayIsConverted,
+    exchangeRate: catalog.exchangeRate,
+  };
+}
 
 function normalizeDisabledFields(fields) {
   return Array.isArray(fields) ? [...new Set(fields.filter(Boolean))] : [];
@@ -151,6 +178,7 @@ router.post('/', validateOrderBody, async (req, res) => {
     const disabledFields = enforceTierDisabledFields(pricingTier, req.body.disabledFields);
     const cleanWeddingDetails = applyDisabledFields(weddingDetails, disabledFields);
     const orderAmount = getTierAmount(pricingTier, PRICE_USD);
+    const displayPricing = getOrderDisplayPricing(req, pricingTier);
     const musicAllowed = tierAllows(pricingTier, 'music');
 
     let template = null;
@@ -228,6 +256,7 @@ router.post('/', validateOrderBody, async (req, res) => {
       return res.status(201).json({
         orderId: order._id,
         paymentProvider: 'paypal',
+        pricing: displayPricing,
         paypal: {
           clientId: process.env.PAYPAL_CLIENT_ID,
           environment: process.env.PAYPAL_ENVIRONMENT === 'live' ? 'live' : 'sandbox',
