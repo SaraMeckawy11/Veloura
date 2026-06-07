@@ -107,13 +107,6 @@ function getPricingRegion() {
   }
 }
 
-function formatPaypalAmount(paypal = {}) {
-  const currency = paypal.currency || 'USD';
-  const amount = Number(paypal.amount);
-  if (!Number.isFinite(amount)) return currency;
-  return `${currency} ${amount.toFixed(2)}`;
-}
-
 const PHOTO_CATEGORIES = [
   { key: 'venue', label: 'Venue Photos', hint: 'Photos of your venue or ceremony location (max 2)', icon: 'location', max: 2 },
   { key: 'story', label: 'Our Story Photos', hint: 'Photos from your journey together — first date, trips, proposal (max 4)', icon: 'book', max: 4 },
@@ -631,7 +624,6 @@ export default function OrderFlow() {
   const selectedTierConfig = pricingTiers.find(tier => tier.id === normalizePricingTier(selectedTier)) || getPricingTier(selectedTier);
   const displayPrice = selectedTierConfig.displayPrice || selectedTierConfig.price;
   const paymentDisplayPrice = paypalOrderData?.pricing?.displayPrice || displayPrice;
-  const paypalPaymentPrice = paypalOrderData ? formatPaypalAmount(paypalOrderData.paypal) : '';
   const effectiveDisabledFields = [...new Set([...disabledFields, ...getTierDisabledFields(selectedTier)])];
   const storyIncluded = tierAllows(selectedTier, 'story');
   const galleryIncluded = tierAllows(selectedTier, 'gallery');
@@ -889,6 +881,7 @@ export default function OrderFlow() {
             input: {
               color: '#342d25',
               'font-size': '15px',
+              'font-weight': '500',
               'font-family': 'Inter, system-ui, sans-serif',
             },
             ':focus': {
@@ -909,10 +902,10 @@ export default function OrderFlow() {
         }
 
         containers.forEach(container => { container.innerHTML = ''; });
-        const nameField = cardFields.NameField({ placeholder: 'Name on card' });
-        const numberField = cardFields.NumberField({ placeholder: 'Card number' });
+        const nameField = cardFields.NameField({ placeholder: 'Full name as shown on card' });
+        const numberField = cardFields.NumberField({ placeholder: '1234 1234 1234 1234' });
         const expiryField = cardFields.ExpiryField({ placeholder: 'MM / YY' });
-        const cvvField = cardFields.CVVField({ placeholder: 'CVV' });
+        const cvvField = cardFields.CVVField({ placeholder: '3 or 4 digits' });
         renderedFields.push(nameField, numberField, expiryField, cvvField);
 
         await Promise.all([
@@ -1999,48 +1992,18 @@ export default function OrderFlow() {
                             </svg>
                           </span>
                           <div>
-                            <h4 className="card-pay-fallback-title">PayPal checkout</h4>
-                            <p className="card-pay-fallback-text">Pay with PayPal balance or card.</p>
+                            <h4 className="card-pay-fallback-title">Secure checkout</h4>
+                            <p className="card-pay-fallback-text">Choose card payment or PayPal wallet.</p>
                           </div>
-                          <span className="veloura-pay-method-status">Selected</span>
-                        </div>
-
-                        <div className="veloura-pay-grid" aria-label="Payment details">
-                          <div className="veloura-pay-widget">
-                            <span>Invitation</span>
-                            <strong>{selectedTemplate.name}</strong>
-                          </div>
-                          <div className="veloura-pay-widget">
-                            <span>Plan</span>
-                            <strong>{selectedTierConfig.name}</strong>
-                          </div>
-                          <div className="veloura-pay-widget">
-                            <span>Couple</span>
-                            <strong>{form.groomName} &amp; {form.brideName}</strong>
-                          </div>
-                          <div className="veloura-pay-widget">
-                            <span>PayPal processes</span>
-                            <strong>{paypalPaymentPrice}</strong>
-                          </div>
-                        </div>
-
-                        <div className="veloura-pay-bridge">
-                          <span className="veloura-pay-bridge-icon" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M12 1v22" />
-                              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" />
-                            </svg>
-                          </span>
-                          <p>
-                            Your Veloura total is {paymentDisplayPrice}. Card payments are processed securely by PayPal for {paypalPaymentPrice}.
-                          </p>
+                          <span className="veloura-pay-method-status">Protected</span>
                         </div>
 
                         <div className="veloura-card-form" aria-label="Card payment form">
                           <div className="veloura-card-form-head">
                             <div>
                               <span className="veloura-card-eyebrow">Card payment</span>
-                              <h4>Pay without leaving Veloura</h4>
+                              <h4>Complete your payment</h4>
+                              <p className="veloura-card-helper">Enter your card details in the secure fields below.</p>
                             </div>
                             <span className="veloura-card-secure">
                               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2049,6 +2012,12 @@ export default function OrderFlow() {
                               </svg>
                               PayPal
                             </span>
+                          </div>
+
+                          <div className="veloura-card-brands" aria-label="Accepted cards">
+                            <span>Visa</span>
+                            <span>Mastercard</span>
+                            <span>Amex</span>
                           </div>
 
                           <div className="veloura-card-fields">
@@ -2082,7 +2051,13 @@ export default function OrderFlow() {
                             onClick={handleCardPayment}
                             disabled={!cardFieldsReady || cardSubmitting || paypalLoading}
                           >
-                            {cardSubmitting ? 'Processing card...' : `Pay ${paymentDisplayPrice} by card`}
+                            <span>{cardSubmitting ? 'Processing card...' : `Pay securely ${paymentDisplayPrice}`}</span>
+                            {!cardSubmitting && (
+                              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M5 12h14" />
+                                <path d="M13 6l6 6-6 6" />
+                              </svg>
+                            )}
                           </button>
                           <p className="veloura-card-privacy">
                             By paying with your card, your payment data is processed by PayPal under PayPal's privacy terms.
