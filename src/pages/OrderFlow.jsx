@@ -240,6 +240,7 @@ export default function OrderFlow() {
   const [cardFieldsReady, setCardFieldsReady] = useState(false);
   const [cardFieldsEligible, setCardFieldsEligible] = useState(false);
   const [cardSubmitting, setCardSubmitting] = useState(false);
+  const [cardError, setCardError] = useState('');
   const [needsRetry, setNeedsRetry] = useState(false);
   const [paypalSdk, setPaypalSdk] = useState(null);
   const [error, setError] = useState('');
@@ -874,7 +875,10 @@ export default function OrderFlow() {
           },
           inputEvents: {
             onChange: () => {
-              if (!cancelled) setError('');
+              if (!cancelled) {
+                setError('');
+                setCardError('');
+              }
             },
           },
           style: {
@@ -1013,11 +1017,12 @@ export default function OrderFlow() {
     if (!cardFieldsRef.current || cardSubmitting || !cardFieldsReady) return;
     setCardSubmitting(true);
     setError('');
+    setCardError('');
     try {
       await cardFieldsRef.current.submit();
     } catch (err) {
       setCardSubmitting(false);
-      setError(err?.message || 'Please check your card details and try again.');
+      setCardError(err?.message || 'Please check your card details and try again.');
     }
   }, [cardSubmitting, cardFieldsReady]);
 
@@ -1987,6 +1992,7 @@ export default function OrderFlow() {
                           onClick={() => {
                             setNeedsRetry(false);
                             setError('');
+                            setCardError('');
                             setPaypalOrderData(null);
                             setPaypalLoading(false);
                             setCardFieldsReady(false);
@@ -2036,6 +2042,17 @@ export default function OrderFlow() {
                           {!cardFieldsEligible && !paypalLoading && (
                             <p className="veloura-card-unavailable">
                               Card fields are not available for this PayPal account or browser. You can still use the PayPal button below.
+                            </p>
+                          )}
+
+                          {cardError && (
+                            <p className="veloura-card-error" role="alert">
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                              </svg>
+                              {cardError}
                             </p>
                           )}
 

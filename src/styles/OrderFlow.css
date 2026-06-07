@@ -2491,6 +2491,24 @@
   font-size: 0.76rem;
   line-height: 1.5;
 }
+.veloura-card-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(196, 114, 127, 0.35);
+  border-radius: 8px;
+  background: var(--rose-soft);
+  color: var(--rose);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.veloura-card-error svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
 .veloura-wallet-divider {
   display: flex;
   align-items: center;
