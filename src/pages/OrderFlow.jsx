@@ -880,14 +880,22 @@ export default function OrderFlow() {
           style: {
             input: {
               color: '#342d25',
-              'font-size': '15px',
+              background: 'transparent',
+              border: '0',
+              'border-radius': '0',
+              'box-shadow': 'none',
+              'font-size': '14px',
               'font-weight': '500',
               'font-family': 'Inter, system-ui, sans-serif',
+              padding: '0',
             },
             ':focus': {
+              border: '0',
               color: '#231f1a',
+              'box-shadow': 'none',
             },
             '.invalid': {
+              border: '0',
               color: '#9f2f2f',
             },
           },
@@ -1986,23 +1994,30 @@ export default function OrderFlow() {
                         <div className="veloura-card-form" aria-label="Card payment form">
                           <div className="veloura-card-form-head">
                             <h4>Card details</h4>
+                            <span className="veloura-card-secure">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                              </svg>
+                              Secured by PayPal
+                            </span>
                           </div>
 
                           <div className="veloura-card-fields">
                             <label className="veloura-card-field">
-                              <span className="visually-hidden">Name on card</span>
+                              <span>Name on card</span>
                               <div ref={cardNameRef} className="veloura-card-hosted-field" />
                             </label>
                             <label className="veloura-card-field">
-                              <span className="visually-hidden">Card number</span>
+                              <span>Card number</span>
                               <div ref={cardNumberRef} className="veloura-card-hosted-field" />
                             </label>
                             <label className="veloura-card-field veloura-card-field--half">
-                              <span className="visually-hidden">Expiry</span>
+                              <span>Expiry date</span>
                               <div ref={cardExpiryRef} className="veloura-card-hosted-field" />
                             </label>
                             <label className="veloura-card-field veloura-card-field--half">
-                              <span className="visually-hidden">CVV</span>
+                              <span>CVV</span>
                               <div ref={cardCvvRef} className="veloura-card-hosted-field" />
                             </label>
                           </div>
