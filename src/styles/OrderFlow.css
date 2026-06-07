@@ -2374,77 +2374,21 @@
 .card-pay-fallback {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 24px;
-  background:
-    linear-gradient(135deg, rgba(184, 146, 74, 0.08), rgba(255, 255, 255, 0) 46%),
-    var(--bg-alt);
-  border: 1px solid var(--border-light);
-  border-radius: 14px;
-}
-.veloura-pay-method {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: 0 10px 26px rgba(65, 54, 36, 0.05);
-}
-.veloura-pay-method.is-selected {
-  border-color: rgba(184, 146, 74, 0.48);
-}
-.veloura-pay-method-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  color: var(--gold);
-  background: var(--gold-bg);
-}
-.veloura-pay-method-status {
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: rgba(184, 146, 74, 0.12);
-  color: var(--gold-dark);
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-}
-.card-pay-fallback-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: 0.2px;
-}
-.card-pay-fallback-text {
-  margin: 0;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--text-secondary);
+  gap: 18px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
 }
 .veloura-card-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 20px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 241, 0.7)),
-    var(--white);
-  border: 1px solid rgba(184, 146, 74, 0.26);
-  border-radius: 12px;
-  box-shadow: 0 16px 34px rgba(65, 54, 36, 0.07);
+  gap: 14px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 .veloura-card-form-head {
   display: flex;
@@ -2465,46 +2409,46 @@
   margin: 0;
   color: var(--text);
   font-family: var(--font-display);
-  font-size: 1.22rem;
+  font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.15;
 }
 .veloura-card-helper {
-  margin: 6px 0 0;
+  margin: -2px 0 2px;
   color: var(--text-secondary);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   line-height: 1.45;
 }
 .veloura-card-secure {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  min-height: 28px;
-  padding: 0 10px;
+  min-height: 26px;
+  padding: 0 9px;
   border-radius: 999px;
-  background: var(--gold-bg);
+  background: rgba(184, 146, 74, 0.1);
   color: var(--gold-dark);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
   white-space: nowrap;
 }
 .veloura-card-brands {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 6px;
 }
 .veloura-card-brands span {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 26px;
-  min-width: 54px;
-  padding: 0 10px;
-  border: 1px solid var(--border-light);
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.74);
+  min-height: 24px;
+  min-width: 46px;
+  padding: 0 8px;
+  border: 1px solid rgba(202, 185, 153, 0.55);
+  border-radius: 5px;
+  background: transparent;
   color: var(--text-secondary);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -2517,7 +2461,7 @@
 .veloura-card-field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 6px;
   grid-column: 1 / -1;
   min-width: 0;
 }
@@ -2525,18 +2469,18 @@
   grid-column: span 1;
 }
 .veloura-card-field span {
-  color: var(--text-light);
-  font-size: 0.73rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 .veloura-card-hosted-field {
-  min-height: 50px;
-  padding: 0 14px;
-  border: 1px solid rgba(202, 185, 153, 0.86);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.86);
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid rgba(202, 185, 153, 0.72);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.52);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 .veloura-card-hosted-field iframe {
@@ -2544,8 +2488,8 @@
 }
 .veloura-card-hosted-field:focus-within {
   border-color: rgba(184, 146, 74, 0.72);
-  background: var(--white);
-  box-shadow: 0 0 0 3px rgba(184, 146, 74, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 2px rgba(184, 146, 74, 0.1);
 }
 .veloura-card-submit {
   display: inline-flex;
@@ -2554,10 +2498,10 @@
   gap: 9px;
   width: 100%;
   min-height: 52px;
-  border-radius: 8px;
+  border-radius: 7px;
   font-size: 0.96rem;
   font-weight: 700;
-  box-shadow: 0 12px 24px rgba(184, 146, 74, 0.22);
+  box-shadow: 0 10px 20px rgba(184, 146, 74, 0.2);
 }
 .veloura-card-submit svg {
   transition: transform 0.2s ease;
@@ -2593,20 +2537,6 @@
   height: 1px;
   background: var(--border-light);
 }
-.card-pay-fallback-hint {
-  margin: 4px 0 0;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: var(--white);
-  border: 1px dashed var(--border);
-  font-size: 0.78rem;
-  line-height: 1.55;
-  color: var(--text-light);
-}
-.card-pay-fallback-hint strong {
-  color: var(--text-secondary);
-  font-weight: 600;
-}
 .paypal-fallback-button:empty {
   display: none;
 }
@@ -2615,7 +2545,7 @@
   pointer-events: none;
 }
 .paypal-fallback-button--secondary {
-  margin-top: 18px;
+  margin-top: 4px;
   padding-top: 18px;
   border-top: 1px solid var(--border-light);
 }
@@ -2684,15 +2614,6 @@
   .payment-section { padding: 20px 16px; }
   .payment-section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
   .payment-total { align-items: flex-start; }
-  .card-pay-fallback { padding: 16px; }
-  .veloura-pay-method {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-  .veloura-pay-method-status {
-    grid-column: 1 / -1;
-    justify-self: flex-start;
-  }
-  .veloura-card-form { padding: 15px; }
   .veloura-card-form-head {
     flex-direction: column;
     align-items: flex-start;

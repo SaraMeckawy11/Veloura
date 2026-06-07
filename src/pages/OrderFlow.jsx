@@ -1984,26 +1984,11 @@ export default function OrderFlow() {
 
                     {!needsRetry && (
                       <div className="card-pay-fallback">
-                        <div className="veloura-pay-method is-selected">
-                          <span className="veloura-pay-method-icon" aria-hidden="true">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <rect x="2" y="5" width="20" height="14" rx="2" />
-                              <path d="M2 10h20" />
-                            </svg>
-                          </span>
-                          <div>
-                            <h4 className="card-pay-fallback-title">Secure checkout</h4>
-                            <p className="card-pay-fallback-text">Choose card payment or PayPal wallet.</p>
-                          </div>
-                          <span className="veloura-pay-method-status">Protected</span>
-                        </div>
-
                         <div className="veloura-card-form" aria-label="Card payment form">
                           <div className="veloura-card-form-head">
                             <div>
                               <span className="veloura-card-eyebrow">Card payment</span>
-                              <h4>Complete your payment</h4>
-                              <p className="veloura-card-helper">Enter your card details in the secure fields below.</p>
+                              <h4>Pay by card</h4>
                             </div>
                             <span className="veloura-card-secure">
                               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -2019,6 +2004,8 @@ export default function OrderFlow() {
                             <span>Mastercard</span>
                             <span>Amex</span>
                           </div>
+
+                          <p className="veloura-card-helper">Card details are entered in secure PayPal fields.</p>
 
                           <div className="veloura-card-fields">
                             <label className="veloura-card-field">
