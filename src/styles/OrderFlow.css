@@ -2374,7 +2374,7 @@
 .card-pay-fallback {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   padding: 0;
   background: transparent;
   border: 0;
@@ -2383,7 +2383,7 @@
 .veloura-card-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 13px;
   padding: 0;
   background: transparent;
   border: 0;
@@ -2396,62 +2396,13 @@
   justify-content: space-between;
   gap: 14px;
 }
-.veloura-card-eyebrow {
-  display: block;
-  margin-bottom: 4px;
-  color: var(--gold);
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
 .veloura-card-form-head h4 {
   margin: 0;
   color: var(--text);
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.12rem;
   font-weight: 600;
   line-height: 1.15;
-}
-.veloura-card-helper {
-  margin: -2px 0 2px;
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-  line-height: 1.45;
-}
-.veloura-card-secure {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 26px;
-  padding: 0 9px;
-  border-radius: 999px;
-  background: rgba(184, 146, 74, 0.1);
-  color: var(--gold-dark);
-  font-size: 0.72rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.veloura-card-brands {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.veloura-card-brands span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 24px;
-  min-width: 46px;
-  padding: 0 8px;
-  border: 1px solid rgba(202, 185, 153, 0.55);
-  border-radius: 5px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 .veloura-card-fields {
   display: grid;
@@ -2461,19 +2412,11 @@
 .veloura-card-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
   grid-column: 1 / -1;
   min-width: 0;
 }
 .veloura-card-field--half {
   grid-column: span 1;
-}
-.veloura-card-field span {
-  color: var(--text-secondary);
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 .veloura-card-hosted-field {
   min-height: 48px;
@@ -2513,22 +2456,31 @@
   opacity: 0.62;
   cursor: not-allowed;
 }
-.veloura-card-unavailable,
-.veloura-card-privacy {
+.veloura-card-unavailable {
   margin: 0;
   color: var(--text-light);
   font-size: 0.76rem;
   line-height: 1.5;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .veloura-wallet-divider {
   display: flex;
   align-items: center;
   gap: 12px;
   color: var(--text-light);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
 }
 .veloura-wallet-divider::before,
 .veloura-wallet-divider::after {

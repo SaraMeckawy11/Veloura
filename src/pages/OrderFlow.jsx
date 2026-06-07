@@ -1941,11 +1941,10 @@ export default function OrderFlow() {
                       </span>
                       <div>
                         <h3>Payment</h3>
-                        <p className="payment-section-subtitle">Encrypted &amp; secure</p>
                       </div>
                     </div>
                     <div className="payment-total">
-                      <span className="payment-total-label">Veloura total</span>
+                      <span className="payment-total-label">Total</span>
                       <span className="payment-total-value">{paymentDisplayPrice}</span>
                     </div>
                   </div>
@@ -1986,42 +1985,24 @@ export default function OrderFlow() {
                       <div className="card-pay-fallback">
                         <div className="veloura-card-form" aria-label="Card payment form">
                           <div className="veloura-card-form-head">
-                            <div>
-                              <span className="veloura-card-eyebrow">Card payment</span>
-                              <h4>Pay by card</h4>
-                            </div>
-                            <span className="veloura-card-secure">
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" />
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                              </svg>
-                              PayPal
-                            </span>
+                            <h4>Card details</h4>
                           </div>
-
-                          <div className="veloura-card-brands" aria-label="Accepted cards">
-                            <span>Visa</span>
-                            <span>Mastercard</span>
-                            <span>Amex</span>
-                          </div>
-
-                          <p className="veloura-card-helper">Card details are entered in secure PayPal fields.</p>
 
                           <div className="veloura-card-fields">
                             <label className="veloura-card-field">
-                              <span>Name on card</span>
+                              <span className="visually-hidden">Name on card</span>
                               <div ref={cardNameRef} className="veloura-card-hosted-field" />
                             </label>
                             <label className="veloura-card-field">
-                              <span>Card number</span>
+                              <span className="visually-hidden">Card number</span>
                               <div ref={cardNumberRef} className="veloura-card-hosted-field" />
                             </label>
                             <label className="veloura-card-field veloura-card-field--half">
-                              <span>Expiry</span>
+                              <span className="visually-hidden">Expiry</span>
                               <div ref={cardExpiryRef} className="veloura-card-hosted-field" />
                             </label>
                             <label className="veloura-card-field veloura-card-field--half">
-                              <span>CVV</span>
+                              <span className="visually-hidden">CVV</span>
                               <div ref={cardCvvRef} className="veloura-card-hosted-field" />
                             </label>
                           </div>
@@ -2046,12 +2027,9 @@ export default function OrderFlow() {
                               </svg>
                             )}
                           </button>
-                          <p className="veloura-card-privacy">
-                            By paying with your card, your payment data is processed by PayPal under PayPal's privacy terms.
-                          </p>
                         </div>
 
-                        <div className="veloura-wallet-divider"><span>or use PayPal wallet</span></div>
+                        <div className="veloura-wallet-divider"><span>PayPal wallet</span></div>
                         <div
                           ref={paypalButtonRef}
                           className={`paypal-fallback-button ${paypalLoading ? 'paypal-fallback-button--loading' : ''}`}
