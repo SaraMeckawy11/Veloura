@@ -107,6 +107,13 @@ function getPricingRegion() {
   }
 }
 
+function formatPaypalAmount(paypal = {}) {
+  const currency = paypal.currency || 'USD';
+  const amount = Number(paypal.amount);
+  if (!Number.isFinite(amount)) return currency;
+  return `${currency} ${amount.toFixed(2)}`;
+}
+
 const PHOTO_CATEGORIES = [
   { key: 'venue', label: 'Venue Photos', hint: 'Photos of your venue or ceremony location (max 2)', icon: 'location', max: 2 },
   { key: 'story', label: 'Our Story Photos', hint: 'Photos from your journey together — first date, trips, proposal (max 4)', icon: 'book', max: 4 },
@@ -237,6 +244,9 @@ export default function OrderFlow() {
   const [confirming, setConfirming] = useState(false);
   const [paypalOrderData, setPaypalOrderData] = useState(null);
   const [paypalLoading, setPaypalLoading] = useState(false);
+  const [cardFieldsReady, setCardFieldsReady] = useState(false);
+  const [cardFieldsEligible, setCardFieldsEligible] = useState(false);
+  const [cardSubmitting, setCardSubmitting] = useState(false);
   const [needsRetry, setNeedsRetry] = useState(false);
   const [paypalSdk, setPaypalSdk] = useState(null);
   const [error, setError] = useState('');
@@ -244,6 +254,11 @@ export default function OrderFlow() {
   const [fontPickerOpen, setFontPickerOpen] = useState(false);
   const [policyPickerOpen, setPolicyPickerOpen] = useState(null);
   const paypalButtonRef = useRef(null);
+  const cardNameRef = useRef(null);
+  const cardNumberRef = useRef(null);
+  const cardExpiryRef = useRef(null);
+  const cardCvvRef = useRef(null);
+  const cardFieldsRef = useRef(null);
   // Guards against a second capture call while one is already in flight or done,
   // so a buyer who triggers approval twice is never charged/captured twice.
   const captureInFlightRef = useRef(false);
@@ -616,6 +631,7 @@ export default function OrderFlow() {
   const selectedTierConfig = pricingTiers.find(tier => tier.id === normalizePricingTier(selectedTier)) || getPricingTier(selectedTier);
   const displayPrice = selectedTierConfig.displayPrice || selectedTierConfig.price;
   const paymentDisplayPrice = paypalOrderData?.pricing?.displayPrice || displayPrice;
+  const paypalPaymentPrice = paypalOrderData ? formatPaypalAmount(paypalOrderData.paypal) : '';
   const effectiveDisabledFields = [...new Set([...disabledFields, ...getTierDisabledFields(selectedTier)])];
   const storyIncluded = tierAllows(selectedTier, 'story');
   const galleryIncluded = tierAllows(selectedTier, 'gallery');
@@ -806,12 +822,13 @@ export default function OrderFlow() {
       // Allow a retry only on failure — a successful capture keeps the guard set
       // so the success navigation can't be undone by a stray second approval.
       captureInFlightRef.current = false;
+      setCardSubmitting(false);
       setError(captureErr.message || 'Could not finalise payment');
     }
   }, [paypalOrderData, goToSuccessPage]);
 
-  // Load the PayPal SDK once an order exists. The UI uses PayPal Buttons only
-  // because the standard approval flow is the most reliable sandbox path.
+  // Load the PayPal SDK once an order exists. We request both wallet buttons
+  // and advanced card fields so the buyer can use the custom Veloura card form.
   useEffect(() => {
     if (!paypalOrderData) return;
     let cancelled = false;
@@ -821,6 +838,7 @@ export default function OrderFlow() {
         const paypal = await getPaypal({
           clientId: paypalOrderData.paypal.clientId,
           currency: paypalOrderData.paypal.currency || 'USD',
+          components: 'buttons,card-fields',
         });
         if (cancelled) return;
         setPaypalSdk(paypal);
@@ -835,6 +853,97 @@ export default function OrderFlow() {
 
     return () => { cancelled = true; };
   }, [paypalOrderData]);
+
+  // Render PayPal Advanced Card Fields into Veloura-styled containers.
+  useEffect(() => {
+    if (!paypalSdk || !paypalOrderData || needsRetry) return;
+    const containers = [cardNameRef.current, cardNumberRef.current, cardExpiryRef.current, cardCvvRef.current];
+    if (containers.some(container => !container)) return;
+    let cancelled = false;
+    const renderedFields = [];
+
+    (async () => {
+      try {
+        if (!paypalSdk.CardFields) {
+          setCardFieldsEligible(false);
+          setCardFieldsReady(false);
+          return;
+        }
+
+        const cardFields = paypalSdk.CardFields({
+          createOrder: () => paypalOrderData.paypal.paypalOrderId,
+          onApprove: () => captureAndFinish(),
+          onError: (err) => {
+            if (!cancelled) {
+              console.error('[paypal] card fields error', err);
+              setCardSubmitting(false);
+              setError(err?.message || 'Card payment could not be completed. Please try again.');
+            }
+          },
+          inputEvents: {
+            onChange: () => {
+              if (!cancelled) setError('');
+            },
+          },
+          style: {
+            input: {
+              color: '#342d25',
+              'font-size': '15px',
+              'font-family': 'Inter, system-ui, sans-serif',
+            },
+            ':focus': {
+              color: '#231f1a',
+            },
+            '.invalid': {
+              color: '#9f2f2f',
+            },
+          },
+        });
+
+        if (!cardFields.isEligible()) {
+          if (!cancelled) {
+            setCardFieldsEligible(false);
+            setCardFieldsReady(false);
+          }
+          return;
+        }
+
+        containers.forEach(container => { container.innerHTML = ''; });
+        const nameField = cardFields.NameField({ placeholder: 'Name on card' });
+        const numberField = cardFields.NumberField({ placeholder: 'Card number' });
+        const expiryField = cardFields.ExpiryField({ placeholder: 'MM / YY' });
+        const cvvField = cardFields.CVVField({ placeholder: 'CVV' });
+        renderedFields.push(nameField, numberField, expiryField, cvvField);
+
+        await Promise.all([
+          nameField.render(cardNameRef.current),
+          numberField.render(cardNumberRef.current),
+          expiryField.render(cardExpiryRef.current),
+          cvvField.render(cardCvvRef.current),
+        ]);
+
+        if (!cancelled) {
+          cardFieldsRef.current = cardFields;
+          setCardFieldsEligible(true);
+          setCardFieldsReady(true);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error('[paypal] card fields render', err);
+          setCardFieldsEligible(false);
+          setCardFieldsReady(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      cardFieldsRef.current = null;
+      renderedFields.forEach(field => {
+        try { field?.close?.(); } catch { /* unmounted */ }
+      });
+    };
+  }, [paypalSdk, paypalOrderData, needsRetry, captureAndFinish]);
 
   // Render the PayPal Buttons after React has mounted the target container.
   useEffect(() => {
@@ -883,6 +992,18 @@ export default function OrderFlow() {
       try { buttonsInstance?.close?.(); } catch { /* unmounted */ }
     };
   }, [paypalSdk, paypalOrderData, needsRetry, captureAndFinish]);
+
+  const handleCardPayment = useCallback(async () => {
+    if (!cardFieldsRef.current || cardSubmitting || !cardFieldsReady) return;
+    setCardSubmitting(true);
+    setError('');
+    try {
+      await cardFieldsRef.current.submit();
+    } catch (err) {
+      setCardSubmitting(false);
+      setError(err?.message || 'Please check your card details and try again.');
+    }
+  }, [cardSubmitting, cardFieldsReady]);
 
   // Parse JSON safely — server may return empty body on 502/504/cold-start
   const parseJsonOrThrow = async (res, label) => {
@@ -960,6 +1081,9 @@ export default function OrderFlow() {
         savePendingOrder(data.orderId);
         setPaypalOrderData({ orderId: data.orderId, paypal: data.paypal, pricing: data.pricing });
         setPaypalLoading(true);
+        setCardFieldsReady(false);
+        setCardFieldsEligible(false);
+        setCardSubmitting(false);
         orderCreationInFlightRef.current = false;
         setConfirming(false);
         return;
@@ -1801,7 +1925,13 @@ export default function OrderFlow() {
                       <dd>{paymentDisplayPrice}</dd>
                     </div>
                   </div>
-                  <button type="button" className="payment-summary-edit" onClick={() => { setPaypalOrderData(null); setPaypalLoading(false); }}>
+                  <button type="button" className="payment-summary-edit" onClick={() => {
+                    setPaypalOrderData(null);
+                    setPaypalLoading(false);
+                    setCardFieldsReady(false);
+                    setCardFieldsEligible(false);
+                    setCardSubmitting(false);
+                  }}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
                     Edit order
                   </button>
@@ -1820,6 +1950,10 @@ export default function OrderFlow() {
                         <h3>Payment</h3>
                         <p className="payment-section-subtitle">Encrypted &amp; secure</p>
                       </div>
+                    </div>
+                    <div className="payment-total">
+                      <span className="payment-total-label">Veloura total</span>
+                      <span className="payment-total-value">{paymentDisplayPrice}</span>
                     </div>
                   </div>
 
@@ -1844,6 +1978,9 @@ export default function OrderFlow() {
                             setError('');
                             setPaypalOrderData(null);
                             setPaypalLoading(false);
+                            setCardFieldsReady(false);
+                            setCardFieldsEligible(false);
+                            setCardSubmitting(false);
                             handleConfirmPayment();
                           }}
                         >
@@ -1854,10 +1991,105 @@ export default function OrderFlow() {
 
                     {!needsRetry && (
                       <div className="card-pay-fallback">
-                        <h4 className="card-pay-fallback-title">Pay with PayPal</h4>
-                        <p className="card-pay-fallback-text">
-                          Choose PayPal or a card to complete your secure checkout.
-                        </p>
+                        <div className="veloura-pay-method is-selected">
+                          <span className="veloura-pay-method-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="2" y="5" width="20" height="14" rx="2" />
+                              <path d="M2 10h20" />
+                            </svg>
+                          </span>
+                          <div>
+                            <h4 className="card-pay-fallback-title">PayPal checkout</h4>
+                            <p className="card-pay-fallback-text">Pay with PayPal balance or card.</p>
+                          </div>
+                          <span className="veloura-pay-method-status">Selected</span>
+                        </div>
+
+                        <div className="veloura-pay-grid" aria-label="Payment details">
+                          <div className="veloura-pay-widget">
+                            <span>Invitation</span>
+                            <strong>{selectedTemplate.name}</strong>
+                          </div>
+                          <div className="veloura-pay-widget">
+                            <span>Plan</span>
+                            <strong>{selectedTierConfig.name}</strong>
+                          </div>
+                          <div className="veloura-pay-widget">
+                            <span>Couple</span>
+                            <strong>{form.groomName} &amp; {form.brideName}</strong>
+                          </div>
+                          <div className="veloura-pay-widget">
+                            <span>PayPal processes</span>
+                            <strong>{paypalPaymentPrice}</strong>
+                          </div>
+                        </div>
+
+                        <div className="veloura-pay-bridge">
+                          <span className="veloura-pay-bridge-icon" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 1v22" />
+                              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
+                          </span>
+                          <p>
+                            Your Veloura total is {paymentDisplayPrice}. Card payments are processed securely by PayPal for {paypalPaymentPrice}.
+                          </p>
+                        </div>
+
+                        <div className="veloura-card-form" aria-label="Card payment form">
+                          <div className="veloura-card-form-head">
+                            <div>
+                              <span className="veloura-card-eyebrow">Card payment</span>
+                              <h4>Pay without leaving Veloura</h4>
+                            </div>
+                            <span className="veloura-card-secure">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                              </svg>
+                              PayPal
+                            </span>
+                          </div>
+
+                          <div className="veloura-card-fields">
+                            <label className="veloura-card-field">
+                              <span>Name on card</span>
+                              <div ref={cardNameRef} className="veloura-card-hosted-field" />
+                            </label>
+                            <label className="veloura-card-field">
+                              <span>Card number</span>
+                              <div ref={cardNumberRef} className="veloura-card-hosted-field" />
+                            </label>
+                            <label className="veloura-card-field veloura-card-field--half">
+                              <span>Expiry</span>
+                              <div ref={cardExpiryRef} className="veloura-card-hosted-field" />
+                            </label>
+                            <label className="veloura-card-field veloura-card-field--half">
+                              <span>CVV</span>
+                              <div ref={cardCvvRef} className="veloura-card-hosted-field" />
+                            </label>
+                          </div>
+
+                          {!cardFieldsEligible && !paypalLoading && (
+                            <p className="veloura-card-unavailable">
+                              Card fields are not available for this PayPal account or browser. You can still use the PayPal button below.
+                            </p>
+                          )}
+
+                          <button
+                            type="button"
+                            className="btn btn-gold veloura-card-submit"
+                            onClick={handleCardPayment}
+                            disabled={!cardFieldsReady || cardSubmitting || paypalLoading}
+                          >
+                            {cardSubmitting ? 'Processing card...' : `Pay ${paymentDisplayPrice} by card`}
+                          </button>
+                          <p className="veloura-card-privacy">
+                            By paying with your card, your payment data is processed by PayPal under PayPal's privacy terms.
+                          </p>
+                        </div>
+
+                        <div className="veloura-wallet-divider"><span>or use PayPal wallet</span></div>
                         <div
                           ref={paypalButtonRef}
                           className={`paypal-fallback-button ${paypalLoading ? 'paypal-fallback-button--loading' : ''}`}

@@ -6,7 +6,7 @@ import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail, sensitiveFieldChangeEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 import { getFallbackTemplate } from '../data/templateFallbacks.js';
-import { getPricingCatalog, getTierAmount, normalizePricingTier, tierAllows } from '../data/pricingTiers.js';
+import { getPricingCatalog, getPricingTier, getTierAmount, normalizePricingTier, tierAllows } from '../data/pricingTiers.js';
 import {
   paypalApiConfigured,
   createPaypalOrder,
@@ -67,6 +67,29 @@ function getOrderDisplayPricing(req, pricingTier) {
     oldDisplayPrice: tier?.oldDisplayPrice,
     displayIsConverted: catalog.displayIsConverted,
     exchangeRate: catalog.exchangeRate,
+  };
+}
+
+function compactPaypalText(value = '', maxLength = 127) {
+  const text = `${value || ''}`.replace(/\s+/g, ' ').trim();
+  return text.length > maxLength ? text.slice(0, maxLength) : text;
+}
+
+function getPaypalOrderMetadata({ order, template, pricingTier }) {
+  const tier = getPricingTier(pricingTier);
+  const couple = coupleName(order.weddingDetails);
+  const itemName = compactPaypalText(`${tier.name} - ${template.name}`);
+  const description = compactPaypalText(
+    couple
+      ? `${template.name} invitation for ${couple}`
+      : `${template.name} wedding invitation`
+  );
+
+  return {
+    invoiceId: `VEL-${order._id.toString().slice(-12).toUpperCase()}`,
+    itemName,
+    itemSku: `veloura-${pricingTier}-${template.slug || template._id}`,
+    description,
   };
 }
 
@@ -246,6 +269,7 @@ router.post('/', validateOrderBody, async (req, res) => {
         orderId: order._id.toString(),
         amount: orderAmount,
         currency: CURRENCY,
+        ...getPaypalOrderMetadata({ order, template, pricingTier }),
       });
       order.paymentProvider = 'paypal';
       order.paypalOrderId = paypalOrder.id;
@@ -261,6 +285,7 @@ router.post('/', validateOrderBody, async (req, res) => {
           clientId: process.env.PAYPAL_CLIENT_ID,
           environment: process.env.PAYPAL_ENVIRONMENT === 'live' ? 'live' : 'sandbox',
           paypalOrderId: paypalOrder.id,
+          amount: orderAmount,
           currency: CURRENCY,
           successUrl: `${CLIENT_URL}/order/success/${order._id}`,
         },

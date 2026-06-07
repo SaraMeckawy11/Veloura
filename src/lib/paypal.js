@@ -1,18 +1,35 @@
 // Loads the PayPal JS SDK exactly once per page load. The same SDK URL handles
-// both sandbox and live — sandbox vs live is determined by the Client ID itself,
-// since each Client ID is tied to a specific PayPal environment.
+// both sandbox and live; each Client ID is tied to a specific PayPal environment.
 let paypalScriptPromise;
 let loadedClientId = null;
+let loadedCurrency = null;
+let loadedComponents = null;
+
+function normalizeComponents(components = 'buttons') {
+  return components
+    .split(',')
+    .map(component => component.trim())
+    .filter(Boolean)
+    .sort()
+    .join(',');
+}
 
 export function getPaypal({ clientId, currency = 'USD', components = 'buttons' }) {
   if (!clientId) {
     return Promise.reject(new Error('PayPal client id is missing.'));
   }
 
-  // If a previous load used a different client id, we cannot swap mid-session —
-  // the SDK locks to whichever client id loaded first. Surface a clear error.
+  const requestedComponents = normalizeComponents(components);
+
+  // The SDK locks to the first client/currency/component set loaded on a page.
   if (loadedClientId && loadedClientId !== clientId) {
     return Promise.reject(new Error('PayPal SDK already initialised with a different client id. Reload the page to switch.'));
+  }
+  if (loadedCurrency && loadedCurrency !== currency) {
+    return Promise.reject(new Error('PayPal SDK already initialised with a different currency. Reload the page to switch.'));
+  }
+  if (loadedComponents && loadedComponents !== requestedComponents) {
+    return Promise.reject(new Error('PayPal SDK already initialised without the requested checkout components. Reload the page to switch.'));
   }
 
   if (window.paypal) return Promise.resolve(window.paypal);
@@ -22,7 +39,7 @@ export function getPaypal({ clientId, currency = 'USD', components = 'buttons' }
     'client-id': clientId,
     currency,
     intent: 'capture',
-    components,
+    components: requestedComponents,
   });
   const src = `https://www.paypal.com/sdk/js?${params.toString()}`;
 
@@ -40,6 +57,8 @@ export function getPaypal({ clientId, currency = 'USD', components = 'buttons' }
     script.dataset.velouraPaypal = '1';
     script.onload = () => {
       loadedClientId = clientId;
+      loadedCurrency = currency;
+      loadedComponents = requestedComponents;
       resolve(window.paypal);
     };
     script.onerror = () => reject(new Error('PayPal checkout could not be loaded. Please try again.'));

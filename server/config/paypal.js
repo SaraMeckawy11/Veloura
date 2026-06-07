@@ -64,8 +64,21 @@ async function paypalFetch(path, init = {}) {
   return data;
 }
 
+function trimPaypalText(value = '', maxLength = 127) {
+  const text = `${value || ''}`.replace(/\s+/g, ' ').trim();
+  return text.length > maxLength ? text.slice(0, maxLength) : text;
+}
+
 // Create a PayPal order (intent: CAPTURE). reference_id and custom_id carry our internal orderId.
-export async function createPaypalOrder({ orderId, amount, currency = 'USD' }) {
+export async function createPaypalOrder({
+  orderId,
+  amount,
+  currency = 'USD',
+  description = 'Veloura Digital Wedding Invitation',
+  invoiceId,
+  itemName = 'Veloura Digital Wedding Invitation',
+  itemSku = 'veloura-invitation',
+}) {
   return paypalFetch('/v2/checkout/orders', {
     method: 'POST',
     body: JSON.stringify({
@@ -73,8 +86,22 @@ export async function createPaypalOrder({ orderId, amount, currency = 'USD' }) {
       purchase_units: [{
         reference_id: orderId,
         custom_id: orderId,
-        description: 'Veloura Digital Wedding Invitation',
-        amount: { currency_code: currency, value: amount },
+        invoice_id: trimPaypalText(invoiceId || `VEL-${orderId}`, 127),
+        description: trimPaypalText(description, 127),
+        amount: {
+          currency_code: currency,
+          value: amount,
+          breakdown: {
+            item_total: { currency_code: currency, value: amount },
+          },
+        },
+        items: [{
+          name: trimPaypalText(itemName, 127),
+          sku: trimPaypalText(itemSku, 127),
+          quantity: '1',
+          category: 'DIGITAL_GOODS',
+          unit_amount: { currency_code: currency, value: amount },
+        }],
       }],
       application_context: {
         brand_name: 'Veloura',
