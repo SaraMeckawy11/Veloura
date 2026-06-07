@@ -1957,10 +1957,6 @@ export default function OrderFlow() {
                         <h3>Payment</h3>
                       </div>
                     </div>
-                    <div className="payment-total">
-                      <span className="payment-total-label">Total</span>
-                      <span className="payment-total-value">{paymentDisplayPrice}</span>
-                    </div>
                   </div>
 
                   <div className="card-pay-wrap">
@@ -2040,7 +2036,7 @@ export default function OrderFlow() {
                             onClick={handleCardPayment}
                             disabled={!cardFieldsReady || cardSubmitting || paypalLoading}
                           >
-                            <span>{cardSubmitting ? 'Processing card...' : `Pay securely ${paymentDisplayPrice}`}</span>
+                            <span>{cardSubmitting ? 'Processing...' : 'Pay now'}</span>
                             {!cardSubmitting && (
                               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M5 12h14" />
