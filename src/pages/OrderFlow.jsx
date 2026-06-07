@@ -885,7 +885,7 @@ export default function OrderFlow() {
               'border-radius': '0',
               'box-shadow': 'none',
               height: '48px',
-              'font-size': '14px',
+              'font-size': '12px',
               'font-weight': '500',
               'font-family': 'Inter, system-ui, sans-serif',
               'line-height': '48px',
@@ -899,6 +899,7 @@ export default function OrderFlow() {
             '::placeholder': {
               color: '#9b8f80',
               'font-weight': '500',
+              'font-size': '12px',
             },
             ':focus': {
               border: '0',
