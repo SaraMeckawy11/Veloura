@@ -18,8 +18,7 @@ export const THEATER_DEMO_ORDER = {
     weddingDate: '2026-09-12T18:30:00.000Z',
     weddingTime: '6:30 PM',
     venue: 'The Royale Grand Theatre',
-    venueMapUrl:
-      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3610.1786!2d31.2357!3d30.0444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDAyJzM5LjgiTiAzMcKwMTQnMDguNSJF!5e0!3m2!1sen!2seg!4v1234567890',
+    venueMapUrl: 'https://maps.google.com/maps?q=Cairo%20Opera%20House&z=15&output=embed',
     message: 'Black tie  •  Dinner & dancing to follow',
     plusOnePolicy: 'named-only',
     plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,

@@ -67,7 +67,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
 
   const dayStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' }) : '';
-  const detailsDayStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { weekday: 'short' }) : '';
+  const detailsDayStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' }) : '';
   const monthStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() : '';
   const heroMonthStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { month: 'long' }).toUpperCase() : '';
   const yearStr = weddingDate ? String(weddingDate.getFullYear()) : '';
@@ -197,6 +197,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
         <DetailsSection
           dayStr={detailsDayStr}
           monthStr={monthStr}
+          yearStr={yearStr}
           dayOfMonth={dayOfMonth}
           fullDateStr={fullDateStr}
           timeStr={timeStr}
@@ -376,6 +377,7 @@ function StorySection({ items }) {
 function DetailsSection({
   dayStr,
   monthStr,
+  yearStr,
   dayOfMonth,
   fullDateStr,
   timeStr,
@@ -390,7 +392,7 @@ function DetailsSection({
       </div>
       <div className="theater-details-date">
         <strong>{dayStr || fullDateStr || 'To be announced'}</strong>
-        <span>{dayOfMonth && monthStr ? `${dayOfMonth} ${monthStr}` : fullDateStr}</span>
+        <span>{dayOfMonth && monthStr ? `${dayOfMonth} ${monthStr}${yearStr ? ` ${yearStr}` : ''}` : fullDateStr}</span>
       </div>
       <div className="theater-details-time">
         <strong>{timeStr || 'To be announced'}</strong>
