@@ -2422,8 +2422,8 @@
 .veloura-card-hosted-field {
   display: flex;
   align-items: center;
-  min-height: 42px;
-  height: 42px;
+  min-height: 48px;
+  height: 48px;
   padding: 0 12px;
   border: 1px solid rgba(196, 176, 139, 0.62);
   border-radius: 7px;
@@ -2433,8 +2433,8 @@
 .veloura-card-hosted-field iframe {
   display: block;
   width: 100% !important;
-  height: 42px !important;
-  min-height: 42px !important;
+  height: 48px !important;
+  min-height: 48px !important;
   border: 0 !important;
 }
 .veloura-card-hosted-field:focus-within {
