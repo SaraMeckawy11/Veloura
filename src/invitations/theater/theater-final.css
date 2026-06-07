@@ -515,18 +515,18 @@ body:has(.theater-theme),
 
 .theater-details-date,
 .theater-details-time {
-  width: 26%;
-  text-align: center;
+  width: 24%;
+  text-align: left;
 }
 
 .theater-details-date {
-  left: 21%;
-  top: 44.5%;
+  left: 24.5%;
+  top: 44.85%;
 }
 
 .theater-details-time {
-  left: 60%;
-  top: 44.5%;
+  left: 65%;
+  top: 45.55%;
 }
 
 .theater-details-date strong,

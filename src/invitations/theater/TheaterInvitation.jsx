@@ -67,6 +67,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
 
   const dayStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' }) : '';
+  const detailsDayStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { weekday: 'short' }) : '';
   const monthStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase() : '';
   const heroMonthStr = weddingDate ? weddingDate.toLocaleDateString('en-US', { month: 'long' }).toUpperCase() : '';
   const yearStr = weddingDate ? String(weddingDate.getFullYear()) : '';
@@ -194,7 +195,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
         {storyItems.length > 0 && <StorySection items={storyItems} />}
 
         <DetailsSection
-          dayStr={dayStr}
+          dayStr={detailsDayStr}
           monthStr={monthStr}
           dayOfMonth={dayOfMonth}
           fullDateStr={fullDateStr}
@@ -393,7 +394,6 @@ function DetailsSection({
       </div>
       <div className="theater-details-time">
         <strong>{timeStr || 'To be announced'}</strong>
-        <span>Doors open</span>
       </div>
       <div className="theater-details-map" aria-hidden={!embedSrc}>
         {embedSrc ? (
