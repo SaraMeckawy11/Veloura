@@ -908,7 +908,10 @@ export default function OrderFlow() {
             },
             '.invalid': {
               border: '0',
-              color: '#9f2f2f',
+              outline: '0',
+              'box-shadow': 'none',
+              background: 'transparent',
+              color: '#c4727f',
             },
           },
         });
