@@ -1,6 +1,7 @@
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
-import FeaturesBar from '../components/FeaturesBar';
+// Features bar temporarily hidden from the home screen.
+// import FeaturesBar from '../components/FeaturesBar';
 import Designs from '../components/Designs';
 import HowItWorks from '../components/HowItWorks';
 import Pricing from '../components/Pricing';
@@ -13,7 +14,7 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
-      <FeaturesBar />
+      {/* <FeaturesBar /> */}
       <Designs />
       <HowItWorks />
       <Pricing showCta={false} />

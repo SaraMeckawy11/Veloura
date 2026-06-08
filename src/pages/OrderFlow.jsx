@@ -366,8 +366,8 @@ export default function OrderFlow() {
 
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
-    { _id: 'gazebo-garden', name: 'Garden Pavilion', slug: 'gazebo-garden', category: 'launch', envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight', colorScheme: { primary: '#86ad61', secondary: '#fff8ea', background: '#eff8dc' } },
     { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', category: 'launch', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
+    { _id: 'gazebo-garden', name: 'Garden Pavilion', slug: 'gazebo-garden', category: 'launch', envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight', colorScheme: { primary: '#86ad61', secondary: '#fff8ea', background: '#eff8dc' } },
     { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', category: 'launch', envelope: 'Blue envelope opens to a bride and groom walking toward the sea', colorScheme: { primary: '#1f5f8f', secondary: '#ec866f', background: '#fffaf1' } },
     // Temporarily hidden designs (also filtered out of the merged API list via HIDDEN_TEMPLATE_SLUGS):
     // { _id: 'fountain-reverie-v1', name: 'Fountain Reverie I', slug: 'fountain-reverie-v1', category: 'launch', envelope: 'Ornate garden doors open to a sunlit fountain invitation', colorScheme: { primary: '#94742f', secondary: '#f5dfcf', background: '#fff6e8' } },

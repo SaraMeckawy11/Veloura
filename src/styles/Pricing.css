@@ -5,20 +5,20 @@
 .pricing-wrapper {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 26px;
   align-items: stretch;
-  max-width: 860px;
+  max-width: 880px;
   margin: 0 auto;
 }
 
 .pricing-card {
   background: var(--white);
-  border: 1px solid rgba(184, 146, 74, 0.22);
+  border: 1px solid rgba(184, 146, 74, 0.12);
   border-radius: var(--radius-lg);
-  padding: 30px 24px;
+  padding: 38px 32px;
   text-align: left;
   position: relative;
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -26,9 +26,9 @@
 }
 
 .pricing-card--featured {
-  border: 2px solid var(--gold);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-8px);
+  border: 1px solid rgba(184, 146, 74, 0.5);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-6px);
 }
 
 .pricing-badge {
@@ -137,18 +137,18 @@
 
 /* Design squares shown inside each pricing card */
 .pricing-demos {
-  margin-top: 22px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(184, 146, 74, 0.16);
+  margin-top: 28px;
+  padding-top: 26px;
+  border-top: 1px solid rgba(184, 146, 74, 0.1);
   min-width: 0;
 }
 
 .pricing-demos-label {
   display: block;
-  margin-bottom: 12px;
-  color: var(--gold);
-  font-size: 0.66rem;
-  font-weight: 800;
+  margin-bottom: 14px;
+  color: var(--text-light);
+  font-size: 0.64rem;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -177,7 +177,7 @@
 .pricing-demo-sq {
   position: relative;
   flex: 0 0 auto;
-  width: 64px;
+  width: 52px;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -188,21 +188,21 @@
 .pricing-demo-sq > img,
 .pricing-demo-sq-initial {
   aspect-ratio: 1 / 1;
-  width: 64px;
-  height: 64px;
-  border-radius: 11px;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
   object-fit: cover;
-  border: 1px solid rgba(184, 146, 74, 0.2);
-  box-shadow: 0 5px 12px rgba(45, 42, 38, 0.07);
+  border: 1px solid rgba(184, 146, 74, 0.14);
+  box-shadow: none;
   transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
 .pricing-demo-sq:hover > img,
 .pricing-demo-sq:focus-visible > img,
 .pricing-demo-sq:hover .pricing-demo-sq-initial {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   border-color: var(--gold);
-  box-shadow: 0 12px 22px rgba(45, 42, 38, 0.16);
+  box-shadow: 0 8px 16px rgba(45, 42, 38, 0.1);
 }
 
 .pricing-demo-sq-initial {
@@ -236,9 +236,9 @@
 
 .pricing-demos-fields li {
   padding: 3px 9px;
-  color: var(--gold);
-  background: rgba(184, 146, 74, 0.1);
-  border: 1px solid rgba(184, 146, 74, 0.14);
+  color: var(--text-secondary);
+  background: rgba(184, 146, 74, 0.06);
+  border: 1px solid rgba(184, 146, 74, 0.1);
   border-radius: 999px;
   font-size: 0.62rem;
   font-weight: 600;
@@ -268,6 +268,6 @@
 
 @media (max-width: 768px) {
   .pricing-card {
-    padding: 30px 22px;
+    padding: 32px 24px;
   }
 }

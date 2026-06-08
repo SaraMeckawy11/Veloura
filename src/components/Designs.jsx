@@ -11,6 +11,17 @@ import useReveal from '../hooks/useReveal';
 
 const designs = [
   {
+    name: 'Boarding Pass',
+    category: 'launch',
+    description: 'A playful travel-ticket design for destination-inspired celebrations.',
+    image: boardingPassPreview,
+    overlay: 'linear-gradient(135deg, rgba(66,165,245,0.08), rgba(13,71,161,0.1))',
+    hidePreviewText: true,
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/boarding-pass',
+  },
+  {
     name: 'Garden Pavilion',
     previewName: (
       <>
@@ -27,17 +38,6 @@ const designs = [
     badge: 'Available',
     badgeClass: 'badge-launch',
     demoPath: '/demo/gazebo-garden',
-  },
-  {
-    name: 'Boarding Pass',
-    category: 'launch',
-    description: 'A playful travel-ticket design for destination-inspired celebrations.',
-    image: boardingPassPreview,
-    overlay: 'linear-gradient(135deg, rgba(66,165,245,0.08), rgba(13,71,161,0.1))',
-    hidePreviewText: true,
-    badge: 'Available',
-    badgeClass: 'badge-launch',
-    demoPath: '/demo/boarding-pass',
   },
   {
     name: 'Coastal Breeze',

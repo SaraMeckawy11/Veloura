@@ -11,7 +11,7 @@ export const PRICING_TIERS = [
       coupleMessage: true,
       story: false,
       gallery: false,
-      rsvp: false,
+      rsvp: true,
       music: false,
     },
   },
