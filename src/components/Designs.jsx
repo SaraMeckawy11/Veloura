@@ -203,9 +203,6 @@ export default function Designs() {
         <div className="section-header reveal" ref={revealRef}>
           <span className="section-label">Our Collection</span>
           <h2 className="section-title">Stunning Invitation Designs</h2>
-          <p className="section-subtitle">
-            Every theme features an animated envelope reveal, cinematic splash screen, and full interactive invitation with RSVP.
-          </p>
         </div>
 
         {/* {availableFilters.length > 1 && (

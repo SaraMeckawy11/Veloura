@@ -55,9 +55,6 @@ export const PRICING_TIERS = [
       'Everything in Essential, plus:',
       'Our Story timeline',
       'Photo gallery section',
-      'Schedule / wedding day details section',
-      'Dress code section',
-      'All premium invitation sections',
     ],
     demoCards: [
       { invitation: 'Boarding Pass', fields: ['Story route', 'Gallery', 'RSVP'] },

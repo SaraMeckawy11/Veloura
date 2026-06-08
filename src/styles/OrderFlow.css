@@ -748,6 +748,12 @@
   border-radius: 14px;
 }
 
+.guest-policy-block {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-light, rgba(184, 146, 74, 0.16));
+}
+
 .guest-policy-section-head {
   display: flex;
   align-items: flex-start;

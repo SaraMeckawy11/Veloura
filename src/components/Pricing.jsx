@@ -45,17 +45,6 @@ function getPricingQuery() {
   return params.toString();
 }
 
-// The sections each plan unlocks, shown as chips under the design squares so
-// buyers see exactly which fields a tier's invitations include.
-function getTierFieldChips(tier) {
-  const chips = ['Names, date & venue', 'Countdown', 'Map'];
-  if (tier.sections?.coupleMessage) chips.push('Envelope note');
-  if (tier.sections?.story) chips.push('Our Story');
-  if (tier.sections?.gallery) chips.push('Gallery');
-  if (tier.sections?.rsvp) chips.push('RSVP');
-  return chips;
-}
-
 export default function Pricing({ showCta = true }) {
   const headerRef = useReveal();
   const cardRef = useReveal();
@@ -97,8 +86,6 @@ export default function Pricing({ showCta = true }) {
                 <span className="old-price">{tier.oldDisplayPrice || tier.oldPrice}</span>
                 {tier.displayPrice || tier.price}
               </div>
-              {tier.tagline && <div className="pricing-tagline">{tier.tagline}</div>}
-              <div className="pricing-desc">{tier.description}</div>
 
               <ul className="pricing-features">
                 {tier.features.map(feature => (
@@ -107,7 +94,6 @@ export default function Pricing({ showCta = true }) {
               </ul>
 
               <div className="pricing-demos">
-                <span className="pricing-demos-label">Designs in this plan</span>
                 <div className="pricing-demos-grid">
                   {tier.demoCards?.map(card => {
                     const slug = DEMO_SLUGS[card.invitation];
@@ -130,11 +116,6 @@ export default function Pricing({ showCta = true }) {
                     );
                   })}
                 </div>
-                <ul className="pricing-demos-fields" aria-label={`Fields included in ${tier.name}`}>
-                  {getTierFieldChips(tier).map(field => (
-                    <li key={field}>{field}</li>
-                  ))}
-                </ul>
               </div>
 
               {showCta && (
