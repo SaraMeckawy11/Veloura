@@ -871,19 +871,18 @@ body:has(.theater-theme),
 
 .theater-plus-one .rsvp-plus-one-toggle button {
   min-height: clamp(30px, 5.4vw, 42px);
-  padding: 0.42em 0.6em 0.42em 1.9em;
-  border-color: rgba(116, 23, 15, 0.2);
+  padding: 0.42em 0 0.42em 1.35em;
   font-size: clamp(0.5rem, 1.35vw, 0.74rem);
 }
 
 .theater-plus-one .rsvp-plus-one-toggle button::before {
-  left: 0.65em;
+  left: 0;
   width: 0.78em;
   height: 0.78em;
 }
 
 .theater-plus-one .rsvp-plus-one-toggle button::after {
-  left: 0.9em;
+  left: 0.25em;
   width: 0.28em;
   height: 0.28em;
 }

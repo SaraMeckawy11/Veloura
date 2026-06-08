@@ -110,9 +110,9 @@ button { cursor: pointer; border: none; font-family: inherit; }
 ======================================== */
 .rsvp-plus-one {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
   min-width: 0;
 }
 .rsvp-plus-one-label {
@@ -125,37 +125,39 @@ button { cursor: pointer; border: none; font-family: inherit; }
   text-transform: uppercase;
 }
 .rsvp-plus-one-toggle {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
-  width: 100%;
+  width: auto;
 }
 .rsvp-plus-one-toggle button {
   position: relative;
   min-width: 0;
-  min-height: 44px;
-  padding: 10px 12px 10px 38px;
-  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-  border-radius: 7px;
-  background: color-mix(in srgb, currentColor 5%, white 72%);
+  min-height: 24px;
+  padding: 2px 0 2px 21px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   color: inherit;
   font: inherit;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   line-height: 1.2;
   text-transform: uppercase;
   text-align: left;
-  opacity: 0.72;
-  transition: opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0.64;
+  transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 .rsvp-plus-one-toggle button::before {
   content: '';
   position: absolute;
-  left: 14px;
+  left: 0;
   top: 50%;
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   border: 1px solid color-mix(in srgb, currentColor 42%, transparent);
   border-radius: 50%;
   background: transparent;
@@ -165,10 +167,10 @@ button { cursor: pointer; border: none; font-family: inherit; }
 .rsvp-plus-one-toggle button::after {
   content: '';
   position: absolute;
-  left: 18px;
+  left: 4px;
   top: 50%;
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: currentColor;
   opacity: 0;
@@ -177,16 +179,13 @@ button { cursor: pointer; border: none; font-family: inherit; }
 }
 .rsvp-plus-one-toggle button.active {
   opacity: 1;
-  border-color: color-mix(in srgb, currentColor 38%, transparent);
-  background: color-mix(in srgb, currentColor 8%, white 84%);
-  box-shadow:
-    0 12px 26px color-mix(in srgb, currentColor 10%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, currentColor 8%, transparent);
+  background: transparent;
+  box-shadow: none;
 }
 .rsvp-plus-one-toggle button.active::before {
   border-color: color-mix(in srgb, currentColor 58%, transparent);
-  background: color-mix(in srgb, currentColor 8%, white 82%);
-  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 8%, transparent);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 8%, transparent);
 }
 .rsvp-plus-one-toggle button.active::after {
   opacity: 1;
