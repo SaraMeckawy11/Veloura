@@ -1256,8 +1256,9 @@
 }
 
 .coastal-rsvp-toggle {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .coastal-rsvp-toggle button {
@@ -1266,7 +1267,7 @@
   flex: 1 1 0;
   min-width: 0;
   min-height: 54px;
-  padding: 14px 14px 14px 42px;
+  padding: 13px 10px 13px 34px;
   border: 1px solid rgba(41, 99, 143, 0.16);
   border-radius: 8px;
   background: rgba(255, 253, 247, 0.74);
@@ -1287,7 +1288,7 @@
 .coastal-rsvp-toggle button::before {
   content: '';
   position: absolute;
-  left: 16px;
+  left: 12px;
   top: 50%;
   width: 13px;
   height: 13px;
@@ -1301,7 +1302,7 @@
 .coastal-rsvp-toggle button::after {
   content: '';
   position: absolute;
-  left: 20px;
+  left: 16px;
   top: 50%;
   width: 5px;
   height: 5px;
@@ -1348,7 +1349,7 @@
 
 .coastal-rsvp-card .rsvp-plus-one-toggle button {
   color: rgba(20, 53, 83, 0.82);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.08em;
 }

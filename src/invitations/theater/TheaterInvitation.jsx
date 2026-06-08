@@ -441,6 +441,12 @@ function RsvpSection({
               subtitle="with pleasure"
             />
             <RsvpChoice
+              active={rsvpForm.attending === 'maybe'}
+              onClick={() => setRsvpForm({ ...rsvpForm, attending: 'maybe' })}
+              title="Maybe"
+              subtitle="not sure"
+            />
+            <RsvpChoice
               active={rsvpForm.attending === 'no'}
               onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
               title="Decline"

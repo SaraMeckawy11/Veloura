@@ -703,29 +703,22 @@ body:has(.theater-theme),
   left: 7.6%;
   top: 33%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 14%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3%;
   width: 84.8%;
 }
 
 .theater-rsvp-choice::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 6%;
-  width: 3.6%;
-  height: 70%;
-  transform: translateX(-50%);
-  background: url("../../assets/theater/rsvp/verticalSeparator_transparent.png") center / contain no-repeat;
+  content: none;
 }
 
 .theater-rsvp-choice button {
   display: grid;
-  grid-template-columns: 22% minmax(0, 1fr);
+  grid-template-columns: 20% minmax(0, 1fr);
   align-items: center;
-  gap: 9%;
+  gap: 7%;
   min-height: clamp(48px, 8.4vw, 68px);
-  padding: 0.6em 0.7em;
+  padding: 0.58em 0.48em;
   border: 1px solid rgba(116, 23, 15, 0.28);
   border-radius: 9px;
   background: rgba(255, 248, 230, 0.46);
@@ -769,14 +762,14 @@ body:has(.theater-theme),
 }
 
 .theater-rsvp-choice strong {
-  font-size: clamp(0.66rem, 1.92vw, 1.08rem);
+  font-size: clamp(0.54rem, 1.45vw, 0.9rem);
 }
 
 .theater-rsvp-choice small {
   display: block;
   grid-column: 2;
   color: rgba(37, 23, 17, 0.75);
-  font-size: clamp(0.46rem, 1.36vw, 0.8rem);
+  font-size: clamp(0.4rem, 1.05vw, 0.68rem);
   letter-spacing: 0.02em;
   text-transform: none;
 }
@@ -1109,7 +1102,7 @@ body:has(.theater-theme),
   }
 
   .theater-rsvp-choice {
-    gap: 13%;
+    gap: 3%;
     width: 88%;
     left: 6%;
   }

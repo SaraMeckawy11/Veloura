@@ -448,6 +448,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                 <div className="gazebo-attending-grid">
                   {[
                     { value: 'yes', label: 'Joyfully yes' },
+                    { value: 'maybe', label: 'Maybe' },
                     { value: 'no', label: 'With regrets' },
                   ].map(option => (
                     <label key={option.value} className={rsvpForm.attending === option.value ? 'active' : ''}>

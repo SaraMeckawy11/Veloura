@@ -1147,7 +1147,7 @@ textarea.kiosk-input {
 /* RSVP toggle buttons */
 .inv-radio-group {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-top: 12px;
 }
@@ -1158,9 +1158,9 @@ textarea.kiosk-input {
   justify-content: flex-start;
   min-height: 44px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  padding: 9px 12px 9px 38px;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  padding: 9px 10px 9px 34px;
   border: 1px solid hsla(208, 28%, 27%, 0.16);
   border-radius: 6px;
   background: hsla(38, 46%, 98%, 0.72);
@@ -1179,7 +1179,7 @@ textarea.kiosk-input {
 .inv-radio-btn::before {
   content: '';
   position: absolute;
-  left: 16px;
+  left: 13px;
   top: 50%;
   width: 13px;
   height: 13px;
@@ -1193,7 +1193,7 @@ textarea.kiosk-input {
 .inv-radio-btn::after {
   content: '';
   position: absolute;
-  left: 20px;
+  left: 17px;
   top: 50%;
   width: 5px;
   height: 5px;
@@ -1239,7 +1239,7 @@ textarea.kiosk-input {
 }
 
 .inv-rsvp-card-enhanced .rsvp-plus-one-toggle {
-  gap: 12px;
+  gap: 8px;
 }
 
 .inv-rsvp-card-enhanced .rsvp-plus-one-toggle button {

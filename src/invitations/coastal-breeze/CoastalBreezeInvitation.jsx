@@ -413,6 +413,15 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                       <button
                         type="button"
                         role="radio"
+                        aria-checked={rsvpForm.attending === 'maybe'}
+                        className={rsvpForm.attending === 'maybe' ? 'active' : ''}
+                        onClick={() => setRsvpForm({ ...rsvpForm, attending: 'maybe' })}
+                      >
+                        Maybe
+                      </button>
+                      <button
+                        type="button"
+                        role="radio"
                         aria-checked={rsvpForm.attending === 'no'}
                         className={rsvpForm.attending === 'no' ? 'active' : ''}
                         onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}

@@ -430,6 +430,16 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                         <button
                           type="button"
                           role="radio"
+                          aria-checked={rsvpForm.attending === 'maybe'}
+                          className={rsvpForm.attending === 'maybe' ? 'active' : ''}
+                          onClick={() => setRsvpForm({ ...rsvpForm, attending: 'maybe' })}
+                        >
+                          <span>Maybe</span>
+                          <small>Unsure</small>
+                        </button>
+                        <button
+                          type="button"
+                          role="radio"
                           aria-checked={rsvpForm.attending === 'no'}
                           className={rsvpForm.attending === 'no' ? 'active' : ''}
                           onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}

@@ -527,6 +527,9 @@ export default function Dashboard() {
   const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
   const galleryPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'gallery');
   const isPhotoUploading = Object.values(photoUploading).some(Boolean);
+  const rsvpSummary = rsvpData?.summary || {};
+  const maybeResponses = rsvpSummary.maybe ?? (rsvpData?.rsvps || []).filter(rsvp => rsvp.attending === 'maybe').length;
+  const totalAttendingGuests = rsvpSummary.totalAttending ?? rsvpSummary.totalGuests ?? 0;
 
   return (
     <div className="dash-page">
@@ -892,19 +895,27 @@ export default function Dashboard() {
         {/* Stats grid */}
         <div className="dash-stats">
           <div className="stat-card stat-yes">
-            <div className="stat-value">{rsvpData?.summary?.attending || 0}</div>
+            <div className="stat-value">{rsvpSummary.attending || 0}</div>
             <div className="stat-label">Attending</div>
           </div>
+          <div className="stat-card stat-maybe">
+            <div className="stat-value">{maybeResponses}</div>
+            <div className="stat-label">Maybe</div>
+          </div>
           <div className="stat-card stat-no">
-            <div className="stat-value">{rsvpData?.summary?.notAttending || 0}</div>
+            <div className="stat-value">{rsvpSummary.notAttending || 0}</div>
             <div className="stat-label">Not Attending</div>
           </div>
+          <div className="stat-card stat-guests">
+            <div className="stat-value">{totalAttendingGuests}</div>
+            <div className="stat-label">Total Attending</div>
+          </div>
           <div className="stat-card stat-plus-one">
-            <div className="stat-value">{rsvpData?.summary?.plusOnes || 0}</div>
+            <div className="stat-value">{rsvpSummary.plusOnes || 0}</div>
             <div className="stat-label">Plus-Ones</div>
           </div>
           <div className="stat-card stat-responses">
-            <div className="stat-value">{rsvpData?.summary?.totalResponses || 0}</div>
+            <div className="stat-value">{rsvpSummary.totalResponses || 0}</div>
             <div className="stat-label">Total Responses</div>
           </div>
         </div>

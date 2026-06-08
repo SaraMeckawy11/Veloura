@@ -2663,8 +2663,8 @@
 
 .fountain-rsvp-panel-choice > div {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
   margin-top: clamp(22px, 4.5vw, 38px);
 }
 
@@ -2674,7 +2674,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.08em;
-  min-height: 66px;
+  min-height: 62px;
+  padding: 8px 6px;
   border: 1px solid rgba(184, 145, 69, 0.52);
   border-radius: 4px;
   background: rgba(255, 253, 247, 0.5);
@@ -2696,13 +2697,13 @@
 }
 
 .fountain-rsvp-panel-choice button span {
-  font-size: clamp(0.74rem, 2.3vw, 1.06rem);
+  font-size: clamp(0.68rem, 1.9vw, 0.98rem);
   letter-spacing: 0.08em;
 }
 
 .fountain-rsvp-panel-choice button small {
-  font-size: clamp(0.62rem, 1.9vw, 0.88rem);
-  letter-spacing: 0.16em;
+  font-size: clamp(0.56rem, 1.55vw, 0.8rem);
+  letter-spacing: 0.12em;
 }
 
 .fountain-rsvp-panel-choice button.active {
@@ -3619,13 +3620,13 @@
 }
 
 .fountain-rsvp-panel-choice > div {
-  gap: clamp(18px, 3vw, 30px);
+  gap: clamp(8px, 2vw, 14px);
   margin-top: clamp(30px, 5vw, 46px);
 }
 
 .fountain-rsvp-panel-choice button {
   min-height: 54px;
-  padding: 9px 14px;
+  padding: 9px 8px;
 }
 
 .fountain-rsvp-panel-field input,
