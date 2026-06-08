@@ -25,9 +25,10 @@ export const PRICING_TIERS = [
       { invitation: 'Garden Pavilion', fields: ['Core details', 'Countdown', 'Map'] },
       { invitation: 'Boarding Pass', fields: ['Core details', 'Countdown', 'Map'] },
       { invitation: 'Coastal Breeze', fields: ['Core details', 'Countdown', 'Map'] },
-      { invitation: 'Fountain Reverie I', fields: ['Core details', 'Countdown', 'Map'] },
-      { invitation: 'Fountain Reverie II', fields: ['Core details', 'Countdown', 'Map'] },
-      { invitation: 'Theater', fields: ['Core details', 'Countdown', 'Map'] },
+      // Temporarily hidden designs:
+      // { invitation: 'Fountain Reverie I', fields: ['Core details', 'Countdown', 'Map'] },
+      // { invitation: 'Fountain Reverie II', fields: ['Core details', 'Countdown', 'Map'] },
+      // { invitation: 'Theater', fields: ['Core details', 'Countdown', 'Map'] },
     ],
     sections: {
       countdown: true,
@@ -63,9 +64,10 @@ export const PRICING_TIERS = [
       { invitation: 'Garden Pavilion', fields: ['Story', 'Guest policy', 'RSVP'] },
       { invitation: 'Boarding Pass', fields: ['Story route', 'Gallery', 'RSVP'] },
       { invitation: 'Coastal Breeze', fields: ['Envelope note', 'Story', 'RSVP'] },
-      { invitation: 'Fountain Reverie I', fields: ['Envelope note', 'Gallery', 'RSVP'] },
-      { invitation: 'Fountain Reverie II', fields: ['Story', 'Gallery', 'RSVP'] },
-      { invitation: 'Theater', fields: ['Memories', 'Details', 'RSVP'] },
+      // Temporarily hidden designs:
+      // { invitation: 'Fountain Reverie I', fields: ['Envelope note', 'Gallery', 'RSVP'] },
+      // { invitation: 'Fountain Reverie II', fields: ['Story', 'Gallery', 'RSVP'] },
+      // { invitation: 'Theater', fields: ['Memories', 'Details', 'RSVP'] },
     ],
     sections: {
       countdown: true,

@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import coastalSplashPreview from '../assets/coastal/thumbnail.png';
-import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
-import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
+// Temporarily hidden designs — Fountain Reverie I/II and Theater (see commented cards below).
+// import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
+// import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
 import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
-import theaterPreview from '../assets/theater/Thumbnail.png';
+// import theaterPreview from '../assets/theater/Thumbnail.png';
 import '../styles/Designs.css';
 import useReveal from '../hooks/useReveal';
 
@@ -49,46 +50,47 @@ const designs = [
     badgeClass: 'badge-launch',
     demoPath: '/demo/coastal-breeze',
   },
-  {
-    name: 'Fountain Reverie I',
-    category: 'launch',
-    description: 'A sunlit garden fountain design with ornate gold typography and an elegant door reveal.',
-    image: fountainHero1Preview,
-    overlay: 'linear-gradient(135deg, rgba(148,116,47,0.12), rgba(245,223,207,0.18))',
-    hidePreviewText: true,
-    badge: 'Available',
-    badgeClass: 'badge-launch',
-    demoPath: '/demo/fountain-reverie-v1',
-  },
-  {
-    name: 'Fountain Reverie II',
-    category: 'launch',
-    description: 'A brighter floral fountain scene framed by garden pillars, soft gold, and romantic script.',
-    image: fountainHero2Preview,
-    overlay: 'linear-gradient(135deg, rgba(91,72,28,0.12), rgba(135,145,108,0.14))',
-    hidePreviewText: true,
-    badge: 'Available',
-    badgeClass: 'badge-launch',
-    demoPath: '/demo/fountain-reverie-v2',
-  },
-  {
-    name: 'Theater',
-    previewName: (
-      <>
-        <span>Opening Night</span>
-        <span>Theater</span>
-      </>
-    ),
-    previewClassName: 'design-preview-text--theater',
-    category: 'launch',
-    description: 'A velvet-stage wedding with gilded marquee details and a cinematic curtain reveal.',
-    image: theaterPreview,
-    overlay: 'linear-gradient(135deg, rgba(45,7,16,0.12), rgba(201,164,90,0.12))',
-    hidePreviewText: true,
-    badge: 'Available',
-    badgeClass: 'badge-launch',
-    demoPath: '/demo/theater',
-  },
+  // Temporarily hidden — Fountain Reverie I, Fountain Reverie II, and Theater.
+  // {
+  //   name: 'Fountain Reverie I',
+  //   category: 'launch',
+  //   description: 'A sunlit garden fountain design with ornate gold typography and an elegant door reveal.',
+  //   image: fountainHero1Preview,
+  //   overlay: 'linear-gradient(135deg, rgba(148,116,47,0.12), rgba(245,223,207,0.18))',
+  //   hidePreviewText: true,
+  //   badge: 'Available',
+  //   badgeClass: 'badge-launch',
+  //   demoPath: '/demo/fountain-reverie-v1',
+  // },
+  // {
+  //   name: 'Fountain Reverie II',
+  //   category: 'launch',
+  //   description: 'A brighter floral fountain scene framed by garden pillars, soft gold, and romantic script.',
+  //   image: fountainHero2Preview,
+  //   overlay: 'linear-gradient(135deg, rgba(91,72,28,0.12), rgba(135,145,108,0.14))',
+  //   hidePreviewText: true,
+  //   badge: 'Available',
+  //   badgeClass: 'badge-launch',
+  //   demoPath: '/demo/fountain-reverie-v2',
+  // },
+  // {
+  //   name: 'Theater',
+  //   previewName: (
+  //     <>
+  //       <span>Opening Night</span>
+  //       <span>Theater</span>
+  //     </>
+  //   ),
+  //   previewClassName: 'design-preview-text--theater',
+  //   category: 'launch',
+  //   description: 'A velvet-stage wedding with gilded marquee details and a cinematic curtain reveal.',
+  //   image: theaterPreview,
+  //   overlay: 'linear-gradient(135deg, rgba(45,7,16,0.12), rgba(201,164,90,0.12))',
+  //   hidePreviewText: true,
+  //   badge: 'Available',
+  //   badgeClass: 'badge-launch',
+  //   demoPath: '/demo/theater',
+  // },
   // {
   //   name: 'Velvet Rose',
   //   category: 'new',

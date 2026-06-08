@@ -67,6 +67,42 @@ button { cursor: pointer; border: none; font-family: inherit; }
   visibility: hidden;
 }
 
+/* ========================================
+   INVITATION COPY PROTECTION
+   Guests view the invitation but can't select, copy, or drag its
+   text and imagery out. The wrapper itself generates no box
+   (display: contents) so it never affects any template's layout.
+   RSVP form fields re-enable text selection so guests can still type.
+======================================== */
+.invitation-guard {
+  display: contents;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.invitation-guard img,
+.invitation-guard video,
+.invitation-guard svg,
+.invitation-guard picture {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+.invitation-guard input,
+.invitation-guard textarea,
+.invitation-guard select,
+.invitation-guard [contenteditable=""],
+.invitation-guard [contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

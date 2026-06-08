@@ -77,13 +77,30 @@ export default function Invitation({ demo = false, templateSlug: demoSlug }) {
 
   const TemplateComponent = entry.component;
 
+  // Stop guests from selecting, copying, cutting, right-clicking, or dragging the
+  // invitation's text and imagery — they should view it, not lift its components.
+  // RSVP form fields are exempted so guests can still type and edit their replies.
+  const isFormField = (target) =>
+    Boolean(target?.closest?.('input, textarea, select, [contenteditable=""], [contenteditable="true"]'));
+  const blockUnlessFormField = (event) => {
+    if (!isFormField(event.target)) event.preventDefault();
+  };
+
   return (
-    <Suspense fallback={
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#faf8f4' }}>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif" }}>Loading...</p>
-      </div>
-    }>
-      <TemplateComponent order={order} demo={demo} publicSlug={publicSlug} />
-    </Suspense>
+    <div
+      className="invitation-guard"
+      onContextMenu={blockUnlessFormField}
+      onCopy={blockUnlessFormField}
+      onCut={blockUnlessFormField}
+      onDragStart={blockUnlessFormField}
+    >
+      <Suspense fallback={
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#faf8f4' }}>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif" }}>Loading...</p>
+        </div>
+      }>
+        <TemplateComponent order={order} demo={demo} publicSlug={publicSlug} />
+      </Suspense>
+    </div>
   );
 }
