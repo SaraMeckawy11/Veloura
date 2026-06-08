@@ -417,7 +417,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                 : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
               return (
                 <div className="inv-map-container">
-                  <p className="data-label">LOCATION MAP</p>
                   <div className="airplane-window inv-map-window">
                     <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
                     <a
