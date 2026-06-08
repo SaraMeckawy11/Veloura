@@ -770,12 +770,12 @@
   position: relative;
   padding: clamp(30px, 5vw, 52px);
   text-align: center;
-  border-radius: 4px;
+  border-radius: 8px;
   background:
-    linear-gradient(180deg, rgba(255, 253, 247, 0.95), rgba(248, 234, 212, 0.85)),
-    radial-gradient(circle at 100% 0%, rgba(130, 192, 191, 0.18), transparent 16rem);
-  border: 1px solid rgba(176, 125, 77, 0.24);
-  box-shadow: 0 28px 76px rgba(20, 53, 83, 0.12);
+    radial-gradient(circle at 8% 10%, rgba(130, 192, 191, 0.2), transparent 10rem),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.98), rgba(248, 234, 212, 0.88));
+  border: 1px solid rgba(41, 99, 143, 0.16);
+  box-shadow: 0 30px 80px rgba(20, 53, 83, 0.13);
   overflow: hidden;
 }
 
@@ -783,8 +783,8 @@
   content: '';
   position: absolute;
   inset: 12px;
-  border: 1px solid rgba(176, 125, 77, 0.18);
-  border-radius: 2px;
+  border: 1px solid rgba(176, 125, 77, 0.2);
+  border-radius: 5px;
   pointer-events: none;
 }
 
@@ -805,10 +805,19 @@
 
 .coastal-event-card dl {
   display: grid;
-  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
   margin: 0;
-  justify-items: center;
+  justify-items: stretch;
   text-align: center;
+}
+
+.coastal-event-card dl > div {
+  min-width: 0;
+  padding: 15px 12px;
+  border: 1px solid rgba(41, 99, 143, 0.12);
+  border-radius: 7px;
+  background: rgba(255, 253, 247, 0.64);
 }
 
 .coastal-event-card dt {
@@ -834,9 +843,11 @@
   height: 260px;
   margin-top: 30px;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 8px;
   border: 1px solid rgba(41, 99, 143, 0.2);
-  box-shadow: 0 14px 32px rgba(20, 53, 83, 0.1);
+  box-shadow:
+    0 16px 36px rgba(20, 53, 83, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45);
 }
 
 .coastal-map iframe,
@@ -1349,7 +1360,7 @@
   margin-top: 32px;
   padding: 18px 24px;
   border: 1px solid rgba(255, 253, 247, 0.26);
-  border-radius: 8px;
+  border-radius: 7px;
   background:
     radial-gradient(ellipse at 20% 0%, rgba(255, 253, 247, 0.2), transparent 58%),
     linear-gradient(135deg, #10334f 0%, var(--coast-denim) 64%, #4f8798 100%);
@@ -1362,8 +1373,8 @@
   cursor: pointer;
   overflow: hidden;
   box-shadow:
-    0 20px 44px rgba(20, 53, 83, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+    0 22px 48px rgba(20, 53, 83, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
 }
 
@@ -1924,6 +1935,10 @@
 
   .coastal-story-item:nth-child(even) figure {
     order: 0;
+  }
+
+  .coastal-event-card dl {
+    grid-template-columns: 1fr;
   }
 
   .coastal-rsvp-row {

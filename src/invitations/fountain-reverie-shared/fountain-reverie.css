@@ -2465,7 +2465,7 @@
     radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.9), transparent 34%),
     linear-gradient(180deg, rgba(255, 253, 247, 0.99), rgba(249, 241, 226, 0.98));
   box-shadow:
-    0 26px 60px rgba(87, 70, 32, 0.14),
+    0 30px 70px rgba(87, 70, 32, 0.16),
     0 0 0 8px rgba(241, 231, 210, 0.88),
     0 0 0 9px rgba(184, 145, 69, 0.42),
     inset 0 0 0 7px rgba(255, 253, 247, 0.86),
@@ -2721,11 +2721,11 @@
 .fountain-rsvp-panel-submit {
   position: relative;
   width: min(420px, 84%);
-  min-height: 44px;
+  min-height: 48px;
   margin: 2px auto 0;
   border: 1px solid rgba(79, 92, 57, 0.9);
   border-radius: 4px;
-  background: linear-gradient(180deg, #939975, #777e5d);
+  background: linear-gradient(180deg, #9aa17a, #6f7655);
   box-shadow: inset 0 0 0 4px rgba(255, 253, 247, 0.48), inset 0 0 0 5px rgba(79, 92, 57, 0.7);
   color: #fffaf0;
   font-family: var(--font-display);
@@ -2735,6 +2735,7 @@
   text-indent: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .fountain-rsvp-panel-submit::before {
@@ -2747,6 +2748,11 @@
 .fountain-rsvp-panel-submit:hover,
 .fountain-rsvp-panel-submit:focus-visible {
   background: linear-gradient(180deg, #858d6b, #69714f);
+  box-shadow:
+    0 12px 28px rgba(87, 70, 32, 0.18),
+    inset 0 0 0 4px rgba(255, 253, 247, 0.52),
+    inset 0 0 0 5px rgba(79, 92, 57, 0.72);
+  transform: translateY(-1px);
   outline: 1px solid rgba(255, 250, 240, 0.7);
   outline-offset: -4px;
 }

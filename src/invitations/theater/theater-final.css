@@ -851,6 +851,37 @@ body:has(.theater-theme),
   background: rgba(255, 248, 230, 0.85);
 }
 
+.theater-plus-one {
+  position: absolute;
+  left: 7.5%;
+  top: 50%;
+  width: 85%;
+  color: var(--theater-ink);
+}
+
+.theater-plus-one .rsvp-plus-one-label {
+  font-family: var(--font-marquee);
+  font-size: clamp(0.5rem, 1.35vw, 0.78rem);
+  letter-spacing: 0.08em;
+}
+
+.theater-plus-one .rsvp-plus-one-toggle {
+  gap: 6px;
+  padding: 3px;
+  border-color: rgba(116, 23, 15, 0.22);
+  background: rgba(255, 248, 230, 0.42);
+}
+
+.theater-plus-one .rsvp-plus-one-toggle button {
+  min-height: clamp(30px, 5.4vw, 42px);
+  padding: 0.42em 0.6em;
+  font-size: clamp(0.5rem, 1.35vw, 0.74rem);
+}
+
+.theater-rsvp-form:has(.theater-plus-one) .theater-message-field {
+  top: 64%;
+}
+
 .theater-rsvp-error {
   position: absolute;
   left: 8%;
@@ -876,7 +907,9 @@ body:has(.theater-theme),
 
 .theater-rsvp-submit:hover,
 .theater-rsvp-submit:focus-visible {
-  outline: 2px solid rgba(116, 23, 15, 0.4);
+  border-radius: 12px;
+  background: rgba(116, 23, 15, 0.08);
+  outline: 2px solid rgba(116, 23, 15, 0.45);
   outline-offset: 2px;
 }
 

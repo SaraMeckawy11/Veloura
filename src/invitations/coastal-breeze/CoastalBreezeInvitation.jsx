@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
-import GuestNote from '../GuestNote';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -95,7 +94,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const askPlusOne = Boolean(wd.askPlusOne);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -373,7 +371,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
               <span>{fullDateStr || 'Date to be announced'}</span>
               <strong>{venue || 'By the sea'}</strong>
             </div>
-            <GuestNote lines={guestPolicyLines} className="coastal-details-policy" />
           </div>
 
           <AnimatePresence mode="wait">

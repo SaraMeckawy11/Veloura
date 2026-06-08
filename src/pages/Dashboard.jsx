@@ -143,10 +143,6 @@ export default function Dashboard() {
       venue: wd.venue || '',
       venueMapUrl: wd.venueMapUrl || '',
       coupleMessage: order.coupleMessage || '',
-      childrenPolicy: wd.childrenPolicy || 'welcome',
-      plusOnePolicy: wd.plusOnePolicy || 'named-only',
-      childrenPolicyText: wd.childrenPolicyText || '',
-      plusOnePolicyText: wd.plusOnePolicyText || '',
       askPlusOne: Boolean(wd.askPlusOne),
       invitationFont: normalizeInvitationFont(invitationFont || DEFAULT_INVITATION_FONT),
     });
@@ -309,15 +305,6 @@ export default function Dashboard() {
     if (getTierDisabledFields(order?.pricingTier).includes(key)) return;
     setEditDisabledFields(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
   };
-  const guestGuidanceOff = isFieldDisabled('childrenNote') && isFieldDisabled('plusOneNote');
-  const toggleEditGuestGuidance = () => {
-    setEditDisabledFields(prev => {
-      const bothOff = prev.includes('childrenNote') && prev.includes('plusOneNote');
-      return bothOff
-        ? prev.filter(k => k !== 'childrenNote' && k !== 'plusOneNote')
-        : [...new Set([...prev, 'childrenNote', 'plusOneNote'])];
-    });
-  };
 
   const handleEditPhotoUpload = async (e, category) => {
     const files = e.target.files;
@@ -414,10 +401,6 @@ export default function Dashboard() {
         timeFormat: editForm.timeFormat || '12h',
         venue: editForm.venue,
         venueMapUrl: editForm.venueMapUrl || undefined,
-        childrenPolicy: editForm.childrenPolicy || 'welcome',
-        plusOnePolicy: editForm.plusOnePolicy || 'named-only',
-        childrenPolicyText: editForm.childrenPolicyText?.trim() || undefined,
-        plusOnePolicyText: editForm.plusOnePolicyText?.trim() || undefined,
         askPlusOne: Boolean(editForm.askPlusOne),
       };
       // Include name fields if they were editable (grace period)
@@ -700,81 +683,6 @@ export default function Dashboard() {
                     <input type="url" value={editForm.venueMapUrl} onChange={e => handleEditInput('venueMapUrl', e.target.value)} />
                   )}
                 </div>
-                <div className={`form-field full-width ${guestGuidanceOff ? 'field-disabled' : ''}`}>
-                  <div className="dash-field-header">
-                    <label>Guest Guidance</label>
-                    <button type="button" className="dash-field-toggle" onClick={toggleEditGuestGuidance}>
-                      {guestGuidanceOff ? 'Enable' : 'Disable'}
-                    </button>
-                  </div>
-                  {guestGuidanceOff ? (
-                    <p className="form-hint" style={{ margin: '0 0 4px' }}>Hidden — guests won’t see any guest guidance notes.</p>
-                  ) : (
-                  <>
-                  <p className="form-hint" style={{ margin: '0 0 4px' }}>Turn each note on or off and edit the wording shown on your invitation.</p>
-                  <div className="dash-guest-policy-grid">
-                    <div className={`dash-guest-policy-card ${isFieldDisabled('childrenNote') ? 'dash-guest-policy-card--off' : ''}`}>
-                      <div className="dash-guest-policy-card-head">
-                        <span className="dash-guest-policy-label">Children</span>
-                        <button type="button" className="dash-field-toggle" onClick={() => toggleEditField('childrenNote')}>
-                          {isFieldDisabled('childrenNote') ? 'Enable' : 'Disable'}
-                        </button>
-                      </div>
-                      {isFieldDisabled('childrenNote') ? (
-                        <p className="form-hint" style={{ margin: 0 }}>Hidden — guests won’t see a note about children.</p>
-                      ) : (
-                        <textarea
-                          className="dash-guidance-textarea"
-                          rows={3}
-                          value={editForm.childrenPolicyText}
-                          placeholder="e.g. Little ones are warmly welcome to share in the celebration."
-                          onChange={e => handleEditInput('childrenPolicyText', e.target.value)}
-                        />
-                      )}
-                    </div>
-                    <div className={`dash-guest-policy-card ${isFieldDisabled('plusOneNote') ? 'dash-guest-policy-card--off' : ''}`}>
-                      <div className="dash-guest-policy-card-head">
-                        <span className="dash-guest-policy-label">Bringing a guest</span>
-                        <button type="button" className="dash-field-toggle" onClick={() => toggleEditField('plusOneNote')}>
-                          {isFieldDisabled('plusOneNote') ? 'Enable' : 'Disable'}
-                        </button>
-                      </div>
-                      {isFieldDisabled('plusOneNote') ? (
-                        <p className="form-hint" style={{ margin: 0 }}>Hidden — guests won’t see a note about bringing a guest.</p>
-                      ) : (
-                        <textarea
-                          className="dash-guidance-textarea"
-                          rows={3}
-                          value={editForm.plusOnePolicyText}
-                          placeholder="e.g. You are warmly welcome to bring a guest with you."
-                          onChange={e => handleEditInput('plusOnePolicyText', e.target.value)}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  </>
-                  )}
-                </div>
-                <div className="form-field full-width">
-                  <label>Invitation font</label>
-                  <button
-                    type="button"
-                    className="font-select-card dash-font-select-card"
-                    onClick={() => setFontPickerOpen(true)}
-                  >
-                    <span className="font-select-preview" style={{ fontFamily: selectedFontOption.display }}>
-                      Aa
-                    </span>
-                    <span className="font-select-copy">
-                      <span className="font-select-label">Invitation font</span>
-                      <strong>{selectedFontOption.label}</strong>
-                    </span>
-                    <span className="font-select-action">
-                      Change
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
-                    </span>
-                  </button>
-                </div>
                 {coupleMessageIncluded && (
                 <div className={`form-field full-width ${isFieldDisabled('coupleMessage') ? 'field-disabled' : ''}`}>
                   <div className="dash-field-header">
@@ -805,15 +713,42 @@ export default function Dashboard() {
                       : 'Guests can RSVP directly from your invitation.'}
                   </p>
                   {!isFieldDisabled('rsvp') && (
-                    <div className="dash-guest-policy-card-head" style={{ marginTop: 12 }}>
+                    <div className="dash-plus-one-option">
                       <span className="dash-guest-policy-label">Ask guests if a plus-one is coming</span>
-                      <button type="button" className="dash-field-toggle" onClick={() => handleEditInput('askPlusOne', !editForm.askPlusOne)}>
+                      <button
+                        type="button"
+                        className={`dash-plus-one-toggle ${editForm.askPlusOne ? 'is-on' : 'is-off'}`}
+                        role="switch"
+                        aria-checked={Boolean(editForm.askPlusOne)}
+                        onClick={() => handleEditInput('askPlusOne', !editForm.askPlusOne)}
+                      >
+                        <span className="dash-plus-one-track"><span className="dash-plus-one-thumb" /></span>
                         {editForm.askPlusOne ? 'On' : 'Off'}
                       </button>
                     </div>
                   )}
                 </div>
                 )}
+                <div className="form-field full-width">
+                  <label>Invitation font</label>
+                  <button
+                    type="button"
+                    className="font-select-card dash-font-select-card"
+                    onClick={() => setFontPickerOpen(true)}
+                  >
+                    <span className="font-select-preview" style={{ fontFamily: selectedFontOption.display }}>
+                      Aa
+                    </span>
+                    <span className="font-select-copy">
+                      <span className="font-select-label">Invitation font</span>
+                      <strong>{selectedFontOption.label}</strong>
+                    </span>
+                    <span className="font-select-action">
+                      Change
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
+                    </span>
+                  </button>
+                </div>
               </div>
 
               {storyIncluded && (

@@ -5,8 +5,7 @@ import FountainSplash from './FountainSplash';
 import FountainEnvelopeSplash from './FountainEnvelopeSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
-import GuestNote from '../GuestNote';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -131,7 +130,6 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const askPlusOne = Boolean(wd.askPlusOne);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -392,7 +390,6 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                 <h2>RSVP</h2>
                 <strong>Kindly Respond</strong>
                 <p>We cannot wait to celebrate with you.<br />Please let us know by replying below.</p>
-                <GuestNote lines={guestPolicyLines} className="fountain-details-policy" />
               </div>
               <AnimatePresence mode="wait">
                 {!rsvpSubmitted ? (

@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
-import GuestNote from '../GuestNote';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -148,7 +147,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
-  const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
   const askPlusOne = Boolean(wd.askPlusOne);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (n) => n.toString().padStart(2, '0');
@@ -419,7 +417,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                 : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
               return (
                 <div className="inv-map-container">
-                  <p className="data-label">LOCATION MAP</p>
                   <div className="airplane-window inv-map-window">
                     <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
                     <a
@@ -465,8 +462,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           transition={{ duration: 0.6 }}
         >
           <img src={confirmYourSeatTitle} alt="Confirm Your Seat — Reserve your place on this flight of love" className="bp-rsvp-title-img" />
-
-          <GuestNote lines={guestPolicyLines} className="inv-details-policy" />
 
           <AnimatePresence mode="wait">
             {!rsvpSubmitted ? (

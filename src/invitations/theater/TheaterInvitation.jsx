@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
-import { GUEST_NOTE_ICONS } from '../GuestNote';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import useHeroScrollReset from '../useHeroScrollReset';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
@@ -90,7 +89,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
       ? order.coupleMessage
       : ((demo ? DEFAULT_COUPLE_MESSAGE : weddingDetails.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
-  const guestPolicyLines = getGuestPolicyLines(weddingDetails, disabledFields);
   const askPlusOne = Boolean(weddingDetails.askPlusOne);
 
   const storyAllowed = invitationTierAllows(order, 'story');
@@ -220,7 +218,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
             rsvpSubmitted={rsvpSubmitted}
             rsvpError={rsvpError}
             handleRsvp={handleRsvp}
-            guestPolicyLines={guestPolicyLines}
             askPlusOne={askPlusOne}
           />
         )}
@@ -239,25 +236,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
         </footer>
       </main>
     </div>
-  );
-}
-
-function TheaterGuestNoteSection({ lines }) {
-  if (!lines?.length) return null;
-  return (
-    <section className="theater-guest-note" aria-label="For our cherished guests">
-      <span className="theater-guest-note-eyebrow">For our cherished guests</span>
-      <ul className="theater-guest-note-list">
-        {lines.map((line, index) => (
-          <li key={line}>
-            <span className="theater-guest-note-icon" aria-hidden="true">
-              {GUEST_NOTE_ICONS[index] || GUEST_NOTE_ICONS[GUEST_NOTE_ICONS.length - 1]}
-            </span>
-            <span>{line}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }
 
@@ -438,15 +416,11 @@ function RsvpSection({
   rsvpSubmitted,
   rsvpError,
   handleRsvp,
-  guestPolicyLines,
   askPlusOne,
 }) {
   return (
     <section className="theater-rsvp" aria-labelledby="theater-rsvp-title">
       <h2 id="theater-rsvp-title" className="visually-hidden">RSVP</h2>
-
-      <TheaterGuestNoteSection lines={guestPolicyLines} />
-
       {!rsvpSubmitted ? (
         <form className="theater-rsvp-form" onSubmit={handleRsvp}>
           <label className="theater-name-field">
