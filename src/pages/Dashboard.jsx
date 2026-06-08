@@ -530,9 +530,9 @@ export default function Dashboard() {
   const rsvpSummary = rsvpData?.summary || {};
   const maybeResponses = rsvpSummary.maybe ?? (rsvpData?.rsvps || []).filter(rsvp => rsvp.attending === 'maybe').length;
   const totalAttendingGuests = rsvpSummary.totalAttending ?? rsvpSummary.totalGuests ?? 0;
+  const getResponseGuestCount = rsvp => (rsvp?.plusOne ? 2 : 1);
   const responseTotalGuests = (rsvpData?.rsvps || [])
-    .filter(rsvp => rsvp.attending === 'yes')
-    .reduce((sum, rsvp) => sum + (rsvp.plusOne ? 2 : 1), 0);
+    .reduce((sum, rsvp) => sum + getResponseGuestCount(rsvp), 0);
 
   return (
     <div className="dash-page">
@@ -982,7 +982,7 @@ export default function Dashboard() {
                   <tr>
                     <th>Guest Name</th>
                     <th>Status</th>
-                    <th>Plus-One</th>
+                    <th>Guests</th>
                     <th>Date</th>
                   </tr>
                 </thead>
@@ -998,7 +998,7 @@ export default function Dashboard() {
                           {r.attending === 'yes' ? 'Attending' : r.attending === 'no' ? 'Not Attending' : 'Maybe'}
                         </span>
                       </td>
-                      <td className="rsvp-plus-one-cell">{r.attending === 'yes' && r.plusOne ? 'Yes' : '—'}</td>
+                      <td>{getResponseGuestCount(r)}</td>
                       <td className="rsvp-date">{new Date(r.respondedAt).toLocaleDateString()}</td>
                     </tr>
                   ))}

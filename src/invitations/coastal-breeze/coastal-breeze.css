@@ -1267,7 +1267,7 @@
   flex: 1 1 0;
   min-width: 0;
   min-height: 54px;
-  padding: 13px 10px 13px 34px;
+  padding: 13px 10px;
   border: 1px solid rgba(41, 99, 143, 0.16);
   border-radius: 8px;
   background: rgba(255, 253, 247, 0.74);
@@ -1278,7 +1278,7 @@
   letter-spacing: 0.08em;
   line-height: 1.2;
   text-transform: uppercase;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
   cursor: pointer;
   overflow: hidden;
@@ -1287,7 +1287,7 @@
 }
 
 .coastal-rsvp-toggle button::before {
-  content: '';
+  content: none;
   position: absolute;
   left: 12px;
   top: 50%;
@@ -1301,7 +1301,7 @@
 }
 
 .coastal-rsvp-toggle button::after {
-  content: '';
+  content: none;
   position: absolute;
   left: 16px;
   top: 50%;
@@ -1966,7 +1966,7 @@
 
   .coastal-rsvp-toggle button {
     min-height: 50px;
-    padding: 12px 8px 12px 30px;
+    padding: 12px 8px;
     font-size: 0.64rem;
     letter-spacing: 0.08em;
   }

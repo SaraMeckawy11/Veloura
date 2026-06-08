@@ -713,10 +713,9 @@ body:has(.theater-theme),
 }
 
 .theater-rsvp-choice button {
-  display: grid;
-  grid-template-columns: 20% minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 7%;
+  justify-content: center;
   min-height: clamp(48px, 8.4vw, 68px);
   padding: 0.58em 0.48em;
   border: 1px solid rgba(116, 23, 15, 0.28);
@@ -726,7 +725,7 @@ body:has(.theater-theme),
   font-family: var(--font-marquee);
   letter-spacing: 0.08em;
   line-height: 1.08;
-  text-align: left;
+  text-align: center;
   text-transform: uppercase;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(83, 35, 18, 0.06);
@@ -734,16 +733,11 @@ body:has(.theater-theme),
 }
 
 .theater-rsvp-choice button > span {
-  grid-row: 1;
-  width: 100%;
-  aspect-ratio: 1;
-  background: url("../../assets/theater/rsvp/circle_transparent.png") center / contain no-repeat;
+  display: none;
 }
 
 .theater-rsvp-choice button.active > span {
-  background:
-    radial-gradient(circle, var(--theater-red) 0 43%, transparent 45%),
-    url("../../assets/theater/rsvp/circle_transparent.png") center / contain no-repeat;
+  display: none;
 }
 
 .theater-rsvp-choice button:hover,
