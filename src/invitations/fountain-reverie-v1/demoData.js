@@ -22,6 +22,7 @@ export const FOUNTAIN_REVERIE_V1_DEMO_ORDER = {
     message: 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.',
     plusOnePolicy: 'named-only',
     plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,
+    askPlusOne: true,
   },
   storyMilestones: [
     {

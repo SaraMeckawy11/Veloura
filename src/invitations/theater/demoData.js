@@ -22,6 +22,7 @@ export const THEATER_DEMO_ORDER = {
     message: 'Black tie  •  Dinner & dancing to follow',
     plusOnePolicy: 'named-only',
     plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,
+    askPlusOne: true,
     flightNo: '12092026',
   },
   storyMilestones: [

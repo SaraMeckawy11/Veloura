@@ -7,6 +7,7 @@ import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
 import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
 import GuestNote from '../GuestNote';
+import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -105,7 +106,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
+  const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
@@ -131,6 +132,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
+  const askPlusOne = Boolean(wd.askPlusOne);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
   const useEnvelopeSplash = variant === 'v1';
@@ -358,7 +360,6 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                 </div>
               )}
             </dl>
-            <GuestNote lines={guestPolicyLines} className="fountain-details-policy" />
             {embedSrc && (
               <div className="fountain-map">
                 <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
@@ -391,6 +392,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                 <h2>RSVP</h2>
                 <strong>Kindly Respond</strong>
                 <p>We cannot wait to celebrate with you.<br />Please let us know by replying below.</p>
+                <GuestNote lines={guestPolicyLines} className="fountain-details-policy" />
               </div>
               <AnimatePresence mode="wait">
                 {!rsvpSubmitted ? (
@@ -440,6 +442,14 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                         </button>
                       </div>
                     </fieldset>
+                    {askPlusOne && (
+                      <div className="fountain-rsvp-panel-field">
+                        <RsvpPlusOneField
+                          value={rsvpForm.plusOne}
+                          onChange={value => setRsvpForm({ ...rsvpForm, plusOne: value })}
+                        />
+                      </div>
+                    )}
                     <label className="fountain-rsvp-panel-field" htmlFor="fountain-rsvp-message">
                       <span>Optional message</span>
                       <textarea

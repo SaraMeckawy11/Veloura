@@ -161,10 +161,16 @@
 /* Stats */
 .dash-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 32px;
   width: 100%;
+}
+
+@media (max-width: 560px) {
+  .dash-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .stat-card {
@@ -186,6 +192,7 @@
 }
 .stat-yes .stat-value { color: var(--sage); }
 .stat-no .stat-value { color: var(--rose); }
+.stat-plus-one .stat-value { color: var(--gold); }
 .stat-responses .stat-value { color: var(--text-secondary); }
 .stat-guests .stat-value { color: var(--gold); }
 

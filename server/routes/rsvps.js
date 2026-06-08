@@ -64,15 +64,17 @@ router.get('/dashboard/:editToken', async (req, res) => {
 
     const rsvps = await Rsvp.find({ order: order._id }).sort({ respondedAt: -1 });
 
-    const attending = rsvps.filter(r => r.attending === 'yes').length;
+    const attendingResponses = rsvps.filter(r => r.attending === 'yes');
+    const attending = attendingResponses.length;
     const notAttending = rsvps.filter(r => r.attending === 'no').length;
+    // Plus-ones only count for guests who are actually attending.
+    const plusOnes = attendingResponses.filter(r => r.plusOne).length;
     const summary = {
       attending,
       notAttending,
+      plusOnes,
       totalResponses: rsvps.length,
-      totalGuests: rsvps
-        .filter(r => r.attending === 'yes')
-        .reduce((sum, r) => sum + r.guestCount, 0),
+      totalGuests: attendingResponses.reduce((sum, r) => sum + (r.guestCount || 1) + (r.plusOne ? 1 : 0), 0),
     };
 
     res.json({ summary, rsvps });

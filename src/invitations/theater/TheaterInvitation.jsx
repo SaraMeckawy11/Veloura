@@ -6,6 +6,7 @@ import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import { GUEST_NOTE_ICONS } from '../GuestNote';
+import RsvpPlusOneField from '../RsvpPlusOneField';
 import useHeroScrollReset from '../useHeroScrollReset';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
@@ -49,7 +50,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
+  const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
@@ -90,6 +91,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
       : ((demo ? DEFAULT_COUPLE_MESSAGE : weddingDetails.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const guestPolicyLines = getGuestPolicyLines(weddingDetails, disabledFields);
+  const askPlusOne = Boolean(weddingDetails.askPlusOne);
 
   const storyAllowed = invitationTierAllows(order, 'story');
   const galleryAllowed = invitationTierAllows(order, 'gallery');
@@ -209,8 +211,6 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           mapHref={openMapHref}
         />
 
-        <TheaterGuestNoteSection lines={guestPolicyLines} />
-
         {coupleMessage && <TheaterMessageSection message={coupleMessage} />}
 
         {fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp') && (
@@ -220,6 +220,8 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
             rsvpSubmitted={rsvpSubmitted}
             rsvpError={rsvpError}
             handleRsvp={handleRsvp}
+            guestPolicyLines={guestPolicyLines}
+            askPlusOne={askPlusOne}
           />
         )}
 
@@ -436,10 +438,14 @@ function RsvpSection({
   rsvpSubmitted,
   rsvpError,
   handleRsvp,
+  guestPolicyLines,
+  askPlusOne,
 }) {
   return (
     <section className="theater-rsvp" aria-labelledby="theater-rsvp-title">
       <h2 id="theater-rsvp-title" className="visually-hidden">RSVP</h2>
+
+      <TheaterGuestNoteSection lines={guestPolicyLines} />
 
       {!rsvpSubmitted ? (
         <form className="theater-rsvp-form" onSubmit={handleRsvp}>
@@ -467,6 +473,14 @@ function RsvpSection({
               subtitle="with regret"
             />
           </div>
+
+          {askPlusOne && (
+            <RsvpPlusOneField
+              className="theater-plus-one"
+              value={rsvpForm.plusOne}
+              onChange={value => setRsvpForm({ ...rsvpForm, plusOne: value })}
+            />
+          )}
 
           <label className="theater-message-field">
             <span>Message for the couple</span>

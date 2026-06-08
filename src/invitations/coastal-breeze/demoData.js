@@ -21,6 +21,7 @@ export const COASTAL_BREEZE_DEMO_ORDER = {
     message: 'With the sea as our witness, we begin forever.',
     plusOnePolicy: 'named-only',
     plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,
+    askPlusOne: true,
     flightNo: 'TIDE-2026',
   },
   storyMilestones: [

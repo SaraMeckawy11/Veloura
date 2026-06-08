@@ -45,10 +45,11 @@ const RESP_PLUS_FONT = "italic 500 21px 'Cormorant Garamond', Georgia, serif";
 const RESP_STATUS_FONT = "italic 600 26px 'Cormorant Garamond', Georgia, serif";
 const RESP_CELL_FONT = "500 25px 'Cormorant Garamond', Georgia, serif";
 const RESP_COLUMNS = [
-  { key: 'name', label: 'Guest', width: 340, align: 'left' },
-  { key: 'status', label: 'Response', width: 200, align: 'left' },
-  { key: 'guests', label: 'Guests', width: 110, align: 'center' },
-  { key: 'date', label: 'Date', width: 161, align: 'left' },
+  { key: 'name', label: 'Guest', width: 300, align: 'left' },
+  { key: 'status', label: 'Response', width: 180, align: 'left' },
+  { key: 'plusOne', label: 'Plus-One', width: 120, align: 'center' },
+  { key: 'guests', label: 'Guests', width: 90, align: 'center' },
+  { key: 'date', label: 'Date', width: 121, align: 'left' },
 ];
 const RESP_HEADER_HEIGHT = 60;
 const RESP_ROW_PAD = 22;
@@ -519,6 +520,10 @@ function drawResponseRow(page, palette, row, zebra) {
       ctx.fillStyle = RESP_STATUS_COLORS[response.attending] || palette.accent;
       ctx.font = RESP_STATUS_FONT;
       ctx.fillText(formatResponseStatus(response.attending), tx, baseline);
+    } else if (col.key === 'plusOne') {
+      ctx.fillStyle = palette.ink;
+      ctx.font = RESP_CELL_FONT;
+      ctx.fillText(response.attending === 'yes' && response.plusOne ? 'Yes' : '—', tx, baseline);
     } else if (col.key === 'guests') {
       ctx.fillStyle = palette.ink;
       ctx.font = RESP_CELL_FONT;

@@ -23,6 +23,7 @@ export const GAZEBO_GARDEN_DEMO_ORDER = {
     message: 'A garden promise sealed in soft light.',
     plusOnePolicy: 'named-only',
     plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,
+    askPlusOne: true,
     flightNo: 'GAZEBO-2026',
   },
   storyMilestones: [

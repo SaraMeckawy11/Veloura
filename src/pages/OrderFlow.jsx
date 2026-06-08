@@ -280,6 +280,7 @@ export default function OrderFlow() {
     plusOnePolicy: 'named-only',
     childrenPolicyText: GUEST_POLICY_OPTIONS.children[0].text,
     plusOnePolicyText: GUEST_POLICY_OPTIONS.plusOne[1].text,
+    askPlusOne: false,
     invitationFont: DEFAULT_INVITATION_FONT,
     language: 'en',
     secondLanguage: '',
@@ -674,6 +675,7 @@ export default function OrderFlow() {
       plusOnePolicy: form.plusOnePolicy,
       childrenPolicyText: form.childrenPolicyText?.trim(),
       plusOnePolicyText: form.plusOnePolicyText?.trim(),
+      askPlusOne: form.askPlusOne,
       language: form.language,
       secondLanguage: optionalValue('secondLanguage'),
     },
@@ -1084,6 +1086,7 @@ export default function OrderFlow() {
             plusOnePolicy: form.plusOnePolicy,
             childrenPolicyText: form.childrenPolicyText?.trim(),
             plusOnePolicyText: form.plusOnePolicyText?.trim(),
+            askPlusOne: form.askPlusOne,
             language: form.language,
             secondLanguage: optionalValue('secondLanguage'),
           },
@@ -1511,9 +1514,9 @@ export default function OrderFlow() {
                 </div>
               </fieldset>
 
-              {/* Optional personalizations — clearly separated so users know what's not required */}
+              {/* Invitation font — its own section */}
               <fieldset className="form-section form-section--optional">
-                <legend>Optional Personalizations</legend>
+                <legend>Invitation Font</legend>
                 <button
                   type="button"
                   className="font-select-card"
@@ -1531,53 +1534,89 @@ export default function OrderFlow() {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6" /></svg>
                   </span>
                 </button>
-                <div className="form-grid">
-                  {optionalFields.map(field => (
-                    <div key={field.key} className={`form-field ${['message', 'coupleMessage', 'rsvp'].includes(field.key) ? 'form-field--wide' : ''} ${disabledFields.includes(field.key) ? 'field-disabled' : ''}`}>
-                      <div className="field-header">
-                        <label>{field.label}</label>
-                        <button type="button" className="field-toggle" onClick={() => toggleField(field.key)}>
-                          {disabledFields.includes(field.key) ? 'Enable' : 'Disable'}
-                        </button>
-                      </div>
-                      {!disabledFields.includes(field.key) && (
-                        field.key === 'rsvp' ? (
-                          <>
-                            <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
-                            {guestGuidanceFields}
-                          </>
-                        ) : field.key === 'message' ? (
-                          <>
-                            <textarea
-                              className="message-textarea"
-                              value={form[field.key]}
-                              onChange={e => handleInput(field.key, e.target.value)}
-                              rows={3}
-                            />
-                            <p className="form-hint message-hint">
-                              This line appears on the invitation. Edit it, or clear it to remove it.
-                            </p>
-                          </>
-                        ) : field.key === 'coupleMessage' ? (
-                          <>
-                            <textarea
-                              className="message-textarea message-textarea--tall"
-                              value={form[field.key]}
-                              onChange={e => handleInput(field.key, e.target.value)}
-                              rows={5}
-                            />
-                            <p className="form-hint message-hint">
-                              Shown inside the envelope. Edit it, or clear it to remove this note.
-                            </p>
-                          </>
-                        ) : (
-                          <input type="text" value={form[field.key]} onChange={e => handleInput(field.key, e.target.value)} placeholder={field.label} />
-                        )
-                      )}
-                    </div>
-                  ))}
-                </div>
               </fieldset>
+
+              {/* Message — its own section */}
+              {optionalFields.some(f => f.key === 'message' || f.key === 'coupleMessage') && (
+                <fieldset className="form-section form-section--optional">
+                  <legend>Message</legend>
+                  <div className="form-grid">
+                    {optionalFields.filter(f => f.key === 'message' || f.key === 'coupleMessage').map(field => (
+                      <div key={field.key} className={`form-field form-field--wide ${disabledFields.includes(field.key) ? 'field-disabled' : ''}`}>
+                        <div className="field-header">
+                          <label>{field.label}</label>
+                          <button type="button" className="field-toggle" onClick={() => toggleField(field.key)}>
+                            {disabledFields.includes(field.key) ? 'Enable' : 'Disable'}
+                          </button>
+                        </div>
+                        {!disabledFields.includes(field.key) && (
+                          field.key === 'message' ? (
+                            <>
+                              <textarea
+                                className="message-textarea"
+                                value={form[field.key]}
+                                onChange={e => handleInput(field.key, e.target.value)}
+                                rows={3}
+                              />
+                              <p className="form-hint message-hint">
+                                This line appears on the invitation. Edit it, or clear it to remove it.
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <textarea
+                                className="message-textarea message-textarea--tall"
+                                value={form[field.key]}
+                                onChange={e => handleInput(field.key, e.target.value)}
+                                rows={5}
+                              />
+                              <p className="form-hint message-hint">
+                                Shown inside the envelope. Edit it, or clear it to remove this note.
+                              </p>
+                            </>
+                          )
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+
+              {/* RSVP — its own section: responses, guidance and the plus-one question */}
+              {optionalFields.some(f => f.key === 'rsvp') && (
+                <fieldset className="form-section form-section--optional">
+                  <legend>RSVP</legend>
+                  <div className={`form-field form-field--wide ${disabledFields.includes('rsvp') ? 'field-disabled' : ''}`}>
+                    <div className="field-header">
+                      <label>RSVP Section</label>
+                      <button type="button" className="field-toggle" onClick={() => toggleField('rsvp')}>
+                        {disabledFields.includes('rsvp') ? 'Enable' : 'Disable'}
+                      </button>
+                    </div>
+                    {!disabledFields.includes('rsvp') && (
+                      <>
+                        <p className="form-hint" style={{ margin: 0 }}>Guests will be able to RSVP directly from your invitation.</p>
+                        <div className="guest-policy-block">
+                          <div className="guest-policy-section-head">
+                            <p className="form-hint">Ask guests whether they're bringing a plus-one.</p>
+                            <button
+                              type="button"
+                              className={`guest-policy-card-toggle ${form.askPlusOne ? 'is-on' : 'is-off'}`}
+                              role="switch"
+                              aria-checked={form.askPlusOne}
+                              onClick={() => handleInput('askPlusOne', !form.askPlusOne)}
+                            >
+                              <span className="guest-policy-switch-track"><span className="guest-policy-switch-thumb" /></span>
+                              {form.askPlusOne ? 'On' : 'Off'}
+                            </button>
+                          </div>
+                        </div>
+                        {guestGuidanceFields}
+                      </>
+                    )}
+                  </div>
+                </fieldset>
+              )}
 
               {/* Venue Photos
               <fieldset className="form-section">

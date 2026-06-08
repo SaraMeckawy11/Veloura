@@ -5,6 +5,7 @@ import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
 import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
 import GuestNote from '../GuestNote';
+import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -58,7 +59,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
+  const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
@@ -95,6 +96,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
+  const askPlusOne = Boolean(wd.askPlusOne);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
   const pad = (n) => n.toString().padStart(2, '0');
@@ -330,7 +332,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                 </div>
               )}
             </dl>
-            <GuestNote lines={guestPolicyLines} className="coastal-details-policy" />
             {embedSrc && (
               <div className="coastal-map">
                 <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
@@ -372,6 +373,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
               <span>{fullDateStr || 'Date to be announced'}</span>
               <strong>{venue || 'By the sea'}</strong>
             </div>
+            <GuestNote lines={guestPolicyLines} className="coastal-details-policy" />
           </div>
 
           <AnimatePresence mode="wait">
@@ -422,6 +424,15 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                       </button>
                     </div>
                   </div>
+
+                  {askPlusOne && (
+                    <div className="coastal-field coastal-field-full">
+                      <RsvpPlusOneField
+                        value={rsvpForm.plusOne}
+                        onChange={value => setRsvpForm({ ...rsvpForm, plusOne: value })}
+                      />
+                    </div>
+                  )}
 
                   <div className="coastal-field coastal-field-full">
                     <label htmlFor="rsvp-message">Message</label>

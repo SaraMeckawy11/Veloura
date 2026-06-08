@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
 import GuestNote from '../GuestNote';
+import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -117,6 +118,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
     guestName: '',
     guestCount: '1',
     attending: 'yes',
+    plusOne: false,
     message: '',
   });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
@@ -150,6 +152,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       : ((demo ? DEFAULT_COUPLE_MESSAGE : wd.message) || DEFAULT_COUPLE_MESSAGE))
     : '';
   const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
+  const askPlusOne = Boolean(wd.askPlusOne);
   const heroDate = compactDateStr || fullDateStr;
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
@@ -274,6 +277,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           guestName: rsvpForm.guestName.trim(),
           guestCount: Number(rsvpForm.guestCount) || 1,
           attending: rsvpForm.attending,
+          plusOne: rsvpForm.plusOne,
           dietaryPreferences: '',
           message: rsvpForm.message,
           submissionId: rsvpSubmissionId.current,
@@ -397,8 +401,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               <DetailItem label="Venue" value={venue || 'Garden venue'} />
               {venueAddress && <DetailItem label="Address" value={venueAddress} />}
             </div>
-            <GuestNote lines={guestPolicyLines} className="gazebo-details-policy" />
-
             {embedSrc && (
               <a className="gazebo-map-frame" href={openMapHref} target="_blank" rel="noreferrer" aria-label="Open location map">
                 <iframe
@@ -419,6 +421,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       {rsvpEnabled && (
       <section id="rsvp" className="gazebo-section gazebo-rsvp-section">
         <SectionTitle eyebrow="Kindly reply" title="Reserve your place" />
+        <GuestNote lines={guestPolicyLines} className="gazebo-details-policy" />
         <AnimatePresence mode="wait">
           {!rsvpSubmitted ? (
             <motion.form
@@ -464,6 +467,13 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                   ))}
                 </div>
               </fieldset>
+
+              {askPlusOne && (
+                <RsvpPlusOneField
+                  value={rsvpForm.plusOne}
+                  onChange={value => updateRsvpField('plusOne', value)}
+                />
+              )}
 
               <label>
                 <span>Message</span>

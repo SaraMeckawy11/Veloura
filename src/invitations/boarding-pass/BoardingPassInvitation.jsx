@@ -5,6 +5,7 @@ import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
 import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getGuestPolicyLines, getInvitationPhotoSrc } from '../shared';
 import GuestNote from '../GuestNote';
+import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -45,7 +46,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, message: '' });
+  const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const audioRef = useRef(null);
@@ -148,6 +149,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
     : '';
   const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
   const guestPolicyLines = getGuestPolicyLines(wd, disabledFields);
+  const askPlusOne = Boolean(wd.askPlusOne);
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (n) => n.toString().padStart(2, '0');
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
@@ -408,8 +410,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
               )}
             </div>
 
-            <GuestNote lines={guestPolicyLines} className="inv-details-policy" />
-
             {(() => {
               if (!mapEnabled) return null;
               const embedSrc = buildMapEmbedUrl(wd.venueMapUrl, [venue, venueAddress].filter(Boolean).join(', '));
@@ -466,6 +466,8 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         >
           <img src={confirmYourSeatTitle} alt="Confirm Your Seat — Reserve your place on this flight of love" className="bp-rsvp-title-img" />
 
+          <GuestNote lines={guestPolicyLines} className="inv-details-policy" />
+
           <AnimatePresence mode="wait">
             {!rsvpSubmitted ? (
               <motion.div key="form" className="inv-rsvp-wrap" exit={{ opacity: 0, y: -20 }}>
@@ -493,6 +495,16 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                         </button>
                       </div>
                     </div>
+
+                    {askPlusOne && (
+                      <div className="inv-form-field">
+                        <RsvpPlusOneField
+                          label="BRINGING A PLUS-ONE?"
+                          value={rsvpForm.plusOne}
+                          onChange={value => setRsvpForm({ ...rsvpForm, plusOne: value })}
+                        />
+                      </div>
+                    )}
 
                     <div className="inv-form-field">
                       <label className="data-label">MESSAGE TO THE COUPLE</label>

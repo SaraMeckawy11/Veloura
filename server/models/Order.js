@@ -26,6 +26,7 @@ const orderSchema = new mongoose.Schema({
     plusOnePolicy: { type: String, enum: ['welcome', 'named-only'], default: 'named-only' },
     childrenPolicyText: { type: String },
     plusOnePolicyText: { type: String },
+    askPlusOne:   { type: Boolean, default: false },     // RSVP form asks guests whether a plus-one is coming
     language:     { type: String, default: 'en' },
     secondLanguage: { type: String },                     // bilingual support
   },

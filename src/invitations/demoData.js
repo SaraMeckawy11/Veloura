@@ -25,6 +25,7 @@ export const BOARDING_PASS_DEMO_ORDER = {
     message: 'Two Souls, One Destination.',
     plusOnePolicy: 'named-only',
     plusOnePolicyText: DEFAULT_PLUS_ONE_POLICY_TEXT,
+    askPlusOne: true,
     flightNo: 'WD-2026',
   },
   storyMilestones: [

@@ -147,6 +147,7 @@ export default function Dashboard() {
       plusOnePolicy: wd.plusOnePolicy || 'named-only',
       childrenPolicyText: wd.childrenPolicyText || '',
       plusOnePolicyText: wd.plusOnePolicyText || '',
+      askPlusOne: Boolean(wd.askPlusOne),
       invitationFont: normalizeInvitationFont(invitationFont || DEFAULT_INVITATION_FONT),
     });
     setEditDisabledFields(
@@ -417,6 +418,7 @@ export default function Dashboard() {
         plusOnePolicy: editForm.plusOnePolicy || 'named-only',
         childrenPolicyText: editForm.childrenPolicyText?.trim() || undefined,
         plusOnePolicyText: editForm.plusOnePolicyText?.trim() || undefined,
+        askPlusOne: Boolean(editForm.askPlusOne),
       };
       // Include name fields if they were editable (grace period)
       if (nameEditable) {
@@ -802,6 +804,14 @@ export default function Dashboard() {
                       ? 'Guests won’t see an RSVP form on your invitation.'
                       : 'Guests can RSVP directly from your invitation.'}
                   </p>
+                  {!isFieldDisabled('rsvp') && (
+                    <div className="dash-guest-policy-card-head" style={{ marginTop: 12 }}>
+                      <span className="dash-guest-policy-label">Ask guests if a plus-one is coming</span>
+                      <button type="button" className="dash-field-toggle" onClick={() => handleEditInput('askPlusOne', !editForm.askPlusOne)}>
+                        {editForm.askPlusOne ? 'On' : 'Off'}
+                      </button>
+                    </div>
+                  )}
                 </div>
                 )}
               </div>
@@ -954,6 +964,10 @@ export default function Dashboard() {
             <div className="stat-value">{rsvpData?.summary?.notAttending || 0}</div>
             <div className="stat-label">Not Attending</div>
           </div>
+          <div className="stat-card stat-plus-one">
+            <div className="stat-value">{rsvpData?.summary?.plusOnes || 0}</div>
+            <div className="stat-label">Plus-Ones</div>
+          </div>
           <div className="stat-card stat-responses">
             <div className="stat-value">{rsvpData?.summary?.totalResponses || 0}</div>
             <div className="stat-label">Total Responses</div>
@@ -1016,6 +1030,7 @@ export default function Dashboard() {
                   <tr>
                     <th>Guest Name</th>
                     <th>Status</th>
+                    <th>Plus-One</th>
                     <th>Date</th>
                   </tr>
                 </thead>
@@ -1031,6 +1046,7 @@ export default function Dashboard() {
                           {r.attending === 'yes' ? 'Attending' : r.attending === 'no' ? 'Not Attending' : 'Maybe'}
                         </span>
                       </td>
+                      <td className="rsvp-plus-one-cell">{r.attending === 'yes' && r.plusOne ? 'Yes' : '—'}</td>
                       <td className="rsvp-date">{new Date(r.respondedAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
