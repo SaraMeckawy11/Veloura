@@ -732,18 +732,8 @@
   max-width: 32rem;
 }
 .inv-event-card-inner {
-  position: relative;
-  padding: clamp(22px, 4vw, 34px);
+  padding: 24px;
   text-align: left;
-  overflow: hidden;
-}
-.inv-event-card-inner::before {
-  content: '';
-  position: absolute;
-  inset: 12px;
-  border: 1px dashed hsla(39, 43%, 43%, 0.28);
-  border-radius: 10px;
-  pointer-events: none;
 }
 .inv-event-card .boarding-pass-card {
   padding: 24px;
@@ -765,25 +755,15 @@
   letter-spacing: 0.1em;
 }
 .inv-event-details {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .inv-event-details--centered {
-  align-items: stretch;
+  align-items: center;
   text-align: center;
 }
-.inv-event-details > div {
-  min-width: 0;
-  padding: 14px 12px;
-  border: 1px solid hsla(208, 28%, 27%, 0.12);
-  border-radius: 8px;
-  background: hsla(38, 46%, 98%, 0.76);
-  box-shadow: 0 10px 24px hsla(208, 28%, 27%, 0.05);
-}
-.inv-event-details .data-label { margin-bottom: 6px; }
+.inv-event-details .data-label { margin-bottom: 4px; }
 .inv-event-details p {
   font-family: var(--font-mono);
   font-size: 0.85rem;
@@ -802,14 +782,11 @@
     0 8px 24px rgba(0,0,0,0.06);
 }
 .inv-map-container {
-  position: relative;
-  z-index: 1;
   margin-top: 24px;
 }
 .inv-map-container .data-label { margin-bottom: 12px; display: block; }
 .inv-map-window {
   aspect-ratio: 4/3;
-  border-radius: 18px;
 }
 .inv-map-window iframe {
   width: 100%;
@@ -962,10 +939,6 @@
   max-width: 16rem;
 }
 @media (max-width: 480px) {
-  .inv-event-details {
-    grid-template-columns: 1fr;
-  }
-
   .bp-rsvp-note-stamp { width: 92px; }
   .bp-rsvp-thanks-text { font-size: 0.85rem; }
 }

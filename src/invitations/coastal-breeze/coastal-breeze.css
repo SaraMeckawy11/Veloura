@@ -770,12 +770,12 @@
   position: relative;
   padding: clamp(30px, 5vw, 52px);
   text-align: center;
-  border-radius: 8px;
+  border-radius: 4px;
   background:
-    radial-gradient(circle at 8% 10%, rgba(130, 192, 191, 0.2), transparent 10rem),
-    linear-gradient(180deg, rgba(255, 253, 247, 0.98), rgba(248, 234, 212, 0.88));
-  border: 1px solid rgba(41, 99, 143, 0.16);
-  box-shadow: 0 30px 80px rgba(20, 53, 83, 0.13);
+    linear-gradient(180deg, rgba(255, 253, 247, 0.95), rgba(248, 234, 212, 0.85)),
+    radial-gradient(circle at 100% 0%, rgba(130, 192, 191, 0.18), transparent 16rem);
+  border: 1px solid rgba(176, 125, 77, 0.24);
+  box-shadow: 0 28px 76px rgba(20, 53, 83, 0.12);
   overflow: hidden;
 }
 
@@ -783,8 +783,8 @@
   content: '';
   position: absolute;
   inset: 12px;
-  border: 1px solid rgba(176, 125, 77, 0.2);
-  border-radius: 5px;
+  border: 1px solid rgba(176, 125, 77, 0.18);
+  border-radius: 2px;
   pointer-events: none;
 }
 
@@ -805,19 +805,10 @@
 
 .coastal-event-card dl {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 18px;
   margin: 0;
-  justify-items: stretch;
+  justify-items: center;
   text-align: center;
-}
-
-.coastal-event-card dl > div {
-  min-width: 0;
-  padding: 15px 12px;
-  border: 1px solid rgba(41, 99, 143, 0.12);
-  border-radius: 7px;
-  background: rgba(255, 253, 247, 0.64);
 }
 
 .coastal-event-card dt {
@@ -843,11 +834,9 @@
   height: 260px;
   margin-top: 30px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 18px;
   border: 1px solid rgba(41, 99, 143, 0.2);
-  box-shadow:
-    0 16px 36px rgba(20, 53, 83, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+  box-shadow: 0 14px 32px rgba(20, 53, 83, 0.1);
 }
 
 .coastal-map iframe,
@@ -1935,10 +1924,6 @@
 
   .coastal-story-item:nth-child(even) figure {
     order: 0;
-  }
-
-  .coastal-event-card dl {
-    grid-template-columns: 1fr;
   }
 
   .coastal-rsvp-row {
