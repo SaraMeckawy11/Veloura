@@ -734,7 +734,7 @@ body:has(.theater-theme),
 }
 
 .theater-rsvp-choice button > span {
-  grid-row: 1 / span 2;
+  grid-row: 1;
   width: 100%;
   aspect-ratio: 1;
   background: url("../../assets/theater/rsvp/circle_transparent.png") center / contain no-repeat;
@@ -763,6 +763,7 @@ body:has(.theater-theme),
 
 .theater-rsvp-choice strong {
   font-size: clamp(0.54rem, 1.45vw, 0.9rem);
+  white-space: nowrap;
 }
 
 .theater-rsvp-choice small {

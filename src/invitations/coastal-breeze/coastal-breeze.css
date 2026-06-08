@@ -1279,6 +1279,7 @@
   line-height: 1.2;
   text-transform: uppercase;
   text-align: left;
+  white-space: nowrap;
   cursor: pointer;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(41, 99, 143, 0.05);

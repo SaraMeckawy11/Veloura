@@ -408,7 +408,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                         className={rsvpForm.attending === 'yes' ? 'active' : ''}
                         onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
                       >
-                        Joyfully accept
+                        Yes
                       </button>
                       <button
                         type="button"
@@ -426,7 +426,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                         className={rsvpForm.attending === 'no' ? 'active' : ''}
                         onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
                       >
-                        Regretfully decline
+                        No
                       </button>
                     </div>
                   </div>

@@ -2699,6 +2699,7 @@
 .fountain-rsvp-panel-choice button span {
   font-size: clamp(0.68rem, 1.9vw, 0.98rem);
   letter-spacing: 0.08em;
+  white-space: nowrap;
 }
 
 .fountain-rsvp-panel-choice button small {

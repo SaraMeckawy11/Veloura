@@ -437,20 +437,17 @@ function RsvpSection({
             <RsvpChoice
               active={rsvpForm.attending === 'yes'}
               onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
-              title="Accept"
-              subtitle="with pleasure"
+              title="Yes"
             />
             <RsvpChoice
               active={rsvpForm.attending === 'maybe'}
               onClick={() => setRsvpForm({ ...rsvpForm, attending: 'maybe' })}
               title="Maybe"
-              subtitle="not sure"
             />
             <RsvpChoice
               active={rsvpForm.attending === 'no'}
               onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
-              title="Decline"
-              subtitle="with regret"
+              title="No"
             />
           </div>
 
@@ -496,7 +493,7 @@ function RsvpChoice({ active, onClick, title, subtitle }) {
     >
       <span aria-hidden="true" />
       <strong>{title}</strong>
-      <small>{subtitle}</small>
+      {subtitle && <small>{subtitle}</small>}
     </button>
   );
 }

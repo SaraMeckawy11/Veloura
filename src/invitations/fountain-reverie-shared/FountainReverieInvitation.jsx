@@ -424,8 +424,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                           className={rsvpForm.attending === 'yes' ? 'active' : ''}
                           onClick={() => setRsvpForm({ ...rsvpForm, attending: 'yes' })}
                         >
-                          <span>Joyfully</span>
-                          <small>Accept</small>
+                          <span>Yes</span>
                         </button>
                         <button
                           type="button"
@@ -435,7 +434,6 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                           onClick={() => setRsvpForm({ ...rsvpForm, attending: 'maybe' })}
                         >
                           <span>Maybe</span>
-                          <small>Unsure</small>
                         </button>
                         <button
                           type="button"
@@ -444,8 +442,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                           className={rsvpForm.attending === 'no' ? 'active' : ''}
                           onClick={() => setRsvpForm({ ...rsvpForm, attending: 'no' })}
                         >
-                          <span>Regretfully</span>
-                          <small>Decline</small>
+                          <span>No</span>
                         </button>
                       </div>
                     </fieldset>
