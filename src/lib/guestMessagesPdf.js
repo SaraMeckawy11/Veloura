@@ -45,11 +45,10 @@ const RESP_PLUS_FONT = "italic 500 21px 'Cormorant Garamond', Georgia, serif";
 const RESP_STATUS_FONT = "italic 600 26px 'Cormorant Garamond', Georgia, serif";
 const RESP_CELL_FONT = "500 25px 'Cormorant Garamond', Georgia, serif";
 const RESP_COLUMNS = [
-  { key: 'name', label: 'Guest', width: 300, align: 'left' },
-  { key: 'status', label: 'Response', width: 180, align: 'left' },
-  { key: 'plusOne', label: 'Plus-One', width: 120, align: 'center' },
-  { key: 'guests', label: 'Guests', width: 90, align: 'center' },
-  { key: 'date', label: 'Date', width: 121, align: 'left' },
+  { key: 'name', label: 'Guest', width: 330, align: 'left' },
+  { key: 'status', label: 'Response', width: 190, align: 'left' },
+  { key: 'guests', label: 'Guests', width: 110, align: 'center' },
+  { key: 'date', label: 'Date', width: 181, align: 'left' },
 ];
 const RESP_HEADER_HEIGHT = 60;
 const RESP_ROW_PAD = 22;
@@ -416,6 +415,10 @@ function formatResponseDate(value) {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+function getResponseGuestCount(response) {
+  return response.plusOne ? 2 : 1;
+}
+
 const RESP_TABLE_X = MSG_MARGIN_X;
 const RESP_TABLE_W = RESP_COLUMNS.reduce((sum, col) => sum + col.width, 0);
 
@@ -527,9 +530,7 @@ function drawResponseRow(page, palette, row, zebra) {
     } else if (col.key === 'guests') {
       ctx.fillStyle = palette.ink;
       ctx.font = RESP_CELL_FONT;
-      const count = Number.isFinite(Number(response.guestCount))
-        ? Number(response.guestCount)
-        : (response.attending === 'no' ? 0 : 1);
+      const count = getResponseGuestCount(response);
       ctx.fillText(`${count}`, tx, baseline);
     } else {
       ctx.fillStyle = palette.muted;
