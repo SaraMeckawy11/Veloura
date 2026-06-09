@@ -977,7 +977,7 @@ export default function Dashboard() {
                   <tr>
                     <th>Guest Name</th>
                     <th>Status</th>
-                    <th>Guests</th>
+                    <th className="rsvp-guests-cell">Guests</th>
                     <th>Date</th>
                   </tr>
                 </thead>
@@ -993,7 +993,7 @@ export default function Dashboard() {
                           {r.attending === 'yes' ? 'Attending' : r.attending === 'no' ? 'Not Attending' : 'Maybe'}
                         </span>
                       </td>
-                      <td>{getResponseGuestCount(r)}</td>
+                      <td className="rsvp-guests-cell">{getResponseGuestCount(r)}</td>
                       <td className="rsvp-date">{new Date(r.respondedAt).toLocaleDateString()}</td>
                     </tr>
                   ))}

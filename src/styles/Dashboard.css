@@ -278,6 +278,9 @@
   border-bottom: 1px solid var(--border-light);
   color: var(--text-secondary);
 }
+.rsvp-table .rsvp-guests-cell {
+  text-align: center;
+}
 .rsvp-name { color: var(--text); font-weight: 500; }
 .plus-one {
   display: block;
