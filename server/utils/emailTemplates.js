@@ -9,7 +9,10 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
 
   const name1 = weddingDetails.groomName || '';
   const name2 = weddingDetails.brideName || '';
+  const coupleName = [name1, name2].filter(Boolean).join(' & ');
   const venue = weddingDetails.venue || '';
+  const shareText = `You're invited to ${coupleName ? `${coupleName}'s` : 'our'} wedding! View the invitation here: ${invitationUrl}`;
+  const shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
   const dateStr = weddingDetails.weddingDate
     ? new Date(weddingDetails.weddingDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
     : '';
@@ -31,7 +34,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
 
   const detailsTable = details
     .map(([label, value], i) => {
-      const border = i === details.length - 1 ? '' : 'border-bottom: 1px solid #F0EDE8;';
+      const border = label === 'Venue' || i === details.length - 1 ? '' : 'border-bottom: 1px solid #F0EDE8;';
       return `
                 <tr>
                   <td style="padding: 14px 16px 14px 0; ${border} font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; color: #A09A93; white-space: nowrap; vertical-align: middle;">${label}</td>
@@ -103,6 +106,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
               ` : ''}
 
               ${!isPending ? button(invitationUrl, 'View Your Invitation', 'primary') : ''}
+              ${!isPending ? button(shareUrl, 'Share Invitation', 'secondary') : ''}
               ${button(dashboardUrl, 'Go to Dashboard', isPending ? 'primary' : 'secondary')}
               ${!isPending ? button(editUrl, 'Edit Your Invitation', 'secondary') : ''}
 

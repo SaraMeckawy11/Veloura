@@ -438,7 +438,7 @@ function drawSpacedText(ctx, text, centerX, baseline, spacing) {
 }
 
 // Couple names + title block at the top of each responses page.
-function drawResponsesTitle(page, palette, coupleNames) {
+function drawResponsesTitle(page, palette, coupleNames, totalGuestCount) {
   const { ctx } = page;
   const cx = MSG_PAGE_W / 2;
   ctx.textAlign = 'center';
@@ -455,8 +455,12 @@ function drawResponsesTitle(page, palette, coupleNames) {
   ctx.font = "italic 24px 'Cormorant Garamond', Georgia, serif";
   ctx.fillText('Your RSVP details at a glance', cx, 244);
 
+  ctx.fillStyle = palette.accent;
+  ctx.font = "600 22px 'Cormorant Garamond', Georgia, serif";
+  ctx.fillText(`Total Guests: ${totalGuestCount}`, cx, 282);
+
   ctx.textAlign = 'left';
-  page.y = 296;
+  page.y = 326;
 }
 
 function drawResponsesHeader(page, palette) {
@@ -554,10 +558,11 @@ function drawResponseRow(page, palette, row, zebra) {
 export async function buildGuestResponsesCanvases({ coupleNames, responses }) {
   const palette = MSG_PALETTE;
   await ensureKeepsakeFonts();
+  const totalGuestCount = responses.reduce((sum, response) => sum + getResponseGuestCount(response), 0);
 
   const startPage = () => {
     const page = createFramedPage();
-    drawResponsesTitle(page, palette, coupleNames);
+    drawResponsesTitle(page, palette, coupleNames, totalGuestCount);
     drawResponsesHeader(page, palette);
     return page;
   };
