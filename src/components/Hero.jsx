@@ -8,25 +8,25 @@ export default function Hero() {
         <div className="hero-content">
           <div className="hero-badge">
             <span className="badge-dot" />
-            Animated Wedding Invitations
+            Digital Wedding Invitations
           </div>
 
           <h1>
-            A wedding invitation<br />
-            guests will <em>remember</em>
+            Your Wedding,<br />
+            Beautifully <em>Digital</em>
           </h1>
 
           <p className="hero-description">
-            RSVP tracking, maps, guest details, and a cinematic reveal in one elegant link.
+            Animated invitations with RSVP tracking, maps, and guest details in one elegant link.
           </p>
 
           <div className="hero-buttons">
             <Link to="/order" className="btn btn-primary hero-primary-cta" data-primary-create-cta>
-              <span>Create your invitation</span>
-              <span className="hero-cta-icon" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z" />
-                  <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z" />
+              <span>Create My Invitation</span>
+              <span className="create-cta-arrow" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 6h8" />
+                  <path d="M6.5 2.5 10 6 6.5 9.5" />
                 </svg>
               </span>
             </Link>

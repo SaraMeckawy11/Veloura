@@ -65,6 +65,10 @@
   gap: 12px;
 }
 
+.nav-cta .btn-gold {
+  gap: 7px;
+}
+
 .nav-cta .btn-client {
   font-size: 0.85rem;
   font-weight: 500;
@@ -212,18 +216,21 @@
     transition: opacity 0.25s ease, transform 0.25s ease;
   }
 
-  .mobile-sticky-cta::after {
-    content: '';
-    width: 7px;
-    height: 7px;
-    border-top: 2px solid currentColor;
-    border-right: 2px solid currentColor;
-    transform: rotate(45deg);
-  }
-
   .mobile-sticky-cta.visible {
     opacity: 1;
     pointer-events: auto;
     transform: translate(-50%, 0);
+  }
+
+  @media (hover: hover) {
+    .mobile-sticky-cta.visible:hover {
+      background: var(--gold-light);
+      box-shadow: 0 12px 32px rgba(184, 146, 74, 0.34);
+      transform: translate(-50%, -2px);
+    }
+
+    .mobile-sticky-cta.visible:hover .create-cta-arrow {
+      transform: translateX(2px);
+    }
   }
 }

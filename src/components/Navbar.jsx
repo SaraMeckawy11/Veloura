@@ -99,7 +99,13 @@ export default function Navbar() {
           <div className="nav-cta">
             <Link to="/my-invitation" className="btn-client">My Invitation</Link>
             <Link to="/order" className="btn btn-gold btn-sm">
-              Create My Invitation
+              <span>Create My Invitation</span>
+              <span className="create-cta-arrow" aria-hidden="true">
+                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 6h8" />
+                  <path d="M6.5 2.5 10 6 6.5 9.5" />
+                </svg>
+              </span>
             </Link>
           </div>
 
@@ -132,7 +138,13 @@ export default function Navbar() {
             My Invitation
           </Link>
           <Link to="/order" className="btn btn-gold btn-sm" onClick={() => { setMenuOpen(false); document.body.style.overflow = ''; }}>
-            Create My Invitation
+            <span>Create My Invitation</span>
+            <span className="create-cta-arrow" aria-hidden="true">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 6h8" />
+                <path d="M6.5 2.5 10 6 6.5 9.5" />
+              </svg>
+            </span>
           </Link>
         </div>
       </div>
@@ -142,7 +154,13 @@ export default function Navbar() {
           to="/order"
           className={`mobile-sticky-cta${showMobileStickyCta ? ' visible' : ''}`}
         >
-          Create My Invitation
+          <span>Create My Invitation</span>
+          <span className="create-cta-arrow" aria-hidden="true">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 6h8" />
+              <path d="M6.5 2.5 10 6 6.5 9.5" />
+            </svg>
+          </span>
         </Link>
       )}
     </>
