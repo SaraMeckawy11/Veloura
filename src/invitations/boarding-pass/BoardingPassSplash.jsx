@@ -60,7 +60,7 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
     if (!readyRef.current || dismissedRef.current) return;
     dismissedRef.current = true;
     setDismissed(true);
-    setTimeout(() => onDismissRef.current(), 2000);
+    setTimeout(() => onDismissRef.current(), 2500);
   }, []);
 
   useEffect(() => {
@@ -198,7 +198,7 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
           }
           transition={
             dismissed
-              ? { duration: 1.85, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
+              ? { duration: 2.35, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
               : undefined
           }
         />
