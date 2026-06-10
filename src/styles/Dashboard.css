@@ -278,6 +278,9 @@
   border-bottom: 1px solid var(--border-light);
   color: var(--text-secondary);
 }
+.rsvp-table .rsvp-guests-cell {
+  text-align: center;
+}
 .rsvp-name { color: var(--text); font-weight: 500; }
 .plus-one {
   display: block;
@@ -340,28 +343,6 @@
 .dash-download-btn:disabled {
   cursor: wait;
   opacity: 0.68;
-}
-
-.dash-section-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.dash-total-guests-pill {
-  display: inline-flex;
-  align-items: center;
-  min-height: 36px;
-  padding: 8px 13px;
-  border: 1px solid var(--border-light);
-  border-radius: 999px;
-  background: var(--white);
-  color: var(--text-secondary);
-  font-size: 0.76rem;
-  font-weight: 700;
-  white-space: nowrap;
 }
 
 .dash-messages-grid {
@@ -461,7 +442,6 @@
   .stat-value { font-size: 1.7rem; }
   .stat-label { font-size: 0.62rem; letter-spacing: 0.05em; }
   .dash-section-heading { align-items: flex-start; flex-direction: column; }
-  .dash-section-actions { justify-content: flex-start; }
 }
 
 /* Edit Form */

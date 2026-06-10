@@ -531,8 +531,6 @@ export default function Dashboard() {
   const maybeResponses = rsvpSummary.maybe ?? (rsvpData?.rsvps || []).filter(rsvp => rsvp.attending === 'maybe').length;
   const totalAttendingGuests = rsvpSummary.totalAttending ?? rsvpSummary.totalGuests ?? 0;
   const getResponseGuestCount = rsvp => (rsvp?.plusOne ? 2 : 1);
-  const responseTotalGuests = (rsvpData?.rsvps || [])
-    .reduce((sum, rsvp) => sum + getResponseGuestCount(rsvp), 0);
 
   return (
     <div className="dash-page">
@@ -909,10 +907,6 @@ export default function Dashboard() {
             <div className="stat-value">{rsvpSummary.notAttending || 0}</div>
             <div className="stat-label">Not Attending</div>
           </div>
-          <div className="stat-card stat-guests">
-            <div className="stat-value">{totalAttendingGuests}</div>
-            <div className="stat-label">Total Attending</div>
-          </div>
           <div className="stat-card stat-plus-one">
             <div className="stat-value">{rsvpSummary.plusOnes || 0}</div>
             <div className="stat-label">Plus-Ones</div>
@@ -920,6 +914,10 @@ export default function Dashboard() {
           <div className="stat-card stat-responses">
             <div className="stat-value">{rsvpSummary.totalResponses || 0}</div>
             <div className="stat-label">Total Responses</div>
+          </div>
+          <div className="stat-card stat-guests">
+            <div className="stat-value">{totalAttendingGuests}</div>
+            <div className="stat-label">Total Attending</div>
           </div>
         </div>
 
@@ -966,13 +964,10 @@ export default function Dashboard() {
           <div className="dash-section-heading">
             <h2 className="dash-section-title">Guest Responses</h2>
             {rsvpData?.rsvps?.length > 0 && (
-              <div className="dash-section-actions">
-                <span className="dash-total-guests-pill">Total Guests: {responseTotalGuests}</span>
-                <button type="button" className="dash-download-btn" onClick={handleDownloadResponses} disabled={downloadingResponses}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
-                  {downloadingResponses ? 'Preparing PDF...' : 'Download PDF'}
-                </button>
-              </div>
+              <button type="button" className="dash-download-btn" onClick={handleDownloadResponses} disabled={downloadingResponses}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                {downloadingResponses ? 'Preparing PDF...' : 'Download PDF'}
+              </button>
             )}
           </div>
           {rsvpData?.rsvps?.length > 0 ? (
@@ -982,7 +977,7 @@ export default function Dashboard() {
                   <tr>
                     <th>Guest Name</th>
                     <th>Status</th>
-                    <th>Guests</th>
+                    <th className="rsvp-guests-cell">Guests</th>
                     <th>Date</th>
                   </tr>
                 </thead>
@@ -998,7 +993,7 @@ export default function Dashboard() {
                           {r.attending === 'yes' ? 'Attending' : r.attending === 'no' ? 'Not Attending' : 'Maybe'}
                         </span>
                       </td>
-                      <td>{getResponseGuestCount(r)}</td>
+                      <td className="rsvp-guests-cell">{getResponseGuestCount(r)}</td>
                       <td className="rsvp-date">{new Date(r.respondedAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
