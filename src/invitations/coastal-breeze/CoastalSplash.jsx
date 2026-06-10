@@ -1,21 +1,39 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.div uses `motion` via JSX members
 import { motion, AnimatePresence } from 'framer-motion';
-import framesUrl from '../../assets/coastal/envelope-frames.bin?url';
-import frameManifest from '../../assets/coastal/envelope-frames.json';
+import spriteUrl from '../../assets/coastal/envelope-frames-light.png';
 import './coastal-splash.css';
 
 // Native canvas player for the "envelope" splash.
 //
-// The source animation ships as 116 sequential JPEG frames (540×822, 30fps)
-// that open a navy envelope and bloom to white. Rather than parse a 2.4MB
-// inline-base64 HTML document in an <iframe>, the frames are packed into a
-// single bundled binary blob (envelope-frames.bin) with a JSON manifest of
-// per-frame byte lengths. We fetch the blob once, slice it into per-frame
-// images, and play them on a <canvas> in the host document. The final frame
-// is pure white, so fading the whole splash out crossfades seamlessly into
-// the coastal hero's cream wash.
-const { frameCount: FRAME_COUNT, fps: FPS, width: FRAME_WIDTH, height: FRAME_HEIGHT, lengths: FRAME_LENGTHS } = frameManifest;
+// The source animation ships as a single sprite sheet (envelope-frames-light.png):
+// 40 sequential frames laid out in an 8×5 grid that open a soft-blue envelope and
+// bloom to white. We load the one bundled PNG (hashed/cached by Vite), slice each
+// frame out of the grid with drawImage source rectangles, and play them on a
+// <canvas> in the host document. The final frame is nearly white, so fading the
+// whole splash out crossfades seamlessly into the coastal hero's cream wash.
+//
+// This is a direct port of the reference player (boardingPass/envelope-splash.html):
+// each frame is drawn discretely at FPS — no blending between frames. (We tried
+// crossfading consecutive frames to fake extra smoothness, but the frames aren't
+// pixel-aligned, so blending two of them ghosts the envelope and reads as a
+// left/right jitter. Discrete playback, exactly like the HTML, is clean.)
+const SHEET_WIDTH = 1293;
+const SHEET_HEIGHT = 1216;
+const COLUMNS = 8;
+const ROWS = 5;
+const FRAME_COUNT = COLUMNS * ROWS; // 40
+const FRAME_WIDTH = SHEET_WIDTH / COLUMNS;
+const FRAME_HEIGHT = SHEET_HEIGHT / ROWS;
+// The contact sheet bakes a ~2px dark gridline around every cell, so we sample
+// the clean interior of each frame rather than the exact cell bounds. Combined
+// with the "cover" fit (which crops the corners), this also keeps the small
+// frame-number tag in each cell's top-left from ever reaching the screen.
+const CELL_INSET = 3;
+const CONTENT_WIDTH = FRAME_WIDTH - CELL_INSET * 2;
+const CONTENT_HEIGHT = FRAME_HEIGHT - CELL_INSET * 2;
+// Same playback constant as envelope-splash.html.
+const FPS = 30;
 
 const FADE_DURATION = 0.7;
 const HOLD_ON_WHITE_MS = 160;
@@ -57,13 +75,15 @@ export default function CoastalSplash({ onReady, onDismiss }) {
     if (!canvas) return undefined;
 
     const context = canvas.getContext('2d', { alpha: false });
-    let frames = [];
+    const sprite = new Image();
+    sprite.decoding = 'async';
+
     let rafId = null;
     let startTime = null;
     let lastFrame = -1;
+    let loaded = false;
     let disposed = false;
     let holdTimer = null;
-    const controller = new AbortController();
 
     const resizeCanvas = () => {
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -73,15 +93,26 @@ export default function CoastalSplash({ onReady, onDismiss }) {
     };
 
     const drawFrame = (frameIndex) => {
-      const image = frames[frameIndex];
-      if (!image) return;
-      // "cover" the viewport, centered — matches the source player.
-      const scale = Math.max(canvas.width / FRAME_WIDTH, canvas.height / FRAME_HEIGHT);
-      const destWidth = FRAME_WIDTH * scale;
-      const destHeight = FRAME_HEIGHT * scale;
+      if (!loaded) return;
+      const sourceX = (frameIndex % COLUMNS) * FRAME_WIDTH + CELL_INSET;
+      const sourceY = Math.floor(frameIndex / COLUMNS) * FRAME_HEIGHT + CELL_INSET;
+      // "cover" the viewport, centered — matches the reference player.
+      const scale = Math.max(canvas.width / CONTENT_WIDTH, canvas.height / CONTENT_HEIGHT);
+      const destWidth = CONTENT_WIDTH * scale;
+      const destHeight = CONTENT_HEIGHT * scale;
       const destX = (canvas.width - destWidth) / 2;
       const destY = (canvas.height - destHeight) / 2;
-      context.drawImage(image, destX, destY, destWidth, destHeight);
+      context.drawImage(
+        sprite,
+        sourceX,
+        sourceY,
+        CONTENT_WIDTH,
+        CONTENT_HEIGHT,
+        destX,
+        destY,
+        destWidth,
+        destHeight,
+      );
       lastFrame = frameIndex;
     };
 
@@ -112,77 +143,40 @@ export default function CoastalSplash({ onReady, onDismiss }) {
       if (disposed || dismissingRef.current) return;
       if (rafId) window.cancelAnimationFrame(rafId);
       window.clearTimeout(holdTimer);
-      if (frames.length === FRAME_COUNT) drawFrame(FRAME_COUNT - 1);
+      drawFrame(FRAME_COUNT - 1);
       beginDismiss();
     };
 
-    const decodeFrames = async () => {
-      const response = await fetch(framesUrl, { signal: controller.signal });
-      const buffer = await response.arrayBuffer();
-      const bytes = new Uint8Array(buffer);
-
-      const supportsBitmap = typeof window.createImageBitmap === 'function';
-      const decoded = new Array(FRAME_COUNT);
-      const objectUrls = [];
-      let offset = 0;
-
-      for (let i = 0; i < FRAME_COUNT; i += 1) {
-        const length = FRAME_LENGTHS[i];
-        const blob = new Blob([bytes.subarray(offset, offset + length)], { type: 'image/jpeg' });
-        offset += length;
-
-        if (supportsBitmap) {
-          // eslint-disable-next-line no-await-in-loop -- sequential keeps frame order + memory bounded
-          decoded[i] = await createImageBitmap(blob);
-        } else {
-          const url = URL.createObjectURL(blob);
-          objectUrls.push(url);
-          // eslint-disable-next-line no-await-in-loop
-          decoded[i] = await new Promise((resolve, reject) => {
-            const image = new Image();
-            image.onload = () => resolve(image);
-            image.onerror = reject;
-            image.src = url;
-          });
-        }
-
-        // Paint the first frame the instant it is ready so there is no flash.
-        if (i === 0 && !disposed) {
-          resizeCanvas();
-          frames = decoded;
-          drawFrame(0);
-        }
-      }
-
-      frames = decoded;
-      frames.__objectUrls = objectUrls;
-      return frames;
+    const handleLoad = () => {
+      if (disposed) return;
+      loaded = true;
+      // Paint the first frame the instant the sprite decodes so there is no flash.
+      resizeCanvas();
+      drawFrame(0);
+      markReady();
+      rafId = window.requestAnimationFrame(tick);
     };
 
-    decodeFrames()
-      .then(() => {
-        if (disposed) return;
-        markReady();
-        rafId = window.requestAnimationFrame(tick);
-      })
-      .catch(() => {
-        if (disposed) return;
-        // If decoding fails, don't trap the guest on the splash — reveal the hero.
-        markReady();
-        beginDismiss();
-      });
+    const handleError = () => {
+      if (disposed) return;
+      // If the sprite fails to load, don't trap the guest on the splash.
+      markReady();
+      beginDismiss();
+    };
 
+    sprite.addEventListener('load', handleLoad);
+    sprite.addEventListener('error', handleError);
     window.addEventListener('resize', resizeCanvas);
+    sprite.src = spriteUrl;
 
     return () => {
       disposed = true;
       skipRef.current = null;
       if (rafId) window.cancelAnimationFrame(rafId);
       window.clearTimeout(holdTimer);
-      controller.abort();
+      sprite.removeEventListener('load', handleLoad);
+      sprite.removeEventListener('error', handleError);
       window.removeEventListener('resize', resizeCanvas);
-      frames.forEach?.((image) => image?.close?.());
-      frames.__objectUrls?.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [markReady, beginDismiss]);
 
@@ -211,8 +205,8 @@ export default function CoastalSplash({ onReady, onDismiss }) {
         <canvas
           ref={canvasRef}
           className="coastal-splash-frames-canvas"
-          width={FRAME_WIDTH}
-          height={FRAME_HEIGHT}
+          width={Math.round(FRAME_WIDTH)}
+          height={Math.round(FRAME_HEIGHT)}
           aria-hidden="true"
         />
       </motion.div>

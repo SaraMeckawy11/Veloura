@@ -23,10 +23,10 @@
   transform-style: preserve-3d;
 }
 
-/* Frame-by-frame envelope splash: starts on the navy first frame and blooms
+/* Frame-by-frame envelope splash: starts on the blue first frame and blooms
    to white, so the backdrop matches frame 0 to avoid any flash before decode. */
 .coastal-splash--frames {
-  background: #22365c;
+  background: #b0c6da;
   perspective: none;
 }
 .coastal-splash-frames-canvas {
