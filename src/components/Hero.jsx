@@ -8,7 +8,7 @@ export default function Hero() {
         <div className="hero-content">
           <div className="hero-badge">
             <span className="badge-dot" />
-            Digital Wedding Invitations
+            Premium Digital Invitations
           </div>
 
           <h1>
@@ -17,7 +17,7 @@ export default function Hero() {
           </h1>
 
           <p className="hero-description">
-            Animated invitations with RSVP tracking, maps, and guest details in one elegant link.
+            Animated wedding invitations with RSVP tracking, maps, and guest details in one elegant link.
           </p>
 
           <div className="hero-buttons">
