@@ -2,38 +2,35 @@ import { Link } from 'react-router-dom';
 import '../styles/Hero.css';
 
 export default function Hero() {
-  const handleClick = (e, href) => {
-    e.preventDefault();
-    const target = document.querySelector(href);
-    if (target) {
-      const y = target.getBoundingClientRect().top + window.pageYOffset - 80;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  };
-
   return (
     <section className="hero" id="hero">
       <div className="container hero-grid">
         <div className="hero-content">
           <div className="hero-badge">
             <span className="badge-dot" />
-            Premium Digital Invitations
+            Animated Wedding Invitations
           </div>
 
           <h1>
-            Your Wedding,<br />
-            Beautifully <em>Digital</em>
+            A wedding invitation<br />
+            guests will <em>remember</em>
           </h1>
 
           <p className="hero-description">
-            Cinematic, animated wedding invitations with RSVP tracking, interactive maps, and guest management — all in one elegant link.
+            RSVP tracking, maps, guest details, and a cinematic reveal in one elegant link.
           </p>
 
           <div className="hero-buttons">
-            <Link to="/order" className="btn btn-primary" data-primary-create-cta>
-              Create My Invitation
+            <Link to="/order" className="btn btn-primary hero-primary-cta" data-primary-create-cta>
+              <span>Create your invitation</span>
+              <span className="hero-cta-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z" />
+                  <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z" />
+                </svg>
+              </span>
             </Link>
-            <a href="#designs" className="btn btn-secondary" onClick={e => {
+            <a href="#designs" className="btn btn-secondary hero-secondary-cta" onClick={e => {
               e.preventDefault();
               const el = document.querySelector('#designs');
               if (el) {
@@ -41,10 +38,13 @@ export default function Hero() {
                 window.scrollTo({ top: y, behavior: 'smooth' });
               }
             }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3" />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="4" y="4" width="6" height="6" rx="1.5" />
+                <rect x="14" y="4" width="6" height="6" rx="1.5" />
+                <rect x="4" y="14" width="6" height="6" rx="1.5" />
+                <rect x="14" y="14" width="6" height="6" rx="1.5" />
               </svg>
-              View Designs
+              Explore designs
             </a>
           </div>
 
