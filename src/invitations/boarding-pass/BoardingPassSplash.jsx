@@ -36,7 +36,6 @@ const STARS = [
 ];
 
 const AUTO_OPEN_MIN_MS = 800;
-const AUTO_OPEN_FALLBACK_MS = 1500;
 
 export default function BoardingPassSplash({ onReady, onDismiss }) {
   const [dismissed, setDismissed] = useState(false);
@@ -60,13 +59,12 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
     if (!readyRef.current || dismissedRef.current) return;
     dismissedRef.current = true;
     setDismissed(true);
-    setTimeout(() => onDismissRef.current(), 2500);
+    setTimeout(() => onDismissRef.current(), 3200);
   }, []);
 
   useEffect(() => {
     let cancelled = false;
     let openTimer = null;
-    let fallbackTimer = null;
     let openScheduled = false;
     const startedAt = performance.now();
 
@@ -81,30 +79,31 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
       }, delay);
     };
 
-    const images = [splashBackground, airplaneSplash].map((src) => {
+    const images = [];
+    const preloadImage = (src) => {
       const image = new Image();
-      image.src = src;
-      return image;
-    });
-    fallbackTimer = window.setTimeout(scheduleOpen, AUTO_OPEN_FALLBACK_MS);
+      images.push(image);
 
-    Promise.all(images.map((image) => (
-      image.decode
-        ? image.decode().catch(() => undefined)
-        : new Promise((resolve) => {
-            image.onload = resolve;
-            image.onerror = resolve;
-          })
-    )))
+      if (image.decode) {
+        image.src = src;
+        return image.decode().catch(() => undefined);
+      }
+
+      return new Promise((resolve) => {
+        image.onload = resolve;
+        image.onerror = resolve;
+        image.src = src;
+      });
+    };
+
+    Promise.all([preloadImage(splashBackground), preloadImage(airplaneSplash)])
       .then(() => {
-        window.clearTimeout(fallbackTimer);
         scheduleOpen();
       });
 
     return () => {
       cancelled = true;
       window.clearTimeout(openTimer);
-      window.clearTimeout(fallbackTimer);
       images.forEach((image) => {
         image.onload = null;
         image.onerror = null;
@@ -198,7 +197,7 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
           }
           transition={
             dismissed
-              ? { duration: 2.35, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
+              ? { duration: 3, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
               : undefined
           }
         />
