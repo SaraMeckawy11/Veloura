@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.div / motion.img use `motion` via JSX members
 import { motion, AnimatePresence } from 'framer-motion';
-import airplaneSplash from '../../assets/plane-splash.jpeg';
+import splashBackground from '../../assets/boardingPass/background.png';
+import airplaneSplash from '../../assets/boardingPass/plane-splash-transparent2.png';
 
 const PETALS = [
   { id: 0, left: 8, delay: 0, dur: 8.2, size: 8 },
@@ -59,7 +60,7 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
     if (!readyRef.current || dismissedRef.current) return;
     dismissedRef.current = true;
     setDismissed(true);
-    setTimeout(() => onDismissRef.current(), 1300);
+    setTimeout(() => onDismissRef.current(), 2000);
   }, []);
 
   useEffect(() => {
@@ -80,31 +81,34 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
       }, delay);
     };
 
-    const image = new Image();
-    image.src = airplaneSplash;
+    const images = [splashBackground, airplaneSplash].map((src) => {
+      const image = new Image();
+      image.src = src;
+      return image;
+    });
     fallbackTimer = window.setTimeout(scheduleOpen, AUTO_OPEN_FALLBACK_MS);
 
-    if (image.decode) {
-      image.decode()
-        .catch(() => undefined)
-        .then(() => {
-          window.clearTimeout(fallbackTimer);
-          scheduleOpen();
-        });
-    } else {
-      image.onload = () => {
+    Promise.all(images.map((image) => (
+      image.decode
+        ? image.decode().catch(() => undefined)
+        : new Promise((resolve) => {
+            image.onload = resolve;
+            image.onerror = resolve;
+          })
+    )))
+      .then(() => {
         window.clearTimeout(fallbackTimer);
         scheduleOpen();
-      };
-      image.onerror = scheduleOpen;
-    }
+      });
 
     return () => {
       cancelled = true;
       window.clearTimeout(openTimer);
       window.clearTimeout(fallbackTimer);
-      image.onload = null;
-      image.onerror = null;
+      images.forEach((image) => {
+        image.onload = null;
+        image.onerror = null;
+      });
     };
   }, [handleOpen, markReady]);
 
@@ -125,6 +129,13 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
         }}
         exit={{ opacity: 0, transition: { duration: 0.45, delay: 0.55 } }}
       >
+        <img
+          src={splashBackground}
+          alt=""
+          className="inv-splash-bg-img"
+          draggable={false}
+        />
+
         <div className="inv-splash-petals" aria-hidden>
           {PETALS.map((p) => (
             <motion.div
@@ -175,7 +186,6 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
           src={airplaneSplash}
           alt=""
           className="inv-splash-plane-img"
-          style={{ mixBlendMode: 'screen' }}
           draggable={false}
           animate={
             dismissed
@@ -188,24 +198,12 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
           }
           transition={
             dismissed
-              ? { duration: 1.15, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
+              ? { duration: 1.85, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
               : undefined
           }
         />
 
         <div className="inv-splash-vignette" aria-hidden />
-
-        {/* "You are invited" — above the plane */}
-        {!dismissed && (
-          <motion.div
-            className="inv-splash-invite-text"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.5, delay: 0.5 }}
-          >
-            <p>You are invited</p>
-          </motion.div>
-        )}
 
       </motion.div>
     </AnimatePresence>

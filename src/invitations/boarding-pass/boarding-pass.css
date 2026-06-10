@@ -68,7 +68,7 @@
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: linear-gradient(180deg, #0a0608 0%, #120c10 40%, #0d0a0e 100%);
+  background: linear-gradient(180deg, #f8e9ce 0%, #f5dcc0 45%, #edd1bc 100%);
   display: block;
   cursor: pointer;
   overflow: hidden;
@@ -95,6 +95,18 @@
   font-size: 10px;
 }
 
+.inv-splash-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .inv-splash-plane-img {
   position: absolute;
   top: 0;
@@ -111,27 +123,10 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.6) 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 246, 232, 0.2) 0%, rgba(255, 246, 232, 0) 42%),
+    radial-gradient(ellipse at center, rgba(255,255,255,0) 42%, rgba(126, 88, 62, 0.2) 100%);
   z-index: 4;
-}
-
-/* "You are invited" text */
-.inv-splash-invite-text {
-  position: absolute;
-  top: 36px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  pointer-events: none;
-  z-index: 10;
-}
-.inv-splash-invite-text p {
-  font-family: 'Courier Prime', monospace;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.4em;
-  color: rgba(201, 169, 110, 0.85);
-  margin: 0;
 }
 
 @keyframes inv-fade-in { from { opacity: 0; } to { opacity: 1; } }
