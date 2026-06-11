@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema({
   // Link to orders
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
 
+  // How many invitations (orders) this user has created. Kept in sync with
+  // `orders.length` whenever orders are added or removed.
+  invitationCount: { type: Number, default: 0 },
+
   // Account status
   isActive:    { type: Boolean, default: true },
   lastLoginAt: { type: Date },

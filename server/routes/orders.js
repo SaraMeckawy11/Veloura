@@ -243,17 +243,20 @@ router.post('/', validateOrderBody, async (req, res) => {
     });
     await order.save();
 
-    // Find or create User
-    let user = await User.findOne({ email: customerEmail.toLowerCase() });
-    if (!user) {
-      user = new User({
-        name: customerName,
-        email: customerEmail,
-      });
-      await user.save();
-    }
-    if (!user.orders.includes(order._id)) {
+    // Find or create the User. A user is identified solely by email (its unique
+    // key), so the same person ordering again is never recorded as a new user.
+    // The atomic upsert also avoids a duplicate-user race when two orders with a
+    // brand-new email arrive at once.
+    const normalizedEmail = customerEmail.toLowerCase().trim();
+    const user = await User.findOneAndUpdate(
+      { email: normalizedEmail },
+      { $setOnInsert: { name: customerName, email: normalizedEmail } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    if (!user.orders.some(id => id.equals(order._id))) {
       user.orders.push(order._id);
+      // Record how many invitations this user has created.
+      user.invitationCount = user.orders.length;
       await user.save();
     }
 

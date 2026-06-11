@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 
-const rsvpSchema = new mongoose.Schema({
-  order:        { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true, index: true },
+// A single guest's response. Many of these live inside one invitation's RSVP
+// document (see rsvpSchema below).
+const responseSchema = new mongoose.Schema({
   submissionId: { type: String, trim: true, maxlength: 128 },
   guestName:    { type: String, required: true },
   email:        { type: String },
@@ -13,11 +14,16 @@ const rsvpSchema = new mongoose.Schema({
   dietaryPreferences: { type: String },
   message:      { type: String },
   respondedAt:  { type: Date, default: Date.now },
-}, { timestamps: true });
+}, { _id: true, timestamps: true });
 
-// Retry-safe RSVP submissions without treating names, emails, or IP addresses
-// as identity. A new form load receives a new submission ID and creates a new
-// dashboard row, even when another guest entered the same name.
-rsvpSchema.index({ order: 1, submissionId: 1 }, { unique: true, sparse: true });
+// One RSVP document per invitation (order). Every guest response is appended to
+// the `responses` array, so an invitation always maps to exactly one row in the
+// collection that gets updated as new responses arrive. When the same guest
+// re-submits (matched by submissionId) their existing response is updated in
+// place rather than duplicated.
+const rsvpSchema = new mongoose.Schema({
+  order:     { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true, unique: true, index: true },
+  responses: { type: [responseSchema], default: [] },
+}, { timestamps: true });
 
 export default mongoose.model('Rsvp', rsvpSchema);

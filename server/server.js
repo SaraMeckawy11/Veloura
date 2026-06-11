@@ -22,6 +22,7 @@ import pricingRoutes from './routes/pricing.js';
 import cronJob from './cron.js';
 import { syncOrderTemplateMetadata } from './services/orderSync.js';
 import { syncRsvpIndexes } from './services/rsvpSync.js';
+import { syncUserInvitationCounts } from './services/userSync.js';
 import { syncDefaultTemplates } from './services/templateSync.js';
 import { paypalApiConfigured } from './config/paypal.js';
 
@@ -55,6 +56,8 @@ async function runStartupSyncs() {
     );
     await syncRsvpIndexes();
     console.log('RSVP indexes ready');
+    const userSyncResult = await syncUserInvitationCounts();
+    console.log(`User invitation counts ready (${userSyncResult.modifiedCount || 0} updated)`);
   } catch (err) {
     syncsRan = false;
     console.error('Startup data sync failed:', err.message);

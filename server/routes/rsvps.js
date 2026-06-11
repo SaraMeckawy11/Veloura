@@ -22,8 +22,7 @@ router.post('/:publicSlug', async (req, res) => {
     if (!guestName?.trim()) return res.status(400).json({ error: 'Guest name is required' });
     if (!['yes', 'no', 'maybe'].includes(attending)) return res.status(400).json({ error: 'Invalid attending value' });
 
-    const rsvpDetails = {
-      order: order._id,
+    const response = {
       submissionId,
       guestName,
       email,
@@ -36,22 +35,40 @@ router.post('/:publicSlug', async (req, res) => {
       message,
       respondedAt: new Date(),
     };
-    const rsvp = submissionId
-      ? await Rsvp.findOneAndUpdate(
-        { order: order._id, submissionId },
-        { $setOnInsert: rsvpDetails },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-      )
-      : await Rsvp.create(rsvpDetails);
+
+    // Each invitation has exactly one RSVP document; ensure it exists, then
+    // either update this guest's existing response (same submissionId) or
+    // append a new one. Retried atomically on the rare upsert race (E11000).
+    let rsvpDoc;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        rsvpDoc = await Rsvp.findOneAndUpdate(
+          { order: order._id },
+          { $setOnInsert: { order: order._id } },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+        break;
+      } catch (raceErr) {
+        if (raceErr.code === 11000 && attempt === 0) continue;
+        throw raceErr;
+      }
+    }
+
+    const existing = submissionId
+      ? rsvpDoc.responses.find(r => r.submissionId === submissionId)
+      : null;
+    if (existing) {
+      existing.set(response);
+    } else {
+      rsvpDoc.responses.push(response);
+    }
+    await rsvpDoc.save();
 
     // No per-RSVP email notification — responses are surfaced in the
     // couple's dashboard instead of emailing on every submission.
 
-    res.status(201).json({ message: 'RSVP recorded', rsvp });
+    res.status(201).json({ message: 'RSVP recorded', rsvp: existing || rsvpDoc.responses[rsvpDoc.responses.length - 1] });
   } catch (err) {
-    if (err.code === 11000) {
-      return res.status(409).json({ error: 'This RSVP was already recorded. Please refresh the invitation before sending another response.' });
-    }
     res.status(500).json({ error: err.message });
   }
 });
@@ -62,7 +79,10 @@ router.get('/dashboard/:editToken', async (req, res) => {
     const order = await Order.findOne({ editToken: req.params.editToken });
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
-    const rsvps = await Rsvp.find({ order: order._id }).sort({ respondedAt: -1 });
+    const rsvpDoc = await Rsvp.findOne({ order: order._id });
+    const rsvps = (rsvpDoc?.responses || [])
+      .map(r => (typeof r.toObject === 'function' ? r.toObject() : r))
+      .sort((a, b) => new Date(b.respondedAt) - new Date(a.respondedAt));
 
     const attendingResponses = rsvps.filter(r => r.attending === 'yes');
     const attending = attendingResponses.length;

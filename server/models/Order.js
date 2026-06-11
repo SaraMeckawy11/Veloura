@@ -121,6 +121,49 @@ orderSchema.pre('save', function (next) {
   next();
 });
 
+// When an invitation is deleted, remove everything that hangs off it: its RSVP
+// document (which holds every guest response and message) and its link from the
+// owning user(s), keeping each user's invitationCount in sync. Models are
+// resolved lazily via mongoose.model() to avoid import cycles.
+async function cascadeDeleteOrder(orderId) {
+  if (!orderId) return;
+  await mongoose.model('Rsvp').deleteMany({ order: orderId });
+  const users = await mongoose.model('User').find({ orders: orderId });
+  for (const user of users) {
+    user.orders.pull(orderId);
+    user.invitationCount = user.orders.length;
+    await user.save();
+  }
+}
+
+// Document-level deletes: order.deleteOne()
+orderSchema.post('deleteOne', { document: true, query: false }, function () {
+  return cascadeDeleteOrder(this._id);
+});
+
+// Query-level single deletes: Order.findByIdAndDelete / findOneAndDelete / deleteOne
+orderSchema.post('findOneAndDelete', function (doc) {
+  if (doc) return cascadeDeleteOrder(doc._id);
+});
+orderSchema.pre('deleteOne', { document: false, query: true }, async function () {
+  const doc = await mongoose.model('Order').findOne(this.getFilter()).select('_id').lean();
+  this._cascadeOrderId = doc?._id;
+});
+orderSchema.post('deleteOne', { document: false, query: true }, function () {
+  if (this._cascadeOrderId) return cascadeDeleteOrder(this._cascadeOrderId);
+});
+
+// Bulk deletes: Order.deleteMany(filter)
+orderSchema.pre('deleteMany', async function () {
+  const docs = await mongoose.model('Order').find(this.getFilter()).select('_id').lean();
+  this._cascadeOrderIds = docs.map(d => d._id);
+});
+orderSchema.post('deleteMany', async function () {
+  for (const id of this._cascadeOrderIds || []) {
+    await cascadeDeleteOrder(id);
+  }
+});
+
 // Grace period (in hours) after activation during which couple names can be corrected
 orderSchema.statics.NAME_EDIT_GRACE_HOURS = 48;
 
