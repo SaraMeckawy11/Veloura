@@ -240,11 +240,11 @@
   content: '';
   position: absolute;
   z-index: 0;
-  inset: 18% 29% 31%;
+  inset: 9% 27% 21%;
   pointer-events: none;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 252, 0.34) 0%, rgba(255, 253, 247, 0.2) 44%, transparent 82%);
-  filter: blur(2px);
+  background: radial-gradient(ellipse at center, rgba(255, 255, 252, 0.48) 0%, rgba(255, 253, 247, 0.32) 46%, transparent 84%);
+  filter: blur(3px);
 }
 
 .coastal-kicker {
