@@ -109,6 +109,9 @@ function getPricingRegion() {
 }
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const scrollOrderFlowToTop = () => {
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+};
 const moveListItem = (items, fromIndex, toIndex) => {
   if (toIndex < 0 || toIndex >= items.length || fromIndex === toIndex) return items;
   const next = [...items];
@@ -774,9 +777,7 @@ export default function OrderFlow() {
     try {
       window.history.pushState({ orderStep: nextStep }, '');
     } catch { /* history unavailable */ }
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, left: 0 });
-    });
+    requestAnimationFrame(scrollOrderFlowToTop);
   }, []);
 
   // In-page "back" controls: pop history so they behave identically to the
@@ -787,7 +788,7 @@ export default function OrderFlow() {
       window.history.back();
     } else {
       setStep(fallbackStep);
-      requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
+      requestAnimationFrame(scrollOrderFlowToTop);
     }
   }, []);
 
@@ -810,13 +811,24 @@ export default function OrderFlow() {
       if (previousStep) {
         stepDepthRef.current = Math.max(0, stepDepthRef.current - 1);
         setStep(previousStep);
-        requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
+        requestAnimationFrame(scrollOrderFlowToTop);
       }
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    let nextFrame = 0;
+    const frame = requestAnimationFrame(() => {
+      nextFrame = requestAnimationFrame(scrollOrderFlowToTop);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(nextFrame);
+    };
+  }, [step]);
 
   useEffect(() => {
     if (!previewOpen) return undefined;
@@ -1098,6 +1110,8 @@ export default function OrderFlow() {
     setError('');
     setCardError('');
     try {
+      document.activeElement?.blur?.();
+      await wait(120);
       await cardFieldsRef.current.submit();
     } catch (err) {
       setCardSubmitting(false);
