@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.div uses `motion` via JSX members
 import { motion, AnimatePresence } from 'framer-motion';
-import splashUrl from '../../assets/coastal/light-envelope-splash-exact.html?url';
+import splashUrl from '../../assets/coastal/light-envelope-splash-no-diamond.html?url';
 import './coastal-splash.css';
 
 const FADE_DURATION = 0.7;
