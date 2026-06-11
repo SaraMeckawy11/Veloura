@@ -1645,28 +1645,30 @@ export default function OrderFlow() {
                   {storyMilestones.map((milestone, i) => (
                     <div key={i} className="story-milestone-item">
                       <div className="story-milestone-number">{i + 1}</div>
-                      <div className="story-milestone-actions" aria-label={`Reorder story milestone ${i + 1}`}>
-                        <button
-                          type="button"
-                          className="photo-order-btn"
-                          onClick={() => moveStoryMilestone(i, -1)}
-                          disabled={i === 0}
-                          title="Move milestone up"
-                          aria-label={`Move story milestone ${i + 1} up`}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
-                        </button>
-                        <button
-                          type="button"
-                          className="photo-order-btn"
-                          onClick={() => moveStoryMilestone(i, 1)}
-                          disabled={i === storyMilestones.length - 1}
-                          title="Move milestone down"
-                          aria-label={`Move story milestone ${i + 1} down`}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                        </button>
-                      </div>
+                      {storyMilestones.length > 1 && (
+                        <div className="story-milestone-actions" aria-label={`Reorder story milestone ${i + 1}`}>
+                          <button
+                            type="button"
+                            className="photo-order-btn"
+                            onClick={() => moveStoryMilestone(i, -1)}
+                            disabled={i === 0}
+                            title="Move milestone up"
+                            aria-label={`Move story milestone ${i + 1} up`}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                          </button>
+                          <button
+                            type="button"
+                            className="photo-order-btn"
+                            onClick={() => moveStoryMilestone(i, 1)}
+                            disabled={i === storyMilestones.length - 1}
+                            title="Move milestone down"
+                            aria-label={`Move story milestone ${i + 1} down`}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                          </button>
+                        </div>
+                      )}
                       {storyMilestones.length > 1 && (
                         <button
                           type="button"
@@ -1776,28 +1778,30 @@ export default function OrderFlow() {
                       style={galleryPreviewStyle}
                     >
                       <InvitationPhoto src={photo} alt={`Gallery ${i + 1}`} />
-                      <div className="photo-order-controls" aria-label={`Reorder gallery photo ${i + 1}`}>
-                        <button
-                          type="button"
-                          className="photo-order-btn"
-                          onClick={() => movePhoto('gallery', i, -1)}
-                          disabled={i === 0}
-                          title="Move photo left"
-                          aria-label={`Move gallery photo ${i + 1} earlier`}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-                        </button>
-                        <button
-                          type="button"
-                          className="photo-order-btn"
-                          onClick={() => movePhoto('gallery', i, 1)}
-                          disabled={i === photos.gallery.length - 1}
-                          title="Move photo right"
-                          aria-label={`Move gallery photo ${i + 1} later`}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-                        </button>
-                      </div>
+                      {photos.gallery.length > 1 && (
+                        <div className="photo-order-controls" aria-label={`Reorder gallery photo ${i + 1}`}>
+                          <button
+                            type="button"
+                            className="photo-order-btn"
+                            onClick={() => movePhoto('gallery', i, -1)}
+                            disabled={i === 0}
+                            title="Move photo left"
+                            aria-label={`Move gallery photo ${i + 1} earlier`}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                          </button>
+                          <button
+                            type="button"
+                            className="photo-order-btn"
+                            onClick={() => movePhoto('gallery', i, 1)}
+                            disabled={i === photos.gallery.length - 1}
+                            title="Move photo right"
+                            aria-label={`Move gallery photo ${i + 1} later`}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                          </button>
+                        </div>
+                      )}
                       <div className="photo-fit-controls" role="group" aria-label={`Gallery photo ${i + 1} fit`}>
                         {PHOTO_FIT_OPTIONS.map((option) => (
                           <button

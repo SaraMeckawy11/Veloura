@@ -868,28 +868,30 @@ export default function Dashboard() {
                       <div key={i} className="edit-story-item edit-story-item--with-photo">
                         <div className="edit-story-item-header">
                           <span className="edit-story-number">{i + 1}</span>
-                          <div className="story-milestone-actions" aria-label={`Reorder story milestone ${i + 1}`}>
-                            <button
-                              type="button"
-                              className="photo-order-btn"
-                              onClick={() => moveStoryItem(i, -1)}
-                              disabled={i === 0}
-                              title="Move milestone up"
-                              aria-label={`Move story milestone ${i + 1} up`}
-                            >
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
-                            </button>
-                            <button
-                              type="button"
-                              className="photo-order-btn"
-                              onClick={() => moveStoryItem(i, 1)}
-                              disabled={i === editStoryMilestones.length - 1}
-                              title="Move milestone down"
-                              aria-label={`Move story milestone ${i + 1} down`}
-                            >
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                            </button>
-                          </div>
+                          {editStoryMilestones.length > 1 && (
+                            <div className="story-milestone-actions" aria-label={`Reorder story milestone ${i + 1}`}>
+                              <button
+                                type="button"
+                                className="photo-order-btn"
+                                onClick={() => moveStoryItem(i, -1)}
+                                disabled={i === 0}
+                                title="Move milestone up"
+                                aria-label={`Move story milestone ${i + 1} up`}
+                              >
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                              </button>
+                              <button
+                                type="button"
+                                className="photo-order-btn"
+                                onClick={() => moveStoryItem(i, 1)}
+                                disabled={i === editStoryMilestones.length - 1}
+                                title="Move milestone down"
+                                aria-label={`Move story milestone ${i + 1} down`}
+                              >
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                              </button>
+                            </div>
+                          )}
                           {editStoryMilestones.length > 1 && (
                             <button type="button" className="edit-story-remove" onClick={() => removeStoryMilestone(i)} title="Remove milestone">
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
@@ -983,28 +985,30 @@ export default function Dashboard() {
                           style={galleryPhotoPreviewStyle}
                         >
                           <InvitationPhoto src={photo} alt={`${cat.label} ${i + 1}`} />
-                          <div className="photo-order-controls" aria-label={`Reorder ${cat.label} ${i + 1}`}>
-                            <button
-                              type="button"
-                              className="photo-order-btn"
-                              onClick={() => moveEditPhoto(cat.key, i, -1)}
-                              disabled={i === 0}
-                              title="Move photo left"
-                              aria-label={`Move ${cat.label} ${i + 1} earlier`}
-                            >
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-                            </button>
-                            <button
-                              type="button"
-                              className="photo-order-btn"
-                              onClick={() => moveEditPhoto(cat.key, i, 1)}
-                              disabled={i === editPhotos[cat.key].length - 1}
-                              title="Move photo right"
-                              aria-label={`Move ${cat.label} ${i + 1} later`}
-                            >
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-                            </button>
-                          </div>
+                          {editPhotos[cat.key].length > 1 && (
+                            <div className="photo-order-controls" aria-label={`Reorder ${cat.label} ${i + 1}`}>
+                              <button
+                                type="button"
+                                className="photo-order-btn"
+                                onClick={() => moveEditPhoto(cat.key, i, -1)}
+                                disabled={i === 0}
+                                title="Move photo left"
+                                aria-label={`Move ${cat.label} ${i + 1} earlier`}
+                              >
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                              </button>
+                              <button
+                                type="button"
+                                className="photo-order-btn"
+                                onClick={() => moveEditPhoto(cat.key, i, 1)}
+                                disabled={i === editPhotos[cat.key].length - 1}
+                                title="Move photo right"
+                                aria-label={`Move ${cat.label} ${i + 1} later`}
+                              >
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                              </button>
+                            </div>
+                          )}
                           {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                           {photo._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
                           {photo._failed && (
