@@ -1245,6 +1245,7 @@
   left: 6px;
   width: 20px;
   height: 20px;
+  border: 0;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1254,6 +1255,60 @@
   font-size: 0.72rem;
   font-weight: 700;
   z-index: 4;
+}
+.photo-retry-btn {
+  position: absolute;
+  top: 6px;
+  left: 30px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(20, 18, 16, 0.76);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+}
+.photo-retry-btn:hover,
+.photo-order-btn:hover:not(:disabled) {
+  background: var(--gold, #b8924a);
+  color: #fff;
+}
+.photo-order-controls,
+.story-milestone-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.photo-order-controls {
+  position: absolute;
+  top: 6px;
+  left: 60px;
+  z-index: 5;
+}
+.story-milestone-actions {
+  margin-left: 8px;
+}
+.photo-order-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(20, 18, 16, 0.12);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.photo-order-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
 }
 @keyframes dashboard-photo-spin {
   to { transform: rotate(360deg); }

@@ -109,6 +109,13 @@ function getPricingRegion() {
 }
 
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const moveListItem = (items, fromIndex, toIndex) => {
+  if (toIndex < 0 || toIndex >= items.length || fromIndex === toIndex) return items;
+  const next = [...items];
+  const [item] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, item);
+  return next;
+};
 
 const PHOTO_CATEGORIES = [
   { key: 'venue', label: 'Venue Photos', hint: 'Photos of your venue or ceremony location (max 2)', icon: 'location', max: 2 },
@@ -658,6 +665,22 @@ export default function OrderFlow() {
     setPhotos(prev => ({
       ...prev,
       [category]: prev[category].filter((_, i) => i !== index),
+    }));
+  };
+
+  const movePhoto = (category, index, direction) => {
+    setPhotos(prev => ({
+      ...prev,
+      [category]: moveListItem(prev[category], index, index + direction),
+    }));
+  };
+
+  const moveStoryMilestone = (index, direction) => {
+    const targetIndex = index + direction;
+    setStoryMilestones(prev => moveListItem(prev, index, targetIndex));
+    setPhotos(prev => ({
+      ...prev,
+      story: moveListItem(prev.story, index, targetIndex),
     }));
   };
 
@@ -1622,6 +1645,28 @@ export default function OrderFlow() {
                   {storyMilestones.map((milestone, i) => (
                     <div key={i} className="story-milestone-item">
                       <div className="story-milestone-number">{i + 1}</div>
+                      <div className="story-milestone-actions" aria-label={`Reorder story milestone ${i + 1}`}>
+                        <button
+                          type="button"
+                          className="photo-order-btn"
+                          onClick={() => moveStoryMilestone(i, -1)}
+                          disabled={i === 0}
+                          title="Move milestone up"
+                          aria-label={`Move story milestone ${i + 1} up`}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                        </button>
+                        <button
+                          type="button"
+                          className="photo-order-btn"
+                          onClick={() => moveStoryMilestone(i, 1)}
+                          disabled={i === storyMilestones.length - 1}
+                          title="Move milestone down"
+                          aria-label={`Move story milestone ${i + 1} down`}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                        </button>
+                      </div>
                       {storyMilestones.length > 1 && (
                         <button
                           type="button"
@@ -1657,8 +1702,8 @@ export default function OrderFlow() {
                             </div>
                             {photos.story[i]._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                             {photos.story[i]._failed && (
-                              <button type="button" className="photo-failed-badge" title="Upload failed - retry" onClick={() => retryPhotoUpload('story', i)}>
-                                !
+                              <button type="button" className="photo-failed-badge" title="Retry upload" onClick={() => retryPhotoUpload('story', i)} aria-label={`Retry story photo ${i + 1} upload`}>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
                               </button>
                             )}
                             <button type="button" className="photo-remove" onClick={() => removePhoto('story', i)}>
@@ -1731,6 +1776,28 @@ export default function OrderFlow() {
                       style={galleryPreviewStyle}
                     >
                       <InvitationPhoto src={photo} alt={`Gallery ${i + 1}`} />
+                      <div className="photo-order-controls" aria-label={`Reorder gallery photo ${i + 1}`}>
+                        <button
+                          type="button"
+                          className="photo-order-btn"
+                          onClick={() => movePhoto('gallery', i, -1)}
+                          disabled={i === 0}
+                          title="Move photo left"
+                          aria-label={`Move gallery photo ${i + 1} earlier`}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                        </button>
+                        <button
+                          type="button"
+                          className="photo-order-btn"
+                          onClick={() => movePhoto('gallery', i, 1)}
+                          disabled={i === photos.gallery.length - 1}
+                          title="Move photo right"
+                          aria-label={`Move gallery photo ${i + 1} later`}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                        </button>
+                      </div>
                       <div className="photo-fit-controls" role="group" aria-label={`Gallery photo ${i + 1} fit`}>
                         {PHOTO_FIT_OPTIONS.map((option) => (
                           <button
@@ -1746,6 +1813,11 @@ export default function OrderFlow() {
                       </div>
                       {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                       {photo._failed && <div className="photo-failed-badge" title="Upload failed — remove and re-add">!</div>}
+                      {photo._failed && (
+                        <button type="button" className="photo-retry-btn" title="Retry upload" onClick={() => retryPhotoUpload('gallery', i)} aria-label={`Retry gallery photo ${i + 1} upload`}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
+                        </button>
+                      )}
                       <button type="button" className="photo-remove" onClick={() => removePhoto('gallery', i)}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                       </button>

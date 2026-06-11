@@ -29,6 +29,13 @@ const PHOTO_FIT_OPTIONS = [
 const normalizePhotoFit = (value) => (
   value === 'contain' || value === 'containFit' || value === 'fit' ? 'contain' : 'cover'
 );
+const moveListItem = (items, fromIndex, toIndex) => {
+  if (toIndex < 0 || toIndex >= items.length || fromIndex === toIndex) return items;
+  const next = [...items];
+  const [item] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, item);
+  return next;
+};
 const getDashboardPhotoCategory = (photo) => (
   photo?.label && DASHBOARD_PHOTO_GROUPS.some(group => group.key === photo.label) ? photo.label : 'gallery'
 );
@@ -41,6 +48,13 @@ const parseUploadResponse = async (res) => {
 };
 const revokeLocalPhotoUrl = (photo) => {
   if (photo?._localUrl) URL.revokeObjectURL(photo._localUrl);
+};
+const uploadEditPhotoFile = async (file, category) => {
+  const formData = new FormData();
+  formData.append('photos', file);
+  const res = await fetch(`${API}/upload?category=${category}`, { method: 'POST', body: formData });
+  const [uploadedPhoto] = await parseUploadResponse(res);
+  return uploadedPhoto;
 };
 // The envelope "A Note" message every design shows in its demo — used as the
 // placeholder so a blank field keeps the default note.
@@ -213,17 +227,16 @@ export default function Dashboard() {
         publicId: '',
         label: 'story',
         fit: 'cover',
+        file,
         _localId: localId,
         _localUrl: localUrl,
         _uploading: true,
+        _failed: false,
       };
       return { ...prev, story: updated };
     });
-    const formData = new FormData();
-    formData.append('photos', file);
     try {
-      const res = await fetch(`${API}/upload?category=story`, { method: 'POST', body: formData });
-      const [uploadedPhoto] = await parseUploadResponse(res);
+      const uploadedPhoto = await uploadEditPhotoFile(file, 'story');
       setEditPhotos(prev => ({
         ...prev,
         story: prev.story.map(photo => (
@@ -260,6 +273,50 @@ export default function Dashboard() {
     setEditPhotos(prev => ({
       ...prev,
       story: prev.story.map((photo, i) => (i === index && photo ? { ...photo, fit: nextFit } : photo)),
+    }));
+  };
+
+  const retryStoryPhotoUpload = async (index) => {
+    const photo = editPhotos.story[index];
+    if (!photo?.file || !photo?._localId) return;
+    setSaveMsg('');
+    setPhotoUploading(prev => ({ ...prev, [`story-${index}`]: true }));
+    setEditPhotos(prev => ({
+      ...prev,
+      story: prev.story.map((item, itemIndex) => (
+        itemIndex === index ? { ...item, _uploading: true, _failed: false } : item
+      )),
+    }));
+    try {
+      const uploadedPhoto = await uploadEditPhotoFile(photo.file, 'story');
+      setEditPhotos(prev => ({
+        ...prev,
+        story: prev.story.map(item => (
+          item?._localId === photo._localId
+            ? { ...uploadedPhoto, fit: normalizePhotoFit(item.fit) }
+            : item
+        )),
+      }));
+      revokeLocalPhotoUrl(photo);
+    } catch (err) {
+      setEditPhotos(prev => ({
+        ...prev,
+        story: prev.story.map(item => (
+          item?._localId === photo._localId ? { ...item, _uploading: false, _failed: true } : item
+        )),
+      }));
+      setSaveMsg(err.message || 'Photo upload failed');
+    } finally {
+      setPhotoUploading(prev => ({ ...prev, [`story-${index}`]: false }));
+    }
+  };
+
+  const moveStoryItem = (index, direction) => {
+    const targetIndex = index + direction;
+    setEditStoryMilestones(prev => moveListItem(prev, index, targetIndex));
+    setEditPhotos(prev => ({
+      ...prev,
+      story: moveListItem(prev.story, index, targetIndex),
     }));
   };
 
@@ -324,9 +381,11 @@ export default function Dashboard() {
         publicId: '',
         label: category,
         fit: 'cover',
+        file,
         _localId: `${category}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         _localUrl: localUrl,
         _uploading: true,
+        _failed: false,
       };
     });
     e.target.value = '';
@@ -370,6 +429,48 @@ export default function Dashboard() {
       revokeLocalPhotoUrl(prev[category][index]);
       return { ...prev, [category]: prev[category].filter((_, i) => i !== index) };
     });
+  };
+
+  const retryEditPhotoUpload = async (category, index) => {
+    const photo = editPhotos[category]?.[index];
+    if (!photo?.file || !photo?._localId) return;
+    setSaveMsg('');
+    setPhotoUploading(prev => ({ ...prev, [category]: true }));
+    setEditPhotos(prev => ({
+      ...prev,
+      [category]: prev[category].map((item, itemIndex) => (
+        itemIndex === index ? { ...item, _uploading: true, _failed: false } : item
+      )),
+    }));
+    try {
+      const uploadedPhoto = await uploadEditPhotoFile(photo.file, category);
+      setEditPhotos(prev => ({
+        ...prev,
+        [category]: prev[category].map(item => (
+          item?._localId === photo._localId
+            ? { ...uploadedPhoto, fit: normalizePhotoFit(item.fit) }
+            : item
+        )),
+      }));
+      revokeLocalPhotoUrl(photo);
+    } catch (err) {
+      setEditPhotos(prev => ({
+        ...prev,
+        [category]: prev[category].map(item => (
+          item?._localId === photo._localId ? { ...item, _uploading: false, _failed: true } : item
+        )),
+      }));
+      setSaveMsg(err.message || 'Photo upload failed');
+    } finally {
+      setPhotoUploading(prev => ({ ...prev, [category]: false }));
+    }
+  };
+
+  const moveEditPhoto = (category, index, direction) => {
+    setEditPhotos(prev => ({
+      ...prev,
+      [category]: moveListItem(prev[category], index, index + direction),
+    }));
   };
 
   const flattenEditPhotos = () => {
@@ -767,6 +868,28 @@ export default function Dashboard() {
                       <div key={i} className="edit-story-item edit-story-item--with-photo">
                         <div className="edit-story-item-header">
                           <span className="edit-story-number">{i + 1}</span>
+                          <div className="story-milestone-actions" aria-label={`Reorder story milestone ${i + 1}`}>
+                            <button
+                              type="button"
+                              className="photo-order-btn"
+                              onClick={() => moveStoryItem(i, -1)}
+                              disabled={i === 0}
+                              title="Move milestone up"
+                              aria-label={`Move story milestone ${i + 1} up`}
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+                            </button>
+                            <button
+                              type="button"
+                              className="photo-order-btn"
+                              onClick={() => moveStoryItem(i, 1)}
+                              disabled={i === editStoryMilestones.length - 1}
+                              title="Move milestone down"
+                              aria-label={`Move story milestone ${i + 1} down`}
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                            </button>
+                          </div>
                           {editStoryMilestones.length > 1 && (
                             <button type="button" className="edit-story-remove" onClick={() => removeStoryMilestone(i)} title="Remove milestone">
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
@@ -780,6 +903,11 @@ export default function Dashboard() {
                                 <InvitationPhoto src={photo} alt={`Story ${i + 1}`} />
                                 {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                                 {photo._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
+                                {photo._failed && (
+                                  <button type="button" className="photo-retry-btn" title="Retry upload" onClick={() => retryStoryPhotoUpload(i)} aria-label={`Retry story photo ${i + 1} upload`}>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
+                                  </button>
+                                )}
                                 <div className="photo-fit-controls" role="group" aria-label={`Story photo ${i + 1} fit`}>
                                   {PHOTO_FIT_OPTIONS.map(option => (
                                     <button
@@ -850,13 +978,40 @@ export default function Dashboard() {
                       )}
                       {editPhotos[cat.key].map((photo, i) => (
                         <div
-                          key={i}
+                          key={photo._localId || photo.publicId || i}
                           className="photo-preview"
                           style={galleryPhotoPreviewStyle}
                         >
                           <InvitationPhoto src={photo} alt={`${cat.label} ${i + 1}`} />
+                          <div className="photo-order-controls" aria-label={`Reorder ${cat.label} ${i + 1}`}>
+                            <button
+                              type="button"
+                              className="photo-order-btn"
+                              onClick={() => moveEditPhoto(cat.key, i, -1)}
+                              disabled={i === 0}
+                              title="Move photo left"
+                              aria-label={`Move ${cat.label} ${i + 1} earlier`}
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+                            </button>
+                            <button
+                              type="button"
+                              className="photo-order-btn"
+                              onClick={() => moveEditPhoto(cat.key, i, 1)}
+                              disabled={i === editPhotos[cat.key].length - 1}
+                              title="Move photo right"
+                              aria-label={`Move ${cat.label} ${i + 1} later`}
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                            </button>
+                          </div>
                           {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                           {photo._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
+                          {photo._failed && (
+                            <button type="button" className="photo-retry-btn" title="Retry upload" onClick={() => retryEditPhotoUpload(cat.key, i)} aria-label={`Retry ${cat.label} ${i + 1} upload`}>
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
+                            </button>
+                          )}
                           <div className="photo-fit-controls" role="group" aria-label={`${cat.label} ${i + 1} fit`}>
                             {PHOTO_FIT_OPTIONS.map(option => (
                               <button
