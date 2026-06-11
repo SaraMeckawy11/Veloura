@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -70,8 +70,8 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const mapEnabled = fieldEnabled('venueMapUrl');
   const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
-  const name1 = wd.groomName || 'Partner 1';
-  const name2 = wd.brideName || 'Partner 2';
+  const name1 = formatInvitationName(wd.groomName || 'Partner 1');
+  const name2 = formatInvitationName(wd.brideName || 'Partner 2');
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
   const dayStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' })

@@ -181,13 +181,10 @@
   to { transform: translateX(-280px); }
 }
 
-/* Coastal-themed script for the couple names + signature lines. Scoped to the
-   hero and footer so it overrides the per-order --font-script (set inline on the
-   root) for these signature moments, giving every coastal invitation a breezy,
-   elegant seaside hand regardless of the picker default. */
+/* Coastal ampersands keep their own serif while couple names use the configured
+   invitation script font. */
 .coastal-hero,
 .coastal-footer {
-  --font-script: 'Great Vibes', 'Allura', cursive;
   --coast-amp-font: 'Cormorant Garamond', Georgia, serif;
 }
 

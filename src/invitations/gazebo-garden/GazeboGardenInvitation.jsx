@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -131,8 +131,8 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const mapEnabled = fieldEnabled('venueMapUrl');
   const rsvpEnabled = fieldEnabled('rsvp') && invitationTierAllows(order, 'rsvp');
-  const name1 = wd.groomName || 'Partner 1';
-  const name2 = wd.brideName || 'Partner 2';
+  const name1 = formatInvitationName(wd.groomName || 'Partner 1');
+  const name2 = formatInvitationName(wd.brideName || 'Partner 2');
   const coupleNames = `${name1} & ${name2}`;
   const weddingDate = wd.weddingDate ? new Date(wd.weddingDate) : null;
   const fullDateStr = weddingDate ? formatDate(weddingDate) : '';

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -76,8 +76,8 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
     : '';
 
-  const name1 = weddingDetails.brideName || weddingDetails.groomName || 'Partner 1';
-  const name2 = weddingDetails.groomName || weddingDetails.brideName || 'Partner 2';
+  const name1 = formatInvitationName(weddingDetails.brideName || weddingDetails.groomName || 'Partner 1');
+  const name2 = formatInvitationName(weddingDetails.groomName || weddingDetails.brideName || 'Partner 2');
   const firstName = (full) => (full || '').trim().split(/\s+/)[0] || full || '';
   const heroName1 = firstName(name1);
   const heroName2 = firstName(name2);

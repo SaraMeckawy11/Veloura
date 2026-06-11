@@ -7,6 +7,7 @@ import calendarIcon from '../../assets/Fountain Reverie/fountain_separator_compo
 import clockIcon from '../../assets/Fountain Reverie/fountain_separator_components/clock_icon.png';
 import locationIcon from '../../assets/Fountain Reverie/fountain_separator_components/location_icon.png';
 import verticalSeparator from '../../assets/Fountain Reverie/fountain_separator_components/vertical_separat.png';
+import { formatInvitationName } from '../shared';
 
 function Monogram({ firstInitial = 'A', secondInitial = 'Z' }) {
   return (
@@ -25,14 +26,6 @@ function FamilyLine({ text = 'TOGETHER WITH THEIR FAMILIES' }) {
   return <p className="fountain-fam">{text}</p>;
 }
 
-// Normalize a name to "First letter capital" form (e.g. "AALIYAH" -> "Aaliyah"),
-// so the script font always renders with proper-case letters as in the reference art.
-function toTitleCase(value = '') {
-  return String(value)
-    .toLowerCase()
-    .replace(/(^|[\s'-])([a-z])/g, (_match, sep, ch) => sep + ch.toUpperCase());
-}
-
 function Rule({ variant = 'middle' }) {
   return (
     <img
@@ -47,9 +40,9 @@ function Rule({ variant = 'middle' }) {
 function CoupleNames({ bride = 'Aaliyah', groom = 'Zayn' }) {
   return (
     <div className="fountain-couple">
-      <h1>{toTitleCase(bride)}</h1>
+      <h1>{formatInvitationName(bride)}</h1>
       <img className="fountain-couple__amp" src={leafAmpersand} alt="and" />
-      <h1>{toTitleCase(groom)}</h1>
+      <h1>{formatInvitationName(groom)}</h1>
     </div>
   );
 }
