@@ -1448,36 +1448,51 @@
 .story-milestone-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 8px 20px rgba(20, 18, 16, 0.16);
+  backdrop-filter: blur(10px);
 }
 .photo-order-controls {
   position: absolute;
-  top: 4px;
-  left: 28px;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 5;
 }
 .story-milestone-actions {
   position: absolute;
-  top: -8px;
-  left: 22px;
+  top: 10px;
+  right: 42px;
   z-index: 3;
 }
 .photo-order-btn {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   padding: 0;
-  border: 1px solid rgba(20, 18, 16, 0.12);
+  border: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--text-secondary);
+  background: transparent;
+  color: rgba(58, 49, 38, 0.82);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: var(--transition);
 }
+.photo-order-btn svg {
+  pointer-events: none;
+}
+.photo-order-btn:focus-visible {
+  outline: 2px solid rgba(184, 146, 74, 0.55);
+  outline-offset: 2px;
+}
 .photo-order-btn:disabled {
-  opacity: 0.38;
+  color: rgba(58, 49, 38, 0.28);
+  opacity: 1;
   cursor: not-allowed;
 }
 
