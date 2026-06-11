@@ -14,16 +14,6 @@ import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
 import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
 import theaterPreview from '../assets/theater/Thumbnail.png';
-import story1 from '../assets/story-1.png';
-import story2 from '../assets/story-2.png';
-import story3 from '../assets/story-3.png';
-import story4 from '../assets/story-4.png';
-import gallery1 from '../assets/gallery-1.png';
-import gallery2 from '../assets/gallery-2.png';
-import gallery3 from '../assets/gallery-3.png';
-import gallery4 from '../assets/gallery-4.png';
-import gallery5 from '../assets/gallery-5.png';
-import gallery6 from '../assets/gallery-6.png';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -33,6 +23,8 @@ const OLD_MESSAGE_HELP_TEXT = 'This text appears as the tagline under your names
 // The envelope "A Note" message every design reveals in its demo. Used as the
 // placeholder for the optional Envelope Message field.
 const DEFAULT_ENVELOPE_MESSAGE = 'Thank you for being part of the moments that brought us here. We feel incredibly lucky to celebrate this beginning with the people we love most.';
+const PHOTO_UPLOAD_ATTEMPTS = 3;
+const PHOTO_UPLOAD_TIMEOUT_MS = 90000;
 
 const normalizeEmail = (value = '') => value.trim().toLowerCase();
 const isValidEmail = (value = '') => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
@@ -116,6 +108,8 @@ function getPricingRegion() {
   }
 }
 
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 const PHOTO_CATEGORIES = [
   { key: 'venue', label: 'Venue Photos', hint: 'Photos of your venue or ceremony location (max 2)', icon: 'location', max: 2 },
   { key: 'story', label: 'Our Story Photos', hint: 'Photos from your journey together — first date, trips, proposal (max 4)', icon: 'book', max: 4 },
@@ -176,43 +170,6 @@ const TEMPLATE_PREVIEW_IMAGES = {
   'boarding-pass': boardingPassPreview,
   'theater': theaterPreview,
 };
-
-const PREVIEW_STORY_MILESTONES = [
-  {
-    date: '2019',
-    title: 'First Meeting',
-    description: 'A simple coffee date became the start of something unforgettable.',
-  },
-  {
-    date: '2020',
-    title: 'First Adventure',
-    description: 'Our first trip together turned into a memory we would always cherish.',
-  },
-  {
-    date: '2022',
-    title: 'A Golden Escape',
-    description: 'A sunset walk through the city became one of our most cherished memories.',
-  },
-  {
-    date: '2025',
-    title: 'The Proposal',
-    description: 'A quiet sunset, a beautiful view, and a promise for forever.',
-  },
-];
-
-const PREVIEW_STORY_PHOTOS = [story1, story2, story3, story4].map((src) => ({
-  src,
-  label: 'story',
-  fit: 'contain',
-  previewFallback: true,
-}));
-
-const PREVIEW_GALLERY_PHOTOS = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6].map((src) => ({
-  src,
-  label: 'gallery',
-  fit: 'cover',
-  previewFallback: true,
-}));
 
 const REVIEW_SECTION_OPTIONS = [
   { key: 'countdown', label: 'Countdown' },
@@ -417,6 +374,78 @@ export default function OrderFlow() {
     window.location.assign(`/order/success/${orderId}`);
   }, []);
 
+  const uploadPhotoOnce = async (file, category) => {
+    const fd = new FormData();
+    fd.append('photos', file);
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), PHOTO_UPLOAD_TIMEOUT_MS);
+    try {
+      const response = await fetch(`${API}/upload?category=${category}`, {
+        method: 'POST',
+        body: fd,
+        signal: controller.signal,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.files?.[0]) throw new Error(data.error || 'Upload failed');
+      return data.files[0];
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  };
+
+  const uploadFileInBackground = useCallback(async (file, category, localId) => {
+    let lastError = null;
+
+    for (let attempt = 1; attempt <= PHOTO_UPLOAD_ATTEMPTS; attempt += 1) {
+      setPhotos(prev => ({
+        ...prev,
+        [category]: prev[category].map(p =>
+          p._localId === localId
+            ? { ...p, _uploading: true, _failed: false, _uploadAttempt: attempt }
+            : p
+        ),
+      }));
+
+      try {
+        const uploadedFile = await uploadPhotoOnce(file, category);
+        setPhotos(prev => ({
+          ...prev,
+          [category]: prev[category].map(p =>
+            p._localId === localId
+              ? { url: uploadedFile.url, publicId: uploadedFile.publicId, label: category, fit: normalizePhotoFit(p.fit) }
+              : p
+          ),
+        }));
+        return;
+      } catch (err) {
+        lastError = err;
+        if (attempt < PHOTO_UPLOAD_ATTEMPTS) await wait(900 * attempt);
+      }
+    }
+
+    setPhotos(prev => ({
+      ...prev,
+      [category]: prev[category].map(p =>
+        p._localId === localId ? { ...p, _uploading: false, _failed: true } : p
+      ),
+    }));
+    setUploadError(lastError?.message || 'One or more photos failed to upload. You can remove and re-add them.');
+  }, []);
+
+  const retryPhotoUpload = useCallback((category, index) => {
+    const photo = photos[category]?.[index];
+    if (!photo?.file || !photo?._localId) return;
+    setUploadError('');
+    setPhotos(prev => ({
+      ...prev,
+      [category]: prev[category].map((item, itemIndex) => (
+        itemIndex === index ? { ...item, _uploading: true, _failed: false, _uploadAttempt: 1 } : item
+      )),
+    }));
+    uploadFileInBackground(photo.file, category, photo._localId);
+  }, [photos, uploadFileInBackground]);
+
   useEffect(() => {
     // PayPal Buttons keeps the user on this page (no top-level redirect), so
     // there's no hash to recover from. We only run a pending-order check on
@@ -544,7 +573,7 @@ export default function OrderFlow() {
   });
 
   // Upload a single file to Cloudinary in the background and update photos state
-  const uploadFileInBackground = useCallback((file, category, localId) => {
+  const UPLOAD_FILE_IN_BACKGROUND_ONCE = useCallback((file, category, localId) => {
     const fd = new FormData();
     fd.append('photos', file);
     fetch(`${API}/upload?category=${category}`, { method: 'POST', body: fd })
@@ -599,8 +628,11 @@ export default function OrderFlow() {
         publicId: '',
         label: category,
         fit: DEFAULT_PHOTO_FIT,
+        file: f,
         _uploading: true,
+        _failed: false,
         _localId: localId,
+        _uploadAttempt: 1,
         _thumbUrl: thumbUrl, // small data URL saved to localStorage
       }};
     }));
@@ -614,6 +646,7 @@ export default function OrderFlow() {
     // Fire-and-forget background uploads for each file
     for (const { file, localId } of entries) {
       uploadFileInBackground(file, category, localId);
+      if (category === 'gallery') await wait(250);
     }
   };
 
@@ -671,14 +704,6 @@ export default function OrderFlow() {
   const cleanedStoryMilestones = storyIncluded
     ? storyMilestones.filter(m => m.title || m.date || m.description)
     : [];
-  const previewPhotos = [
-    ...tieredPhotos,
-    ...(storyIncluded && !tieredPhotos.some(photo => photo.label === 'story') ? PREVIEW_STORY_PHOTOS : []),
-    ...(galleryIncluded && !tieredPhotos.some(photo => photo.label === 'gallery') ? PREVIEW_GALLERY_PHOTOS : []),
-  ];
-  const previewStoryMilestones = storyIncluded
-    ? (cleanedStoryMilestones.length ? cleanedStoryMilestones : PREVIEW_STORY_MILESTONES)
-    : [];
   const selectedTierSections = REVIEW_SECTION_OPTIONS
     .filter(section => tierAllows(selectedTier, section.key));
   const fieldEnabled = (key) => !effectiveDisabledFields.includes(key);
@@ -704,12 +729,12 @@ export default function OrderFlow() {
     },
     coupleMessage: fieldEnabled('coupleMessage') ? form.coupleMessage.trim() : undefined,
     disabledFields: effectiveDisabledFields,
-    photos: previewPhotos,
+    photos: tieredPhotos,
     customizations: {
       invitationFont: normalizeInvitationFont(form.invitationFont),
     },
     musicEnabled: false,
-    storyMilestones: previewStoryMilestones,
+    storyMilestones: cleanedStoryMilestones,
   };
   const previewRegistryEntry = selectedTemplate ? registry[selectedTemplate.slug] : null;
   const PreviewInvitationComponent = previewRegistryEntry?.component;
@@ -1631,7 +1656,11 @@ export default function OrderFlow() {
                               ))}
                             </div>
                             {photos.story[i]._uploading && <div className="photo-upload-badge" title="Uploading…" />}
-                            {photos.story[i]._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
+                            {photos.story[i]._failed && (
+                              <button type="button" className="photo-failed-badge" title="Upload failed - retry" onClick={() => retryPhotoUpload('story', i)}>
+                                !
+                              </button>
+                            )}
                             <button type="button" className="photo-remove" onClick={() => removePhoto('story', i)}>
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                             </button>
@@ -1650,7 +1679,7 @@ export default function OrderFlow() {
                               const thumbUrl = await fileToThumbUrl(file);
                               setPhotos(prev => {
                                 const updated = [...prev.story];
-                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', fit: DEFAULT_PHOTO_FIT, _uploading: true, _localId: localId, _thumbUrl: thumbUrl };
+                                updated[i] = { url: URL.createObjectURL(file), publicId: '', label: 'story', fit: DEFAULT_PHOTO_FIT, file, _uploading: true, _failed: false, _localId: localId, _thumbUrl: thumbUrl, _uploadAttempt: 1 };
                                 return { ...prev, story: updated };
                               });
                               // Background upload

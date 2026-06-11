@@ -1410,6 +1410,7 @@
   left: 4px;
   width: 18px;
   height: 18px;
+  border: 0;
   background: #ef4444;
   color: #fff;
   border-radius: 50%;
@@ -1419,6 +1420,8 @@
   align-items: center;
   justify-content: center;
   line-height: 1;
+  cursor: pointer;
+  z-index: 5;
 }
 
 /* Fallback placeholder when browser can\u2019t render an image format */

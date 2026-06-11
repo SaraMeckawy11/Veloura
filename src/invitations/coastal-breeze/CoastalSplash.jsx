@@ -5,10 +5,13 @@ import splashUrl from '../../assets/coastal/light-envelope-splash-no-diamond.htm
 import './coastal-splash.css';
 
 const FADE_DURATION = 0.7;
+const AUTO_DISMISS_FALLBACK_MS = 5200;
 const DONE_MESSAGE_TYPE = 'coastal-splash:done';
 
 export default function CoastalSplash({ onReady, onDismiss }) {
   const [dismissing, setDismissing] = useState(false);
+  const rootRef = useRef(null);
+  const fallbackTimerRef = useRef(null);
   const dismissingRef = useRef(false);
   const readyRef = useRef(false);
   const onReadyRef = useRef(onReady);
@@ -19,16 +22,24 @@ export default function CoastalSplash({ onReady, onDismiss }) {
     onDismissRef.current = onDismiss;
   }, [onReady, onDismiss]);
 
+  const beginDismiss = useCallback(() => {
+    if (dismissingRef.current) return;
+    dismissingRef.current = true;
+    if (fallbackTimerRef.current) window.clearTimeout(fallbackTimerRef.current);
+    setDismissing(true);
+  }, []);
+
   const markReady = useCallback(() => {
     if (readyRef.current) return;
     readyRef.current = true;
     onReadyRef.current?.();
-  }, []);
+    fallbackTimerRef.current = window.setTimeout(beginDismiss, AUTO_DISMISS_FALLBACK_MS);
+  }, [beginDismiss]);
 
-  const beginDismiss = useCallback(() => {
-    if (dismissingRef.current) return;
-    dismissingRef.current = true;
-    setDismissing(true);
+  useEffect(() => {
+    return () => {
+      if (fallbackTimerRef.current) window.clearTimeout(fallbackTimerRef.current);
+    };
   }, []);
 
   const handleSkip = useCallback(() => {
@@ -37,19 +48,21 @@ export default function CoastalSplash({ onReady, onDismiss }) {
   }, [beginDismiss]);
 
   useEffect(() => {
+    const targetWindow = rootRef.current?.ownerDocument?.defaultView || window;
     const handleMessage = (event) => {
       if (event.data?.type === DONE_MESSAGE_TYPE) beginDismiss();
     };
 
-    window.addEventListener('message', handleMessage);
+    targetWindow.addEventListener('message', handleMessage);
     return () => {
-      window.removeEventListener('message', handleMessage);
+      targetWindow.removeEventListener('message', handleMessage);
     };
   }, [beginDismiss]);
 
   return (
     <AnimatePresence>
       <motion.div
+        ref={rootRef}
         key="coastal-splash"
         className="coastal-splash coastal-splash--html"
         role="button"
