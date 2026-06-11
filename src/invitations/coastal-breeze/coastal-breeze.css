@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&family=Allura&family=Italianno&family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Prata&family=Allura&family=Italianno&family=Great+Vibes&display=swap');
 
 .coastal-theme {
   --coast-ink: #1a3a52;
@@ -181,10 +181,10 @@
   to { transform: translateX(-280px); }
 }
 
-/* Coastal couple names use a graceful editorial serif with long-name safeguards. */
+/* Coastal couple names use a minimal premium serif with long-name safeguards. */
 .coastal-hero,
 .coastal-footer {
-  --coast-name-font: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --coast-name-font: 'Prata', 'Cormorant Garamond', Georgia, serif;
   --coast-amp-font: 'Cormorant Garamond', Georgia, serif;
 }
 
@@ -273,10 +273,10 @@
   margin: 24px 0 8px;
   color: #2f4d70;
   font-family: var(--coast-name-font);
-  font-weight: 500;
-  font-size: clamp(1.85rem, 5.6vw, 3rem);
-  line-height: 1.08;
-  letter-spacing: 0.01em;
+  font-weight: 400;
+  font-size: clamp(1.72rem, 5.1vw, 2.72rem);
+  line-height: 1.12;
+  letter-spacing: 0.005em;
   text-transform: none;
 }
 
@@ -1802,9 +1802,9 @@
   color: var(--coast-denim-dark);
   font-family: var(--coast-name-font);
   font-size: clamp(1.25rem, 2.8vw, 1.75rem);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 1.18;
   max-width: min(100%, 520px);
   overflow-wrap: anywhere;
   text-wrap: balance;
@@ -1891,7 +1891,7 @@
   }
 
   .coastal-hero-card h1 {
-    font-size: clamp(1.6rem, 7.6vw, 2.35rem);
+    font-size: clamp(1.48rem, 7vw, 2.15rem);
     width: min(100%, 330px);
   }
 
