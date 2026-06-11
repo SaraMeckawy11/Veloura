@@ -240,11 +240,13 @@
   content: '';
   position: absolute;
   z-index: 0;
-  inset: 9% 27% 21%;
+  inset: -4% 30% 4%;
   pointer-events: none;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 252, 0.48) 0%, rgba(255, 253, 247, 0.32) 46%, transparent 84%);
-  filter: blur(3px);
+  /* A tall vertical glow column (not a circular halo): narrow horizontally and
+     elongated along the vertical axis so it lifts the stacked names without
+     bulging out to the sides. */
+  background: radial-gradient(ellipse 52% 96% at 50% 50%, rgba(255, 255, 252, 0.5) 0%, rgba(255, 253, 247, 0.34) 42%, transparent 80%);
+  filter: blur(4px);
 }
 
 .coastal-kicker {
