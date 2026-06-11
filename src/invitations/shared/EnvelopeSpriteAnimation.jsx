@@ -33,6 +33,7 @@ export default function EnvelopeSpriteAnimation({ className, onReady, onComplete
     const canvas = canvasRef.current;
     if (!canvas) return undefined;
 
+    const ownerWindow = canvas.ownerDocument?.defaultView || window;
     const context = canvas.getContext('2d', { alpha: true });
     const sprite = new Image();
     sprite.decoding = 'async';
@@ -44,9 +45,9 @@ export default function EnvelopeSpriteAnimation({ className, onReady, onComplete
     let disposed = false;
 
     const resizeCanvas = () => {
-      const pixelRatio = Math.max(window.devicePixelRatio || 1, 1);
-      canvas.width = Math.ceil(window.innerWidth * pixelRatio);
-      canvas.height = Math.ceil(window.innerHeight * pixelRatio);
+      const pixelRatio = Math.max(ownerWindow.devicePixelRatio || 1, 1);
+      canvas.width = Math.ceil(ownerWindow.innerWidth * pixelRatio);
+      canvas.height = Math.ceil(ownerWindow.innerHeight * pixelRatio);
       if (lastFrame >= 0) drawFrame(lastFrame);
     };
 
@@ -85,7 +86,7 @@ export default function EnvelopeSpriteAnimation({ className, onReady, onComplete
       }
 
       if (frameIndex < FRAME_COUNT - 1) {
-        rafId = window.requestAnimationFrame(tick);
+        rafId = ownerWindow.requestAnimationFrame(tick);
       } else if (!completed) {
         completed = true;
         onCompleteRef.current?.();
@@ -97,18 +98,18 @@ export default function EnvelopeSpriteAnimation({ className, onReady, onComplete
       resizeCanvas();
       drawFrame(0);
       onReadyRef.current?.();
-      rafId = window.requestAnimationFrame(tick);
+      rafId = ownerWindow.requestAnimationFrame(tick);
     };
 
     sprite.addEventListener('load', handleLoad);
-    window.addEventListener('resize', resizeCanvas);
+    ownerWindow.addEventListener('resize', resizeCanvas);
     sprite.src = spriteUrl;
 
     return () => {
       disposed = true;
-      if (rafId) window.cancelAnimationFrame(rafId);
+      if (rafId) ownerWindow.cancelAnimationFrame(rafId);
       sprite.removeEventListener('load', handleLoad);
-      window.removeEventListener('resize', resizeCanvas);
+      ownerWindow.removeEventListener('resize', resizeCanvas);
     };
   }, []);
 

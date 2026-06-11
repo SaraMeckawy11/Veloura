@@ -14,6 +14,16 @@ import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
 import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
 import theaterPreview from '../assets/theater/Thumbnail.png';
+import story1 from '../assets/story-1.png';
+import story2 from '../assets/story-2.png';
+import story3 from '../assets/story-3.png';
+import story4 from '../assets/story-4.png';
+import gallery1 from '../assets/gallery-1.png';
+import gallery2 from '../assets/gallery-2.png';
+import gallery3 from '../assets/gallery-3.png';
+import gallery4 from '../assets/gallery-4.png';
+import gallery5 from '../assets/gallery-5.png';
+import gallery6 from '../assets/gallery-6.png';
 import '../styles/OrderFlow.css';
 
 const API = import.meta.env.VITE_API_URL || '/api';
@@ -167,6 +177,52 @@ const TEMPLATE_PREVIEW_IMAGES = {
   'theater': theaterPreview,
 };
 
+const PREVIEW_STORY_MILESTONES = [
+  {
+    date: '2019',
+    title: 'First Meeting',
+    description: 'A simple coffee date became the start of something unforgettable.',
+  },
+  {
+    date: '2020',
+    title: 'First Adventure',
+    description: 'Our first trip together turned into a memory we would always cherish.',
+  },
+  {
+    date: '2022',
+    title: 'A Golden Escape',
+    description: 'A sunset walk through the city became one of our most cherished memories.',
+  },
+  {
+    date: '2025',
+    title: 'The Proposal',
+    description: 'A quiet sunset, a beautiful view, and a promise for forever.',
+  },
+];
+
+const PREVIEW_STORY_PHOTOS = [story1, story2, story3, story4].map((src) => ({
+  src,
+  label: 'story',
+  fit: 'contain',
+  previewFallback: true,
+}));
+
+const PREVIEW_GALLERY_PHOTOS = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6].map((src) => ({
+  src,
+  label: 'gallery',
+  fit: 'cover',
+  previewFallback: true,
+}));
+
+const REVIEW_SECTION_OPTIONS = [
+  { key: 'countdown', label: 'Countdown' },
+  { key: 'coupleMessage', label: 'Envelope note' },
+  { key: 'story', label: 'Our Story' },
+  { key: 'gallery', label: 'Memories' },
+  { key: 'rsvp', label: 'RSVP' },
+  { key: 'music', label: 'Music' },
+];
+
 // Designs temporarily hidden from the order flow's design picker. The server's
 // /api/templates response still includes these, so we filter them out of the
 // merged list as well — not just the local fallback definitions above.
@@ -208,9 +264,12 @@ export default function OrderFlow() {
   // page — that explicit choice must win over any saved draft tier and land
   // them on step 1 so they can see the plan they picked already selected.
   const urlTierParam = new URLSearchParams(window.location.search).get('tier');
-  const hasUrlTier = Boolean(urlTierParam && normalizePricingTier(urlTierParam) === urlTierParam);
+  const normalizedUrlTier = urlTierParam ? normalizePricingTier(urlTierParam) : '';
+  const hasUrlTier = Boolean(
+    urlTierParam && (urlTierParam === normalizedUrlTier || urlTierParam === 'luxe')
+  );
   const initialTier = normalizePricingTier(
-    urlTierParam || draft?.selectedTier || DEFAULT_PRICING_TIER
+    (hasUrlTier ? normalizedUrlTier : draft?.selectedTier) || DEFAULT_PRICING_TIER
   );
 
   const [step, setStep] = useState(hasUrlTier ? 1 : (draft?.step || 1));
@@ -612,6 +671,16 @@ export default function OrderFlow() {
   const cleanedStoryMilestones = storyIncluded
     ? storyMilestones.filter(m => m.title || m.date || m.description)
     : [];
+  const previewPhotos = [
+    ...tieredPhotos,
+    ...(storyIncluded && !tieredPhotos.some(photo => photo.label === 'story') ? PREVIEW_STORY_PHOTOS : []),
+    ...(galleryIncluded && !tieredPhotos.some(photo => photo.label === 'gallery') ? PREVIEW_GALLERY_PHOTOS : []),
+  ];
+  const previewStoryMilestones = storyIncluded
+    ? (cleanedStoryMilestones.length ? cleanedStoryMilestones : PREVIEW_STORY_MILESTONES)
+    : [];
+  const selectedTierSections = REVIEW_SECTION_OPTIONS
+    .filter(section => tierAllows(selectedTier, section.key));
   const fieldEnabled = (key) => !effectiveDisabledFields.includes(key);
   const optionalValue = (key, fallback = undefined) => (
     fieldEnabled(key) && form[key] ? form[key] : fallback
@@ -635,12 +704,12 @@ export default function OrderFlow() {
     },
     coupleMessage: fieldEnabled('coupleMessage') ? form.coupleMessage.trim() : undefined,
     disabledFields: effectiveDisabledFields,
-    photos: tieredPhotos,
+    photos: previewPhotos,
     customizations: {
       invitationFont: normalizeInvitationFont(form.invitationFont),
     },
     musicEnabled: false,
-    storyMilestones: cleanedStoryMilestones,
+    storyMilestones: previewStoryMilestones,
   };
   const previewRegistryEntry = selectedTemplate ? registry[selectedTemplate.slug] : null;
   const PreviewInvitationComponent = previewRegistryEntry?.component;
@@ -1702,6 +1771,21 @@ export default function OrderFlow() {
               </div>
 
               <div className="review-section">
+                <h3 className="review-section-title">Selected Plan</h3>
+                <div className="review-plan">
+                  <div>
+                    <strong>{selectedTierConfig.name}</strong>
+                    <span>{displayPrice}</span>
+                  </div>
+                  <div className="review-plan-sections" aria-label={`${selectedTierConfig.name} sections`}>
+                    {selectedTierSections.map(section => (
+                      <span key={section.key}>{section.label}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="review-section">
                 <h3 className="review-section-title">Invitation Preview</h3>
                 <button
                   type="button"
@@ -1834,6 +1918,10 @@ export default function OrderFlow() {
                         <dd>{form.venue}</dd>
                       </div>
                     )}
+                    <div className="payment-summary-row">
+                      <dt>Plan</dt>
+                      <dd>{selectedTierConfig.name}</dd>
+                    </div>
                     <div className="payment-summary-row">
                       <dt>Email</dt>
                       <dd>{form.customerEmail}</dd>
