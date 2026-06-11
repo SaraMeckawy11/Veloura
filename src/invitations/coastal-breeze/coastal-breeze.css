@@ -181,10 +181,10 @@
   to { transform: translateX(-280px); }
 }
 
-/* Coastal ampersands keep their own serif while couple names use the configured
-   invitation script font. */
+/* Coastal couple names use a breezy script that fits the seaside watercolor theme. */
 .coastal-hero,
 .coastal-footer {
+  --coast-name-font: 'Allura', 'Great Vibes', 'Italianno', cursive;
   --coast-amp-font: 'Cormorant Garamond', Georgia, serif;
 }
 
@@ -271,10 +271,10 @@
   gap: 2px;
   margin: 24px 0 8px;
   color: #2f4d70;
-  font-family: var(--font-script);
+  font-family: var(--coast-name-font);
   font-weight: 400;
-  font-size: clamp(2.6rem, 8vw, 4.3rem);
-  line-height: 1.04;
+  font-size: clamp(1.6rem, 5vw, 2.65rem);
+  line-height: 1;
   letter-spacing: 0.01em;
   text-transform: none;
 }
@@ -289,7 +289,7 @@
   position: relative;
   z-index: 1;
   display: block;
-  font-family: var(--font-script);
+  font-family: var(--coast-name-font);
   font-size: 1em;
   line-height: 1;
 }
@@ -1796,18 +1796,18 @@
 .coastal-footer-names {
   margin: 6px 0 24px;
   color: var(--coast-denim-dark);
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.7vw, 1.85rem);
-  font-weight: 300;
-  letter-spacing: 0.14em;
-  line-height: 1.2;
-  text-transform: uppercase;
+  font-family: var(--coast-name-font);
+  font-size: clamp(1.35rem, 3.2vw, 2rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  text-transform: none;
 }
 
 .coastal-footer-amp {
   display: inline-block;
   margin: 0 0.16em;
-  font-family: var(--font-script);
+  font-family: var(--coast-name-font);
   font-size: 1.15em;
   font-weight: 400;
   color: var(--coast-coral);
@@ -1884,7 +1884,7 @@
   }
 
   .coastal-hero-card h1 {
-    font-size: clamp(2.1rem, 10vw, 2.9rem);
+    font-size: clamp(1.35rem, 7vw, 2rem);
   }
 
   .coastal-hero-shell {
