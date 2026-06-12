@@ -886,14 +886,22 @@
   color: #314234;
   font: inherit;
   outline: none;
-  padding: 0.98rem 1rem;
+  padding: 0.86rem 0.95rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
   transition: border 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
 .gazebo-rsvp-card textarea {
-  min-height: 5.75rem;
+  min-height: 6rem;
+  line-height: 1.55;
   resize: vertical;
+}
+
+.gazebo-rsvp-card input::placeholder,
+.gazebo-rsvp-card textarea::placeholder {
+  color: rgba(49, 66, 52, 0.42);
+  font-size: 0.86rem;
+  font-style: italic;
 }
 
 .gazebo-rsvp-card input:focus,
@@ -907,8 +915,8 @@
 .gazebo-attending-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.6rem;
-  margin-top: clamp(1.6rem, 4vw, 2.4rem);
+  gap: 0.5rem;
+  margin-top: clamp(1.1rem, 3vw, 1.6rem);
   padding: 0;
   background: transparent;
 }
@@ -918,14 +926,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 3.35rem;
+  min-height: 2.75rem;
   overflow: hidden;
   border: 1px solid rgba(139, 115, 50, 0.22);
   border-radius: 0.5rem;
   background: rgba(255, 255, 252, 0.74);
   color: rgba(49, 66, 52, 0.82);
   cursor: pointer;
-  padding: 0.84rem 0.72rem;
+  padding: 0.6rem 0.62rem;
   text-align: center;
   transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
 }
@@ -936,7 +944,7 @@
 .gazebo-attending-grid label span {
   position: relative;
   z-index: 1;
-  font-size: 0.88rem;
+  font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.01em;
   white-space: nowrap;
@@ -1360,8 +1368,8 @@
   }
 
   .gazebo-attending-grid label {
-    min-height: 3.25rem;
-    padding: 0.78rem 0.62rem;
+    min-height: 2.75rem;
+    padding: 0.58rem 0.5rem;
   }
 
   .gazebo-attending-grid label span {

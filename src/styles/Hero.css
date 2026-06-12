@@ -107,9 +107,7 @@
   font-weight: 600;
   line-height: 1;
   border-radius: 999px;
-  /* Size to the label — fixed widths squeezed "Explore designs" onto two
-     lines on desktop/tablet, while mobile's full-width buttons looked right. */
-  width: auto;
+  width: 208px;
   white-space: nowrap;
 }
 

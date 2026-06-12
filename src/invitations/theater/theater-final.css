@@ -716,8 +716,8 @@ body:has(.theater-theme),
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: clamp(48px, 8.4vw, 68px);
-  padding: 0.58em 0.48em;
+  min-height: clamp(42px, 6.4vw, 50px);
+  padding: 0.44em 0.42em;
   border: 1px solid rgba(116, 23, 15, 0.28);
   border-radius: 9px;
   background: rgba(255, 248, 230, 0.46);
@@ -757,7 +757,7 @@ body:has(.theater-theme),
 }
 
 .theater-rsvp-choice strong {
-  font-size: clamp(0.54rem, 1.45vw, 0.9rem);
+  font-size: clamp(0.5rem, 1.22vw, 0.74rem);
   white-space: nowrap;
 }
 
@@ -807,7 +807,7 @@ body:has(.theater-theme),
   left: 7.5%;
   top: 55%;
   display: grid;
-  gap: 0.5em;
+  gap: 0.42em;
   width: 85%;
   text-align: center;
 }
@@ -817,13 +817,13 @@ body:has(.theater-theme),
 }
 
 .theater-message-field textarea {
-  min-height: clamp(50px, 9.2vw, 72px);
-  padding: 0.45em 0.6em;
+  min-height: clamp(54px, 8vw, 70px);
+  padding: 0.5em 0.62em;
   border: 1px solid rgba(47, 27, 19, 0.35);
   border-radius: 4px;
   background: rgba(255, 248, 230, 0.5);
   font-family: var(--font-soft);
-  font-size: clamp(0.78rem, 2vw, 1rem);
+  font-size: clamp(0.72rem, 1.75vw, 0.92rem);
   resize: none;
   line-height: 1.35;
   text-align: left;
@@ -832,6 +832,7 @@ body:has(.theater-theme),
 
 .theater-message-field textarea::placeholder {
   color: rgba(75, 36, 20, 0.48);
+  font-size: clamp(0.64rem, 1.55vw, 0.82rem);
   font-style: italic;
 }
 
@@ -1105,6 +1106,7 @@ body:has(.theater-theme),
 
   .theater-rsvp-choice button {
     gap: 5%;
+    min-height: clamp(40px, 10vw, 46px);
   }
 }
 

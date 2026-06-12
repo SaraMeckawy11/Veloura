@@ -35,7 +35,7 @@ const STARS = [
   { id: 9, left: 6, top: 75, delay: 1.1, dur: 1.9 },
 ];
 
-const AUTO_OPEN_MIN_MS = 800;
+const AUTO_OPEN_MIN_MS = 1200;
 
 export default function BoardingPassSplash({ onReady, onDismiss }) {
   const [dismissed, setDismissed] = useState(false);
@@ -189,15 +189,15 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
           animate={
             dismissed
               ? {
-                  y: ['0vh', '-6vh', '-52vh', '-135vh'],
-                  scale: [1, 0.98, 0.93, 0.83],
-                  filter: ['blur(0px)', 'blur(0px)', 'blur(1.5px)', 'blur(5px)'],
+                  y: ['4vh', '4vh', '-5vh', '-54vh', '-135vh'],
+                  scale: [1, 1, 0.98, 0.93, 0.83],
+                  filter: ['blur(0px)', 'blur(0px)', 'blur(0px)', 'blur(1.5px)', 'blur(5px)'],
                 }
-              : { y: '0vh', scale: 1, filter: 'blur(0px)' }
+              : { y: '4vh', scale: 1, filter: 'blur(0px)' }
           }
           transition={
             dismissed
-              ? { duration: 3, ease: [0.3, 0, 0.9, 1], times: [0, 0.2, 0.6, 1] }
+              ? { duration: 3.15, ease: [0.3, 0, 0.9, 1], times: [0, 0.16, 0.32, 0.66, 1] }
               : undefined
           }
         />
