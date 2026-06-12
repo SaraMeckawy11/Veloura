@@ -32,11 +32,6 @@
   overflow-x: hidden;
 }
 
-.coastal-theme .invitation-boot {
-  background: #f5fafd;
-  color: var(--coast-denim);
-}
-
 /* ============================================================
    HERO — beach watercolor backdrop with elegant text overlay
    ============================================================ */
@@ -1346,10 +1341,10 @@
 }
 
 .coastal-rsvp-toggle button.active {
-  border-color: var(--coast-denim-dark);
-  color: var(--coast-ivory);
-  background: var(--coast-denim-dark);
-  box-shadow: none;
+  border-color: rgba(41, 99, 143, 0.6);
+  color: var(--coast-denim-dark);
+  background: rgba(41, 99, 143, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 253, 247, 0.72);
 }
 
 .coastal-rsvp-card .rsvp-plus-one-label {

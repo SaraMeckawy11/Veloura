@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -179,6 +179,12 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   return (
     <div ref={rootRef} className={`theater-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />}
+      {showSplash && !splashReady && (
+        <div className="invitation-boot" role="status" aria-live="polite">
+          <span className="invitation-boot-spinner" aria-hidden="true" />
+          <span className="invitation-boot-label">Opening invitation</span>
+        </div>
+      )}
       {showSplash && <TheaterSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />}
 
       <main className="theater-invitation">
@@ -306,7 +312,7 @@ function splitVenueLines(text) {
 function CountdownSection({ timeLeft }) {
   const pad = (value) => String(value).padStart(2, '0');
   const countdown = [
-    { label: 'Days', value: pad(timeLeft.days) },
+    { label: 'Days', value: formatCountdownDays(timeLeft.days) },
     { label: 'Hours', value: pad(timeLeft.hours) },
     { label: 'Minutes', value: pad(timeLeft.minutes) },
     { label: 'Seconds', value: pad(timeLeft.seconds) },

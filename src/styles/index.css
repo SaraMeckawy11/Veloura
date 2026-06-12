@@ -67,6 +67,21 @@ img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; }
 button { cursor: pointer; border: none; font-family: inherit; }
 
+::selection {
+  background: rgba(184, 146, 74, 0.22);
+  color: var(--text);
+}
+
+input::selection,
+textarea::selection {
+  background: rgba(184, 146, 74, 0.24);
+  color: inherit;
+}
+
+:focus-visible {
+  outline-color: var(--gold);
+}
+
 .invitation-splash-gated > :not(audio):not(.inv-splash):not(.coastal-splash):not(.fountain-splash):not(.gazebo-splash):not(.theater-splash):not(.invitation-boot) {
   visibility: hidden;
 }
@@ -76,7 +91,7 @@ button { cursor: pointer; border: none; font-family: inherit; }
    Quiet spinner shown the instant an invitation route opens, until the
    splash screen's own assets have loaded (and while the page/chunk loads).
    Sits above the splash (z-index 9999) so guests never see a blank sheet.
-   Per-theme colors live in each invitation's stylesheet.
+   Uses the website palette so loading stays consistent across templates.
 ======================================== */
 .invitation-boot {
   position: fixed;
@@ -87,8 +102,10 @@ button { cursor: pointer; border: none; font-family: inherit; }
   align-items: center;
   justify-content: center;
   gap: 16px;
-  background: #faf8f4;
-  color: #8a7a5e;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(240, 230, 211, 0.64), transparent 18rem),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+  color: var(--gold);
 }
 
 .invitation-boot-spinner {
@@ -128,6 +145,17 @@ button { cursor: pointer; border: none; font-family: inherit; }
   -ms-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+}
+
+.invitation-guard button,
+.invitation-guard [role="button"],
+.invitation-guard [role="radio"],
+.invitation-guard label {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .invitation-guard img,
 .invitation-guard video,

@@ -20,11 +20,6 @@
   font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
 }
 
-.gazebo-theme .invitation-boot {
-  background: #fffaf0;
-  color: #6f8257;
-}
-
 .gazebo-splash {
   position: fixed;
   inset: 0;
@@ -949,24 +944,22 @@
 
 .gazebo-attending-grid label:hover,
 .gazebo-attending-grid label:focus-within {
-  border-color: rgba(139, 115, 50, 0.4);
+  border-color: rgba(139, 99, 49, 0.42);
   background: rgba(255, 255, 252, 0.92);
-  box-shadow: 0 10px 24px rgba(90, 102, 64, 0.08);
+  box-shadow: 0 10px 24px rgba(139, 99, 49, 0.08);
   transform: translateY(-1px);
 }
 
 .gazebo-attending-grid label.active {
-  border-color: #33473a;
-  background: #33473a;
-  box-shadow: none;
-  color: #fffaf0;
+  border-color: rgba(139, 99, 49, 0.68);
+  background: rgba(139, 99, 49, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 250, 240, 0.84);
+  color: #5a4322;
   transform: none;
 }
 
-/* The generic rsvp-card label>span rule paints spans dark green; the filled
-   selected chip needs its label in cream for contrast. */
 .gazebo-attending-grid label.active span {
-  color: #fffaf0;
+  color: #5a4322;
 }
 
 .gazebo-attending-grid input {

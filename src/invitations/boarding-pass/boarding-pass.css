@@ -63,12 +63,6 @@
   padding: 40px;
 }
 
-/* --- Splash (Framer Motion; matches boarding-pass reference) --- */
-.boarding-pass-theme .invitation-boot {
-  background: var(--bp-bg);
-  color: var(--bp-navy);
-}
-
 .inv-splash {
   position: fixed;
   inset: 0;
@@ -1198,10 +1192,12 @@ textarea.kiosk-input {
 }
 
 .inv-radio-btn.active {
-  background: var(--bp-navy);
-  color: var(--bp-ivory);
-  border-color: var(--bp-navy);
-  box-shadow: none;
+  background: hsla(39, 43%, 58%, 0.12);
+  color: var(--bp-fg);
+  border-color: hsla(39, 43%, 43%, 0.64);
+  box-shadow:
+    inset 0 0 0 1px hsla(39, 43%, 58%, 0.22),
+    0 8px 20px hsla(39, 43%, 58%, 0.08);
 }
 
 .inv-rsvp-card-enhanced .rsvp-plus-one-label {

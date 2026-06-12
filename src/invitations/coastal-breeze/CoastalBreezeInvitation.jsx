@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -278,7 +278,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         <section className="coastal-countdown coastal-section-denim">
           <SectionTitle eyebrow="Save The Date" title="Counting The Moments" light />
           <div className="coastal-count-grid">
-            <CountdownUnit value={pad(timeLeft.days)} label="Days" />
+            <CountdownUnit value={formatCountdownDays(timeLeft.days)} label="Days" />
             <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
             <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
             <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />

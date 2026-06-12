@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -267,7 +267,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             <h2 className="inv-section-label">Boarding In</h2>
             <div className="inv-gold-divider" />
             <div className="inv-countdown-grid">
-              <FlapDigit value={pad(timeLeft.days)} label="DAYS" />
+              <FlapDigit value={formatCountdownDays(timeLeft.days)} label="DAYS" />
               <span className="inv-colon">:</span>
               <FlapDigit value={pad(timeLeft.hours)} label="HOURS" />
               <span className="inv-colon">:</span>

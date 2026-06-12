@@ -5,7 +5,7 @@ import FountainSplash from './FountainSplash';
 import FountainEnvelopeSplash from './FountainEnvelopeSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -249,6 +249,14 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
       {showSplash && (
+        !splashReady && (
+          <div className="invitation-boot" role="status" aria-live="polite">
+            <span className="invitation-boot-spinner" aria-hidden="true" />
+            <span className="invitation-boot-label">Opening invitation</span>
+          </div>
+        )
+      )}
+      {showSplash && (
         useEnvelopeSplash ? (
           <FountainEnvelopeSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
         ) : (
@@ -287,7 +295,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
           <section className="fountain-countdown">
             <SectionTitle title="Countdown" />
             <div className="fountain-count-grid">
-              <CountdownUnit value={pad(timeLeft.days)} label="Days" />
+              <CountdownUnit value={formatCountdownDays(timeLeft.days)} label="Days" />
               <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
               <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
               <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />

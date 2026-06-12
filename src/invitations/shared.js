@@ -15,6 +15,11 @@ export function createRsvpSubmissionId() {
   return `rsvp-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
+export function formatCountdownDays(value) {
+  const days = Math.max(0, Math.min(99, Number(value) || 0));
+  return String(days).padStart(2, '0');
+}
+
 const normalizePhotoFit = (value) => {
   if (value === 'fit' || value === 'containFit' || value === 'contain') return 'contain';
   return VALID_PHOTO_FITS.has(value) ? value : 'cover';

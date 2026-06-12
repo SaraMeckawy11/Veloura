@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -349,7 +349,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           <div className="gazebo-section-soft-pattern" aria-hidden="true" />
           <SectionTitle eyebrow="The celebration begins in" title="Counting every heartbeat" />
           <div className="gazebo-count-grid">
-            <CountdownUnit value={pad(timeLeft.days)} label="Days" />
+            <CountdownUnit value={formatCountdownDays(timeLeft.days)} label="Days" />
             <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
             <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
             <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />
