@@ -6,6 +6,10 @@ import './coastal-splash.css';
 
 const FADE_DURATION = 0.7;
 const AUTO_DISMISS_FALLBACK_MS = 5200;
+// If the splash iframe never loads (offline / stalled network), force the
+// ready signal so the gated invitation content can still mount and the
+// auto-dismiss chain can run — the splash must never trap the guest.
+const READY_FALLBACK_MS = 7000;
 const DONE_MESSAGE_TYPE = 'coastal-splash:done';
 
 export default function CoastalSplash({ onReady, onDismiss }) {
@@ -37,10 +41,12 @@ export default function CoastalSplash({ onReady, onDismiss }) {
   }, [beginDismiss]);
 
   useEffect(() => {
+    const readyFallback = window.setTimeout(markReady, READY_FALLBACK_MS);
     return () => {
+      window.clearTimeout(readyFallback);
       if (fallbackTimerRef.current) window.clearTimeout(fallbackTimerRef.current);
     };
-  }, []);
+  }, [markReady]);
 
   const handleSkip = useCallback(() => {
     if (!readyRef.current) return;

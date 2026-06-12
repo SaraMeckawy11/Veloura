@@ -151,6 +151,10 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (n) => n.toString().padStart(2, '0');
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
+  // The splash must be the first thing fetched and painted. Main content only
+  // mounts once the splash reports ready, so the clouds/ticket imagery never
+  // competes with the splash assets for bandwidth.
+  const contentReady = !showSplash || splashReady;
 
   // Categorize photos
   const allPhotos = getTieredInvitationPhotos(order);
@@ -188,6 +192,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
       {showSplash && <BoardingPassSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />}
+      {contentReady && (<>
       {/* ========== HERO ========== */}
       <section className="inv-hero">
         {/* Cloud background with parallax scroll */}
@@ -642,6 +647,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           <span className="inv-footer-bar-text">Thank you for being part of our beginning</span>
         </div>
       </section>
+      </>)}
     </div>
   );
 }

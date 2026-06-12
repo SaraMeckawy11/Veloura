@@ -155,6 +155,10 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (value) => String(value).padStart(2, '0');
+  // The splash must be the first thing fetched and painted. Main content only
+  // mounts once the splash reports ready, so the hero poster/video and section
+  // imagery never compete with the splash sprite for bandwidth.
+  const contentReady = !showSplash || splashReady;
 
   const storyAllowed = invitationTierAllows(order, 'story');
   const galleryAllowed = invitationTierAllows(order, 'gallery');
@@ -301,6 +305,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         />
       )}
 
+      {contentReady && (<>
       <section id="hero" className="gazebo-hero">
         <div className="gazebo-hero-media" aria-hidden>
           <img src="/assets/gazebo-watercolor-poster1.jpg" alt="" />
@@ -516,6 +521,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           <p className="gazebo-footer-thanks">Thank you for being part of our beginning</p>
         </div>
       </footer>
+      </>)}
     </div>
   );
 }
@@ -669,8 +675,10 @@ function GazeboGallerySection({ items }) {
     let pointerActive = false;
     let pointerStartX = 0;
     let pointerStartOffset = 0;
+    let lastPauseAt = 0;
     const pause = () => {
       isInteracting = true;
+      lastPauseAt = Date.now();
       window.clearTimeout(resumeTimer);
     };
     const resumeSoon = () => {
@@ -691,6 +699,7 @@ function GazeboGallerySection({ items }) {
     const handlePointerMove = (event) => {
       if (!pointerActive) return;
       event.preventDefault();
+      lastPauseAt = Date.now();
       applyOffset(pointerStartOffset - (event.clientX - pointerStartX));
     };
     const handlePointerEnd = (event) => {
@@ -716,9 +725,23 @@ function GazeboGallerySection({ items }) {
     viewport?.addEventListener('pointerleave', handlePointerEnd);
     viewport?.addEventListener('wheel', handleWheel, { passive: false });
 
+    // Watchdog: mobile browsers sometimes swallow pointerup/pointercancel when
+    // a native pan takes over mid-gesture, which would leave the marquee
+    // paused forever. If it has been "interacting" with no pointer activity
+    // for a while, force it back to life so the loop truly never ends.
+    const watchdog = window.setInterval(() => {
+      if (!distance) updateDistance();
+      if (isInteracting && Date.now() - lastPauseAt > 4000) {
+        pointerActive = false;
+        previousTime = 0;
+        isInteracting = false;
+      }
+    }, 2000);
+
     return () => {
       window.cancelAnimationFrame(animationFrame);
       window.clearTimeout(resumeTimer);
+      window.clearInterval(watchdog);
       resizeObserver?.disconnect();
       if (reducedMotion.removeEventListener) {
         reducedMotion.removeEventListener('change', startAnimation);

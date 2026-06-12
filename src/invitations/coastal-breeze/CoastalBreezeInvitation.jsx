@@ -97,6 +97,10 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const isReferenceDemo = Boolean(demo && order.referenceLayout);
   const pad = (n) => n.toString().padStart(2, '0');
+  // The splash must be the first thing fetched and painted. Main content only
+  // mounts once the splash reports ready, so its images never compete with the
+  // splash assets for bandwidth; they load while the splash animation plays.
+  const contentReady = !showSplash || splashReady;
 
   const allPhotos = getTieredInvitationPhotos(order);
   const storyMilestones = getTieredStoryMilestones(order);
@@ -132,6 +136,9 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   }, [showSplash, shouldPlayMusic, order.musicUrl]);
 
   useEffect(() => {
+    // Hold the gallery preloads back until the splash is ready — they are
+    // high-priority fetches that would otherwise race the splash assets.
+    if (showSplash && !splashReady) return undefined;
     const memorySources = isReferenceDemo && order.galleryImages?.length
       ? order.galleryImages
       : allPhotos
@@ -168,7 +175,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       });
 
     return () => links.forEach(link => link.remove());
-  }, [isReferenceDemo, order]);
+  }, [isReferenceDemo, order, showSplash, splashReady]);
 
   const handleSplashDismiss = () => {
     if (shouldPlayMusic && audioRef.current) {
@@ -213,6 +220,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         <CoastalSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
       )}
 
+      {contentReady && (<>
       <section className="coastal-hero">
         <div className="coastal-hero-bg" aria-hidden>
           <img src={coastalHero} alt="" />
@@ -494,6 +502,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           </p>
         </div>
       </footer>
+      </>)}
     </div>
   );
 }
@@ -683,8 +692,10 @@ function GallerySection({ images }) {
     let pointerActive = false;
     let pointerStartX = 0;
     let pointerStartOffset = 0;
+    let lastPauseAt = 0;
     const pause = () => {
       isInteracting = true;
+      lastPauseAt = Date.now();
       window.clearTimeout(resumeTimer);
     };
     const resumeSoon = () => {
@@ -705,6 +716,7 @@ function GallerySection({ images }) {
     const handlePointerMove = (event) => {
       if (!pointerActive) return;
       event.preventDefault();
+      lastPauseAt = Date.now();
       applyOffset(pointerStartOffset - (event.clientX - pointerStartX));
     };
     const handlePointerEnd = (event) => {
@@ -730,9 +742,23 @@ function GallerySection({ images }) {
     viewport?.addEventListener('pointerleave', handlePointerEnd);
     viewport?.addEventListener('wheel', handleWheel, { passive: false });
 
+    // Watchdog: mobile browsers sometimes swallow pointerup/pointercancel when
+    // a native pan takes over mid-gesture, which would leave the marquee
+    // paused forever. If it has been "interacting" with no pointer activity
+    // for a while, force it back to life so the loop truly never ends.
+    const watchdog = window.setInterval(() => {
+      if (!distance) updateDistance();
+      if (isInteracting && Date.now() - lastPauseAt > 4000) {
+        pointerActive = false;
+        previousTime = 0;
+        isInteracting = false;
+      }
+    }, 2000);
+
     return () => {
       window.cancelAnimationFrame(animationFrame);
       window.clearTimeout(resumeTimer);
+      window.clearInterval(watchdog);
       resizeObserver?.disconnect();
       if (reducedMotion.removeEventListener) {
         reducedMotion.removeEventListener('change', startAnimation);

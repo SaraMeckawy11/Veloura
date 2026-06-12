@@ -274,7 +274,7 @@
   color: #2f4d70;
   font-family: var(--coast-name-font);
   font-weight: 400;
-  font-size: clamp(1.62rem, 4.8vw, 2.55rem);
+  font-size: clamp(1.45rem, 4.2vw, 2.15rem);
   line-height: 1.14;
   letter-spacing: 0;
   text-transform: none;
@@ -345,7 +345,7 @@
   background: transparent;
   color: #2f4d70;
   font-family: var(--font-display);
-  font-size: clamp(1.05rem, 2.5vw, 1.28rem);
+  font-size: clamp(0.95rem, 2.2vw, 1.12rem);
   font-weight: 500;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -418,7 +418,7 @@
   margin-top: 24px;
   color: #6d8474;
   font-family: var(--font-script);
-  font-size: clamp(1.7rem, 3.5vw, 2.2rem);
+  font-size: clamp(1.35rem, 2.8vw, 1.7rem);
   font-weight: 400;
   line-height: 1;
 }
@@ -455,7 +455,7 @@
   position: relative;
   z-index: 2;
   max-width: 760px;
-  margin: 0 auto 48px;
+  margin: 0 auto 40px;
   text-align: center;
 }
 
@@ -473,10 +473,10 @@
   margin: 16px 0 0;
   color: var(--coast-denim-dark);
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 4.2vw, 2.85rem);
-  font-weight: 300;
-  line-height: 1.1;
-  letter-spacing: 0.005em;
+  font-size: clamp(1.5rem, 3.4vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
 }
 
 .coastal-section-title h2 .script {
@@ -493,7 +493,7 @@
   margin: 10px 0 0;
   color: var(--coast-coral);
   font-family: var(--font-script);
-  font-size: clamp(1.15rem, 3.2vw, 1.7rem);
+  font-size: clamp(1rem, 2.4vw, 1.3rem);
   font-weight: 400;
   line-height: 1.2;
 }
@@ -509,9 +509,9 @@
 
 .coastal-section-divider {
   display: block;
-  width: 110px;
+  width: 96px;
   height: 14px;
-  margin: 22px auto 0;
+  margin: 16px auto 0;
   color: var(--coast-gold);
   opacity: 0.65;
 }
@@ -525,7 +525,7 @@
    COUNTDOWN
    ============================================================ */
 .coastal-countdown {
-  min-height: 540px;
+  min-height: 0;
   color: var(--coast-denim-dark);
   background:
     radial-gradient(ellipse at 50% 0%, rgba(143, 185, 207, 0.35), transparent 30rem),
@@ -548,7 +548,7 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(10px, 3vw, 26px);
   width: min(820px, 100%);
-  margin: 56px auto 0;
+  margin: 40px auto 0;
 }
 
 .coastal-count-unit {
@@ -577,7 +577,7 @@
 
 .coastal-count-unit strong {
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 7vw, 4.6rem);
+  font-size: clamp(1.9rem, 5vw, 3rem);
   font-weight: 300;
   line-height: 1;
   color: var(--coast-denim-dark);
@@ -752,7 +752,7 @@
 .coastal-story-item span {
   color: var(--coast-coral);
   font-family: var(--font-script);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
@@ -762,7 +762,7 @@
   margin: 4px 0 10px;
   color: var(--coast-denim-dark);
   font-family: var(--font-display);
-  font-size: 1.85rem;
+  font-size: 1.4rem;
   font-weight: 500;
   letter-spacing: 0.02em;
 }
@@ -822,7 +822,7 @@
   margin: 10px 0 22px;
   color: var(--coast-denim-dark);
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 2.6vw, 1.7rem);
+  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
   font-weight: 500;
   line-height: 1.22;
   letter-spacing: 0.02em;
@@ -849,7 +849,7 @@
   margin: 8px 0 0;
   color: var(--coast-ink);
   font-family: var(--font-display);
-  font-size: 1.18rem;
+  font-size: 1.05rem;
   font-weight: 500;
   line-height: 1.4;
 }
@@ -860,8 +860,22 @@
   margin-top: 30px;
   overflow: hidden;
   border-radius: 18px;
-  border: 1px solid rgba(41, 99, 143, 0.2);
-  box-shadow: 0 14px 32px rgba(20, 53, 83, 0.1);
+  border: 1px solid rgba(41, 99, 143, 0.24);
+  border-bottom-color: rgba(176, 125, 77, 0.32);
+  box-shadow:
+    0 14px 32px rgba(20, 53, 83, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Inner hairline echoes the photo frames used across the design. */
+.coastal-map::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 12px;
+  pointer-events: none;
 }
 
 .coastal-map iframe,
@@ -874,8 +888,34 @@
 }
 
 .coastal-map a {
-  z-index: 2;
+  z-index: 3;
   background: transparent;
+}
+
+/* Visible affordance: the whole map is tappable, the pill says where it goes. */
+.coastal-map a::after {
+  content: 'Open in Google Maps';
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(20, 53, 83, 0.84);
+  color: #fffdf7;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 22px rgba(20, 53, 83, 0.28);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+@media (hover: hover) {
+  .coastal-map a:hover::after {
+    background: rgba(20, 53, 83, 0.96);
+    transform: translateY(-1px);
+  }
 }
 
 .coastal-event-art {
@@ -1034,7 +1074,7 @@
   margin: 14px 0 14px;
   color: var(--coast-denim-dark);
   font-family: var(--font-display);
-  font-size: clamp(2.7rem, 6vw, 4.6rem);
+  font-size: clamp(1.8rem, 4.4vw, 2.6rem);
   font-weight: 300;
   letter-spacing: 0.02em;
   line-height: 1.05;
@@ -1046,7 +1086,7 @@
   margin: 0;
   color: rgba(20, 53, 83, 0.76);
   font-family: var(--font-display);
-  font-size: 1.14rem;
+  font-size: 1rem;
   font-style: italic;
   line-height: 1.55;
 }
@@ -1091,7 +1131,7 @@
   margin-top: 8px;
   color: var(--coast-denim-dark);
   font-family: var(--font-display);
-  font-size: 1.34rem;
+  font-size: 1.15rem;
   font-weight: 500;
   line-height: 1.2;
 }
@@ -1368,14 +1408,14 @@
 
 .coastal-rsvp-card .rsvp-plus-one-label {
   color: var(--coast-denim-dark);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.18em;
 }
 
 .coastal-rsvp-card .rsvp-plus-one-toggle button {
   color: rgba(20, 53, 83, 0.82);
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
@@ -1490,7 +1530,7 @@
 .coastal-rsvp-success h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
   font-weight: 400;
   color: var(--coast-denim-dark);
   letter-spacing: 0.02em;
@@ -1530,7 +1570,7 @@
   margin: 0;
   color: var(--coast-denim-dark);
   font-family: var(--font-display);
-  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  font-size: clamp(1.6rem, 4vw, 2.3rem);
   font-weight: 300;
   letter-spacing: 0.18em;
   line-height: 1;
@@ -1792,7 +1832,7 @@
   margin: 0 0 8px;
   color: var(--coast-coral);
   font-family: var(--font-script);
-  font-size: clamp(1.4rem, 2.6vw, 1.8rem);
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
   font-weight: 400;
   line-height: 1;
 }
@@ -1891,7 +1931,7 @@
   }
 
   .coastal-hero-card h1 {
-    font-size: clamp(1.38rem, 6.5vw, 2rem);
+    font-size: clamp(1.3rem, 6vw, 1.7rem);
     width: min(100%, 330px);
   }
 
@@ -1928,7 +1968,7 @@
   }
 
   .coastal-count-unit strong {
-    font-size: clamp(1.6rem, 9vw, 2.2rem);
+    font-size: clamp(1.4rem, 7.5vw, 1.8rem);
   }
 
   .coastal-count-unit span {
@@ -2013,7 +2053,7 @@
   }
 
   .coastal-rsvp-title {
-    font-size: clamp(2.2rem, 12vw, 3.1rem);
+    font-size: clamp(1.7rem, 9vw, 2.2rem);
   }
 
   .coastal-submit {
