@@ -369,7 +369,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <div className="coastal-rsvp-intro">
             <BlueShellMark className="coastal-rsvp-shell-mark" />
             <span className="coastal-rsvp-eyebrow">RSVP</span>
-            <h2 className="coastal-rsvp-title">Kindly Respond</h2>
             <p className="coastal-rsvp-lead">
               We can't wait to celebrate with you. Please let us know by replying below.
             </p>

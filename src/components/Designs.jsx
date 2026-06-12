@@ -248,7 +248,9 @@ export default function Designs() {
                     </span>
                   )}
                 </div>
+                {/* Availability badge hidden for now.
                 <span className={`design-badge ${design.badgeClass}`}>{design.badge}</span>
+                */}
                 {design.demoPath && (
                   <span className="design-demo-hint" aria-hidden>View live demo</span>
                 )}

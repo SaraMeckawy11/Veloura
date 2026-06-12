@@ -770,6 +770,15 @@
   transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
+.gazebo-primary-button:focus-visible {
+  outline: 2px solid #8b6331;
+  outline-offset: 3px;
+}
+
+.gazebo-primary-button:active {
+  transform: translateY(0);
+}
+
 .gazebo-primary-button:hover {
   border-color: rgba(255, 253, 247, 0.38);
   background:
@@ -805,31 +814,8 @@
   outline: none;
 }
 
-/* Visible affordance: the arched map is tappable, the pill says where it goes. */
-.gazebo-map-frame::after {
-  content: 'Open in Google Maps';
-  position: absolute;
-  left: 50%;
-  bottom: 0.9rem;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  background: rgba(49, 66, 52, 0.86);
-  color: #fffaf0;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  box-shadow: 0 10px 26px rgba(49, 66, 52, 0.3);
-  transition: background 0.2s ease;
-}
-
-@media (hover: hover) {
-  .gazebo-map-frame:hover::after {
-    background: rgba(49, 66, 52, 0.97);
-  }
-}
+/* No custom open-in-maps pill: the Google embed already shows its own
+   link, so the arched frame stays clean to avoid duplication. */
 
 .gazebo-map-frame iframe {
   display: block;
@@ -944,31 +930,17 @@
   transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
 }
 
+/* Checkmark that appears inside the selected choice — the filled background
+   plus the check makes the current answer readable at a glance. */
 .gazebo-attending-grid label::before {
-  content: none;
+  content: '✓';
   position: absolute;
-  left: 0.78rem;
+  left: 0.85rem;
   top: 50%;
-  width: 0.82rem;
-  height: 0.82rem;
-  border: 1px solid rgba(139, 115, 50, 0.46);
-  border-radius: 50%;
-  background: transparent;
-  transform: translateY(-50%);
-  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
-}
-
-.gazebo-attending-grid label::after {
-  content: none;
-  position: absolute;
-  left: 1.015rem;
-  top: 50%;
-  width: 0.35rem;
-  height: 0.35rem;
-  border-radius: 50%;
-  background: #9f7a38;
+  font-size: 0.9em;
+  font-weight: 800;
   opacity: 0;
-  transform: translateY(-50%) scale(0.7);
+  transform: translateY(-50%) scale(0.5);
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
@@ -990,24 +962,22 @@
 }
 
 .gazebo-attending-grid label.active {
-  border-color: rgba(157, 113, 53, 0.58);
-  background: rgba(255, 253, 247, 0.96);
-  box-shadow:
-    0 12px 30px rgba(139, 99, 49, 0.12),
-    inset 0 0 0 1px rgba(157, 113, 53, 0.12);
-  color: #314234;
+  border-color: transparent;
+  background: linear-gradient(135deg, #33473a 0%, #4f6a4f 100%);
+  box-shadow: 0 12px 30px rgba(49, 66, 52, 0.26);
+  color: #fffaf0;
   transform: translateY(-1px);
 }
 
 .gazebo-attending-grid label.active::before {
-  border-color: rgba(157, 113, 53, 0.68);
-  background: rgba(255, 250, 235, 0.92);
-  box-shadow: 0 0 0 4px rgba(157, 113, 53, 0.08);
-}
-
-.gazebo-attending-grid label.active::after {
   opacity: 1;
   transform: translateY(-50%) scale(1);
+}
+
+/* The generic rsvp-card label>span rule paints spans dark green; the filled
+   selected chip needs its label in cream for contrast. */
+.gazebo-attending-grid label.active span {
+  color: #fffaf0;
 }
 
 .gazebo-attending-grid input {
@@ -1414,10 +1384,6 @@
 
   .gazebo-attending-grid label::before {
     left: 0.7rem;
-  }
-
-  .gazebo-attending-grid label::after {
-    left: 0.935rem;
   }
 
   .gazebo-attending-grid label span {

@@ -93,6 +93,7 @@ export default function Pricing({ showCta = true }) {
                 ))}
               </ul>
 
+              {/* Per-plan demo thumbnails hidden for now.
               <div className="pricing-demos">
                 <div className="pricing-demos-grid">
                   {tier.demoCards?.map(card => {
@@ -117,6 +118,7 @@ export default function Pricing({ showCta = true }) {
                   })}
                 </div>
               </div>
+              */}
 
               {showCta && (
                 <div className="pricing-cta">

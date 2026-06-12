@@ -801,33 +801,8 @@
   cursor: pointer;
 }
 
-/* Visible affordance styled like a ticket tag: tap the window, open the map. */
-.inv-map-click-overlay::after {
-  content: 'Open in Maps';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 20px;
-  white-space: nowrap;
-  padding: 7px 13px;
-  border: 1px solid var(--bp-gold);
-  border-radius: 4px;
-  background: hsla(208, 34%, 28%, 0.88);
-  color: var(--bp-ivory);
-  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  box-shadow: 0 8px 20px hsla(208, 34%, 28%, 0.3);
-  transition: background 0.2s ease;
-}
-
-@media (hover: hover) {
-  .inv-map-click-overlay:hover::after {
-    background: hsla(208, 34%, 28%, 0.98);
-  }
-}
+/* No custom open-in-maps tag: the Google embed already shows its own
+   link, so the airplane window stays clean to avoid duplication. */
 
 /* --- Gallery --- */
 .inv-gallery-grid {
@@ -1200,36 +1175,19 @@ textarea.kiosk-input {
   white-space: nowrap;
 }
 
-.inv-radio-btn svg {
-  display: none;
+/* Each choice carries its own icon (check / question / cross) so the options
+   read at a glance; the selected one fills navy like a stamped ticket. */
+.inv-radio-btn {
+  gap: 7px;
 }
 
-.inv-radio-btn::before {
-  content: none;
-  position: absolute;
-  left: 13px;
-  top: 50%;
+.inv-radio-btn svg {
+  display: block;
   width: 13px;
   height: 13px;
-  border: 1px solid hsla(39, 43%, 43%, 0.48);
-  border-radius: 50%;
-  background: transparent;
-  transform: translateY(-50%);
-  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-}
-
-.inv-radio-btn::after {
-  content: none;
-  position: absolute;
-  left: 17px;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--bp-gold-dark);
-  opacity: 0;
-  transform: translateY(-50%) scale(0.7);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  flex: 0 0 auto;
+  opacity: 0.55;
+  transition: opacity 0.25s ease;
 }
 
 .inv-radio-btn:hover {
@@ -1239,24 +1197,21 @@ textarea.kiosk-input {
   color: var(--bp-fg);
   transform: translateY(-1px);
 }
+
+.inv-radio-btn:focus-visible {
+  outline: 2px solid var(--bp-gold-dark);
+  outline-offset: 2px;
+}
+
 .inv-radio-btn.active {
-  background: hsla(38, 46%, 98%, 0.98);
-  color: var(--bp-fg);
-  border-color: hsla(39, 43%, 43%, 0.52);
-  box-shadow:
-    0 14px 30px hsla(39, 43%, 43%, 0.12),
-    inset 0 0 0 1px hsla(39, 43%, 43%, 0.1);
+  background: linear-gradient(135deg, var(--bp-navy), var(--bp-charcoal));
+  color: var(--bp-ivory);
+  border-color: hsla(39, 43%, 58%, 0.55);
+  box-shadow: 0 14px 30px hsla(208, 34%, 28%, 0.28);
 }
 
-.inv-radio-btn.active::before {
-  border-color: hsla(39, 43%, 43%, 0.68);
-  background: hsla(39, 44%, 76%, 0.34);
-  box-shadow: 0 0 0 4px hsla(39, 43%, 58%, 0.09);
-}
-
-.inv-radio-btn.active::after {
+.inv-radio-btn.active svg {
   opacity: 1;
-  transform: translateY(-50%) scale(1);
 }
 
 .inv-rsvp-card-enhanced .rsvp-plus-one-label {
@@ -1310,6 +1265,13 @@ textarea.kiosk-input {
   color: var(--bp-fg);
   transform: translateY(-1px);
   box-shadow: 0 8px 30px -4px hsla(38, 55%, 58%, 0.3);
+}
+.inv-rsvp-submit:focus-visible {
+  outline: 2px solid var(--bp-gold-dark);
+  outline-offset: 3px;
+}
+.inv-rsvp-submit:active {
+  transform: translateY(0);
 }
 .inv-rsvp-error {
   color: var(--bp-stamp-red);

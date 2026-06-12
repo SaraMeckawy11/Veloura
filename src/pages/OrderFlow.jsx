@@ -2163,7 +2163,7 @@ export default function OrderFlow() {
                               <div ref={cardExpiryRef} className="veloura-card-hosted-field" />
                             </label>
                             <label className="veloura-card-field veloura-card-field--half">
-                              <span>CVV</span>
+                              <span>CVC / CVV</span>
                               <div ref={cardCvvRef} className="veloura-card-hosted-field" />
                             </label>
                           </div>
