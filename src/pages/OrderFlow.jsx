@@ -339,6 +339,9 @@ export default function OrderFlow() {
       for (const cat of Object.keys(photos)) {
         persistablePhotos[cat] = photos[cat]
           .map(p => {
+            // Story photo slots are index-aligned with milestones, so the array
+            // can contain empty holes — skip them instead of dereferencing.
+            if (!p) return null;
             // Uploaded to Cloudinary — save the real URL
             if (p.publicId && !p._uploading) {
               return { url: p.url, publicId: p.publicId, label: p.label, fit: normalizePhotoFit(p.fit) };
@@ -723,7 +726,10 @@ export default function OrderFlow() {
   // Flatten all photos for submission & review (exclude failed/uploading)
   const allPhotos = Object.entries(photos).flatMap(([cat, items]) =>
     items
-      .filter(p => !p._uploading && !p._failed && !p._pendingUpload)
+      // Story slots are index-aligned with milestones, so the array can hold
+      // empty holes (e.g. after reordering a milestone with no photo) — guard
+      // against undefined before reading flags so the form never crashes.
+      .filter(p => p && !p._uploading && !p._failed && !p._pendingUpload)
       .map(p => ({ ...p, label: p.label || cat }))
   );
   const tieredPhotos = allPhotos.filter(photoAllowedForTier);
@@ -818,6 +824,14 @@ export default function OrderFlow() {
     return () => window.removeEventListener('popstate', onPopState);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Whenever the step changes (e.g. Details → Payment), land at the top of the
+  // page. Running this after commit is more reliable than the rAF scroll in
+  // goToStep, which can fire before the new step's taller content lays out and
+  // leave the buyer scrolled partway down on the payment/review view.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, [step]);
 
   useEffect(() => {
     let nextFrame = 0;
@@ -1718,9 +1732,13 @@ export default function OrderFlow() {
                             </div>
                             {photos.story[i]._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                             {photos.story[i]._failed && (
-                              <button type="button" className="photo-failed-badge" title="Retry upload" onClick={() => retryPhotoUpload('story', i)} aria-label={`Retry story photo ${i + 1} upload`}>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
-                              </button>
+                              photos.story[i].file ? (
+                                <button type="button" className="photo-failed-badge" title="Retry upload" onClick={() => retryPhotoUpload('story', i)} aria-label={`Retry story photo ${i + 1} upload`}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
+                                </button>
+                              ) : (
+                                <div className="photo-failed-badge" title="Upload failed — remove and re-add">!</div>
+                              )
                             )}
                             <button type="button" className="photo-remove" onClick={() => removePhoto('story', i)}>
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
@@ -1830,8 +1848,8 @@ export default function OrderFlow() {
                         ))}
                       </div>
                       {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
-                      {photo._failed && <div className="photo-failed-badge" title="Upload failed — remove and re-add">!</div>}
-                      {photo._failed && (
+                      {photo._failed && !photo.file && <div className="photo-failed-badge" title="Upload failed — remove and re-add">!</div>}
+                      {photo._failed && photo.file && (
                         <button type="button" className="photo-retry-btn" title="Retry upload" onClick={() => retryPhotoUpload('gallery', i)} aria-label={`Retry gallery photo ${i + 1} upload`}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
                         </button>

@@ -12,7 +12,6 @@ import useHeroScrollReset from '../useHeroScrollReset';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
 import coastalHero from '../../assets/coastal/hero1.png';
-import cruiseShip from '../../assets/coastal/cruise-ship-clean.webp';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
 
@@ -270,7 +269,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
             <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
             <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />
           </div>
-          <AnimatedBoat />
         </section>
       )}
 
@@ -794,17 +792,6 @@ function GallerySection({ images }) {
         </div>
       </div>
     </section>
-  );
-}
-
-function AnimatedBoat({ small = false }) {
-  return (
-    <div className={`coastal-boat-wrap${small ? ' coastal-boat-wrap-small' : ''}`} aria-hidden>
-      <div className="coastal-boat">
-        <img src={cruiseShip} alt="" />
-      </div>
-      <span className="coastal-boat-wake" />
-    </div>
   );
 }
 
