@@ -1294,8 +1294,8 @@
 
 .coastal-rsvp-card textarea {
   resize: vertical;
-  min-height: 96px;
-  line-height: 1.52;
+  min-height: 82px;
+  line-height: 1.46;
 }
 
 .coastal-rsvp-card input::placeholder,

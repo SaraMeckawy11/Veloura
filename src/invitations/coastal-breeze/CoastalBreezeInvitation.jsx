@@ -458,7 +458,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                       rows={4}
                       value={rsvpForm.message}
                       onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
-                      placeholder="Share a wish, a memory, or a song request…"
+                      placeholder="Share a wish or a memory..."
                     />
                   </div>
                 </div>

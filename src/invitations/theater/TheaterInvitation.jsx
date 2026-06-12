@@ -469,7 +469,7 @@ function RsvpSection({
             <span>Message for the couple</span>
             <textarea
               rows={3}
-              placeholder="Share a wish, memory, or song request"
+              placeholder="Share a wish or a memory..."
               value={rsvpForm.message}
               onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
             />

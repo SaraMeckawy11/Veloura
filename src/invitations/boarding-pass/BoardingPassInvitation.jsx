@@ -518,7 +518,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
                     <div className="inv-form-field">
                       <label className="data-label">MESSAGE TO THE COUPLE</label>
-                      <textarea className="kiosk-input" rows={3} value={rsvpForm.message} onChange={e => setRsvpForm({ ...rsvpForm, message: e.target.value })} placeholder="Write your wishes..." />
+                      <textarea className="kiosk-input" rows={3} value={rsvpForm.message} onChange={e => setRsvpForm({ ...rsvpForm, message: e.target.value })} placeholder="Share a wish or a memory..." />
                     </div>
                   </div>
 

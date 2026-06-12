@@ -489,7 +489,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                 <textarea
                   value={rsvpForm.message}
                   onChange={event => updateRsvpField('message', event.target.value)}
-                  placeholder="Share a wish, dietary note, or song request"
+                  placeholder="Share a wish or a memory..."
                   rows={3}
                 />
               </label>

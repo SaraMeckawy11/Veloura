@@ -469,7 +469,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                         rows={3}
                         value={rsvpForm.message}
                         onChange={event => setRsvpForm({ ...rsvpForm, message: event.target.value })}
-                        placeholder="Share any special notes or song requests..."
+                        placeholder="Share a wish or a memory..."
                       />
                     </label>
                     {rsvpError && <p className="fountain-rsvp-panel-error">{rsvpError}</p>}
