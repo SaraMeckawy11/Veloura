@@ -11,7 +11,7 @@ import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
-import coastalHero from '../../assets/coastal/hero1.png';
+import coastalHero from '../../assets/coastal/heroNewEmpty.png';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
 
@@ -228,50 +228,52 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
       {contentReady && (<>
       <section className="coastal-hero">
-        <div className="coastal-hero-bg" aria-hidden>
-          <img src={coastalHero} alt="" />
-          <div className="coastal-hero-bg-wash" />
+        <div className="coastal-hero-frame">
+          <div className="coastal-hero-bg" aria-hidden>
+            <img src={coastalHero} alt="" />
+            <div className="coastal-hero-bg-wash" />
+          </div>
+
+          <article className="coastal-hero-card">
+            <div className="coastal-hero-top">
+              <span className="coastal-kicker">Please join us to</span>
+              <span className="coastal-kicker coastal-kicker-thin">celebrate the marriage of</span>
+            </div>
+
+            <div className="coastal-hero-center">
+              <h1>
+                <span className="coastal-hero-name">{name1}</span>
+                <span className="coastal-hero-amp">&amp;</span>
+                <span className="coastal-hero-name">{name2}</span>
+              </h1>
+
+              <FlourishSvg className="coastal-hero-flourish" />
+            </div>
+
+            <div className="coastal-hero-bottom">
+              {weddingDate ? (
+                <div className="coastal-hero-datepill">
+                  <div>
+                    <small>{dayStr ? dayStr.slice(0, 3).toUpperCase() : 'Day'}</small>
+                  </div>
+                  <span aria-hidden />
+                  <div className="coastal-hero-datepill-month">
+                    <small>{monthStr || 'Month'}</small>
+                    <strong>{dayOfMonth || '—'}</strong>
+                  </div>
+                  <span aria-hidden />
+                  <div>
+                    <small>{timeStr || 'Time'}</small>
+                  </div>
+                </div>
+              ) : null}
+
+              <p className="coastal-hero-venue">{venue || 'By the sea'}</p>
+
+              {message && <p className="coastal-hero-message">"{message}"</p>}
+            </div>
+          </article>
         </div>
-
-        <article className="coastal-hero-card">
-          <div className="coastal-hero-top">
-            <span className="coastal-kicker">Please join us to</span>
-            <span className="coastal-kicker coastal-kicker-thin">celebrate the marriage of</span>
-          </div>
-
-          <div className="coastal-hero-center">
-            <h1>
-              <span className="coastal-hero-name">{name1}</span>
-              <span className="coastal-hero-amp">&amp;</span>
-              <span className="coastal-hero-name">{name2}</span>
-            </h1>
-
-            <FlourishSvg className="coastal-hero-flourish" />
-          </div>
-
-          <div className="coastal-hero-bottom">
-            {weddingDate ? (
-              <div className="coastal-hero-datepill">
-                <div>
-                  <small>{dayStr ? dayStr.slice(0, 3).toUpperCase() : 'Day'}</small>
-                </div>
-                <span aria-hidden />
-                <div className="coastal-hero-datepill-month">
-                  <small>{monthStr || 'Month'}</small>
-                  <strong>{dayOfMonth || '—'}</strong>
-                </div>
-                <span aria-hidden />
-                <div>
-                  <small>{timeStr || 'Time'}</small>
-                </div>
-              </div>
-            ) : null}
-
-            <p className="coastal-hero-venue">{venue || 'By the sea'}</p>
-
-            {message && <p className="coastal-hero-message">"{message}"</p>}
-          </div>
-        </article>
       </section>
 
       {weddingDate && (
