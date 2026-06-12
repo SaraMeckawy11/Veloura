@@ -15,7 +15,7 @@ export const GAZEBO_GARDEN_DEMO_ORDER = {
   weddingDetails: {
     groomName: 'Lina',
     brideName: 'Omar',
-    weddingDate: '2026-06-06T15:30:00.000Z',
+    weddingDate: '2027-09-18T15:30:00.000Z',
     weddingTime: '5:30 PM',
     venue: 'Villa Aurelia Gardens',
     venueMapUrl:

@@ -18,7 +18,7 @@ export const BOARDING_PASS_DEMO_ORDER = {
   weddingDetails: {
     groomName: 'Omar',
     brideName: 'Layla',
-    weddingDate: '2026-06-20T17:00:00.000Z',
+    weddingDate: '2027-09-18T17:00:00.000Z',
     weddingTime: '5:00 PM',
     venue: 'The Grand Pavilion',
     venueMapUrl: 'https://maps.google.com/maps?q=Atlantis%20The%20Palm%2C%20Dubai&z=15&output=embed',

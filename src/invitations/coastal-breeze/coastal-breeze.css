@@ -32,6 +32,11 @@
   overflow-x: hidden;
 }
 
+.coastal-theme .invitation-boot {
+  background: #f5fafd;
+  color: var(--coast-denim);
+}
+
 /* ============================================================
    HERO — beach watercolor backdrop with elegant text overlay
    ============================================================ */
@@ -1324,29 +1329,15 @@
   white-space: nowrap;
   cursor: pointer;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(41, 99, 143, 0.05);
-  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Checkmark that appears inside the selected choice — the filled background
-   plus the check makes the current answer readable at a glance. */
-.coastal-rsvp-toggle button::before {
-  content: '✓';
-  position: absolute;
-  left: 13px;
-  top: 50%;
-  font-size: 0.95em;
-  font-weight: 700;
-  opacity: 0;
-  transform: translateY(-50%) scale(0.5);
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
+/* Minimal segmented control: quiet outline at rest, flat denim fill when
+   selected — no icons, the fill alone marks the answer. */
 .coastal-rsvp-toggle button:hover {
-  transform: translateY(-1px);
-  border-color: rgba(41, 99, 143, 0.32);
-  background: rgba(255, 253, 247, 0.94);
-  box-shadow: 0 12px 28px rgba(41, 99, 143, 0.09);
+  border-color: rgba(41, 99, 143, 0.34);
+  background: #fffdf7;
 }
 
 .coastal-rsvp-toggle button:focus-visible {
@@ -1355,15 +1346,10 @@
 }
 
 .coastal-rsvp-toggle button.active {
-  border-color: transparent;
+  border-color: var(--coast-denim-dark);
   color: var(--coast-ivory);
-  background: linear-gradient(135deg, #10334f 0%, var(--coast-denim) 100%);
-  box-shadow: 0 14px 30px rgba(20, 53, 83, 0.26);
-}
-
-.coastal-rsvp-toggle button.active::before {
-  opacity: 1;
-  transform: translateY(-50%) scale(1);
+  background: var(--coast-denim-dark);
+  box-shadow: none;
 }
 
 .coastal-rsvp-card .rsvp-plus-one-label {
@@ -2003,10 +1989,6 @@
     padding: 12px 8px;
     font-size: 0.64rem;
     letter-spacing: 0.08em;
-  }
-
-  .coastal-rsvp-toggle button::before {
-    left: 10px;
   }
 
   .coastal-rsvp-card {

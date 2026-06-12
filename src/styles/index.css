@@ -67,8 +67,51 @@ img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; }
 button { cursor: pointer; border: none; font-family: inherit; }
 
-.invitation-splash-gated > :not(audio):not(.inv-splash):not(.coastal-splash):not(.fountain-splash):not(.gazebo-splash):not(.theater-splash) {
+.invitation-splash-gated > :not(audio):not(.inv-splash):not(.coastal-splash):not(.fountain-splash):not(.gazebo-splash):not(.theater-splash):not(.invitation-boot) {
   visibility: hidden;
+}
+
+/* ========================================
+   INVITATION BOOT LOADER
+   Quiet spinner shown the instant an invitation route opens, until the
+   splash screen's own assets have loaded (and while the page/chunk loads).
+   Sits above the splash (z-index 9999) so guests never see a blank sheet.
+   Per-theme colors live in each invitation's stylesheet.
+======================================== */
+.invitation-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #faf8f4;
+  color: #8a7a5e;
+}
+
+.invitation-boot-spinner {
+  width: 30px;
+  height: 30px;
+  border: 2px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: invitation-boot-spin 0.8s linear infinite;
+}
+
+.invitation-boot-label {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+@keyframes invitation-boot-spin {
+  to { transform: rotate(360deg); }
 }
 
 /* ========================================

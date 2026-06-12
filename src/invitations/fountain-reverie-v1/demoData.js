@@ -15,7 +15,7 @@ export const FOUNTAIN_REVERIE_V1_DEMO_ORDER = {
   weddingDetails: {
     groomName: 'Aaliyah',
     brideName: 'Zayn',
-    weddingDate: '2026-06-20T17:30:00.000Z',
+    weddingDate: '2027-09-18T17:30:00.000Z',
     weddingTime: '5:30 PM',
     venue: 'The Garden Pavilion',
     venueMapUrl: 'https://maps.google.com/maps?q=Trevi%20Fountain%2C%20Rome&z=15&output=embed',

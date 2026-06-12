@@ -50,9 +50,9 @@ export default function Invitation({ demo = false, templateSlug: demoSlug }) {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#faf8f4', fontFamily: "'Cormorant Garamond', serif" }}>
-        <div style={{ width: 40, height: 40, border: '3px solid #d4c9b8', borderTopColor: '#b8965a', borderRadius: '50%', animation: 'inv-spin 1s linear infinite', marginBottom: 16 }} />
-        <p>Loading your invitation...</p>
+      <div className="invitation-boot" role="status" aria-live="polite">
+        <span className="invitation-boot-spinner" aria-hidden="true" />
+        <p className="invitation-boot-label">Opening invitation</p>
       </div>
     );
   }
@@ -95,8 +95,9 @@ export default function Invitation({ demo = false, templateSlug: demoSlug }) {
       onDragStart={blockUnlessFormField}
     >
       <Suspense fallback={
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#faf8f4' }}>
-          <p style={{ fontFamily: "'Cormorant Garamond', serif" }}>Loading...</p>
+        <div className="invitation-boot" role="status" aria-live="polite">
+          <span className="invitation-boot-spinner" aria-hidden="true" />
+          <p className="invitation-boot-label">Opening invitation</p>
         </div>
       }>
         <TemplateComponent order={order} demo={demo} publicSlug={publicSlug} />

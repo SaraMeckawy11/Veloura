@@ -20,6 +20,11 @@
   font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
 }
 
+.gazebo-theme .invitation-boot {
+  background: #fffaf0;
+  color: #6f8257;
+}
+
 .gazebo-splash {
   position: fixed;
   inset: 0;
@@ -930,19 +935,8 @@
   transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
 }
 
-/* Checkmark that appears inside the selected choice — the filled background
-   plus the check makes the current answer readable at a glance. */
-.gazebo-attending-grid label::before {
-  content: '✓';
-  position: absolute;
-  left: 0.85rem;
-  top: 50%;
-  font-size: 0.9em;
-  font-weight: 800;
-  opacity: 0;
-  transform: translateY(-50%) scale(0.5);
-  transition: opacity 180ms ease, transform 180ms ease;
-}
+/* Minimal segmented control: quiet outline at rest, flat garden-green fill
+   when selected — no icons, the fill alone marks the answer. */
 
 .gazebo-attending-grid label span {
   position: relative;
@@ -962,16 +956,11 @@
 }
 
 .gazebo-attending-grid label.active {
-  border-color: transparent;
-  background: linear-gradient(135deg, #33473a 0%, #4f6a4f 100%);
-  box-shadow: 0 12px 30px rgba(49, 66, 52, 0.26);
+  border-color: #33473a;
+  background: #33473a;
+  box-shadow: none;
   color: #fffaf0;
-  transform: translateY(-1px);
-}
-
-.gazebo-attending-grid label.active::before {
-  opacity: 1;
-  transform: translateY(-50%) scale(1);
+  transform: none;
 }
 
 /* The generic rsvp-card label>span rule paints spans dark green; the filled
@@ -1380,10 +1369,6 @@
   .gazebo-attending-grid label {
     min-height: 3.25rem;
     padding: 0.78rem 0.62rem;
-  }
-
-  .gazebo-attending-grid label::before {
-    left: 0.7rem;
   }
 
   .gazebo-attending-grid label span {

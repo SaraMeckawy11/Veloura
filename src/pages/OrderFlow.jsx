@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, Suspense, Fragment } from 're
 import { Link } from 'react-router-dom';
 import { getPaypal } from '../lib/paypal';
 import InvitationPhoto from '../invitations/InvitationPhoto';
+import { buildInvitationImageSources } from '../invitations/shared';
 import InvitationPreviewFrame from '../components/InvitationPreviewFrame';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
 import registry from '../invitations/registry';
@@ -422,6 +423,23 @@ export default function OrderFlow() {
 
       try {
         const uploadedFile = await uploadPhotoOnce(file, category);
+        // Decode the optimized remote image before swapping it into state —
+        // otherwise the preview flashes the empty beige placeholder while the
+        // Cloudinary copy downloads, even though a local preview was showing.
+        // Same srcset/sizes as InvitationPhoto so the same variant is cached.
+        try {
+          const sources = buildInvitationImageSources(uploadedFile.url);
+          const remoteImage = new Image();
+          remoteImage.decoding = 'async';
+          if (sources.srcSet) {
+            remoteImage.srcset = sources.srcSet;
+            remoteImage.sizes = '100vw';
+          }
+          remoteImage.src = sources.src;
+          // Cap the wait — the upload itself already succeeded, so a slow
+          // download should not keep the tile in its uploading state forever.
+          await Promise.race([remoteImage.decode(), wait(4000)]);
+        } catch { /* decode failed — swap anyway, the placeholder is brief */ }
         setPhotos(prev => ({
           ...prev,
           [category]: prev[category].map(p =>
@@ -829,9 +847,12 @@ export default function OrderFlow() {
   // page. Running this after commit is more reliable than the rAF scroll in
   // goToStep, which can fire before the new step's taller content lays out and
   // leave the buyer scrolled partway down on the payment/review view.
+  // paypalOrderData is also a dependency: the review → payment-window switch
+  // happens inside step 4 without a step change, and it should land at the top
+  // of the page rather than down at the payment widget.
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
-  }, [step]);
+  }, [step, paypalOrderData]);
 
   useEffect(() => {
     let nextFrame = 0;

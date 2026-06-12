@@ -191,6 +191,12 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
+      {showSplash && !splashReady && (
+        <div className="invitation-boot" role="status" aria-live="polite">
+          <span className="invitation-boot-spinner" aria-hidden="true" />
+          <span className="invitation-boot-label">Opening invitation</span>
+        </div>
+      )}
       {showSplash && <BoardingPassSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />}
       {contentReady && (<>
       {/* ========== HERO ========== */}

@@ -216,6 +216,12 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
+      {showSplash && !splashReady && (
+        <div className="invitation-boot" role="status" aria-live="polite">
+          <span className="invitation-boot-spinner" aria-hidden="true" />
+          <span className="invitation-boot-label">Opening invitation</span>
+        </div>
+      )}
       {showSplash && (
         <CoastalSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
       )}

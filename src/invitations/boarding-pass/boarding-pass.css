@@ -64,6 +64,11 @@
 }
 
 /* --- Splash (Framer Motion; matches boarding-pass reference) --- */
+.boarding-pass-theme .invitation-boot {
+  background: var(--bp-bg);
+  color: var(--bp-navy);
+}
+
 .inv-splash {
   position: fixed;
   inset: 0;
@@ -1175,27 +1180,16 @@ textarea.kiosk-input {
   white-space: nowrap;
 }
 
-/* Each choice carries its own icon (check / question / cross) so the options
-   read at a glance; the selected one fills navy like a stamped ticket. */
-.inv-radio-btn {
-  gap: 7px;
-}
-
+/* Minimal segmented control: quiet outline at rest, flat navy fill when
+   selected — no icons, the fill alone marks the answer. */
 .inv-radio-btn svg {
-  display: block;
-  width: 13px;
-  height: 13px;
-  flex: 0 0 auto;
-  opacity: 0.55;
-  transition: opacity 0.25s ease;
+  display: none;
 }
 
 .inv-radio-btn:hover {
   border-color: hsla(39, 43%, 43%, 0.36);
   background: hsla(38, 46%, 98%, 0.94);
-  box-shadow: 0 12px 28px hsla(208, 28%, 27%, 0.08);
   color: var(--bp-fg);
-  transform: translateY(-1px);
 }
 
 .inv-radio-btn:focus-visible {
@@ -1204,14 +1198,10 @@ textarea.kiosk-input {
 }
 
 .inv-radio-btn.active {
-  background: linear-gradient(135deg, var(--bp-navy), var(--bp-charcoal));
+  background: var(--bp-navy);
   color: var(--bp-ivory);
-  border-color: hsla(39, 43%, 58%, 0.55);
-  box-shadow: 0 14px 30px hsla(208, 34%, 28%, 0.28);
-}
-
-.inv-radio-btn.active svg {
-  opacity: 1;
+  border-color: var(--bp-navy);
+  box-shadow: none;
 }
 
 .inv-rsvp-card-enhanced .rsvp-plus-one-label {

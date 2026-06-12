@@ -15,7 +15,7 @@ export const THEATER_DEMO_ORDER = {
   weddingDetails: {
     groomName: 'Omar Kareem',
     brideName: 'Layla Hassan',
-    weddingDate: '2026-09-12T18:30:00.000Z',
+    weddingDate: '2027-09-18T18:30:00.000Z',
     weddingTime: '6:30 PM',
     venue: 'The Royale Grand Theatre',
     venueMapUrl: 'https://maps.google.com/maps?q=Cairo%20Opera%20House&z=15&output=embed',
