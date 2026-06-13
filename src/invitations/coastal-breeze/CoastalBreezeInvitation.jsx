@@ -11,7 +11,7 @@ import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
-import coastalHeroExport from '../../assets/coastal/coastal-hero-export.webp';
+import coastalHeroExtended from '../../assets/coastal/coastal-hero-extended.webp';
 import coastalCountdownTrimmedBg from '../../assets/coastal/coastal-countdown-trimmed-bg.png';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
@@ -221,7 +221,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
       {contentReady && (<>
       <section className="coastal-hero coastal-art-section">
-        <img className="coastal-art-bg" src={coastalHeroExport} alt="" />
+        <img className="coastal-art-bg" src={coastalHeroExtended} alt="" />
         <p className="coastal-art-layer coastal-hero-eyebrow">
           <span>Please join us to</span>
           <span>celebrate the marriage of</span>

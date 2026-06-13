@@ -2173,7 +2173,7 @@
 }
 
 .coastal-theme .coastal-hero-eyebrow {
-  top: 7.1%;
+  top: 6.9%;
   color: #9a7c48;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 2.15vw;
@@ -2204,15 +2204,15 @@
 }
 
 .coastal-theme .coastal-hero-name-groom {
-  top: 18.8%;
+  top: 18.3%;
 }
 
 .coastal-theme .coastal-hero-name-bride {
-  top: 31%;
+  top: 30.1%;
 }
 
 .coastal-theme .coastal-art-section .coastal-hero-amp {
-  top: 24.4%;
+  top: 23.7%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2235,7 +2235,7 @@
 }
 
 .coastal-theme .coastal-hero-date {
-  top: 78%;
+  top: 75.8%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2286,7 +2286,7 @@
 }
 
 .coastal-theme .coastal-art-section .coastal-hero-venue {
-  top: 90%;
+  top: 87.5%;
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 3vw;
