@@ -2171,7 +2171,7 @@
 }
 
 .coastal-theme .coastal-hero-name-bride {
-  top: 29%;
+  top: 30.15%;
 }
 
 .coastal-theme .coastal-art-section .coastal-hero-amp {
@@ -2198,11 +2198,11 @@
 }
 
 .coastal-theme .coastal-hero-date {
-  top: 75.35%;
+  top: 75.15%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.12vw;
+  gap: 0.22vw;
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
 }
@@ -2210,34 +2210,34 @@
 .coastal-theme .coastal-hero-date-line,
 .coastal-theme .coastal-hero-date-year,
 .coastal-theme .coastal-hero-date-time {
-  font-size: 2.55vw;
+  font-size: 2.85vw;
   font-weight: 600;
-  letter-spacing: 0.24em;
-  line-height: 1.08;
-  text-indent: 0.24em;
+  letter-spacing: 0.25em;
+  line-height: 1.12;
+  text-indent: 0.25em;
   text-transform: uppercase;
 }
 
 .coastal-theme .coastal-hero-date strong {
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 5.1vw;
+  font-size: 5.65vw;
   font-weight: 500;
   letter-spacing: 0.06em;
-  line-height: 0.98;
+  line-height: 1;
 }
 
 .coastal-theme .coastal-hero-date-year {
-  margin-top: 0.18vw;
-  font-size: 2.25vw;
+  margin-top: 0.24vw;
+  font-size: 2.55vw;
   letter-spacing: 0.28em;
   text-indent: 0.28em;
 }
 
 .coastal-theme .coastal-hero-date-time {
-  margin-top: 0.58vw;
+  margin-top: 0.72vw;
   color: #9a7c48;
-  font-size: 2.35vw;
+  font-size: 2.7vw;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-indent: 0.2em;
@@ -2247,7 +2247,7 @@
   top: 90%;
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 3.25vw;
+  font-size: 3vw;
   font-weight: 600;
   letter-spacing: 0.24em;
   text-indent: 0.24em;
