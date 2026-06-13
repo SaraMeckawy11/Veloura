@@ -248,17 +248,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       {weddingDate && (
         <section className="coastal-countdown coastal-art-section" aria-label="Countdown to the wedding">
           <img className="coastal-art-bg" src={coastalCountdownMonths} alt="" />
-          <div className="coastal-count-titleblock" aria-hidden="true">
-            <h2 className="coastal-count-title">Countdown</h2>
-            <p className="coastal-count-subtitle">until we say I do</p>
-            <svg className="coastal-count-flourish" viewBox="0 0 300 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
-              <path d="M12 7 q 7 3 0 6" />
-              <path d="M20 10 C 66 10 96 5 140 10" />
-              <circle cx="150" cy="10" r="3.5" />
-              <path d="M160 10 C 204 5 234 10 280 10" />
-              <path d="M288 7 q -7 3 0 6" />
-            </svg>
-          </div>
           <div className="coastal-count-cards" role="list">
             <div className="coastal-count-card" role="listitem" aria-label={`${timeLeft.months} months`}>
               <span className="coastal-count-value">{pad(timeLeft.months)}</span>

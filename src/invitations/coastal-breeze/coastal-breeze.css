@@ -2115,6 +2115,52 @@
   isolation: auto;
 }
 
+.coastal-theme .coastal-hero.coastal-art-section {
+  z-index: 1;
+}
+
+.coastal-theme .coastal-hero.coastal-art-section::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  z-index: 1;
+  height: clamp(72px, 13vw, 170px);
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(245, 238, 222, 0) 0%,
+      rgba(247, 240, 224, 0.38) 38%,
+      rgba(246, 237, 218, 0.82) 72%,
+      #f1e4c8 100%
+    );
+}
+
+.coastal-theme .coastal-countdown.coastal-art-section {
+  z-index: 0;
+  margin-top: calc(-1 * clamp(36px, 5.6vw, 78px));
+  background: #f1e4c8;
+}
+
+.coastal-theme .coastal-countdown.coastal-art-section::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 1;
+  height: clamp(64px, 10vw, 142px);
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      #f1e4c8 0%,
+      rgba(241, 228, 200, 0.86) 28%,
+      rgba(241, 228, 200, 0.24) 72%,
+      rgba(241, 228, 200, 0) 100%
+    );
+}
+
 .coastal-theme .coastal-art-bg {
   display: block;
   width: 100%;
@@ -2123,6 +2169,7 @@
 
 .coastal-theme .coastal-art-layer {
   position: absolute;
+  z-index: 2;
   left: 50%;
   width: 100%;
   margin: 0;
@@ -2261,6 +2308,7 @@
 
 .coastal-theme .coastal-count-cards {
   position: absolute;
+  z-index: 2;
   left: 50%;
   top: 51.5%;
   width: 53.5%;
@@ -2268,48 +2316,6 @@
   align-items: stretch;
   gap: 3%;
   transform: translateX(-50%);
-}
-
-.coastal-theme .coastal-count-titleblock {
-  position: absolute;
-  left: 50%;
-  top: calc(12% + clamp(18px, 3.3vw, 48px));
-  width: 92%;
-  color: #9a7c48;
-  text-align: center;
-  pointer-events: none;
-  transform: translateX(-50%);
-}
-
-.coastal-theme .coastal-count-title {
-  margin: 0;
-  color: #1f3a6b;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 5.8vw;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  line-height: 1;
-  text-indent: 0.2em;
-  text-transform: uppercase;
-}
-
-.coastal-theme .coastal-count-subtitle {
-  margin: 0.35em 0 0;
-  color: #9a7c48;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 2.6vw;
-  font-style: italic;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  line-height: 1.05;
-}
-
-.coastal-theme .coastal-count-flourish {
-  display: block;
-  width: 16%;
-  height: auto;
-  margin: 0.7em auto 0;
-  color: #9a7c48;
 }
 
 .coastal-theme .coastal-count-card {
