@@ -543,7 +543,11 @@ function StorySection({ milestones, images }) {
 
   return (
     <section className="coastal-section coastal-story-section">
-      <SectionTitle eyebrow="Our story" title="The Route" script="Of Us" />
+      <div className="coastal-section-title coastal-story-title">
+        <h2>Our Story</h2>
+        <p className="coastal-story-title-route">The Route Of Us</p>
+        <FlourishSvg className="coastal-section-divider" />
+      </div>
       <div className="coastal-story-list">
         {items.map((item, index) => (
           <motion.article

@@ -691,6 +691,21 @@
   opacity: 0.55;
 }
 
+.coastal-story-title h2 {
+  margin-top: 0;
+  color: var(--coast-denim-dark);
+}
+
+.coastal-story-title-route {
+  margin: 8px 0 0;
+  color: var(--coast-coral);
+  font-family: var(--font-script);
+  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.18;
+  white-space: nowrap;
+}
+
 .coastal-story-list {
   position: relative;
   z-index: 1;
@@ -2247,7 +2262,7 @@
 .coastal-theme .coastal-hero-date-line,
 .coastal-theme .coastal-hero-date-year,
 .coastal-theme .coastal-hero-date-time {
-  font-size: 2.85vw;
+  font-size: 3vw;
   font-weight: 600;
   letter-spacing: 0.25em;
   line-height: 1.12;
@@ -2263,7 +2278,7 @@
 .coastal-theme .coastal-hero-date strong {
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 5.65vw;
+  font-size: 5.9vw;
   font-weight: 500;
   letter-spacing: 0.06em;
   line-height: 1;
@@ -2271,7 +2286,7 @@
 
 .coastal-theme .coastal-hero-date-year {
   margin-top: 0.24vw;
-  font-size: 2.55vw;
+  font-size: 2.7vw;
   letter-spacing: 0.28em;
   text-indent: 0.28em;
 }
@@ -2279,14 +2294,14 @@
 .coastal-theme .coastal-hero-date-time {
   margin-top: 1.35vw;
   color: #9a7c48;
-  font-size: 2.7vw;
+  font-size: 2.88vw;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-indent: 0.2em;
 }
 
 .coastal-theme .coastal-art-section .coastal-hero-venue {
-  top: 88.6%;
+  top: 89.6%;
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 3vw;
@@ -2299,7 +2314,7 @@
 .coastal-theme .coastal-count-titleblock {
   position: absolute;
   left: 50%;
-  top: 31%;
+  top: 32.5%;
   z-index: 2;
   width: 92%;
   color: #9a7c48;
@@ -2346,7 +2361,7 @@
   position: absolute;
   z-index: 2;
   left: 50%;
-  top: 56.8%;
+  top: 58.3%;
   width: 52.5%;
   display: flex;
   align-items: stretch;
