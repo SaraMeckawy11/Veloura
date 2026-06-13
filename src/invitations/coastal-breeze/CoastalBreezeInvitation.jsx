@@ -12,7 +12,7 @@ import useHeroScrollReset from '../useHeroScrollReset';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
 import coastalHeroExport from '../../assets/coastal/coastal-hero-export.webp';
-import coastalCountdownExport from '../../assets/coastal/coastal-countdown-export.webp';
+import coastalCountdownMonths from '../../assets/coastal/coastal-countdown-months.png';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
 
@@ -247,7 +247,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
       {weddingDate && (
         <section className="coastal-countdown coastal-art-section" aria-label="Countdown to the wedding">
-          <img className="coastal-art-bg" src={coastalCountdownExport} alt="" />
+          <img className="coastal-art-bg" src={coastalCountdownMonths} alt="" />
           <span className="coastal-count-num coastal-count-months" aria-label={`${timeLeft.months} months`}>{pad(timeLeft.months)}</span>
           <span className="coastal-count-num coastal-count-days" aria-label={`${timeLeft.days} days`}>{pad(timeLeft.days)}</span>
           <span className="coastal-count-num coastal-count-hours" aria-label={`${timeLeft.hours} hours`}>{pad(timeLeft.hours)}</span>

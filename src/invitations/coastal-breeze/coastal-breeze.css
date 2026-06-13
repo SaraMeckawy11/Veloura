@@ -2256,7 +2256,7 @@
 
 .coastal-theme .coastal-count-num {
   position: absolute;
-  top: 50.3%;
+  top: 52%;
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 6vw;
@@ -2289,29 +2289,29 @@
 }
 
 .coastal-theme .coastal-count-months {
-  left: 18.4%;
+  left: 20.2%;
 }
 
 .coastal-theme .coastal-count-days {
-  left: 39.4%;
+  left: 40%;
 }
 
 .coastal-theme .coastal-count-hours {
-  left: 60.3%;
+  left: 60%;
 }
 
 .coastal-theme .coastal-count-label-months {
-  left: 18.4%;
+  left: 20.2%;
 }
 
 .coastal-theme .coastal-count-label-days {
-  left: 39.4%;
+  left: 40%;
 }
 
 .coastal-theme .coastal-count-label-hours {
-  left: 60.3%;
+  left: 60%;
 }
 
 .coastal-theme .coastal-count-label-blank {
-  left: 81.3%;
+  left: 79.8%;
 }
