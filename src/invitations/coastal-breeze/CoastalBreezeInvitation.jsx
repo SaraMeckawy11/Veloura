@@ -12,7 +12,7 @@ import useHeroScrollReset from '../useHeroScrollReset';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
 import coastalHeroExport from '../../assets/coastal/coastal-hero-export.webp';
-import coastalCountdownBridgeBg from '../../assets/coastal/coastal-countdown-bridge-bg.png';
+import coastalCountdownTrimmedBg from '../../assets/coastal/coastal-countdown-trimmed-bg.png';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
 
@@ -247,7 +247,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
       {weddingDate && (
         <section className="coastal-countdown coastal-art-section" aria-label="Countdown to the wedding">
-          <img className="coastal-art-bg" src={coastalCountdownBridgeBg} alt="" />
+          <img className="coastal-art-bg" src={coastalCountdownTrimmedBg} alt="" />
           <div className="coastal-count-titleblock">
             <h2 className="coastal-count-title">Countdown</h2>
             <p className="coastal-count-subtitle">until we say I do</p>
