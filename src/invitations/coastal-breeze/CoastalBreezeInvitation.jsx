@@ -251,17 +251,14 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <div className="coastal-count-cards" role="list">
             <div className="coastal-count-card" role="listitem" aria-label={`${timeLeft.months} months`}>
               <span className="coastal-count-value">{pad(timeLeft.months)}</span>
-              <span className="coastal-count-divider" aria-hidden="true" />
               <span className="coastal-count-card-label">Months</span>
             </div>
             <div className="coastal-count-card" role="listitem" aria-label={`${timeLeft.days} days`}>
               <span className="coastal-count-value">{pad(timeLeft.days)}</span>
-              <span className="coastal-count-divider" aria-hidden="true" />
               <span className="coastal-count-card-label">Days</span>
             </div>
             <div className="coastal-count-card" role="listitem" aria-label={`${timeLeft.hours} hours`}>
               <span className="coastal-count-value">{pad(timeLeft.hours)}</span>
-              <span className="coastal-count-divider" aria-hidden="true" />
               <span className="coastal-count-card-label">Hours</span>
             </div>
           </div>

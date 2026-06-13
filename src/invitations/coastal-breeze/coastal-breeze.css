@@ -2198,7 +2198,7 @@
 }
 
 .coastal-theme .coastal-hero-date {
-  top: 76.6%;
+  top: 78%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2262,25 +2262,25 @@
 .coastal-theme .coastal-count-cards {
   position: absolute;
   left: 50%;
-  top: 41.8%;
-  width: 57%;
+  top: 50.6%;
+  width: 54.5%;
   display: flex;
   align-items: stretch;
-  gap: 2.2%;
+  gap: 3.5%;
   transform: translateX(-50%);
 }
 
 .coastal-theme .coastal-count-card {
   flex: 1 1 0;
-  aspect-ratio: 247 / 386;
+  aspect-ratio: 229 / 250;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(180deg, #fdf9f1 0%, #f8f2e9 60%);
+  background: linear-gradient(180deg, #fdf9f1 0%, #f8f2e9 65%);
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 1.7vw;
   box-shadow:
-    0 1.4vw 3vw rgba(94, 68, 28, 0.16),
+    0 1.3vw 2.8vw rgba(94, 68, 28, 0.16),
     0 0.2vw 0.6vw rgba(94, 68, 28, 0.08);
   color: #1f3a6b;
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -2293,32 +2293,10 @@
   align-items: center;
   justify-content: center;
   color: #1f3a6b;
-  font-size: 5.5vw;
+  font-size: 5vw;
   font-variant-numeric: lining-nums tabular-nums;
   font-weight: 500;
   line-height: 1;
-}
-
-.coastal-theme .coastal-count-divider {
-  position: relative;
-  width: 46%;
-  height: 1px;
-  background: #9a7c48;
-}
-
-.coastal-theme .coastal-count-divider::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 0.55vw;
-  min-width: 6px;
-  height: 0.55vw;
-  min-height: 6px;
-  border: 1px solid #9a7c48;
-  border-radius: 50%;
-  background: #f8f2e9;
-  transform: translate(-50%, -50%);
 }
 
 .coastal-theme .coastal-count-card-label {
@@ -2327,10 +2305,11 @@
   align-items: center;
   justify-content: center;
   color: #1f3a6b;
-  font-size: 1.7vw;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.9vw;
+  font-weight: 600;
+  letter-spacing: 0.24em;
   line-height: 1;
-  text-indent: 0.2em;
+  text-indent: 0.24em;
   text-transform: uppercase;
 }
