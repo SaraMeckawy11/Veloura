@@ -4,17 +4,16 @@ import { useEffect, useRef } from 'react';
 //
 // On mount we pin the document to the top and briefly lock scrolling, so the
 // guest always begins at the hero (rather than wherever the previous route was
-// scrolled) and a stray early scroll can't shift the page. The lock then
-// releases after a short delay — independent of how long the splash animation
-// runs — so the hero becomes scrollable almost immediately, without changing the
-// splash screen's own timing. We deliberately don't snap back to the top when
-// the splash finally dismisses, so a guest who has already started scrolling
-// isn't yanked back up.
+// scrolled) and a stray early scroll can't shift the page before the hero has
+// been revealed. The lock holds for a couple of seconds — long enough that the
+// splash has opened onto the hero — then releases so the page becomes
+// scrollable. We deliberately don't snap back to the top when the splash finally
+// dismisses, so a guest who has already started scrolling isn't yanked back up.
 //
 // We resolve the window/document from the rendered node's ownerDocument so this
 // also works inside the order-flow preview iframe, where the component runs in
 // the parent window but its DOM is portaled into the iframe.
-const HERO_SCROLL_LOCK_MS = 400;
+const HERO_SCROLL_LOCK_MS = 2000;
 
 export default function useHeroScrollReset(showSplash) {
   const rootRef = useRef(null);

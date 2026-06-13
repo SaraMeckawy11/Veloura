@@ -65,7 +65,16 @@
       "Bash(awk 'NR>=1 && NR<=3557' src/invitations/fountain-reverie-shared/fountain-reverie.css)",
       "Bash(awk -F: '$1>=3300 && $1<=3650')",
       "Bash(node -e 'const fs=require\\('\\\\''fs'\\\\''\\);const b=fs.readFileSync\\('\\\\''__TRACKED_VAR__'\\\\''\\);const w=b.readUInt32BE\\(16\\),h=b.readUInt32BE\\(20\\);console.log\\('\\\\''__TRACKED_VAR__'\\\\'',w+'\\\\''x'\\\\''+h,\\(w/h\\).toFixed\\(3\\)\\);')",
-      "PowerShell(npm run build 2>&1)"
+      "PowerShell(npm run build 2>&1)",
+      "Bash(git -C \"D:\\\\App_Development\\\\Veloura\" status)",
+      "Bash(git -C \"D:\\\\App_Development\\\\Veloura\" log --oneline -5)",
+      "Bash(git -C \"D:/App_Development/Veloura\" log -p -S \"named on your invitation\" --format=\"=== %h %s ===\" -- src/pages/OrderFlow.jsx)",
+      "Bash(git -C \"D:/App_Development/Veloura\" log -p -S \"kindly ask that only the guests named\" --format=\"=== %h %s ===\" -- src/pages/OrderFlow.jsx)",
+      "PowerShell(git add src/pages/Home.jsx src/components/Designs.jsx src/pages/OrderFlow.jsx src/lib/pricingTiers.js src/styles/Pricing.css server/data/pricingTiers.js)",
+      "Bash(npm uninstall *)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(powershell -Command 'Get-NetTCPConnection -LocalPort 5173 -State Listen | Select-Object OwningProcess | ForEach-Object { \\(Get-Process -Id $_.OwningProcess\\).ProcessName }')"
     ]
   }
 }
