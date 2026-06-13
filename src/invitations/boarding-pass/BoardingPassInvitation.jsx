@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -44,7 +44,7 @@ function buildMapEmbedUrl(rawUrl, fallbackQuery) {
 export default function BoardingPassInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ months: 0, days: 0, hours: 0 });
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
@@ -57,15 +57,9 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   // Countdown
   useEffect(() => {
     if (!order?.weddingDetails?.weddingDate) return;
-    const target = new Date(order.weddingDetails.weddingDate).getTime();
+    const target = new Date(order.weddingDetails.weddingDate);
     const calc = () => {
-      const diff = Math.max(0, target - Date.now());
-      setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
-      });
+      setTimeLeft(calculateCountdownTimeLeft(target));
     };
     calc();
     const interval = setInterval(calc, 1000);
@@ -138,9 +132,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime, wd.timeFormat) : '';
   const venue = wd.venue || '';
   const venueAddress = '';
-  const message = fieldEnabled('message')
-    ? (wd.message !== undefined && wd.message !== null ? wd.message : 'Two Souls, One Destination.')
-    : '';
   const coupleMessage = fieldEnabled('coupleMessage')
     ? (order.coupleMessage !== undefined && order.coupleMessage !== null
       ? order.coupleMessage
@@ -267,13 +258,11 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             <h2 className="inv-section-label">Boarding In</h2>
             <div className="inv-gold-divider" />
             <div className="inv-countdown-grid">
-              <FlapDigit value={formatCountdownDays(timeLeft.days)} label="DAYS" />
+              <FlapDigit value={pad(timeLeft.months)} label="MONTHS" />
+              <span className="inv-colon">:</span>
+              <FlapDigit value={pad(timeLeft.days)} label="DAYS" />
               <span className="inv-colon">:</span>
               <FlapDigit value={pad(timeLeft.hours)} label="HOURS" />
-              <span className="inv-colon">:</span>
-              <FlapDigit value={pad(timeLeft.minutes)} label="MINUTES" />
-              <span className="inv-colon">:</span>
-              <FlapDigit value={pad(timeLeft.seconds)} label="SECONDS" />
             </div>
           </motion.div>
         </section>

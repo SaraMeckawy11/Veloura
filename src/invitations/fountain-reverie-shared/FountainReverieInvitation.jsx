@@ -5,7 +5,7 @@ import FountainSplash from './FountainSplash';
 import FountainEnvelopeSplash from './FountainEnvelopeSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -104,7 +104,7 @@ const Crest = ({ initials }) => (
 export default function FountainReverieInvitation({ order, demo = false, publicSlug, heroImage, variant = 'v1' }) {
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ months: 0, days: 0, hours: 0 });
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
@@ -148,15 +148,9 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
 
   useEffect(() => {
     if (!order?.weddingDetails?.weddingDate) return undefined;
-    const target = new Date(order.weddingDetails.weddingDate).getTime();
+    const target = new Date(order.weddingDetails.weddingDate);
     const calc = () => {
-      const diff = Math.max(0, target - Date.now());
-      setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
-      });
+      setTimeLeft(calculateCountdownTimeLeft(target));
     };
     calc();
     const interval = setInterval(calc, 1000);
@@ -295,10 +289,9 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
           <section className="fountain-countdown">
             <SectionTitle title="Countdown" />
             <div className="fountain-count-grid">
-              <CountdownUnit value={formatCountdownDays(timeLeft.days)} label="Days" />
+              <CountdownUnit value={pad(timeLeft.months)} label="Months" />
+              <CountdownUnit value={pad(timeLeft.days)} label="Days" />
               <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
-              <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
-              <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />
             </div>
           </section>
         </>

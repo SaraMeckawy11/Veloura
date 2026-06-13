@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -57,7 +57,7 @@ const BlueShellMark = ({ className = '' }) => (
 export default function CoastalBreezeInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ months: 0, days: 0, hours: 0 });
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
@@ -112,15 +112,9 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
   useEffect(() => {
     if (!order?.weddingDetails?.weddingDate) return undefined;
-    const target = new Date(order.weddingDetails.weddingDate).getTime();
+    const target = new Date(order.weddingDetails.weddingDate);
     const calc = () => {
-      const diff = Math.max(0, target - Date.now());
-      setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
-      });
+      setTimeLeft(calculateCountdownTimeLeft(target));
     };
     calc();
     const interval = setInterval(calc, 1000);
@@ -254,10 +248,13 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       {weddingDate && (
         <section className="coastal-countdown coastal-art-section" aria-label="Countdown to the wedding">
           <img className="coastal-art-bg" src={coastalCountdownExport} alt="" />
-          <span className="coastal-count-num coastal-count-days" aria-label={`${timeLeft.days} days`}>{timeLeft.days}</span>
-          <span className="coastal-count-num coastal-count-hours" aria-label={`${pad(timeLeft.hours)} hours`}>{pad(timeLeft.hours)}</span>
-          <span className="coastal-count-num coastal-count-minutes" aria-label={`${pad(timeLeft.minutes)} minutes`}>{pad(timeLeft.minutes)}</span>
-          <span className="coastal-count-num coastal-count-seconds" aria-label={`${pad(timeLeft.seconds)} seconds`}>{pad(timeLeft.seconds)}</span>
+          <span className="coastal-count-num coastal-count-months" aria-label={`${timeLeft.months} months`}>{pad(timeLeft.months)}</span>
+          <span className="coastal-count-num coastal-count-days" aria-label={`${timeLeft.days} days`}>{pad(timeLeft.days)}</span>
+          <span className="coastal-count-num coastal-count-hours" aria-label={`${timeLeft.hours} hours`}>{pad(timeLeft.hours)}</span>
+          <span className="coastal-count-label coastal-count-label-months">Months</span>
+          <span className="coastal-count-label coastal-count-label-days">Days</span>
+          <span className="coastal-count-label coastal-count-label-hours">Hours</span>
+          <span className="coastal-count-label coastal-count-label-blank" aria-hidden="true" />
         </section>
       )}
       {!isReferenceDemo && couplePhotos.length > 0 && (

@@ -526,7 +526,7 @@
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(10px, 3vw, 26px);
   width: min(820px, 100%);
   margin: 40px auto 0;
@@ -1889,7 +1889,7 @@
   }
 
   .coastal-count-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
     margin-top: 36px;
   }
@@ -2198,7 +2198,7 @@
 }
 
 .coastal-theme .coastal-hero-date {
-  top: 75.15%;
+  top: 76.6%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2267,18 +2267,51 @@
   transform: translate(-50%, -50%);
 }
 
-.coastal-theme .coastal-count-days {
+.coastal-theme .coastal-count-label {
+  position: absolute;
+  top: 61.35%;
+  z-index: 2;
+  width: 11.4%;
+  min-height: 2.8%;
+  display: grid;
+  place-items: center;
+  color: #16305e;
+  background: rgba(250, 250, 246, 0.96);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2vw;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  line-height: 1;
+  text-indent: 0.24em;
+  text-transform: uppercase;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.coastal-theme .coastal-count-months {
   left: 18.4%;
 }
 
-.coastal-theme .coastal-count-hours {
+.coastal-theme .coastal-count-days {
   left: 39.4%;
 }
 
-.coastal-theme .coastal-count-minutes {
+.coastal-theme .coastal-count-hours {
   left: 60.3%;
 }
 
-.coastal-theme .coastal-count-seconds {
+.coastal-theme .coastal-count-label-months {
+  left: 18.4%;
+}
+
+.coastal-theme .coastal-count-label-days {
+  left: 39.4%;
+}
+
+.coastal-theme .coastal-count-label-hours {
+  left: 60.3%;
+}
+
+.coastal-theme .coastal-count-label-blank {
   left: 81.3%;
 }

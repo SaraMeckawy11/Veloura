@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -112,7 +112,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const [splashReady, setSplashReady] = useState(false);
   const [heroVideoFailed, setHeroVideoFailed] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ months: 0, days: 0, hours: 0 });
   const [rsvpForm, setRsvpForm] = useState({
     guestName: '',
     guestCount: '1',
@@ -152,7 +152,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
     : '';
   const askPlusOne = Boolean(wd.askPlusOne);
   const heroDate = compactDateStr || fullDateStr;
-  const fullDateTime = [fullDateStr, timeStr].filter(Boolean).join(' at ');
   const shouldPlayMusic = invitationTierAllows(order, 'music') && Boolean(order.musicUrl && order.musicEnabled !== false);
   const pad = (value) => String(value).padStart(2, '0');
   // The splash must be the first thing fetched and painted. Main content only
@@ -222,15 +221,9 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
   useEffect(() => {
     if (!order?.weddingDetails?.weddingDate) return undefined;
-    const target = new Date(order.weddingDetails.weddingDate).getTime();
+    const target = new Date(order.weddingDetails.weddingDate);
     const calc = () => {
-      const diff = Math.max(0, target - Date.now());
-      setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
-      });
+      setTimeLeft(calculateCountdownTimeLeft(target));
     };
     calc();
     const interval = window.setInterval(calc, 1000);
@@ -349,10 +342,9 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           <div className="gazebo-section-soft-pattern" aria-hidden="true" />
           <SectionTitle eyebrow="The celebration begins in" title="Counting every heartbeat" />
           <div className="gazebo-count-grid">
-            <CountdownUnit value={formatCountdownDays(timeLeft.days)} label="Days" />
+            <CountdownUnit value={pad(timeLeft.months)} label="Months" />
+            <CountdownUnit value={pad(timeLeft.days)} label="Days" />
             <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
-            <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
-            <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />
           </div>
         </section>
       )}

@@ -15,9 +15,37 @@ export function createRsvpSubmissionId() {
   return `rsvp-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
 }
 
-export function formatCountdownDays(value) {
-  const days = Math.max(0, Math.min(99, Number(value) || 0));
-  return String(days).padStart(2, '0');
+function addCalendarMonthsClamped(date, months) {
+  const next = new Date(date);
+  const originalDay = next.getDate();
+  next.setDate(1);
+  next.setMonth(next.getMonth() + months);
+  const lastDay = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+  next.setDate(Math.min(originalDay, lastDay));
+  return next;
+}
+
+export function calculateCountdownTimeLeft(targetDate, nowDate = new Date()) {
+  const target = new Date(targetDate);
+  const now = new Date(nowDate);
+
+  if (!Number.isFinite(target.getTime()) || target <= now) {
+    return { months: 0, days: 0, hours: 0 };
+  }
+
+  let months = (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
+  let anchor = addCalendarMonthsClamped(now, months);
+
+  if (anchor > target) {
+    months = Math.max(0, months - 1);
+    anchor = addCalendarMonthsClamped(now, months);
+  }
+
+  const diff = Math.max(0, target - anchor);
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+
+  return { months, days, hours };
 }
 
 const normalizePhotoFit = (value) => {

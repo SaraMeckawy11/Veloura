@@ -568,7 +568,7 @@
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(10px, 3vw, 26px);
   width: min(820px, 100%);
   margin: 30px auto 0;
@@ -1622,7 +1622,7 @@
   }
 
   .fountain-count-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
     margin-top: 36px;
   }
