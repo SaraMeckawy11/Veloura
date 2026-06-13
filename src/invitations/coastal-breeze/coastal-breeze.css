@@ -2176,16 +2176,16 @@
   top: 6.9%;
   color: #9a7c48;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 2.15vw;
+  font-size: 2.42vw;
   font-weight: 600;
-  letter-spacing: 0.3em;
-  line-height: 1.5;
+  letter-spacing: 0.26em;
+  line-height: 1.42;
   text-transform: uppercase;
 }
 
 .coastal-theme .coastal-hero-eyebrow span {
   display: block;
-  text-indent: 0.3em;
+  text-indent: 0.26em;
   white-space: nowrap;
 }
 
@@ -2286,7 +2286,7 @@
 }
 
 .coastal-theme .coastal-art-section .coastal-hero-venue {
-  top: 87.5%;
+  top: 88.6%;
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 3vw;
@@ -2299,7 +2299,7 @@
 .coastal-theme .coastal-count-titleblock {
   position: absolute;
   left: 50%;
-  top: 27%;
+  top: 31%;
   z-index: 2;
   width: 92%;
   color: #9a7c48;
@@ -2346,7 +2346,7 @@
   position: absolute;
   z-index: 2;
   left: 50%;
-  top: 52.8%;
+  top: 56.8%;
   width: 52.5%;
   display: flex;
   align-items: stretch;
