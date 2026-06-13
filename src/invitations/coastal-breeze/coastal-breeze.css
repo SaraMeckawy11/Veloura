@@ -2350,9 +2350,8 @@
 .coastal-theme .coastal-count-flourish {
   display: block;
   width: 96px;
-  max-width: 18%;
-  height: auto;
-  margin: 0.72em auto 0;
+  height: 14px;
+  margin: 16px auto 0;
   color: var(--coast-gold);
   opacity: 0.65;
 }

@@ -251,13 +251,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <div className="coastal-count-titleblock">
             <h2 className="coastal-count-title">Countdown</h2>
             <p className="coastal-count-subtitle">until we say I do</p>
-            <svg className="coastal-count-flourish" viewBox="0 0 300 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
-              <path d="M12 7 q 7 3 0 6" />
-              <path d="M20 10 C 66 10 96 5 140 10" />
-              <circle cx="150" cy="10" r="3.5" />
-              <path d="M160 10 C 204 5 234 10 280 10" />
-              <path d="M288 7 q -7 3 0 6" />
-            </svg>
+            <FlourishSvg className="coastal-section-divider coastal-count-flourish" />
           </div>
           <div className="coastal-count-cards" role="list">
             <div className="coastal-count-card" role="listitem" aria-label={`${timeLeft.months} months`}>
@@ -589,6 +583,7 @@ function GallerySection({ images }) {
   const galleryImageKey = uniqueImages.map(getInvitationPhotoSrc).join('|');
   const galleryRowRef = useRef(null);
   const galleryUnitRef = useRef(null);
+  const [loopGroupCount, setLoopGroupCount] = useState(6);
   // Repeat images enough times to fill at least 2x the viewport for seamless looping
   const unitRepeatCount = uniqueImages.length ? Math.max(3, Math.ceil(12 / uniqueImages.length)) : 0;
   const unitImages = uniqueImages.length
@@ -620,7 +615,11 @@ function GallerySection({ images }) {
     };
 
     const updateDistance = () => {
-      distance = unit.scrollWidth;
+      distance = unit.getBoundingClientRect().width;
+      const viewportWidth = viewport?.getBoundingClientRect().width || window.innerWidth;
+      if (distance > 0) {
+        setLoopGroupCount(Math.max(6, Math.ceil((viewportWidth * 3) / distance) + 2));
+      }
       applyOffset(offset);
     };
 
@@ -794,7 +793,7 @@ function GallerySection({ images }) {
           className={`coastal-gallery-row${unitImages.length ? ' coastal-gallery-row-loop' : ''}`}
           ref={galleryRowRef}
         >
-          {[0, 1, 2, 3].map((groupIndex) => (
+          {Array.from({ length: loopGroupCount }, (_, groupIndex) => (
             <div
               key={groupIndex}
               ref={groupIndex === 0 ? galleryUnitRef : null}

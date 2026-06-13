@@ -580,6 +580,7 @@ function CountdownUnit({ value, label }) {
 function GazeboGallerySection({ items }) {
   const galleryRowRef = useRef(null);
   const galleryUnitRef = useRef(null);
+  const [loopGroupCount, setLoopGroupCount] = useState(6);
   const imageItems = items.filter(item => getInvitationPhotoSrc(item.image));
   const fallbackItems = imageItems.length ? [] : items;
   const galleryKey = items.map(item => getInvitationPhotoSrc(item.image) || item.title).join('|');
@@ -613,7 +614,11 @@ function GazeboGallerySection({ items }) {
     };
 
     const updateDistance = () => {
-      distance = unit.scrollWidth;
+      distance = unit.getBoundingClientRect().width;
+      const viewportWidth = viewport?.getBoundingClientRect().width || window.innerWidth;
+      if (distance > 0) {
+        setLoopGroupCount(Math.max(6, Math.ceil((viewportWidth * 3) / distance) + 2));
+      }
       applyOffset(offset);
     };
 
@@ -791,7 +796,7 @@ function GazeboGallerySection({ items }) {
           className={`gazebo-gallery-row${unitItems.length ? ' gazebo-gallery-row-loop' : ''}`}
           ref={galleryRowRef}
         >
-          {[0, 1, 2, 3].map((groupIndex) => (
+          {Array.from({ length: loopGroupCount }, (_, groupIndex) => (
             <div
               key={groupIndex}
               ref={groupIndex === 0 ? galleryUnitRef : null}
