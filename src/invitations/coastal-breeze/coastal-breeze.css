@@ -2262,23 +2262,68 @@
 .coastal-theme .coastal-count-cards {
   position: absolute;
   left: 50%;
-  top: 50.6%;
-  width: 54.5%;
+  top: 51.5%;
+  width: 53.5%;
   display: flex;
   align-items: stretch;
-  gap: 3.5%;
+  gap: 3%;
   transform: translateX(-50%);
+}
+
+.coastal-theme .coastal-count-titleblock {
+  position: absolute;
+  left: 50%;
+  top: calc(12% + clamp(18px, 3.3vw, 48px));
+  width: 92%;
+  color: #9a7c48;
+  text-align: center;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.coastal-theme .coastal-count-title {
+  margin: 0;
+  color: #1f3a6b;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 5.8vw;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+}
+
+.coastal-theme .coastal-count-subtitle {
+  margin: 0.35em 0 0;
+  color: #9a7c48;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.6vw;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+}
+
+.coastal-theme .coastal-count-flourish {
+  display: block;
+  width: 16%;
+  height: auto;
+  margin: 0.7em auto 0;
+  color: #9a7c48;
 }
 
 .coastal-theme .coastal-count-card {
   flex: 1 1 0;
-  aspect-ratio: 229 / 250;
+  aspect-ratio: 228 / 252;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 0.45vw;
+  padding: 1.35vw 0 1.15vw;
   background: linear-gradient(180deg, #fdf9f1 0%, #f8f2e9 65%);
   border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 1.7vw;
+  border-radius: 1.6vw;
   box-shadow:
     0 1.3vw 2.8vw rgba(94, 68, 28, 0.16),
     0 0.2vw 0.6vw rgba(94, 68, 28, 0.08);
@@ -2288,7 +2333,7 @@
 }
 
 .coastal-theme .coastal-count-value {
-  height: 60%;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2300,7 +2345,7 @@
 }
 
 .coastal-theme .coastal-count-card-label {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
