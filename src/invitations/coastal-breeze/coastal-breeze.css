@@ -2218,6 +2218,11 @@
   text-transform: uppercase;
 }
 
+.coastal-theme .coastal-hero-date-line,
+.coastal-theme .coastal-hero-date-year {
+  text-transform: none;
+}
+
 .coastal-theme .coastal-hero-date strong {
   color: #16305e;
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -2235,7 +2240,7 @@
 }
 
 .coastal-theme .coastal-hero-date-time {
-  margin-top: 0.72vw;
+  margin-top: 1.35vw;
   color: #9a7c48;
   font-size: 2.7vw;
   font-weight: 600;

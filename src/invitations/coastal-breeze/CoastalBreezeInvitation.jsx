@@ -77,7 +77,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long' })
     : '';
   const monthStr = weddingDate
-    ? weddingDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
+    ? weddingDate.toLocaleDateString('en-US', { month: 'long' })
     : '';
   const dayOfMonth = weddingDate ? weddingDate.getDate() : '';
   const yearStr = weddingDate ? weddingDate.getFullYear() : '';
@@ -234,9 +234,9 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
         {weddingDate && (
           <div className="coastal-art-layer coastal-hero-date">
-            <span className="coastal-hero-date-line">{dayStr ? dayStr.slice(0, 3).toUpperCase() : 'DAY'}</span>
-            <span className="coastal-hero-date-line">{monthStr || 'MONTH'}</span>
+            <span className="coastal-hero-date-line">{dayStr || 'DAY'}</span>
             <strong>{dayOfMonth || ''}</strong>
+            <span className="coastal-hero-date-line">{monthStr || 'MONTH'}</span>
             <span className="coastal-hero-date-year">{yearStr || 'YEAR'}</span>
             {timeStr && <span className="coastal-hero-date-time">{timeStr}</span>}
           </div>
