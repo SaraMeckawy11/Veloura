@@ -2299,7 +2299,7 @@
 .coastal-theme .coastal-count-titleblock {
   position: absolute;
   left: 50%;
-  top: 27%;
+  top: 31%;
   z-index: 2;
   width: 92%;
   color: #9a7c48;
@@ -2346,7 +2346,7 @@
   position: absolute;
   z-index: 2;
   left: 50%;
-  top: 52.8%;
+  top: 56.8%;
   width: 52.5%;
   display: flex;
   align-items: stretch;
