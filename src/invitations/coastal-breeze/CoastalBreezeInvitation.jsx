@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatCountdownDays, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -11,7 +11,8 @@ import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
-import coastalHero from '../../assets/coastal/heroNewEmpty.png';
+import coastalHeroExport from '../../assets/coastal/coastal-hero-export.webp';
+import coastalCountdownExport from '../../assets/coastal/coastal-countdown-export.webp';
 import blueShellAsset from '../../assets/coastal/blue-shell-transparent.png';
 import coastalEnvelope from '../../assets/coastal/coastal-breeze-envelope-transparent.png';
 
@@ -79,15 +80,13 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     ? weddingDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
     : '';
   const dayOfMonth = weddingDate ? weddingDate.getDate() : '';
+  const yearStr = weddingDate ? weddingDate.getFullYear() : '';
   const fullDateStr = weddingDate
     ? weddingDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
     : '';
   const timeStr = fieldEnabled('weddingTime') ? formatInvitationTime(wd.weddingTime, wd.timeFormat) : '';
   const venue = wd.venue || '';
   const venueAddress = '';
-  const message = fieldEnabled('message')
-    ? (wd.message !== undefined && wd.message !== null ? wd.message : 'With the sea as our witness, we begin forever.')
-    : '';
   const coupleMessage = fieldEnabled('coupleMessage')
     ? (order.coupleMessage !== undefined && order.coupleMessage !== null
       ? order.coupleMessage
@@ -227,67 +226,40 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       )}
 
       {contentReady && (<>
-      <section className="coastal-hero">
-        <div className="coastal-hero-frame">
-          <div className="coastal-hero-bg" aria-hidden>
-            <img src={coastalHero} alt="" />
-            <div className="coastal-hero-bg-wash" />
-          </div>
-
-          <article className="coastal-hero-card">
-            <div className="coastal-hero-top">
-              <span className="coastal-kicker">Please join us to</span>
-              <span className="coastal-kicker coastal-kicker-thin">celebrate the marriage of</span>
-            </div>
-
-            <div className="coastal-hero-center">
-              <h1>
-                <span className="coastal-hero-name">{name1}</span>
-                <span className="coastal-hero-amp">&amp;</span>
-                <span className="coastal-hero-name">{name2}</span>
-              </h1>
-
-              <FlourishSvg className="coastal-hero-flourish" />
-            </div>
-
-            <div className="coastal-hero-bottom">
-              {weddingDate ? (
-                <div className="coastal-hero-datepill">
-                  <div>
-                    <small>{dayStr ? dayStr.slice(0, 3).toUpperCase() : 'Day'}</small>
-                  </div>
-                  <span aria-hidden />
-                  <div className="coastal-hero-datepill-month">
-                    <small>{monthStr || 'Month'}</small>
-                    <strong>{dayOfMonth || '—'}</strong>
-                  </div>
-                  <span aria-hidden />
-                  <div>
-                    <small>{timeStr || 'Time'}</small>
-                  </div>
-                </div>
-              ) : null}
-
-              <p className="coastal-hero-venue">{venue || 'By the sea'}</p>
-
-              {message && <p className="coastal-hero-message">"{message}"</p>}
-            </div>
-          </article>
+      <section className="coastal-hero coastal-art-section">
+        <img className="coastal-art-bg" src={coastalHeroExport} alt="" />
+        <p className="coastal-art-layer coastal-hero-eyebrow">
+          <span>Please join us to</span>
+          <span>celebrate the marriage of</span>
+        </p>
+        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-groom">{name1}</h1>
+        <div className="coastal-art-layer coastal-hero-amp" aria-hidden="true">
+          <span>&amp;</span>
         </div>
+        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-bride">{name2}</h1>
+
+        {weddingDate && (
+          <div className="coastal-art-layer coastal-hero-date">
+            <span className="coastal-hero-date-line">{dayStr ? dayStr.slice(0, 3).toUpperCase() : 'DAY'}</span>
+            <span className="coastal-hero-date-line">{monthStr || 'MONTH'}</span>
+            <strong>{dayOfMonth || ''}</strong>
+            <span className="coastal-hero-date-year">{yearStr || 'YEAR'}</span>
+            {timeStr && <span className="coastal-hero-date-time">{timeStr}</span>}
+          </div>
+        )}
+
+        <p className="coastal-art-layer coastal-hero-venue">{venue || 'By the sea'}</p>
       </section>
 
       {weddingDate && (
-        <section className="coastal-countdown coastal-section-denim">
-          <SectionTitle eyebrow="Save The Date" title="Counting The Moments" light />
-          <div className="coastal-count-grid">
-            <CountdownUnit value={formatCountdownDays(timeLeft.days)} label="Days" />
-            <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
-            <CountdownUnit value={pad(timeLeft.minutes)} label="Minutes" />
-            <CountdownUnit value={pad(timeLeft.seconds)} label="Seconds" />
-          </div>
+        <section className="coastal-countdown coastal-art-section" aria-label="Countdown to the wedding">
+          <img className="coastal-art-bg" src={coastalCountdownExport} alt="" />
+          <span className="coastal-count-num coastal-count-days" aria-label={`${timeLeft.days} days`}>{timeLeft.days}</span>
+          <span className="coastal-count-num coastal-count-hours" aria-label={`${pad(timeLeft.hours)} hours`}>{pad(timeLeft.hours)}</span>
+          <span className="coastal-count-num coastal-count-minutes" aria-label={`${pad(timeLeft.minutes)} minutes`}>{pad(timeLeft.minutes)}</span>
+          <span className="coastal-count-num coastal-count-seconds" aria-label={`${pad(timeLeft.seconds)} seconds`}>{pad(timeLeft.seconds)}</span>
         </section>
       )}
-
       {!isReferenceDemo && couplePhotos.length > 0 && (
         <section className="coastal-section coastal-couple-section">
           <SectionTitle eyebrow="The couple" title="A Love" script="In Full Tide" />
@@ -524,15 +496,6 @@ function SectionTitle({ eyebrow, title, script, subtitle, light = false }) {
       </h2>
       {subtitle && <p className="coastal-section-subtitle">{subtitle}</p>}
       <FlourishSvg className="coastal-section-divider" />
-    </div>
-  );
-}
-
-function CountdownUnit({ value, label }) {
-  return (
-    <div className="coastal-count-unit">
-      <strong>{value}</strong>
-      <span>{label}</span>
     </div>
   );
 }

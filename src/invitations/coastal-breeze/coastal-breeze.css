@@ -2102,3 +2102,183 @@
     overflow-wrap: anywhere;
   }
 }
+
+/* Exported coastal hero/countdown artwork overlays. */
+.coastal-theme .coastal-art-section {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  background: #0c1830;
+  isolation: auto;
+}
+
+.coastal-theme .coastal-art-bg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.coastal-theme .coastal-art-layer {
+  position: absolute;
+  left: 50%;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.coastal-splash-active .coastal-art-layer {
+  visibility: hidden;
+}
+
+.coastal-theme .coastal-hero-eyebrow {
+  top: 7.1%;
+  color: #9a7c48;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.15vw;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.coastal-theme .coastal-hero-eyebrow span {
+  display: block;
+  text-indent: 0.3em;
+  white-space: nowrap;
+}
+
+.coastal-theme .coastal-art-section .coastal-hero-name {
+  color: #1f3a6b;
+  font-family: 'Great Vibes', cursive;
+  font-size: 10.2vw;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  overflow-wrap: normal;
+  text-wrap: auto;
+  filter: none;
+  text-shadow: none;
+}
+
+.coastal-theme .coastal-hero-name-groom {
+  top: 18.8%;
+}
+
+.coastal-theme .coastal-hero-name-bride {
+  top: 29%;
+}
+
+.coastal-theme .coastal-art-section .coastal-hero-amp {
+  top: 24.4%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.4vw;
+  color: #9a7c48;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 4.5vw;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.coastal-theme .coastal-art-section .coastal-hero-amp::before,
+.coastal-theme .coastal-art-section .coastal-hero-amp::after {
+  content: '';
+  width: 8vw;
+  max-width: 68px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(154, 124, 72, 0.75), transparent);
+}
+
+.coastal-theme .coastal-hero-date {
+  top: 75.35%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12vw;
+  color: #16305e;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.coastal-theme .coastal-hero-date-line,
+.coastal-theme .coastal-hero-date-year,
+.coastal-theme .coastal-hero-date-time {
+  font-size: 2.55vw;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  line-height: 1.08;
+  text-indent: 0.24em;
+  text-transform: uppercase;
+}
+
+.coastal-theme .coastal-hero-date strong {
+  color: #16305e;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 5.1vw;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 0.98;
+}
+
+.coastal-theme .coastal-hero-date-year {
+  margin-top: 0.18vw;
+  font-size: 2.25vw;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+}
+
+.coastal-theme .coastal-hero-date-time {
+  margin-top: 0.58vw;
+  color: #9a7c48;
+  font-size: 2.35vw;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+}
+
+.coastal-theme .coastal-art-section .coastal-hero-venue {
+  top: 90%;
+  color: #16305e;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 3.25vw;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  text-transform: uppercase;
+}
+
+.coastal-theme .coastal-count-num {
+  position: absolute;
+  top: 50.3%;
+  color: #16305e;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 6vw;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-weight: 500;
+  line-height: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.coastal-theme .coastal-count-days {
+  left: 18.4%;
+}
+
+.coastal-theme .coastal-count-hours {
+  left: 39.4%;
+}
+
+.coastal-theme .coastal-count-minutes {
+  left: 60.3%;
+}
+
+.coastal-theme .coastal-count-seconds {
+  left: 81.3%;
+}
