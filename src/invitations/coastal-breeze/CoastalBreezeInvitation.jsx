@@ -248,13 +248,23 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       {weddingDate && (
         <section className="coastal-countdown coastal-art-section" aria-label="Countdown to the wedding">
           <img className="coastal-art-bg" src={coastalCountdownMonths} alt="" />
-          <span className="coastal-count-num coastal-count-months" aria-label={`${timeLeft.months} months`}>{pad(timeLeft.months)}</span>
-          <span className="coastal-count-num coastal-count-days" aria-label={`${timeLeft.days} days`}>{pad(timeLeft.days)}</span>
-          <span className="coastal-count-num coastal-count-hours" aria-label={`${timeLeft.hours} hours`}>{pad(timeLeft.hours)}</span>
-          <span className="coastal-count-label coastal-count-label-months">Months</span>
-          <span className="coastal-count-label coastal-count-label-days">Days</span>
-          <span className="coastal-count-label coastal-count-label-hours">Hours</span>
-          <span className="coastal-count-label coastal-count-label-blank" aria-hidden="true" />
+          <div className="coastal-count-cards" role="list">
+            <div className="coastal-count-card" role="listitem" aria-label={`${timeLeft.months} months`}>
+              <span className="coastal-count-value">{pad(timeLeft.months)}</span>
+              <span className="coastal-count-divider" aria-hidden="true" />
+              <span className="coastal-count-card-label">Months</span>
+            </div>
+            <div className="coastal-count-card" role="listitem" aria-label={`${timeLeft.days} days`}>
+              <span className="coastal-count-value">{pad(timeLeft.days)}</span>
+              <span className="coastal-count-divider" aria-hidden="true" />
+              <span className="coastal-count-card-label">Days</span>
+            </div>
+            <div className="coastal-count-card" role="listitem" aria-label={`${timeLeft.hours} hours`}>
+              <span className="coastal-count-value">{pad(timeLeft.hours)}</span>
+              <span className="coastal-count-divider" aria-hidden="true" />
+              <span className="coastal-count-card-label">Hours</span>
+            </div>
+          </div>
         </section>
       )}
       {!isReferenceDemo && couplePhotos.length > 0 && (
