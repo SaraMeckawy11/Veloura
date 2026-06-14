@@ -12,7 +12,7 @@ const frameModules = import.meta.glob(
   '../../assets/gardenPavilion/bird-envelope-frames/*.jpg',
   { eager: true, import: 'default', query: '?url' },
 );
-const LAST_PLAYABLE_FRAME = 134;
+const LAST_PLAYABLE_FRAME = 101;
 const FRAME_URLS = Object.keys(frameModules)
   .sort()
   .filter((key) => {
