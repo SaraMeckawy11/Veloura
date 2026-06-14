@@ -6,7 +6,7 @@ import EnvelopeSpriteAnimation from '../shared/EnvelopeSpriteAnimation';
 // Envelope-opening splash (the same animation the Garden Pavilion uses), shown
 // for the first Fountain Reverie design instead of the door splash.
 const END_PADDING_MS = 320;
-const FALLBACK_DISMISS_MS = 4600;
+const FALLBACK_DISMISS_MS = 8200;
 
 export default function FountainEnvelopeSplash({ onReady, onDismiss }) {
   const dismissTimerRef = useRef(null);

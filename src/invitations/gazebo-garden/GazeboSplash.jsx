@@ -7,7 +7,7 @@ import EnvelopeSpriteAnimation from '../shared/EnvelopeSpriteAnimation';
 // case the sprite never loads (offline / decode failure) so the splash can't
 // trap the viewer on a blank screen.
 const END_PADDING_MS = 320;
-const FALLBACK_DISMISS_MS = 4600;
+const FALLBACK_DISMISS_MS = 8200;
 
 export default function GazeboSplash({ onReady, onDismiss }) {
   const dismissTimerRef = useRef(null);
