@@ -69,7 +69,9 @@
 }
 
 .gazebo-splash--html-animation {
-  background: transparent;
+  /* Matches the creamy backdrop baked into the envelope frames so the splash
+     reads as one surface while the sequence is still decoding. */
+  background: #e5deca;
 }
 
 .gazebo-splash-envelope-animation {

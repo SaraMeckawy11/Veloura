@@ -42,11 +42,10 @@ function buildMapEmbedUrl(rawUrl, fallbackQuery) {
 }
 
 const FlourishSvg = ({ className = '' }) => (
-  <svg className={className} viewBox="0 0 110 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-    <path d="M0 7 Q 18 0 36 7 T 72 7 T 110 7" stroke="currentColor" strokeWidth="1" fill="none" opacity="0.7" />
-    <circle cx="55" cy="7" r="2.2" fill="currentColor" opacity="0.85" />
-    <circle cx="20" cy="7" r="1" fill="currentColor" opacity="0.6" />
-    <circle cx="90" cy="7" r="1" fill="currentColor" opacity="0.6" />
+  <svg className={className} viewBox="0 0 96 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+    <line x1="2" y1="4" x2="40" y2="4" stroke="currentColor" strokeWidth="1" opacity="0.45" />
+    <path d="M48 1.4 L50.6 4 L48 6.6 L45.4 4 Z" fill="currentColor" opacity="0.7" />
+    <line x1="56" y1="4" x2="94" y2="4" stroke="currentColor" strokeWidth="1" opacity="0.45" />
   </svg>
 );
 
