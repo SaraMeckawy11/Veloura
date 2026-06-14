@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Marcellus&family=Allura&family=Italianno&family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Marcellus&family=Allura&family=Italianno&family=Great+Vibes&display=swap');
 
 .coastal-theme {
   --coast-ink: #1a3a52;
@@ -2206,7 +2206,7 @@
 
 .coastal-theme .coastal-art-section .coastal-hero-name {
   color: #1f3a6b;
-  font-family: 'Great Vibes', cursive;
+  font-family: 'Alex Brush', 'Allura', cursive;
   font-size: 9.65vw;
   font-weight: 400;
   line-height: 1;
