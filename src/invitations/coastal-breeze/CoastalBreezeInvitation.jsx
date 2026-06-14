@@ -53,6 +53,29 @@ const BlueShellMark = ({ className = '' }) => (
   <img className={className} src={blueShellAsset} alt="" aria-hidden="true" />
 );
 
+function renderCoastalHeroName(name) {
+  const source = String(name || '');
+  const parts = [];
+  const initialPattern = /(^|[\s'-])(\p{L})/gu;
+  let lastIndex = 0;
+  let match = initialPattern.exec(source);
+
+  while (match) {
+    const letterIndex = match.index + match[1].length;
+    if (letterIndex > lastIndex) parts.push(source.slice(lastIndex, letterIndex));
+    parts.push(
+      <span key={`initial-${letterIndex}`} className="coastal-hero-name-initial">
+        {match[2].toLocaleUpperCase('en-US')}
+      </span>,
+    );
+    lastIndex = letterIndex + match[2].length;
+    match = initialPattern.exec(source);
+  }
+
+  if (lastIndex < source.length) parts.push(source.slice(lastIndex));
+  return parts.length ? parts : source;
+}
+
 export default function CoastalBreezeInvitation({ order, demo = false, publicSlug }) {
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
@@ -225,11 +248,11 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <span>Please join us to</span>
           <span>celebrate the marriage of</span>
         </p>
-        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-groom">{name1}</h1>
+        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-groom">{renderCoastalHeroName(name1)}</h1>
         <div className="coastal-art-layer coastal-hero-amp" aria-hidden="true">
           <span>&amp;</span>
         </div>
-        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-bride">{name2}</h1>
+        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-bride">{renderCoastalHeroName(name2)}</h1>
 
         {weddingDate && (
           <div className="coastal-art-layer coastal-hero-date">

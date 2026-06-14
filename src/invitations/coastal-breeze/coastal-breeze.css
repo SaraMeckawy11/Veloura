@@ -2218,6 +2218,16 @@
   text-shadow: none;
 }
 
+.coastal-theme .coastal-art-section .coastal-hero-name-initial {
+  display: inline-block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  font-variant-caps: normal;
+}
+
 .coastal-theme .coastal-hero-name-groom {
   top: 18.3%;
 }
