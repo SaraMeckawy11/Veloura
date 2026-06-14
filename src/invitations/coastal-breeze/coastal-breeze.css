@@ -2220,9 +2220,9 @@
 
 .coastal-theme .coastal-art-section .coastal-hero-name-initial {
   display: inline-block;
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: inherit;
   font-size: 1em;
-  font-weight: 700;
+  font-weight: inherit;
   line-height: 1;
   text-transform: uppercase;
   font-variant-caps: normal;
