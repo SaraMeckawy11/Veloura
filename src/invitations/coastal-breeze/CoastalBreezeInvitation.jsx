@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -312,9 +312,9 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       )}
 
       {isReferenceDemo && storyMilestones.length ? (
-        <StorySection milestones={storyMilestones} images={order.storyImages || []} />
+        <StorySection milestones={storyMilestones} images={order.storyImages || []} orientation={normalizeStoryOrientation(order.storyOrientation)} />
       ) : storyPhotos.length > 0 ? (
-        <StorySection milestones={storyMilestones} images={storyPhotos} />
+        <StorySection milestones={storyMilestones} images={storyPhotos} orientation={normalizeStoryOrientation(order.storyOrientation)} />
       ) : null}
 
       <section className="coastal-section coastal-event-section">
@@ -552,7 +552,7 @@ function CoastalMessageSection({ message }) {
   );
 }
 
-function StorySection({ milestones, images }) {
+function StorySection({ milestones, images, orientation = 'portrait' }) {
   const items = images.length
     ? images.map((src, index) => ({ src, ...(milestones[index] || {}) }))
     : milestones.map((milestone) => ({ ...milestone, src: ceremonyArch }));
@@ -564,7 +564,7 @@ function StorySection({ milestones, images }) {
         <p className="coastal-story-title-route">The Route Of Us</p>
         <FlourishSvg className="coastal-section-divider" />
       </div>
-      <div className="coastal-story-list">
+      <div className="coastal-story-list" data-story-orientation={orientation}>
         {items.map((item, index) => (
           <motion.article
             key={index}

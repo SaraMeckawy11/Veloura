@@ -134,6 +134,10 @@ function normalizeTierStoryMilestones(storyMilestones, pricingTier) {
   return Array.isArray(storyMilestones) ? storyMilestones : [];
 }
 
+function normalizeStoryOrientation(value) {
+  return value === 'landscape' ? 'landscape' : 'portrait';
+}
+
 function normalizeWeddingDetailValue(field, value) {
   if (field === 'weddingDate') {
     if (!value) return '';
@@ -196,7 +200,7 @@ async function ensureTemplateMetadata(order) {
 // POST /api/orders - create order + PayPal order. Refuses with 503 if PayPal credentials are missing.
 router.post('/', validateOrderBody, async (req, res) => {
   try {
-    const { customerName, customerEmail, templateId, weddingDetails, customizations, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones, coupleMessage } = req.body;
+    const { customerName, customerEmail, templateId, weddingDetails, customizations, colorOverrides, photos, musicUrl, musicPublicId, musicEnabled, storyMilestones, storyOrientation, coupleMessage } = req.body;
     const pricingTier = normalizePricingTier(req.body.pricingTier);
     const disabledFields = enforceTierDisabledFields(pricingTier, req.body.disabledFields);
     const cleanWeddingDetails = applyDisabledFields(weddingDetails, disabledFields);
@@ -240,6 +244,7 @@ router.post('/', validateOrderBody, async (req, res) => {
       musicPublicId: musicAllowed ? musicPublicId : undefined,
       musicEnabled: musicAllowed ? (musicEnabled !== undefined ? musicEnabled : Boolean(musicUrl)) : false,
       storyMilestones: normalizeTierStoryMilestones(storyMilestones, pricingTier),
+      storyOrientation: normalizeStoryOrientation(storyOrientation),
     });
     await order.save();
 
@@ -495,6 +500,7 @@ router.get('/edit/:editToken', validateEditToken, async (req, res) => {
       colorOverrides: order.colorOverrides,
       photos: order.photos,
       storyMilestones: order.storyMilestones,
+      storyOrientation: order.storyOrientation,
       musicUrl: order.musicUrl,
       musicPublicId: order.musicPublicId,
       musicEnabled: order.musicEnabled,
@@ -525,7 +531,7 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
       });
     }
 
-    const { customizations, colorOverrides, photos, storyMilestones, musicUrl, musicPublicId, musicEnabled, coupleMessage } = req.body;
+    const { customizations, colorOverrides, photos, storyMilestones, storyOrientation, musicUrl, musicPublicId, musicEnabled, coupleMessage } = req.body;
     const pricingTier = normalizePricingTier(order.pricingTier);
     if (order.pricingTier !== pricingTier) order.pricingTier = pricingTier;
     const disabledFields = req.body.disabledFields !== undefined
@@ -588,6 +594,7 @@ router.put('/edit/:editToken', validateEditToken, async (req, res) => {
     if (colorOverrides) { order.colorOverrides = { ...order.colorOverrides, ...colorOverrides }; fieldsChanged.push('colorOverrides'); }
     if (photos) { order.photos = normalizeTierPhotos(photos, pricingTier); fieldsChanged.push('photos'); }
     if (storyMilestones) { order.storyMilestones = normalizeTierStoryMilestones(storyMilestones, pricingTier); fieldsChanged.push('storyMilestones'); }
+    if (storyOrientation !== undefined) { order.storyOrientation = normalizeStoryOrientation(storyOrientation); fieldsChanged.push('storyOrientation'); }
     if (tierAllows(pricingTier, 'coupleMessage')) {
       if (coupleMessage !== undefined) { order.coupleMessage = coupleMessage; fieldsChanged.push('coupleMessage'); }
     } else if (order.coupleMessage) {
@@ -714,6 +721,7 @@ router.get('/dashboard/:editToken', validateEditToken, async (req, res) => {
       colorOverrides: order.colorOverrides,
       photos: order.photos,
       storyMilestones: order.storyMilestones,
+      storyOrientation: order.storyOrientation,
       musicUrl: order.musicUrl,
       musicPublicId: order.musicPublicId,
       musicEnabled: order.musicEnabled,

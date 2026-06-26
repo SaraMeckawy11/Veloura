@@ -3,7 +3,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { downloadGuestMessagesPdf, downloadGuestResponsesPdf } from '../lib/guestMessagesPdf';
 import InvitationPhoto from '../invitations/InvitationPhoto';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
-import { formatInvitationTime } from '../invitations/shared';
+import { formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../invitations/shared';
 import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
 import { getPricingTier, tierAllows, getTierDisabledFields } from '../lib/pricingTiers';
 import { migrateGuestPolicyFields } from '../lib/guestPolicyFields';
@@ -79,6 +79,7 @@ export default function Dashboard() {
   const [editDisabledFields, setEditDisabledFields] = useState([]);
   const [editPhotos, setEditPhotos] = useState({ venue: [], story: [], gallery: [] });
   const [editStoryMilestones, setEditStoryMilestones] = useState([]);
+  const [editStoryOrientation, setEditStoryOrientation] = useState('portrait');
   const [photoUploading, setPhotoUploading] = useState({});
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
@@ -191,6 +192,7 @@ export default function Dashboard() {
         };
       })
     );
+    setEditStoryOrientation(normalizeStoryOrientation(order.storyOrientation));
     setEditing(true);
     setSaveMsg('');
   };
@@ -268,13 +270,6 @@ export default function Dashboard() {
     });
   };
 
-  const setStoryPhotoFit = (index, fit) => {
-    const nextFit = normalizePhotoFit(fit);
-    setEditPhotos(prev => ({
-      ...prev,
-      story: prev.story.map((photo, i) => (i === index && photo ? { ...photo, fit: nextFit } : photo)),
-    }));
-  };
 
   const retryStoryPhotoUpload = async (index) => {
     const photo = editPhotos.story[index];
@@ -534,6 +529,7 @@ export default function Dashboard() {
           disabledFields: effectiveDisabledFields,
           photos: flattenEditPhotos(),
           storyMilestones: tierAllows(order?.pricingTier, 'story') ? cleanedMilestones : [],
+          storyOrientation: editStoryOrientation,
         }),
       });
       const data = await res.json();
@@ -626,6 +622,11 @@ export default function Dashboard() {
   const coupleMessageIncluded = tierAllows(order.pricingTier, 'coupleMessage');
   const selectedFontOption = getInvitationFontOption(editForm.invitationFont);
   const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
+  // Story preview tiles take the chosen shape so the couple sees the real framing.
+  const storyPhotoTileStyle = {
+    ...storyPhotoPreviewStyle,
+    '--upload-preview-aspect-ratio': editStoryOrientation === 'portrait' ? '3 / 4' : '4 / 3',
+  };
   const galleryPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'gallery');
   const isPhotoUploading = Object.values(photoUploading).some(Boolean);
   const rsvpSummary = rsvpData?.summary || {};
@@ -860,6 +861,27 @@ export default function Dashboard() {
               <div className="edit-story-section">
                 <label className="edit-photos-label">Our Story</label>
                 <p className="form-hint">Add or edit the milestones from your journey together. Each milestone has its own photo. Leave blank to skip this section on the invitation.</p>
+                <div className="story-orientation-control" role="group" aria-label="Story photo shape">
+                  <span className="story-orientation-title">Photo shape</span>
+                  <div className="story-orientation-options">
+                    {[
+                      { value: 'portrait', label: 'Portrait' },
+                      { value: 'landscape', label: 'Landscape' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        className={`story-orientation-btn ${editStoryOrientation === opt.value ? 'active' : ''}`}
+                        onClick={() => setEditStoryOrientation(opt.value)}
+                        aria-pressed={editStoryOrientation === opt.value}
+                      >
+                        <span className={`story-orientation-icon story-orientation-icon--${opt.value}`} aria-hidden />
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="form-hint story-orientation-hint">Applies to every story photo. Portrait keeps tall photos fully in frame; landscape suits wide photos.</p>
+                </div>
                 <div className="edit-story-list">
                   {editStoryMilestones.map((m, i) => {
                     const photo = editPhotos.story[i];
@@ -899,10 +921,10 @@ export default function Dashboard() {
                           )}
                         </div>
                         <div className="edit-story-body">
-                          <div className="edit-story-photo" style={storyPhotoPreviewStyle}>
+                          <div className="edit-story-photo" style={storyPhotoTileStyle}>
                             {photo ? (
                               <>
-                                <InvitationPhoto src={photo} alt={`Story ${i + 1}`} />
+                                <InvitationPhoto src={getInvitationPhotoSrc(photo)} alt={`Story ${i + 1}`} />
                                 {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                                 {photo._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
                                 {photo._failed && (
@@ -910,19 +932,6 @@ export default function Dashboard() {
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
                                   </button>
                                 )}
-                                <div className="photo-fit-controls" role="group" aria-label={`Story photo ${i + 1} fit`}>
-                                  {PHOTO_FIT_OPTIONS.map(option => (
-                                    <button
-                                      key={option.value}
-                                      type="button"
-                                      className={`photo-fit-btn ${normalizePhotoFit(photo.fit) === option.value ? 'active' : ''}`}
-                                      onClick={() => setStoryPhotoFit(i, option.value)}
-                                      title={option.hint}
-                                    >
-                                      {option.label}
-                                    </button>
-                                  ))}
-                                </div>
                                 <button type="button" className="photo-remove" onClick={() => removeStoryPhoto(i)} title="Remove photo">
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                                 </button>

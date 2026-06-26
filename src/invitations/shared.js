@@ -67,6 +67,20 @@ export function getInvitationPhotoSrc(source) {
   return resolveInvitationPhoto(source).src;
 }
 
+// Story-section photo orientation — the couple picks one shape for every story
+// card so the whole timeline stays uniform. Portrait suits most couple photos
+// (it crops the least), so it is the default.
+export const STORY_ORIENTATIONS = ['portrait', 'landscape'];
+
+export function normalizeStoryOrientation(value) {
+  return value === 'landscape' ? 'landscape' : 'portrait';
+}
+
+// The CSS aspect-ratio each orientation maps to, shared by every invitation.
+export function getStoryAspectRatio(value) {
+  return normalizeStoryOrientation(value) === 'landscape' ? '4 / 3' : '3 / 4';
+}
+
 export function containInvitationPhoto(source) {
   const resolved = resolveInvitationPhoto(source);
   if (!resolved.src) return source;

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -164,6 +164,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const orderPhotos = getTieredInvitationPhotos(order);
   const storyPhotos = orderPhotos.filter(photo => photo.label === 'story');
   const storyMilestones = getTieredStoryMilestones(order);
+  const storyOrientation = normalizeStoryOrientation(order.storyOrientation);
   const storyCount = !storyAllowed
     ? 0
     : demo
@@ -352,7 +353,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       {storyItems.length > 0 && (
       <section id="story" className="gazebo-section gazebo-story-section">
         <SectionTitle eyebrow="Our story" title="The path that brought us here" />
-        <div className="gazebo-story-grid">
+        <div className="gazebo-story-grid" data-story-orientation={storyOrientation}>
           {storyItems.map((item, index) => (
             <motion.article
               key={item.id}

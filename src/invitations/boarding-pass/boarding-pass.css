@@ -1513,6 +1513,14 @@ textarea.kiosk-input {
   box-shadow: 0 8px 30px -8px rgba(0,0,0,0.08);
   background: linear-gradient(180deg, var(--bp-blush), var(--bp-card));
 }
+
+/* Story photo shape follows the couple's chosen orientation. */
+.inv-story-timeline[data-story-orientation='portrait'] .inv-story-photo {
+  aspect-ratio: 3 / 4;
+}
+.inv-story-timeline[data-story-orientation='landscape'] .inv-story-photo {
+  aspect-ratio: 4 / 3;
+}
 .inv-story-photo > .invitation-photo {
   --invitation-photo-pad: 0.35rem;
   --invitation-photo-scale: 1;

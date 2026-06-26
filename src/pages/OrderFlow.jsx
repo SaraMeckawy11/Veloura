@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, Suspense, Fragment } from 're
 import { Link } from 'react-router-dom';
 import { getPaypal } from '../lib/paypal';
 import InvitationPhoto from '../invitations/InvitationPhoto';
-import { buildInvitationImageSources } from '../invitations/shared';
+import { buildInvitationImageSources, getInvitationPhotoSrc, normalizeStoryOrientation } from '../invitations/shared';
 import InvitationPreviewFrame from '../components/InvitationPreviewFrame';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
 import registry from '../invitations/registry';
@@ -325,6 +325,9 @@ export default function OrderFlow() {
     failed: false,
   });
   // Story milestones — text/date for each story photo
+  const [storyOrientation, setStoryOrientation] = useState(
+    normalizeStoryOrientation(draft?.storyOrientation)
+  );
   const [storyMilestones, setStoryMilestones] = useState(
     draft?.storyMilestones || [{ date: '', title: '', description: '' }]
   );
@@ -364,11 +367,12 @@ export default function OrderFlow() {
         disabledFields,
         photos: persistablePhotos,
         storyMilestones,
+        storyOrientation,
         music,
       });
     }, 350);
     return () => clearTimeout(handle);
-  }, [step, selectedTier, selectedTemplate, form, disabledFields, photos, storyMilestones, music]);
+  }, [step, selectedTier, selectedTemplate, form, disabledFields, photos, storyMilestones, storyOrientation, music]);
 
   // Local template definitions used as fallback when API is unavailable
   const localTemplates = [
@@ -719,6 +723,12 @@ export default function OrderFlow() {
   };
 
   const storyPreviewStyle = getUploadPreviewStyle(selectedTemplate?.slug, 'story');
+  // The story preview tiles take the shape the couple picked so they can see
+  // exactly how their photos will be framed on the invitation.
+  const storyTileStyle = {
+    ...storyPreviewStyle,
+    '--upload-preview-aspect-ratio': storyOrientation === 'portrait' ? '3 / 4' : '4 / 3',
+  };
   const galleryPreviewStyle = getUploadPreviewStyle(selectedTemplate?.slug, 'gallery');
   const pricingTiers = pricingCatalog?.tiers?.length
     ? PRICING_TIERS.map(tier => ({
@@ -785,6 +795,7 @@ export default function OrderFlow() {
     },
     musicEnabled: false,
     storyMilestones: cleanedStoryMilestones,
+    storyOrientation,
   };
   const previewRegistryEntry = selectedTemplate ? registry[selectedTemplate.slug] : null;
   const PreviewInvitationComponent = previewRegistryEntry?.component;
@@ -1216,6 +1227,7 @@ export default function OrderFlow() {
           musicPublicId: musicIncluded && music.enabled && music.publicId && !music.uploading && !music.failed ? music.publicId : undefined,
           musicEnabled: Boolean(musicIncluded && music.enabled && music.url && !music.uploading && !music.failed),
           storyMilestones: cleanedStoryMilestones,
+          storyOrientation,
         }),
       });
 
@@ -1689,6 +1701,27 @@ export default function OrderFlow() {
               <fieldset className="form-section story-form-section">
                 <legend>Our Story</legend>
                 <p className="form-hint">Add milestones from your journey together — first date, proposal, and more. Each one appears on your invitation timeline.</p>
+                <div className="story-orientation-control" role="group" aria-label="Story photo shape">
+                  <span className="story-orientation-title">Photo shape</span>
+                  <div className="story-orientation-options">
+                    {[
+                      { value: 'portrait', label: 'Portrait' },
+                      { value: 'landscape', label: 'Landscape' },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        className={`story-orientation-btn ${storyOrientation === opt.value ? 'active' : ''}`}
+                        onClick={() => setStoryOrientation(opt.value)}
+                        aria-pressed={storyOrientation === opt.value}
+                      >
+                        <span className={`story-orientation-icon story-orientation-icon--${opt.value}`} aria-hidden />
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="form-hint story-orientation-hint">Applies to every story photo. Portrait keeps tall photos fully in frame; landscape suits wide photos.</p>
+                </div>
                 {uploadError && <p className="photo-error">{uploadError}</p>}
                 <div className="story-milestones">
                   {storyMilestones.map((milestone, i) => (
@@ -1734,23 +1767,10 @@ export default function OrderFlow() {
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                         </button>
                       )}
-                      <div className="story-milestone-photo" style={storyPreviewStyle}>
+                      <div className="story-milestone-photo" style={storyTileStyle}>
                         {photos.story[i] ? (
                           <>
-                            <InvitationPhoto src={photos.story[i]} alt={`Story ${i + 1}`} />
-                            <div className="photo-fit-controls" role="group" aria-label={`Story photo ${i + 1} fit`}>
-                              {PHOTO_FIT_OPTIONS.map((option) => (
-                                <button
-                                  key={option.value}
-                                  type="button"
-                                  className={`photo-fit-btn ${(photos.story[i].fit || DEFAULT_PHOTO_FIT) === option.value ? 'active' : ''}`}
-                                  onClick={() => setPhotoFit('story', i, option.value)}
-                                  title={option.hint}
-                                >
-                                  {option.label}
-                                </button>
-                              ))}
-                            </div>
+                            <InvitationPhoto src={getInvitationPhotoSrc(photos.story[i])} alt={`Story ${i + 1}`} />
                             {photos.story[i]._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                             {photos.story[i]._failed && (
                               photos.story[i].file ? (

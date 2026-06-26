@@ -42,6 +42,10 @@ const orderSchema = new mongoose.Schema({
     description: { type: String },
   }],
 
+  // Shape of every photo card in the "Our Story" timeline (uniform across all
+  // milestones). Portrait crops the least for typical couple photos.
+  storyOrientation: { type: String, enum: ['portrait', 'landscape'], default: 'portrait' },
+
   // Customizations — which placeholders are enabled/disabled + their values
   customizations: { type: Map, of: mongoose.Schema.Types.Mixed, default: {} },
 

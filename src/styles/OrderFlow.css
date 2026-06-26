@@ -2984,6 +2984,60 @@
   color: var(--gold);
 }
 
+/* Story photo shape (orientation) picker — one choice for the whole timeline. */
+.story-orientation-control {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(184, 146, 74, 0.18);
+  border-radius: 12px;
+}
+.story-orientation-title {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #6b6258);
+}
+.story-orientation-options {
+  display: inline-flex;
+  gap: 8px;
+}
+.story-orientation-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  background: var(--white, #fff);
+  color: var(--text-secondary, #6b6258);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.story-orientation-btn:hover {
+  border-color: var(--gold);
+}
+.story-orientation-btn.active {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(184, 146, 74, 0.3);
+}
+.story-orientation-icon {
+  display: inline-block;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  opacity: 0.9;
+}
+.story-orientation-icon--portrait { width: 12px; height: 16px; }
+.story-orientation-icon--landscape { width: 16px; height: 12px; }
+.story-orientation-hint { margin: 10px 0 0; }
+
 .story-milestone-photo {
   width: 100%;
   height: auto;

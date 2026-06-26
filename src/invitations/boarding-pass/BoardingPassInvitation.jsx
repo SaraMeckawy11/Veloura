@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -150,6 +150,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   // Categorize photos
   const allPhotos = getTieredInvitationPhotos(order);
   const storyMilestones = getTieredStoryMilestones(order);
+  const storyOrientation = normalizeStoryOrientation(order.storyOrientation);
   const couplePhotos = allPhotos.filter(p => p.label === 'couple');
   const storyPhotos = allPhotos.filter(p => p.label === 'story');
   const galleryPhotos = allPhotos.filter(p => p.label === 'gallery');
@@ -296,7 +297,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             Our Story
           </motion.h3>
           <div className="inv-story-divider" />
-          <div className="inv-story-timeline">
+          <div className="inv-story-timeline" data-story-orientation={storyOrientation}>
             <div className="inv-flight-path" />
             {storyMilestones.map((m, i) => (
               <motion.div
@@ -334,7 +335,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             Our Story
           </motion.h3>
           <div className="inv-story-divider" />
-          <div className="inv-story-timeline">
+          <div className="inv-story-timeline" data-story-orientation={storyOrientation}>
             <div className="inv-flight-path" />
             {storyPhotos.map((photo, i) => {
               const milestone = storyMilestones?.[i];

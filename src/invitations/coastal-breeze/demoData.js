@@ -46,6 +46,7 @@ export const COASTAL_BREEZE_DEMO_ORDER = {
       description: 'A quiet sunset, a beautiful view, and a promise for forever.',
     },
   ],
+  storyOrientation: 'portrait',
   storyImages: [
     { src: story1, fit: 'contain' },
     { src: story2, fit: 'contain' },
