@@ -335,7 +335,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           <h1>{coupleNames}</h1>
           <p className="gazebo-hero-date">{heroDate || fullDateStr}</p>
           {timeStr && <p className="gazebo-hero-time">{timeStr}</p>}
-          {message && <p className="gazebo-hero-tagline">{message}</p>}
+          {venue && <p className="gazebo-hero-venue">{venue}</p>}
         </motion.article>
       </section>
 

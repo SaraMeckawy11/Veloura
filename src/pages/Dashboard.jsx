@@ -622,7 +622,6 @@ export default function Dashboard() {
   const coupleMessageIncluded = tierAllows(order.pricingTier, 'coupleMessage');
   const selectedFontOption = getInvitationFontOption(editForm.invitationFont);
   const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
-  // Story preview tiles take the chosen shape so the couple sees the real framing.
   const storyPhotoTileStyle = {
     ...storyPhotoPreviewStyle,
     '--upload-preview-aspect-ratio': editStoryOrientation === 'portrait' ? '3 / 4' : '4 / 3',
@@ -924,7 +923,7 @@ export default function Dashboard() {
                           <div className="edit-story-photo" style={storyPhotoTileStyle}>
                             {photo ? (
                               <>
-                                <InvitationPhoto src={getInvitationPhotoSrc(photo)} alt={`Story ${i + 1}`} />
+                                <InvitationPhoto src={photo} alt={`Story ${i + 1}`} />
                                 {photo._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                                 {photo._failed && <div className="photo-failed-badge" title="Upload failed">!</div>}
                                 {photo._failed && (
@@ -932,6 +931,19 @@ export default function Dashboard() {
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg>
                                   </button>
                                 )}
+                                <div className="photo-fit-controls" role="group" aria-label={`Story photo ${i + 1} fit`}>
+                                  {PHOTO_FIT_OPTIONS.map(option => (
+                                    <button
+                                      key={option.value}
+                                      type="button"
+                                      className={`photo-fit-btn ${normalizePhotoFit(photo.fit) === option.value ? 'active' : ''}`}
+                                      onClick={() => setEditPhotoFit('story', i, option.value)}
+                                      title={option.hint}
+                                    >
+                                      {option.label}
+                                    </button>
+                                  ))}
+                                </div>
                                 <button type="button" className="photo-remove" onClick={() => removeStoryPhoto(i)} title="Remove photo">
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                                 </button>

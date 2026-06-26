@@ -392,7 +392,6 @@
   filter: drop-shadow(0 3px 18px rgba(255, 255, 245, 0.92));
 }
 
-.gazebo-hero-date,
 .gazebo-section-eyebrow {
   margin: 0;
   color: #8a7332;
@@ -403,7 +402,7 @@
 }
 
 .gazebo-hero-invite {
-  margin: 0.85rem 0 0;
+  margin: 0;
   color: #5d7046;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-style: italic;
@@ -415,26 +414,65 @@
 .gazebo-hero-copy h1 {
   margin: 0.55rem 0 0;
   color: #314234;
-  font-size: clamp(2rem, 3.4vw, 3.2rem);
+  font-size: clamp(2.05rem, 3.45vw, 3.25rem);
   font-weight: 600;
-  line-height: 0.96;
+  line-height: 1;
 }
 
-.gazebo-hero-time {
-  margin: 0.95rem 0 0;
+.gazebo-hero-date {
+  margin: clamp(1.45rem, 3vw, 2rem) 0 0;
   color: #8a7332;
-  font-size: 0.78rem;
+  font-size: clamp(0.56rem, 1.35vw, 0.66rem);
   font-weight: 800;
   letter-spacing: 0.28em;
   text-transform: uppercase;
 }
 
+.gazebo-hero-time {
+  margin: 0.48rem 0 0;
+  color: #8a7332;
+  font-size: clamp(0.56rem, 1.35vw, 0.66rem);
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.gazebo-hero-venue {
+  position: relative;
+  display: inline-flex;
+  max-width: min(82vw, 32rem);
+  margin: 0.72rem auto 0;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.55rem, 1.8vw, 0.9rem);
+  color: #3f5d35;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(0.82rem, 1.9vw, 1rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-wrap: balance;
+  text-transform: uppercase;
+}
+
+.gazebo-hero-venue::before,
+.gazebo-hero-venue::after {
+  content: '';
+  flex: 0 0 clamp(1.4rem, 5vw, 3rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(138, 115, 50, 0.68));
+}
+
+.gazebo-hero-venue::after {
+  background: linear-gradient(90deg, rgba(138, 115, 50, 0.68), transparent);
+}
+
 .gazebo-hero-tagline {
   max-width: min(86vw, 42rem);
-  margin: 0.9rem auto 0;
+  margin: 0.82rem auto 0;
   color: #5d7046;
   font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1rem, 2.8vw, 1.35rem);
+  font-size: clamp(0.98rem, 2.5vw, 1.24rem);
   line-height: 1.35;
 }
 

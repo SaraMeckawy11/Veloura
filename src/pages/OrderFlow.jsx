@@ -723,8 +723,6 @@ export default function OrderFlow() {
   };
 
   const storyPreviewStyle = getUploadPreviewStyle(selectedTemplate?.slug, 'story');
-  // The story preview tiles take the shape the couple picked so they can see
-  // exactly how their photos will be framed on the invitation.
   const storyTileStyle = {
     ...storyPreviewStyle,
     '--upload-preview-aspect-ratio': storyOrientation === 'portrait' ? '3 / 4' : '4 / 3',
@@ -1770,7 +1768,20 @@ export default function OrderFlow() {
                       <div className="story-milestone-photo" style={storyTileStyle}>
                         {photos.story[i] ? (
                           <>
-                            <InvitationPhoto src={getInvitationPhotoSrc(photos.story[i])} alt={`Story ${i + 1}`} />
+                            <InvitationPhoto src={photos.story[i]} alt={`Story ${i + 1}`} />
+                            <div className="photo-fit-controls" role="group" aria-label={`Story photo ${i + 1} fit`}>
+                              {PHOTO_FIT_OPTIONS.map((option) => (
+                                <button
+                                  key={option.value}
+                                  type="button"
+                                  className={`photo-fit-btn ${(photos.story[i].fit || DEFAULT_PHOTO_FIT) === option.value ? 'active' : ''}`}
+                                  onClick={() => setPhotoFit('story', i, option.value)}
+                                  title={option.hint}
+                                >
+                                  {option.label}
+                                </button>
+                              ))}
+                            </div>
                             {photos.story[i]._uploading && <div className="photo-upload-badge" title="Uploading…" />}
                             {photos.story[i]._failed && (
                               photos.story[i].file ? (
