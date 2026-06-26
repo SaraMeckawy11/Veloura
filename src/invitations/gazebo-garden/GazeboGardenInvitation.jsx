@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -356,19 +356,18 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           {storyItems.map((item, index) => (
             <motion.article
               key={item.id}
-              className="gazebo-card gazebo-story-card"
-              initial={{ opacity: 0, y: 36 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.22 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.08 }}
+              className="gazebo-story-card"
+              initial={{ opacity: 0, x: index % 2 === 0 ? -40 : 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
             >
               <div className="gazebo-story-art" style={{ background: item.tone }}>
-                {item.image && <InvitationPhoto src={containInvitationPhoto(item.image)} alt="" sizes="(max-width: 768px) 80vw, 320px" />}
-                <div />
+                {item.image && <InvitationPhoto src={getInvitationPhotoSrc(item.image)} alt={item.title || ''} sizes="(max-width: 640px) 86vw, 320px" />}
               </div>
               {(item.date || item.title || item.body) && (
                 <div className="gazebo-story-copy">
-                  {item.date && <p className="gazebo-section-eyebrow">{item.date}</p>}
+                  {item.date && <span className="gazebo-story-date">{item.date}</span>}
                   {item.title && <h3>{item.title}</h3>}
                   {item.body && <p>{item.body}</p>}
                 </div>
@@ -781,7 +780,6 @@ function GazeboGallerySection({ items }) {
         ) : (
           <div className="gazebo-memory-fill" style={{ background: item.tone }} />
         )}
-        <span className="gazebo-memory-frame" aria-hidden />
       </figure>
     );
   });

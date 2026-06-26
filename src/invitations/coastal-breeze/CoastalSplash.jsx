@@ -11,10 +11,12 @@ const AUTO_DISMISS_FALLBACK_MS = 5200;
 // auto-dismiss chain can run — the splash must never trap the guest.
 const READY_FALLBACK_MS = 7000;
 const DONE_MESSAGE_TYPE = 'coastal-splash:done';
+const BOOST_MESSAGE_TYPE = 'coastal-splash:boost';
 
 export default function CoastalSplash({ onReady, onDismiss }) {
   const [dismissing, setDismissing] = useState(false);
   const rootRef = useRef(null);
+  const iframeRef = useRef(null);
   const fallbackTimerRef = useRef(null);
   const dismissingRef = useRef(false);
   const readyRef = useRef(false);
@@ -48,10 +50,11 @@ export default function CoastalSplash({ onReady, onDismiss }) {
     };
   }, [markReady]);
 
+  // Tapping (or pressing Enter/Space) hurries the opening by fast-forwarding the
+  // splash video rather than skipping straight to the invitation underneath.
   const handleSkip = useCallback(() => {
-    if (!readyRef.current) return;
-    beginDismiss();
-  }, [beginDismiss]);
+    iframeRef.current?.contentWindow?.postMessage({ type: BOOST_MESSAGE_TYPE }, '*');
+  }, []);
 
   useEffect(() => {
     const targetWindow = rootRef.current?.ownerDocument?.defaultView || window;
@@ -89,6 +92,7 @@ export default function CoastalSplash({ onReady, onDismiss }) {
         }}
       >
         <iframe
+          ref={iframeRef}
           className="coastal-splash-html-frame"
           title="Light envelope splash animation"
           src={splashUrl}

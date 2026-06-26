@@ -35,7 +35,9 @@ const STARS = [
   { id: 9, left: 6, top: 75, delay: 1.1, dur: 1.9 },
 ];
 
-const AUTO_OPEN_MIN_MS = 1200;
+// A short, intentional beat so the closed pass registers before it lifts off —
+// trimmed from a sluggish 1.2s to keep the intro brisk per UX guidance.
+const AUTO_OPEN_MIN_MS = 650;
 
 export default function BoardingPassSplash({ onReady, onDismiss }) {
   const [dismissed, setDismissed] = useState(false);
@@ -59,7 +61,7 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
     if (!readyRef.current || dismissedRef.current) return;
     dismissedRef.current = true;
     setDismissed(true);
-    setTimeout(() => onDismissRef.current(), 3200);
+    setTimeout(() => onDismissRef.current(), 2450);
   }, []);
 
   useEffect(() => {
@@ -197,7 +199,7 @@ export default function BoardingPassSplash({ onReady, onDismiss }) {
           }
           transition={
             dismissed
-              ? { duration: 3.15, ease: [0.3, 0, 0.9, 1], times: [0, 0.16, 0.32, 0.66, 1] }
+              ? { duration: 2.35, ease: [0.3, 0, 0.9, 1], times: [0, 0.16, 0.32, 0.66, 1] }
               : undefined
           }
         />

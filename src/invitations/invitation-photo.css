@@ -72,6 +72,20 @@
   transform: none;
 }
 
+/* Contained photos letterbox onto a clean, neutral matte instead of a blurred,
+   zoomed duplicate of themselves. The blurred fill reads as low quality and
+   muddies the composition — a calm solid surface is the standard, premium way
+   to frame a photo that does not fill its container. */
+.invitation-photo[data-fit='contain'] .invitation-photo__backdrop-image,
+.invitation-photo[data-fit='containFit'] .invitation-photo__backdrop-image {
+  display: none;
+}
+
+.invitation-photo[data-fit='contain'] .invitation-photo__backdrop-wash,
+.invitation-photo[data-fit='containFit'] .invitation-photo__backdrop-wash {
+  background: none;
+}
+
 .invitation-photo:hover .invitation-photo__backdrop-image {
   transform: scale(1.14);
 }

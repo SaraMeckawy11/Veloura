@@ -31,12 +31,21 @@
 <script>
 const video = document.getElementById('splash');
 
+const BASE_RATE = 1.65;
+const BOOST_RATE = 5;
+
 function playFromStart() {
   video.pause();
   video.currentTime = 0;
-  video.playbackRate = 1.5;
+  video.playbackRate = BASE_RATE;
   const p = video.play();
   if (p && typeof p.catch === 'function') p.catch(() => {});
+}
+
+// Tapping hurries the opening along by fast-forwarding the same animation,
+// rather than cutting straight to the invitation underneath.
+function boost() {
+  video.playbackRate = BOOST_RATE;
 }
 
 video.addEventListener('ended', () => {
@@ -44,7 +53,10 @@ video.addEventListener('ended', () => {
   window.parent?.postMessage({ type: 'coastal-splash:done' }, '*');
 });
 
-document.body.addEventListener('click', playFromStart);
+document.body.addEventListener('click', boost);
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'coastal-splash:boost') boost();
+});
 
 // Autoplay immediately. Because it is muted + playsinline, browsers allow it.
 if (document.readyState === 'loading') {

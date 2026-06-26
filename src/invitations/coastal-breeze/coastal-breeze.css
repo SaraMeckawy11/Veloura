@@ -706,68 +706,101 @@
   white-space: nowrap;
 }
 
+/* Centered milestone timeline — copy sits in the middle above each photo, the
+   way the Boarding Pass story reads. */
 .coastal-story-list {
   position: relative;
   z-index: 1;
-  width: min(900px, 100%);
+  width: min(40rem, 100%);
   margin: 0 auto;
-  display: grid;
-  gap: 26px;
-}
-
-.coastal-story-item {
-  display: grid;
-  grid-template-columns: minmax(190px, 280px) 1fr;
-  gap: 32px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 22px;
-  border: 1px solid rgba(176, 125, 77, 0.18);
-  border-radius: 4px;
-  background:
-    linear-gradient(180deg, rgba(255, 253, 247, 0.88), rgba(255, 250, 240, 0.7));
-  box-shadow: 0 22px 56px rgba(20, 53, 83, 0.08);
+  gap: 3.75rem;
 }
 
-.coastal-story-item:nth-child(even) {
-  grid-template-columns: 1fr minmax(190px, 280px);
+/* The story rows drop the framed-card treatment — no border, fill, or inner
+   keyline — so each milestone reads as clean centered copy above its photo. */
+.coastal-story-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.15rem;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
 }
 
-.coastal-story-item:nth-child(even) figure {
-  order: 2;
-}
-
-.coastal-story-item figure {
+/* A clean full-bleed photo framed like a seaside print — soft rounded corners, a
+   hairline ivory keyline and a gentle deep-sea shadow. No matte or gradient fill,
+   so the image simply fills its frame. */
+.coastal-story-item .coastal-photo-frame {
+  position: relative;
+  width: min(85%, 20.5rem);
   aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  border-radius: 1rem;
+  box-shadow:
+    0 18px 42px -14px rgba(20, 53, 83, 0.4),
+    0 4px 12px -6px rgba(20, 53, 83, 0.2);
+}
+
+.coastal-story-item .coastal-photo-frame::after {
+  content: '';
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
 }
 
 .coastal-story-item figure > .invitation-photo {
+  --invitation-photo-pad: 0;
   --invitation-photo-scale: 1;
-  --invitation-photo-hover-scale: 1.03;
+  --invitation-photo-hover-scale: 1;
+  --invitation-photo-surface: transparent;
+  --invitation-photo-shadow: transparent;
 }
 
-.coastal-story-item span {
+.coastal-story-copy {
+  width: 100%;
+  max-width: 21rem;
+  text-align: center;
+}
+
+.coastal-story-copy span {
+  display: block;
+  margin-bottom: 0.45rem;
   color: var(--coast-coral);
-  font-family: var(--font-script);
-  font-size: 1.2rem;
-  font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
 }
 
-.coastal-story-item h3 {
-  margin: 4px 0 10px;
+.coastal-story-copy h3 {
+  margin: 0;
   color: var(--coast-denim-dark);
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: 0.01em;
 }
 
-.coastal-story-item p {
-  margin: 0;
+.coastal-story-copy p {
+  margin: 0.5rem 0 0;
   color: var(--coast-muted);
-  font-size: 0.96rem;
-  line-height: 1.7;
+  font-size: 0.9rem;
+  line-height: 1.62;
 }
 
 /* ============================================================
@@ -1607,14 +1640,11 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.3), transparent 33%),
-    radial-gradient(circle at 82% 10%, rgba(236, 134, 111, 0.18), transparent 30%),
-    linear-gradient(180deg, transparent 58%, rgba(31, 95, 143, 0.12));
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 rgba(176, 125, 77, 0.16);
-  opacity: 0.86;
+  /* Keep only a whisper-soft bottom gradient for depth — the heavy wash that
+     made the photos look hazy has been removed. */
+  background: linear-gradient(180deg, transparent 72%, rgba(31, 95, 143, 0.12));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  opacity: 1;
   transition: opacity 0.45s ease;
 }
 
@@ -1668,49 +1698,6 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
-/* Seaside postcard mat — a sandy keyline frame around each memory. */
-.coastal-gallery-frame {
-  position: absolute;
-  inset: 0.55rem;
-  z-index: 3;
-  pointer-events: none;
-  border-radius: 5px;
-  border: 1px solid rgba(255, 253, 247, 0.6);
-  box-shadow:
-    inset 0 0 0 1px rgba(31, 95, 143, 0.3),
-    inset 0 0 24px rgba(20, 53, 83, 0.1);
-  transition: border-color 0.45s ease, box-shadow 0.45s ease;
-}
-
-.coastal-gallery-card:hover .coastal-gallery-frame {
-  border-color: rgba(255, 253, 247, 0.82);
-  box-shadow:
-    inset 0 0 0 1px rgba(31, 95, 143, 0.42),
-    inset 0 0 28px rgba(20, 53, 83, 0.14);
-}
-
-/* A little hand-drawn wave tucked in the bottom-left corner of the mat. */
-.coastal-gallery-shell {
-  position: absolute;
-  left: 0.95rem;
-  bottom: 1rem;
-  width: 1.8rem;
-  height: 0.42rem;
-  z-index: 4;
-  opacity: 0.72;
-  background:
-    radial-gradient(circle at 50% 0,
-      transparent 0 0.18rem,
-      rgba(31, 95, 143, 0.55) 0.18rem 0.24rem,
-      transparent 0.25rem);
-  background-size: 0.6rem 0.42rem;
-  background-repeat: repeat-x;
-  transition: opacity 0.45s ease;
-}
-
-.coastal-gallery-card:hover .coastal-gallery-shell {
-  opacity: 0.92;
-}
 
 /* ============================================================
    FOOTER — minimal signature
@@ -1956,15 +1943,6 @@
 
   .coastal-gallery-item:nth-child(even) {
     margin-top: 22px;
-  }
-
-  .coastal-story-item,
-  .coastal-story-item:nth-child(even) {
-    grid-template-columns: 1fr;
-  }
-
-  .coastal-story-item:nth-child(even) figure {
-    order: 0;
   }
 
   .coastal-rsvp-row {

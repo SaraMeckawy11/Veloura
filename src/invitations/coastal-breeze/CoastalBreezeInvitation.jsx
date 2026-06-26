@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -569,22 +569,16 @@ function StorySection({ milestones, images }) {
           <motion.article
             key={index}
             className="coastal-story-item"
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55, delay: index * 0.08 }}
+            initial={{ opacity: 0, x: index % 2 === 0 ? -40 : 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <motion.figure
-              className="coastal-photo-frame"
-              initial={{ opacity: 0, x: index % 2 === 0 ? -42 : 42 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.9, delay: index * 0.1 + 0.08, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <InvitationPhoto src={containInvitationPhoto(item.src)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 768px) 80vw, 280px" />
-            </motion.figure>
+            <figure className="coastal-photo-frame">
+              <InvitationPhoto src={getInvitationPhotoSrc(item.src)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 640px) 86vw, 320px" />
+            </figure>
             {(item.date || item.title || item.description) && (
-              <div>
+              <div className="coastal-story-copy">
                 {item.date && <span>{item.date}</span>}
                 {item.title && <h3>{item.title}</h3>}
                 {item.description && <p>{item.description}</p>}
@@ -800,7 +794,6 @@ function GallerySection({ images }) {
           loading="eager"
           fetchPriority={groupIndex === 0 && index < uniqueImages.length ? 'high' : 'auto'}
         />
-        <span className="coastal-gallery-frame" aria-hidden />
       </figure>
     );
   });
