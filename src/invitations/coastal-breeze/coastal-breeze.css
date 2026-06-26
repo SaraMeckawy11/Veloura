@@ -716,7 +716,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.75rem;
+  gap: 3.5rem;
 }
 
 /* The story rows drop the framed-card treatment — no border, fill, or inner
@@ -745,6 +745,7 @@
   border: 0;
   background: none;
   border-radius: 0.9rem;
+  clip-path: inset(0 round 0.9rem);
   box-shadow:
     0 16px 36px -14px rgba(20, 53, 83, 0.4),
     0 4px 12px -6px rgba(20, 53, 83, 0.18);
@@ -778,11 +779,12 @@
   --invitation-photo-hover-scale: 1;
   --invitation-photo-surface: transparent;
   --invitation-photo-shadow: transparent;
+  border-radius: inherit;
 }
 
 .coastal-story-copy {
   width: 100%;
-  max-width: 21rem;
+  max-width: 19rem;
   text-align: center;
 }
 
@@ -791,7 +793,7 @@
   margin-bottom: 0.35rem;
   color: var(--coast-coral);
   font-family: var(--font-body);
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -801,7 +803,7 @@
   margin: 0;
   color: var(--coast-denim-dark);
   font-family: var(--font-display);
-  font-size: 1.32rem;
+  font-size: clamp(1.05rem, 2.4vw, 1.18rem);
   font-weight: 600;
   line-height: 1.14;
   letter-spacing: 0.01em;
@@ -810,7 +812,7 @@
 .coastal-story-copy p {
   margin: 0.4rem 0 0;
   color: var(--coast-muted);
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   line-height: 1.55;
 }
 
@@ -1628,8 +1630,8 @@
 
 .coastal-gallery-card {
   position: relative;
-  flex: 0 0 clamp(220px, 22vw, 300px);
-  height: clamp(280px, 30vw, 400px);
+  flex: 0 0 clamp(180px, 18vw, 250px);
+  height: clamp(232px, 25vw, 332px);
   margin: 0;
   overflow: hidden;
   border: 1px solid rgba(31, 95, 143, 0.26);
@@ -1944,8 +1946,8 @@
   }
 
   .coastal-gallery-card {
-    flex-basis: min(70vw, 270px);
-    height: clamp(292px, 82vw, 370px);
+    flex-basis: min(58vw, 220px);
+    height: clamp(244px, 66vw, 296px);
   }
 
   .coastal-gallery-item {

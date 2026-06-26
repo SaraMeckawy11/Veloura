@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
+import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -317,7 +317,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.7 3.3-3.3 3.3-2-.7c-.4-.1-.8 0-1 .3l-.2.3c-.2.3-.1.7.1.9l3.3 2.3 2.3 3.3c.2.3.6.3.9.1l.3-.2c.3-.2.4-.6.3-1l-.7-2 3.3-3.3 3.3 5.7c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
                 </div>
                 <div className="inv-story-photo">
-                  <InvitationPhoto src={containInvitationPhoto(order.storyImages[i])} alt={m.title} sizes="(max-width: 640px) 80vw, 320px" />
+                  <InvitationPhoto src={getInvitationPhotoSrc(order.storyImages[i])} alt={m.title} sizes="(max-width: 640px) 80vw, 320px" />
                 </div>
               </motion.div>
             ))}
@@ -357,7 +357,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.7 3.3-3.3 3.3-2-.7c-.4-.1-.8 0-1 .3l-.2.3c-.2.3-.1.7.1.9l3.3 2.3 2.3 3.3c.2.3.6.3.9.1l.3-.2c.3-.2.4-.6.3-1l-.7-2 3.3-3.3 3.3 5.7c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
                   </div>
                   <div className="inv-story-photo">
-                    <InvitationPhoto src={containInvitationPhoto(photo)} alt={milestone?.title || `Story ${i + 1}`} sizes="(max-width: 640px) 80vw, 320px" />
+                    <InvitationPhoto src={getInvitationPhotoSrc(photo)} alt={milestone?.title || `Story ${i + 1}`} sizes="(max-width: 640px) 80vw, 320px" />
                   </div>
                 </motion.div>
               );

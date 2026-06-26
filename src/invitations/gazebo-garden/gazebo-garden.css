@@ -402,8 +402,18 @@
   text-transform: uppercase;
 }
 
+.gazebo-hero-invite {
+  margin: 0.85rem 0 0;
+  color: #5d7046;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1.05rem, 3vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
 .gazebo-hero-copy h1 {
-  margin: 0.75rem 0 0;
+  margin: 0.55rem 0 0;
   color: #314234;
   font-size: clamp(2rem, 3.4vw, 3.2rem);
   font-weight: 600;
@@ -526,7 +536,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.75rem;
+  gap: 3.5rem;
   max-width: 40rem;
   margin: 0 auto;
 }
@@ -557,6 +567,7 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 0.9rem;
+  clip-path: inset(0 round 0.9rem);
   box-shadow:
     0 16px 36px -14px rgba(54, 70, 44, 0.4),
     0 4px 12px -6px rgba(54, 70, 44, 0.18);
@@ -590,11 +601,12 @@
   --invitation-photo-shadow: transparent;
   position: absolute;
   inset: 0;
+  border-radius: inherit;
 }
 
 .gazebo-story-copy {
   width: 100%;
-  max-width: 21rem;
+  max-width: 19rem;
   text-align: center;
 }
 
@@ -602,7 +614,7 @@
   display: block;
   margin: 0 0 0.35rem;
   color: #8a7332;
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -612,7 +624,7 @@
   margin: 0;
   font-family: "Cormorant Garamond", Georgia, serif;
   color: #2c3c2f;
-  font-size: 1.32rem;
+  font-size: clamp(1.05rem, 2.4vw, 1.18rem);
   font-weight: 600;
   line-height: 1.14;
   letter-spacing: 0.01em;
@@ -621,7 +633,7 @@
 .gazebo-story-copy > p:last-child {
   margin: 0.4rem 0 0;
   color: rgba(49, 66, 52, 0.78);
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   line-height: 1.55;
 }
 
@@ -1163,8 +1175,8 @@
 
 .gazebo-memory-card {
   position: relative;
-  flex: 0 0 clamp(13.75rem, 22vw, 18.75rem);
-  height: clamp(17.5rem, 30vw, 25rem);
+  flex: 0 0 clamp(11.5rem, 18vw, 15.5rem);
+  height: clamp(14.5rem, 25vw, 20.5rem);
   margin: 0;
   overflow: hidden;
   border: 1px solid rgba(117, 142, 72, 0.3);
@@ -1374,8 +1386,8 @@
   }
 
   .gazebo-memory-card {
-    flex-basis: min(70vw, 16.875rem);
-    height: clamp(18.25rem, 82vw, 23.125rem);
+    flex-basis: min(58vw, 13.75rem);
+    height: clamp(15rem, 66vw, 18.5rem);
   }
 
   .gazebo-footer {

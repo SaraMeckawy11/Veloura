@@ -331,10 +331,11 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0, scale: 1 }}
           transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="gazebo-hero-date">{heroDate || fullDateStr}</p>
+          <p className="gazebo-hero-invite">You are invited to the wedding of</p>
           <h1>{coupleNames}</h1>
-          {message && <p className="gazebo-hero-tagline">{message}</p>}
+          <p className="gazebo-hero-date">{heroDate || fullDateStr}</p>
           {timeStr && <p className="gazebo-hero-time">{timeStr}</p>}
+          {message && <p className="gazebo-hero-tagline">{message}</p>}
         </motion.article>
       </section>
 

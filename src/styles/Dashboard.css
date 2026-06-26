@@ -1209,12 +1209,15 @@
   color: var(--text-secondary, #6b6258);
 }
 .story-orientation-options {
-  display: inline-flex;
+  display: flex;
   gap: 8px;
+  width: 100%;
 }
 .story-orientation-btn {
+  flex: 1 1 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 8px 16px;
   border: 1px solid var(--border-light);
