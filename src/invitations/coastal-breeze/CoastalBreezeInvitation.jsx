@@ -574,9 +574,6 @@ function StorySection({ milestones, images, orientation = 'portrait' }) {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <figure className="coastal-photo-frame">
-              <InvitationPhoto src={getInvitationPhotoSrc(item.src)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 640px) 86vw, 320px" />
-            </figure>
             {(item.date || item.title || item.description) && (
               <div className="coastal-story-copy">
                 {item.date && <span>{item.date}</span>}
@@ -584,6 +581,9 @@ function StorySection({ milestones, images, orientation = 'portrait' }) {
                 {item.description && <p>{item.description}</p>}
               </div>
             )}
+            <figure className="coastal-photo-frame">
+              <InvitationPhoto src={getInvitationPhotoSrc(item.src)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 640px) 86vw, 320px" />
+            </figure>
           </motion.article>
         ))}
       </div>

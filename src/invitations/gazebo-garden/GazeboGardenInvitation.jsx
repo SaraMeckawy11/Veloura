@@ -364,9 +364,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <div className="gazebo-story-art" style={{ background: item.tone }}>
-                {item.image && <InvitationPhoto src={getInvitationPhotoSrc(item.image)} alt={item.title || ''} sizes="(max-width: 640px) 86vw, 320px" />}
-              </div>
               {(item.date || item.title || item.body) && (
                 <div className="gazebo-story-copy">
                   {item.date && <span className="gazebo-story-date">{item.date}</span>}
@@ -374,6 +371,9 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                   {item.body && <p>{item.body}</p>}
                 </div>
               )}
+              <div className="gazebo-story-art" style={{ background: item.tone }}>
+                {item.image && <InvitationPhoto src={getInvitationPhotoSrc(item.image)} alt={item.title || ''} sizes="(max-width: 640px) 86vw, 320px" />}
+              </div>
             </motion.article>
           ))}
         </div>
