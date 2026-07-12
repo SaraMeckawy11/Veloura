@@ -8,6 +8,7 @@ import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
+import InvitationDock from '../InvitationDock';
 import useHeroScrollReset from '../useHeroScrollReset';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
@@ -48,6 +49,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
+  const [rsvpSubmitting, setRsvpSubmitting] = useState(false);
   const audioRef = useRef(null);
   const rsvpSubmissionId = useRef(createRsvpSubmissionId());
   const rootRef = useHeroScrollReset(showSplash);
@@ -99,6 +101,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       setRsvpSubmitted(true);
       return;
     }
+    setRsvpSubmitting(true);
     try {
       const res = await fetch(`${API}/rsvps/${publicSlug}`, {
         method: 'POST',
@@ -110,6 +113,8 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       setRsvpSubmitted(true);
     } catch (err) {
       setRsvpError(err.message);
+    } finally {
+      setRsvpSubmitting(false);
     }
   };
 
@@ -146,7 +151,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   // mounts once the splash reports ready, so the clouds/ticket imagery never
   // competes with the splash assets for bandwidth.
   const contentReady = !showSplash || splashReady;
-
   // Categorize photos
   const allPhotos = getTieredInvitationPhotos(order);
   const storyMilestones = getTieredStoryMilestones(order);
@@ -157,6 +161,13 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   const venuePhotos = allPhotos.filter(p => p.label === 'venue');
   const uncategorized = allPhotos.filter(p => !p.label || !['couple', 'story', 'gallery', 'venue'].includes(p.label));
   const allGallery = [...galleryPhotos, ...uncategorized];
+  const dockItems = [
+    { id: 'hero', label: 'Welcome' },
+    ...((isReferenceDemo && storyMilestones.length) || storyPhotos.length ? [{ id: 'story', label: 'Our story' }] : []),
+    { id: 'details', label: 'Details' },
+    ...(rsvpEnabled ? [{ id: 'rsvp', label: 'RSVP' }] : []),
+    ...(allGallery.length || (isReferenceDemo && order.galleryImages?.length) ? [{ id: 'gallery', label: 'Gallery' }] : []),
+  ];
 
   useEffect(() => {
     if (showSplash || !shouldPlayMusic || !audioRef.current) return;
@@ -190,9 +201,10 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         </div>
       )}
       {showSplash && <BoardingPassSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />}
+      {!showSplash && <InvitationDock items={dockItems} audioRef={audioRef} musicEnabled={shouldPlayMusic} theme="boarding" />}
       {contentReady && (<>
       {/* ========== HERO ========== */}
-      <section className="inv-hero">
+      <section id="hero" className="inv-hero">
         {/* Cloud background with parallax scroll */}
         <div className="inv-hero-bg">
           <div className="inv-clouds-scroll">
@@ -286,7 +298,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
       {/* ========== OUR STORY ========== */}
       {isReferenceDemo && storyMilestones.length ? (
-        <section className="inv-section-light">
+        <section id="story" className="inv-section-light">
           <p className="inv-section-label-mono">FLIGHT ROUTE</p>
           <motion.h3
             className="inv-story-title"
@@ -324,7 +336,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           </div>
         </section>
       ) : storyPhotos.length > 0 ? (
-        <section className="inv-section-light">
+        <section id="story" className="inv-section-light">
           <p className="inv-section-label-mono">FLIGHT ROUTE</p>
           <motion.h3
             className="inv-story-title"
@@ -367,7 +379,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       ) : null}
 
       {/* ========== EVENT DETAILS ========== */}
-      <section className="inv-section-dark">
+      <section id="details" className="inv-section-dark">
         <div className="inv-corner-tl" /><div className="inv-corner-tr" />
         <motion.h2
           className="inv-section-label"
@@ -452,7 +464,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
       {/* ========== RSVP ========== */}
       {rsvpEnabled && (
-      <section className="inv-rsvp-section">
+      <section id="rsvp" className="inv-rsvp-section">
         <div className="inv-rsvp-bg-decor">
           <div className="inv-rsvp-bg-line" />
         </div>
@@ -512,7 +524,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
                     </div>
                   </div>
 
-                  {rsvpError && <p className="inv-rsvp-error">{rsvpError}</p>}
+                  {rsvpError && <p className="inv-rsvp-error" role="alert">{rsvpError}</p>}
 
                   <div className="bp-rsvp-note-row">
                     <img src={loveFlightStamp} alt="" className="bp-rsvp-note-stamp" aria-hidden />
@@ -524,9 +536,9 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
                   <div className="inv-rsvp-card-footer">
                     <div className="inv-rsvp-perf-line" />
-                    <button type="submit" className="inv-rsvp-submit">
+                    <button type="submit" className="inv-rsvp-submit" disabled={rsvpSubmitting} aria-busy={rsvpSubmitting}>
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.7 3.3-3.3 3.3-2-.7c-.4-.1-.8 0-1 .3l-.2.3c-.2.3-.1.7.1.9l3.3 2.3 2.3 3.3c.2.3.6.3.9.1l.3-.2c.3-.2.4-.6.3-1l-.7-2 3.3-3.3 3.3 5.7c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
-                      CHECK IN
+                      {rsvpSubmitting ? 'CHECKING IN…' : 'CHECK IN'}
                     </button>
                   </div>
                 </form>
@@ -566,7 +578,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
       {/* ========== GALLERY ========== */}
       {invitationTierAllows(order, 'gallery') && isReferenceDemo && order.galleryImages?.length ? (
-        <section className="inv-section-dark" ref={galleryRef}>
+        <section id="gallery" className="inv-section-dark" ref={galleryRef}>
           <motion.h2
             className="inv-section-label"
             initial={{ opacity: 0 }}
@@ -595,7 +607,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           </div>
         </section>
       ) : allGallery.length > 0 ? (
-        <section className="inv-section-dark" ref={galleryRef}>
+        <section id="gallery" className="inv-section-dark" ref={galleryRef}>
           <motion.h2
             className="inv-section-label"
             initial={{ opacity: 0 }}
