@@ -7,7 +7,6 @@ import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
-import InvitationDock from '../InvitationDock';
 import useHeroScrollReset from '../useHeroScrollReset';
 import './gazebo-garden.css';
 import gardenEnvelope from '../../assets/gardenPavilion/garden-pavilion-envelope-transparent.png';
@@ -123,7 +122,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
-  const [rsvpSubmitting, setRsvpSubmitting] = useState(false);
   const audioRef = useRef(null);
   const rsvpSubmissionId = useRef(createRsvpSubmissionId());
   const rootRef = useHeroScrollReset(showSplash);
@@ -206,13 +204,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       image: src,
     }))
     : [];
-  const dockItems = [
-    { id: 'hero', label: 'Welcome' },
-    ...(storyItems.length ? [{ id: 'story', label: 'Our story' }] : []),
-    { id: 'details', label: 'Details' },
-    ...(rsvpEnabled ? [{ id: 'rsvp', label: 'RSVP' }] : []),
-    ...(galleryItems.length ? [{ id: 'gallery', label: 'Gallery' }] : []),
-  ];
 
   const embedSrc = mapEnabled ? buildMapEmbedUrl(wd.venueMapUrl, [venue, venueAddress].filter(Boolean).join(', ')) : null;
   const openMapHref = wd.venueMapUrl
@@ -274,7 +265,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       return;
     }
 
-    setRsvpSubmitting(true);
     try {
       const res = await fetch(`${API}/rsvps/${publicSlug}`, {
         method: 'POST',
@@ -294,8 +284,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       setRsvpSubmitted(true);
     } catch (err) {
       setRsvpError(err.message);
-    } finally {
-      setRsvpSubmitting(false);
     }
   };
 
@@ -316,8 +304,6 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           onDismiss={handleSplashDismiss}
         />
       )}
-
-      {!showSplash && <InvitationDock items={dockItems} audioRef={audioRef} musicEnabled={shouldPlayMusic} theme="garden" />}
 
       {contentReady && (<>
       <section id="hero" className="gazebo-hero">
@@ -501,10 +487,8 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
                 />
               </label>
 
-              {rsvpError && <p className="gazebo-rsvp-error" role="alert">{rsvpError}</p>}
-              <button className="gazebo-primary-button gazebo-rsvp-submit" type="submit" disabled={rsvpSubmitting} aria-busy={rsvpSubmitting}>
-                {rsvpSubmitting ? 'Sending…' : 'Send RSVP'}
-              </button>
+              {rsvpError && <p className="gazebo-rsvp-error">{rsvpError}</p>}
+              <button className="gazebo-primary-button gazebo-rsvp-submit" type="submit">Send RSVP</button>
             </motion.form>
           ) : (
             <motion.div

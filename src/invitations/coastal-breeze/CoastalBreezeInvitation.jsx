@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
@@ -8,7 +8,6 @@ import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
-import InvitationDock from '../InvitationDock';
 import useHeroScrollReset from '../useHeroScrollReset';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
@@ -84,7 +83,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const [rsvpForm, setRsvpForm] = useState({ guestName: '', attending: 'yes', guestCount: 1, plusOne: false, message: '' });
   const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
-  const [rsvpSubmitting, setRsvpSubmitting] = useState(false);
   const audioRef = useRef(null);
   const rsvpSubmissionId = useRef(createRsvpSubmissionId());
   const rootRef = useHeroScrollReset(showSplash);
@@ -125,7 +123,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   // splash assets for bandwidth; they load while the splash animation plays.
   const contentReady = !showSplash || splashReady;
 
-  const allPhotos = useMemo(() => getTieredInvitationPhotos(order), [order]);
+  const allPhotos = getTieredInvitationPhotos(order);
   const storyMilestones = getTieredStoryMilestones(order);
   const couplePhotos = allPhotos.filter(p => p.label === 'couple');
   const storyPhotos = allPhotos.filter(p => p.label === 'story');
@@ -133,13 +131,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const venuePhotos = allPhotos.filter(p => p.label === 'venue');
   const uncategorized = allPhotos.filter(p => !p.label || !['couple', 'story', 'gallery', 'venue'].includes(p.label));
   const allGallery = [...galleryPhotos, ...uncategorized];
-  const dockItems = [
-    { id: 'hero', label: 'Welcome' },
-    ...((isReferenceDemo && storyMilestones.length) || storyPhotos.length ? [{ id: 'story', label: 'Our story' }] : []),
-    { id: 'details', label: 'Details' },
-    ...(rsvpEnabled ? [{ id: 'rsvp', label: 'RSVP' }] : []),
-    ...(allGallery.length || (isReferenceDemo && order.galleryImages?.length) ? [{ id: 'gallery', label: 'Gallery' }] : []),
-  ];
 
   useEffect(() => {
     if (!order?.weddingDetails?.weddingDate) return undefined;
@@ -199,7 +190,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       });
 
     return () => links.forEach(link => link.remove());
-  }, [allPhotos, isReferenceDemo, order, showSplash, splashReady]);
+  }, [isReferenceDemo, order, showSplash, splashReady]);
 
   const handleSplashDismiss = () => {
     if (shouldPlayMusic && audioRef.current) {
@@ -216,7 +207,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       setRsvpSubmitted(true);
       return;
     }
-    setRsvpSubmitting(true);
     try {
       const res = await fetch(`${API}/rsvps/${publicSlug}`, {
         method: 'POST',
@@ -228,8 +218,6 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       setRsvpSubmitted(true);
     } catch (err) {
       setRsvpError(err.message);
-    } finally {
-      setRsvpSubmitting(false);
     }
   };
 
@@ -253,9 +241,8 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         <CoastalSplash onReady={() => setSplashReady(true)} onDismiss={handleSplashDismiss} />
       )}
 
-      {!showSplash && <InvitationDock items={dockItems} audioRef={audioRef} musicEnabled={shouldPlayMusic} theme="coastal" />}
       {contentReady && (<>
-      <section id="hero" className="coastal-hero coastal-art-section">
+      <section className="coastal-hero coastal-art-section">
         <img className="coastal-art-bg" src={coastalHeroExtended} alt="" />
         <p className="coastal-art-layer coastal-hero-eyebrow">
           <span>Please join us to</span>
@@ -330,7 +317,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         <StorySection milestones={storyMilestones} images={storyPhotos} orientation={normalizeStoryOrientation(order.storyOrientation)} />
       ) : null}
 
-      <section id="details" className="coastal-section coastal-event-section">
+      <section className="coastal-section coastal-event-section">
         <SectionTitle title="Event details" subtitle="where love gathers" />
         <div className="coastal-event-layout">
           <motion.div
@@ -383,7 +370,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       {coupleMessage && <CoastalMessageSection message={coupleMessage} />}
 
       {rsvpEnabled && (
-      <section id="rsvp" className="coastal-rsvp-section">
+      <section className="coastal-rsvp-section">
         <div className="coastal-rsvp-ocean" aria-hidden>
           <span className="coastal-rsvp-foam coastal-rsvp-foam-one" />
           <span className="coastal-rsvp-foam coastal-rsvp-foam-two" />
@@ -481,9 +468,9 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
                   </div>
                 </div>
 
-                {rsvpError && <p className="coastal-rsvp-error" role="alert">{rsvpError}</p>}
-                <button type="submit" className="coastal-submit" disabled={rsvpSubmitting} aria-busy={rsvpSubmitting}>
-                  <span>{rsvpSubmitting ? 'Sending…' : 'Send Response'}</span>
+                {rsvpError && <p className="coastal-rsvp-error">{rsvpError}</p>}
+                <button type="submit" className="coastal-submit">
+                  <span>Send Response</span>
                 </button>
               </motion.form>
             ) : (
@@ -571,7 +558,7 @@ function StorySection({ milestones, images, orientation = 'portrait' }) {
     : milestones.map((milestone) => ({ ...milestone, src: ceremonyArch }));
 
   return (
-    <section id="story" className="coastal-section coastal-story-section">
+    <section className="coastal-section coastal-story-section">
       <div className="coastal-section-title coastal-story-title">
         <h2>Our Story</h2>
         <p className="coastal-story-title-route">The Route Of Us</p>
@@ -812,7 +799,7 @@ function GallerySection({ images }) {
   });
 
   return (
-    <section id="gallery" className="coastal-gallery-section">
+    <section className="coastal-gallery-section">
       <div className="coastal-gallery-header">
         <h2>Memories</h2>
       </div>
