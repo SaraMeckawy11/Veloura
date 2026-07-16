@@ -31,7 +31,7 @@ export default function Contact() {
               </div>
             </a>
 
-            <a className="contact-method" href="https://www.instagram.com/veloura.invites" target="_blank" rel="noreferrer" aria-label="Visit Veloura on Instagram">
+            <a className="contact-method" href="https://www.instagram.com/veloura.invitations" target="_blank" rel="noreferrer" aria-label="Visit Veloura on Instagram">
               <div className="contact-method-icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
@@ -41,7 +41,7 @@ export default function Contact() {
               </div>
               <div className="contact-method-text">
                 <div className="label">Instagram</div>
-                <div className="value">@veloura</div>
+                <div className="value">@veloura.invitations</div>
               </div>
             </a>
           </div>
