@@ -70,6 +70,15 @@ function getOrderDisplayPricing(req, pricingTier) {
   };
 }
 
+function getOrderPricingRegion(req) {
+  const region = req.body.pricingRegion || {};
+  return {
+    countryCode: readCountry(req),
+    timezone: region.timezone,
+    locale: region.locale || req.headers['accept-language'],
+  };
+}
+
 function compactPaypalText(value = '', maxLength = 127) {
   const text = `${value || ''}`.replace(/\s+/g, ' ').trim();
   return text.length > maxLength ? text.slice(0, maxLength) : text;
@@ -204,7 +213,7 @@ router.post('/', validateOrderBody, async (req, res) => {
     const pricingTier = normalizePricingTier(req.body.pricingTier);
     const disabledFields = enforceTierDisabledFields(pricingTier, req.body.disabledFields);
     const cleanWeddingDetails = applyDisabledFields(weddingDetails, disabledFields);
-    const orderAmount = getTierAmount(pricingTier, PRICE_USD);
+    const orderAmount = getTierAmount(pricingTier, PRICE_USD, getOrderPricingRegion(req));
     const displayPricing = getOrderDisplayPricing(req, pricingTier);
     const musicAllowed = tierAllows(pricingTier, 'music');
 

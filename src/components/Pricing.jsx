@@ -73,7 +73,10 @@ export default function Pricing({ showCta = true }) {
           <span className="section-label">Pricing</span>
           <h2 className="section-title">Choose the invitation experience</h2>
           <p className="section-subtitle">
-            Two one-time plans, each matched to the sections your hosted wedding invitation will include.
+            Three one-time options, with dedicated pricing for Egypt and the rest of the world.
+          </p>
+          <p className="pricing-region-label">
+            {pricingCatalog?.pricingRegion === 'egypt' ? 'Egypt pricing' : 'International pricing'}
           </p>
         </div>
 
@@ -130,6 +133,11 @@ export default function Pricing({ showCta = true }) {
             </article>
           ))}
         </div>
+        <p className="pricing-currency-note">
+          {pricingCatalog?.pricingRegion === 'egypt'
+            ? 'Prices shown are the fixed launch prices for customers in Egypt.'
+            : 'Prices shown are the launch prices for customers outside Egypt.'}
+        </p>
       </div>
     </section>
   );
