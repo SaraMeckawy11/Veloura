@@ -60,22 +60,16 @@ export default function Pricing({ showCta = true }) {
         <div className="section-header reveal" ref={headerRef}>
           <span className="section-label">Pricing</span>
           <h2 className="section-title">Choose the invitation experience</h2>
-          <p className="section-subtitle">
-            Three one-time options, with dedicated pricing for Egypt and the rest of the world.
-          </p>
-          <p className="pricing-region-label">
-            {pricingCatalog?.pricingRegion === 'egypt' ? 'Egypt pricing' : 'International pricing'}
-          </p>
         </div>
 
         <div className="pricing-wrapper reveal" ref={cardRef}>
           {tiers.map(tier => (
-            <article key={tier.id} className={`pricing-card ${tier.featured ? 'pricing-card--featured' : ''}`}>
+            <article key={tier.id} className={`pricing-card pricing-card--${tier.id} ${tier.featured ? 'pricing-card--featured' : ''}`}>
               <div className="pricing-badge">{tier.badge}</div>
               <div className="pricing-plan-name">{tier.name}</div>
               <div className="pricing-amount">
                 <span className="old-price">{tier.oldDisplayPrice || tier.oldPrice}</span>
-                {tier.displayPrice || tier.price}
+                <span className="current-price">{tier.displayPrice || tier.price}</span>
               </div>
 
               <ul className="pricing-features">

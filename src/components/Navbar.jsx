@@ -6,6 +6,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [primaryCreateVisible, setPrimaryCreateVisible] = useState(false);
+  const [pricingVisible, setPricingVisible] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -33,6 +34,24 @@ export default function Navbar() {
     );
 
     observer.observe(primaryCreateCta);
+    return () => observer.disconnect();
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setPricingVisible(false);
+      return undefined;
+    }
+
+    const pricingSection = document.querySelector('#pricing');
+    if (!pricingSection) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setPricingVisible(entry.isIntersecting),
+      { threshold: 0.08 }
+    );
+
+    observer.observe(pricingSection);
     return () => observer.disconnect();
   }, [location.pathname]);
 
@@ -74,7 +93,7 @@ export default function Navbar() {
     setMenuOpen(false);
     document.body.style.overflow = '';
   };
-  const showMobileStickyCta = location.pathname === '/' && scrolled && !menuOpen && !primaryCreateVisible;
+  const showMobileStickyCta = location.pathname === '/' && scrolled && !menuOpen && !primaryCreateVisible && !pricingVisible;
 
   return (
     <>

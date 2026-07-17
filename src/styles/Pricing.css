@@ -58,6 +58,10 @@
 }
 
 .pricing-amount {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 8px;
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 3.35rem);
   font-weight: 700;
@@ -71,7 +75,12 @@
   font-weight: 400;
   color: var(--text-light);
   text-decoration: line-through;
-  margin-right: 8px;
+  margin-right: 0;
+  line-height: 1.15;
+}
+
+.pricing-amount .current-price {
+  min-width: 0;
 }
 
 .pricing-tagline {
@@ -254,20 +263,6 @@
   text-align: center;
 }
 
-.pricing-region-label {
-  display: inline-flex;
-  margin-top: 14px;
-  padding: 7px 13px;
-  border: 1px solid rgba(184, 146, 74, 0.24);
-  border-radius: 999px;
-  color: var(--gold);
-  background: rgba(184, 146, 74, 0.07);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
 @media (max-width: 980px) {
   .pricing-wrapper {
     grid-template-columns: 1fr;
@@ -283,5 +278,24 @@
 @media (max-width: 768px) {
   .pricing-card {
     padding: 30px 22px;
+  }
+
+  .pricing-card--luxe .pricing-plan-name {
+    font-size: 1.35rem;
+  }
+
+  .pricing-card--luxe .pricing-amount {
+    display: grid;
+    gap: 8px;
+    font-size: clamp(2.15rem, 11vw, 3rem);
+    line-height: 1.05;
+  }
+
+  .pricing-card--luxe .pricing-amount .old-price {
+    font-size: 1rem;
+  }
+
+  .pricing-card--luxe .pricing-amount .current-price {
+    overflow-wrap: anywhere;
   }
 }
