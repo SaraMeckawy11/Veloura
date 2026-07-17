@@ -1,6 +1,32 @@
 import mongoose from 'mongoose';
 import Rsvp from '../models/Rsvp.js';
 
+const OBSOLETE_INDEX_NAMES = [
+  'order_1_submissionId_1',
+  'order_1_email_1',
+];
+
+async function dropIndexIfPresent(collection, indexName) {
+  try {
+    await collection.dropIndex(indexName);
+  } catch (error) {
+    // Another server instance may have completed the same startup migration
+    // after we listed indexes. MongoDB code 27 means the index is already gone.
+    if (error?.code !== 27 && error?.codeName !== 'IndexNotFound') throw error;
+  }
+}
+
+async function dropObsoleteResponseIndexes() {
+  const coll = Rsvp.collection;
+  const indexes = await coll.indexes();
+
+  for (const indexName of OBSOLETE_INDEX_NAMES) {
+    if (indexes.some(index => index.name === indexName)) {
+      await dropIndexIfPresent(coll, indexName);
+    }
+  }
+}
+
 // Consolidate any legacy one-document-per-response RSVP rows into the current
 // one-document-per-invitation shape (an `order` with an embedded `responses`
 // array). Legacy rows are identified by a top-level `guestName` field, which
@@ -49,21 +75,19 @@ async function migrateLegacyResponses() {
 }
 
 export async function syncRsvpIndexes() {
+  // Drop legacy compound unique indexes before migrating. Consolidated RSVP
+  // documents intentionally have no top-level submissionId/email; inserting
+  // one while the old index exists makes MongoDB index those fields as null
+  // and can trigger E11000 against a legacy row for the same order.
+  await dropObsoleteResponseIndexes();
   await migrateLegacyResponses();
 
   const indexes = await Rsvp.collection.indexes();
-  // Drop the obsolete per-response uniqueness index.
-  if (indexes.some(index => index.name === 'order_1_submissionId_1')) {
-    await Rsvp.collection.dropIndex('order_1_submissionId_1');
-  }
-  if (indexes.some(index => index.name === 'order_1_email_1')) {
-    await Rsvp.collection.dropIndex('order_1_email_1');
-  }
   // The old schema indexed `order` non-uniquely; drop it so we can recreate it
   // as unique (one RSVP document per invitation).
   const orderIndex = indexes.find(index => index.name === 'order_1');
   if (orderIndex && !orderIndex.unique) {
-    await Rsvp.collection.dropIndex('order_1');
+    await dropIndexIfPresent(Rsvp.collection, 'order_1');
   }
 
   await Rsvp.collection.createIndex({ order: 1 }, { unique: true, name: 'order_1' });

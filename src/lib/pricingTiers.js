@@ -74,34 +74,10 @@ export const PRICING_TIERS = [
       music: false,
     },
   },
-  {
-    id: 'luxe',
-    name: 'Signature (Custom)',
-    badge: 'Made for you',
-    tagline: 'A bespoke invitation created around your wedding.',
-    price: 'From $169',
-    oldPrice: 'From $199',
-    amount: '169.00',
-    oldAmount: '199.00',
-    description: 'A fully custom invitation experience, designed for you.',
-    features: [
-      'Everything in Premium, plus:',
-      'A custom visual direction for your wedding',
-      'Tailored sections and details',
-    ],
-    demoCards: [],
-    sections: {
-      countdown: true,
-      coupleMessage: true,
-      story: true,
-      gallery: true,
-      rsvp: true,
-      music: false,
-    },
-  },
 ];
 
 export function normalizePricingTier(value) {
+  if (value === 'luxe') return 'signature';
   return PRICING_TIERS.some(tier => tier.id === value) ? value : DEFAULT_PRICING_TIER;
 }
 

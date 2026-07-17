@@ -4,10 +4,10 @@
 
 .pricing-wrapper {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   align-items: stretch;
-  max-width: 1120px;
+  max-width: 860px;
   margin: 0 auto;
 }
 
@@ -280,22 +280,4 @@
     padding: 30px 22px;
   }
 
-  .pricing-card--luxe .pricing-plan-name {
-    font-size: 1.35rem;
-  }
-
-  .pricing-card--luxe .pricing-amount {
-    display: grid;
-    gap: 8px;
-    font-size: clamp(2.15rem, 11vw, 3rem);
-    line-height: 1.05;
-  }
-
-  .pricing-card--luxe .pricing-amount .old-price {
-    font-size: 1rem;
-  }
-
-  .pricing-card--luxe .pricing-amount .current-price {
-    overflow-wrap: anywhere;
-  }
 }

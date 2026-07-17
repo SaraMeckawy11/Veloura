@@ -33,26 +33,10 @@ export const PRICING_TIERS = [
       music: false,
     },
   },
-  {
-    id: 'luxe',
-    name: 'Signature (Custom)',
-    amount: '169.00',
-    oldAmount: '199.00',
-    egyptAmount: '4500',
-    oldEgyptAmount: '5900',
-    pricePrefix: 'From ',
-    sections: {
-      countdown: true,
-      coupleMessage: true,
-      story: true,
-      gallery: true,
-      rsvp: true,
-      music: false,
-    },
-  },
 ];
 
 export function normalizePricingTier(value) {
+  if (value === 'luxe') return 'signature';
   return PRICING_TIERS.some(tier => tier.id === value) ? value : DEFAULT_PRICING_TIER;
 }
 
