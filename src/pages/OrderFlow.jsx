@@ -89,26 +89,6 @@ function loadPendingOrder() {
   } catch { return null; }
 }
 
-function getPricingQuery() {
-  const params = new URLSearchParams();
-  const region = getPricingRegion();
-  if (!region.timezone && !region.locale) return '';
-  params.set('timezone', region.timezone);
-  params.set('locale', region.locale);
-  return params.toString();
-}
-
-function getPricingRegion() {
-  try {
-    return {
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
-      locale: navigator.language || '',
-    };
-  } catch {
-    return { timezone: '', locale: '' };
-  }
-}
-
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const scrollOrderFlowToTop = () => {
   window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -547,8 +527,7 @@ export default function OrderFlow() {
   }, []);
 
   useEffect(() => {
-    const query = getPricingQuery();
-    fetch(`${API}/pricing${query ? `?${query}` : ''}`)
+    fetch(`${API}/pricing`, { cache: 'no-store' })
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
         if (data?.tiers?.length) setPricingCatalog(data);
@@ -1201,7 +1180,6 @@ export default function OrderFlow() {
           customerEmail,
           templateId: selectedTemplate._id,
           pricingTier: selectedTier,
-          pricingRegion: getPricingRegion(),
           weddingDetails: {
             groomName: form.groomName,
             brideName: form.brideName,

@@ -7,6 +7,7 @@ import { orderConfirmationEmail, sensitiveFieldChangeEmail } from '../utils/emai
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 import { getFallbackTemplate } from '../data/templateFallbacks.js';
 import { getPricingCatalog, getPricingTier, getTierAmount, normalizePricingTier, tierAllows } from '../data/pricingTiers.js';
+import { getRequestPricingRegion } from '../utils/pricingRegion.js';
 import {
   paypalApiConfigured,
   createPaypalOrder,
@@ -43,21 +44,8 @@ const WEDDING_DETAIL_FIELDS = new Set([
   'secondLanguage',
 ]);
 
-function readCountry(req) {
-  return req.headers['cf-ipcountry']
-    || req.headers['x-vercel-ip-country']
-    || req.headers['x-country-code']
-    || req.headers['x-appengine-country']
-    || '';
-}
-
 function getOrderDisplayPricing(req, pricingTier) {
-  const region = req.body.pricingRegion || {};
-  const catalog = getPricingCatalog({
-    countryCode: readCountry(req),
-    timezone: region.timezone,
-    locale: region.locale || req.headers['accept-language'],
-  });
+  const catalog = getPricingCatalog(getRequestPricingRegion(req));
   const tier = catalog.tiers.find(item => item.id === pricingTier);
 
   return {
@@ -71,12 +59,7 @@ function getOrderDisplayPricing(req, pricingTier) {
 }
 
 function getOrderPricingRegion(req) {
-  const region = req.body.pricingRegion || {};
-  return {
-    countryCode: readCountry(req),
-    timezone: region.timezone,
-    locale: region.locale || req.headers['accept-language'],
-  };
+  return getRequestPricingRegion(req);
 }
 
 function compactPaypalText(value = '', maxLength = 127) {

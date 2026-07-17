@@ -79,11 +79,9 @@ function readUsdToEgpRate() {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 53;
 }
 
-function isEgyptRequest({ countryCode, timezone, locale } = {}) {
+function isEgyptRequest({ countryCode } = {}) {
   const country = `${countryCode || ''}`.trim().toUpperCase();
-  const tz = `${timezone || ''}`.trim().toLowerCase();
-  const loc = `${locale || ''}`.trim().toLowerCase();
-  return country === 'EG' || tz === 'africa/cairo' || /(^|[-_])eg($|[-_])/.test(loc);
+  return country === 'EG';
 }
 
 function formatUsd(amount) {
@@ -103,6 +101,7 @@ export function getPricingCatalog(region = {}) {
     displayCurrency,
     paymentCurrency: 'USD',
     pricingRegion: useEgpDisplay ? 'egypt' : 'international',
+    resolvedCountry: `${region.countryCode || ''}`.trim().toUpperCase() || null,
     displayIsConverted: false,
     exchangeRate,
     tiers: PRICING_TIERS.map(tier => ({

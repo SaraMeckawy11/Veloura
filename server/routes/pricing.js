@@ -1,24 +1,14 @@
 import { Router } from 'express';
 import { getPricingCatalog } from '../data/pricingTiers.js';
+import { getRequestPricingRegion } from '../utils/pricingRegion.js';
 
 const router = Router();
 
-function readCountry(req) {
-  return req.headers['cf-ipcountry']
-    || req.headers['x-vercel-ip-country']
-    || req.headers['x-country-code']
-    || req.headers['x-appengine-country']
-    || req.query.country
-    || '';
-}
-
 router.get('/', (req, res) => {
-  const catalog = getPricingCatalog({
-    countryCode: readCountry(req),
-    timezone: req.query.timezone,
-    locale: req.query.locale || req.headers['accept-language'],
-  });
+  const catalog = getPricingCatalog(getRequestPricingRegion(req));
 
+  res.set('Cache-Control', 'private, no-store');
+  res.set('Vary', 'CF-IPCountry, X-Vercel-IP-Country, CloudFront-Viewer-Country, X-Nf-Country, X-AppEngine-Country');
   res.json(catalog);
 });
 

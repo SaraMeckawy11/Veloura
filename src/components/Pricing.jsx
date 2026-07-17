@@ -34,17 +34,6 @@ const DEMO_SLUGS = {
   'Boarding Pass': 'boarding-pass',
 };
 
-function getPricingQuery() {
-  const params = new URLSearchParams();
-  try {
-    params.set('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone || '');
-    params.set('locale', navigator.language || '');
-  } catch {
-    return '';
-  }
-  return params.toString();
-}
-
 export default function Pricing({ showCta = true }) {
   const headerRef = useReveal();
   const cardRef = useReveal();
@@ -57,8 +46,7 @@ export default function Pricing({ showCta = true }) {
     : PRICING_TIERS;
 
   useEffect(() => {
-    const query = getPricingQuery();
-    fetch(`${API}/pricing${query ? `?${query}` : ''}`)
+    fetch(`${API}/pricing`, { cache: 'no-store' })
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
         if (data?.tiers?.length) setPricingCatalog(data);
