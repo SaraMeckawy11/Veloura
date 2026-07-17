@@ -4,10 +4,10 @@ export const PRICING_TIERS = [
   {
     id: 'essential',
     name: 'Essential',
-    amount: '59.00',
-    oldAmount: '69.00',
-    egyptAmount: '1200',
-    oldEgyptAmount: '1500',
+    amount: '49.00',
+    oldAmount: '59.00',
+    egyptAmount: '999',
+    oldEgyptAmount: '1200',
     sections: {
       countdown: true,
       coupleMessage: true,
@@ -20,10 +20,10 @@ export const PRICING_TIERS = [
   {
     id: 'signature',
     name: 'Premium',
-    amount: '69.00',
-    oldAmount: '79.00',
-    egyptAmount: '1500',
-    oldEgyptAmount: '1900',
+    amount: '59.00',
+    oldAmount: '69.00',
+    egyptAmount: '1200',
+    oldEgyptAmount: '1500',
     sections: {
       countdown: true,
       coupleMessage: true,
@@ -38,7 +38,7 @@ export const PRICING_TIERS = [
     name: 'Signature (Custom)',
     amount: '169.00',
     oldAmount: '199.00',
-    egyptAmount: '4900',
+    egyptAmount: '4500',
     oldEgyptAmount: '5900',
     pricePrefix: 'From ',
     sections: {
