@@ -4,6 +4,10 @@ Promo discounts and usage limits are enforced by the server. Set a long random
 `PROMO_ADMIN_KEY` in `server/.env` (and in the production server environment)
 before using the protected administration endpoints.
 
+The same controls are available in the browser at `/admin/promos`. Enter the
+server's `PROMO_ADMIN_KEY` there; the key is kept only for the current browser
+session and is sent to the protected API in the `x-promo-admin-key` header.
+
 ## List codes and remaining uses
 
 ```powershell
@@ -24,7 +28,7 @@ $headers = @{
 $body = @{
   displayCode = 'Nour'
   discountPercent = 100
-  maxUses = 1
+  maxUses = 2
   active = $true
   expiresAt = $null
 } | ConvertTo-Json
@@ -32,5 +36,12 @@ Invoke-RestMethod -Method Put -Uri 'https://your-api.example.com/api/promos/admi
 ```
 
 The built-in `Nour` code is created automatically with a 100% discount and a
-maximum of one successful use. Updating it through the endpoint does not reset
-its redemption history.
+total allowance of two successful uses. This preserves the first accidental
+redemption and leaves one more use available. Updating a code's limit does not
+erase its redemption history.
+
+Each redemption is stored on the promo-code document against its order as one
+of three states: `reserved` while checkout is in progress, `redeemed` after the
+order succeeds, or `released` after cancellation/expiry. The admin page shows
+used, reserved, and remaining counts. `maxUses` is the lifetime successful-use
+limit; increase it to grant additional uses, or disable the code to stop it.

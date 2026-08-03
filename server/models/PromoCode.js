@@ -16,6 +16,7 @@ const promoCodeSchema = new mongoose.Schema({
   maxUses: { type: Number, required: true, min: 1 },
   active: { type: Boolean, default: true, index: true },
   expiresAt: { type: Date },
+  allowanceVersion: { type: Number, default: 0 },
   redemptions: { type: [promoRedemptionSchema], default: [] },
 }, { timestamps: true });
 

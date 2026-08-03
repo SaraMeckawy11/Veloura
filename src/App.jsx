@@ -8,6 +8,7 @@ import Invitation from './pages/Invitation';
 import MyInvitation from './pages/MyInvitation';
 import PricingPage from './pages/PricingPage';
 import LegalPage from './pages/LegalPage';
+import PromoAdmin from './pages/PromoAdmin';
 
 function DemoInvitation() {
   const { templateSlug } = useParams();
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/dashboard/:editToken" element={<Dashboard />} />
         <Route path="/edit/:editToken" element={<Dashboard />} />
         <Route path="/my-invitation" element={<MyInvitation />} />
+        <Route path="/admin/promos" element={<PromoAdmin />} />
         <Route path="/demo/:templateSlug" element={<DemoInvitation />} />
         <Route path="/i/:publicSlug" element={<Invitation />} />
       </Routes>

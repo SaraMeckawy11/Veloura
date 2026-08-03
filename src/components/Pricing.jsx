@@ -115,11 +115,6 @@ export default function Pricing({ showCta = true }) {
             </article>
           ))}
         </div>
-        <p className="pricing-currency-note">
-          {pricingCatalog?.pricingRegion === 'egypt'
-            ? 'Prices shown are the fixed launch prices for customers in Egypt.'
-            : 'Prices shown are the launch prices for customers outside Egypt.'}
-        </p>
       </div>
     </section>
   );

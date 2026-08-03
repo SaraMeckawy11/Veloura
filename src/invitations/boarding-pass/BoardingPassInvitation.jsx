@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cloudsHero from '../../assets/clouds-hero.jpg';
 import BoardingPassSplash from './BoardingPassSplash';
-import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
+import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getEventCopy, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -11,7 +11,7 @@ import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
-import heroEmpty from '../../assets/boardingPass/hero1Empty.png';
+import heroEmpty from '../../assets/boardingPass/hero1OccasionTransparent.png';
 import confirmedStamp from '../../assets/boardingPass/confirmed_stamp_transparent.png';
 import confirmYourSeatTitle from '../../assets/boardingPass/confirm_your_seat_title_transparent.png';
 import loveFlightStamp from '../../assets/boardingPass/love_flight_stamp_transparent.png';
@@ -114,6 +114,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
   };
 
   const wd = order.weddingDetails || {};
+  const eventCopy = getEventCopy(wd.eventType);
   const disabledFields = order.disabledFields || [];
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const mapEnabled = fieldEnabled('venueMapUrl');
@@ -211,6 +212,10 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         >
           <div className="bp-hero-ticket">
             <img src={heroEmpty} alt="" className="bp-hero-ticket-img" />
+
+            <p className="bp-hero-occasion">
+              You are invited to the {eventCopy.label} of
+            </p>
 
             {/* Couple names */}
             <div className="bp-hero-names">

@@ -15,7 +15,7 @@ export function normalizePromoCode(value = '') {
 }
 
 export async function syncDefaultPromoCodes() {
-  return PromoCode.updateOne(
+  await PromoCode.updateOne(
     { code: 'NOUR' },
     {
       $setOnInsert: {
@@ -24,9 +24,25 @@ export async function syncDefaultPromoCodes() {
         discountPercent: 100,
         maxUses: 1,
         active: true,
+        allowanceVersion: 0,
       },
     },
     { upsert: true }
+  );
+
+  // One-time allowance migration: keep the accidental redemption in the
+  // audit trail, but raise an untouched one-use Nour code to two total uses.
+  // The version marker means later limits set by the admin are respected.
+  return PromoCode.updateOne(
+    { code: 'NOUR', allowanceVersion: { $ne: 1 } },
+    [
+      {
+        $set: {
+          maxUses: { $cond: [{ $eq: ['$maxUses', 1] }, 2, '$maxUses'] },
+          allowanceVersion: 1,
+        },
+      },
+    ]
   );
 }
 
