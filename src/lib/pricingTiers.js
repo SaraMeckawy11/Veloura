@@ -2,59 +2,28 @@ export const DEFAULT_PRICING_TIER = 'signature';
 
 export const PRICING_TIERS = [
   {
-    id: 'essential',
-    name: 'Essential',
-    badge: 'Simple & elegant',
+    id: 'signature',
+    name: 'Premium',
+    badge: 'Complete Experience',
     tagline: 'One-time payment. No monthly fees.',
-    price: '$49',
-    oldPrice: '$59',
-    amount: '49.00',
-    oldAmount: '59.00',
-    description: 'Core details with RSVP, beautifully presented.',
+    price: '$79',
+    oldPrice: '$99',
+    amount: '79.00',
+    oldAmount: '99.00',
+    description: 'Every Veloura feature in one complete invitation.',
+    featured: true,
     features: [
       'Choose any Veloura invitation design',
       'Cinematic splash screen reveal',
       'Couple names, date, time & venue',
       'Personal envelope message',
-      'Live countdown to your wedding day',
+      'Live countdown to your celebration',
       'Google Maps location link',
+      'Our Story timeline',
+      'Photo gallery section',
       'RSVP form with live guest tracking',
       'Matching invitation font',
       'Private editing dashboard',
-    ],
-    demoCards: [
-      { invitation: 'Boarding Pass', fields: ['Core details', 'Countdown', 'RSVP'] },
-      { invitation: 'Garden Pavilion', fields: ['Core details', 'Countdown', 'RSVP'] },
-      { invitation: 'Coastal Breeze', fields: ['Core details', 'Countdown', 'RSVP'] },
-      // Temporarily hidden designs:
-      // { invitation: 'Fountain Reverie I', fields: ['Core details', 'Countdown', 'RSVP'] },
-      // { invitation: 'Fountain Reverie II', fields: ['Core details', 'Countdown', 'RSVP'] },
-      // { invitation: 'Theater', fields: ['Core details', 'Countdown', 'RSVP'] },
-    ],
-    sections: {
-      countdown: true,
-      coupleMessage: true,
-      story: false,
-      gallery: false,
-      rsvp: true,
-      music: false,
-    },
-  },
-  {
-    id: 'signature',
-    name: 'Premium',
-    badge: 'Most Popular',
-    tagline: 'One-time payment. Story, gallery & premium sections.',
-    price: '$59',
-    oldPrice: '$69',
-    amount: '59.00',
-    oldAmount: '69.00',
-    description: 'Story, gallery & all premium sections.',
-    featured: true,
-    features: [
-      'Everything in Essential, plus:',
-      'Our Story timeline',
-      'Photo gallery section',
     ],
     demoCards: [
       { invitation: 'Boarding Pass', fields: ['Story route', 'Gallery', 'RSVP'] },
@@ -77,13 +46,13 @@ export const PRICING_TIERS = [
 ];
 
 export function normalizePricingTier(value) {
-  if (value === 'luxe') return 'signature';
+  if (value === 'luxe' || value === 'essential') return 'signature';
   return PRICING_TIERS.some(tier => tier.id === value) ? value : DEFAULT_PRICING_TIER;
 }
 
 export function getPricingTier(value) {
   const normalized = normalizePricingTier(value);
-  return PRICING_TIERS.find(tier => tier.id === normalized) || PRICING_TIERS[1];
+  return PRICING_TIERS.find(tier => tier.id === normalized) || PRICING_TIERS[0];
 }
 
 export function tierAllows(value, section) {

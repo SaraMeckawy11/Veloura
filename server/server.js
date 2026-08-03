@@ -19,12 +19,14 @@ import rsvpRoutes from './routes/rsvps.js';
 import uploadRoutes from './routes/upload.js';
 import webhookRoutes from './routes/webhooks.js';
 import pricingRoutes from './routes/pricing.js';
+import promoRoutes from './routes/promos.js';
 import cronJob from './cron.js';
 import { syncOrderTemplateMetadata } from './services/orderSync.js';
 import { syncRsvpIndexes } from './services/rsvpSync.js';
 import { syncUserInvitationCounts } from './services/userSync.js';
 import { syncDefaultTemplates } from './services/templateSync.js';
 import { paypalApiConfigured } from './config/paypal.js';
+import { syncDefaultPromoCodes } from './services/promoCodes.js';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -58,6 +60,8 @@ async function runStartupSyncs() {
     console.log('RSVP indexes ready');
     const userSyncResult = await syncUserInvitationCounts();
     console.log(`User invitation counts ready (${userSyncResult.modifiedCount || 0} updated)`);
+    await syncDefaultPromoCodes();
+    console.log('Promo codes ready');
   } catch (err) {
     syncsRan = false;
     console.error('Startup data sync failed:', err.message);
@@ -81,6 +85,7 @@ app.use('/api/rsvps', rsvpRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/pricing', pricingRoutes);
+app.use('/api/promos', promoRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

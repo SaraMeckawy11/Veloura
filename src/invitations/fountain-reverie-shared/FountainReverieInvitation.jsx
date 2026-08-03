@@ -5,7 +5,7 @@ import FountainSplash from './FountainSplash';
 import FountainEnvelopeSplash from './FountainEnvelopeSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
-import { buildInvitationImageSources, calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, getEventCopy, getInvitationPhotoSrc } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -113,6 +113,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
   const rootRef = useHeroScrollReset(showSplash);
 
   const wd = order.weddingDetails || {};
+  const eventCopy = getEventCopy(wd.eventType);
   const disabledFields = order.disabledFields || [];
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const mapEnabled = fieldEnabled('venueMapUrl');
@@ -272,6 +273,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
               secondInitial={initials[1] || 'Z'}
               bride={name1}
               groom={name2}
+              inviteLine2={`THEIR ${eventCopy.label.toUpperCase()}`}
               day={dateParts.weekday || 'SATURDAY'}
               date={dateParts.dayMonthYear || '24 MAY 2025'}
               time={timeStr ? `AT ${timeStr}` : 'AT 5:30 PM'}

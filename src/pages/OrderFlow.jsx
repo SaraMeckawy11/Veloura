@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, Suspense, Fragment } from 're
 import { Link } from 'react-router-dom';
 import { getPaypal } from '../lib/paypal';
 import InvitationPhoto from '../invitations/InvitationPhoto';
-import { buildInvitationImageSources, getInvitationPhotoSrc, normalizeStoryOrientation } from '../invitations/shared';
+import { buildInvitationImageSources, normalizeStoryOrientation } from '../invitations/shared';
 import InvitationPreviewFrame from '../components/InvitationPreviewFrame';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
 import registry from '../invitations/registry';
@@ -208,20 +208,11 @@ const LANGUAGE_OPTIONS = [
 
 export default function OrderFlow() {
   const draft = useRef(loadDraft()).current;
-  // A `tier` query param means the buyer just chose a plan on the home/pricing
-  // page — that explicit choice must win over any saved draft tier and land
-  // them on step 1 so they can see the plan they picked already selected.
-  const urlTierParam = new URLSearchParams(window.location.search).get('tier');
-  const normalizedUrlTier = urlTierParam ? normalizePricingTier(urlTierParam) : '';
-  const hasUrlTier = Boolean(
-    urlTierParam && (urlTierParam === normalizedUrlTier || urlTierParam === 'luxe')
-  );
-  const initialTier = normalizePricingTier(
-    (hasUrlTier ? normalizedUrlTier : draft?.selectedTier) || DEFAULT_PRICING_TIER
-  );
-
-  const [step, setStep] = useState(hasUrlTier ? 1 : (draft?.step || 1));
-  const [selectedTier, setSelectedTier] = useState(initialTier);
+  // Veloura has one complete plan, so older drafts resume no earlier than the
+  // design picker (the former plan-selection step has been removed).
+  const restoredStep = Math.min(4, Math.max(2, Number(draft?.step) || 2));
+  const [step, setStep] = useState(restoredStep);
+  const selectedTier = DEFAULT_PRICING_TIER;
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(draft?.selectedTemplate || null);
   const [loading, setLoading] = useState(true);
@@ -236,6 +227,10 @@ export default function OrderFlow() {
   const [needsRetry, setNeedsRetry] = useState(false);
   const [paypalSdk, setPaypalSdk] = useState(null);
   const [error, setError] = useState('');
+  const [promoInput, setPromoInput] = useState('');
+  const [promoData, setPromoData] = useState(null);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [fontPickerOpen, setFontPickerOpen] = useState(false);
   const paypalButtonRef = useRef(null);
@@ -253,6 +248,7 @@ export default function OrderFlow() {
   const defaultForm = {
     customerName: '',
     customerEmail: '',
+    eventType: 'wedding',
     groomName: '',
     brideName: '',
     weddingDate: '',
@@ -715,7 +711,11 @@ export default function OrderFlow() {
     : PRICING_TIERS;
   const selectedTierConfig = pricingTiers.find(tier => tier.id === normalizePricingTier(selectedTier)) || getPricingTier(selectedTier);
   const displayPrice = selectedTierConfig.displayPrice || selectedTierConfig.price;
-  const paymentDisplayPrice = paypalOrderData?.pricing?.displayPrice || displayPrice;
+  const reviewPricing = promoData?.pricing || null;
+  const paymentPricing = paypalOrderData?.pricing || reviewPricing;
+  const paymentDisplayPrice = paymentPricing?.displayPrice || displayPrice;
+  const eventLabel = form.eventType === 'engagement' ? 'Engagement' : 'Wedding';
+  const eventLabelLower = eventLabel.toLowerCase();
   const effectiveDisabledFields = [...new Set([...disabledFields, ...getTierDisabledFields(selectedTier)])];
   const storyIncluded = tierAllows(selectedTier, 'story');
   const galleryIncluded = tierAllows(selectedTier, 'gallery');
@@ -752,6 +752,7 @@ export default function OrderFlow() {
     preview: true,
     pricingTier: selectedTier,
     weddingDetails: {
+      eventType: form.eventType,
       groomName: form.groomName,
       brideName: form.brideName,
       weddingDate: form.weddingDate || undefined,
@@ -812,11 +813,11 @@ export default function OrderFlow() {
   useEffect(() => {
     const initialStep = step;
     try {
-      window.history.replaceState({ orderStep: 1 }, '');
-      for (let s = 2; s <= initialStep; s += 1) {
+      window.history.replaceState({ orderStep: 2 }, '');
+      for (let s = 3; s <= initialStep; s += 1) {
         window.history.pushState({ orderStep: s }, '');
       }
-      stepDepthRef.current = Math.max(0, initialStep - 1);
+      stepDepthRef.current = Math.max(0, initialStep - 2);
     } catch { /* history unavailable */ }
     const onPopState = (event) => {
       const previousStep = event.state?.orderStep;
@@ -896,7 +897,7 @@ export default function OrderFlow() {
     }
     setForm(prev => ({ ...prev, customerEmail }));
     if (form.weddingDate && form.weddingDate < todayISO) {
-      setError('Please choose a wedding date that is today or in the future.');
+      setError(`Please choose ${eventLabel === 'Engagement' ? 'an' : 'a'} ${eventLabelLower} date that is today or in the future.`);
       return;
     }
     if (music.uploading) {
@@ -1155,6 +1156,35 @@ export default function OrderFlow() {
     }
   };
 
+  const handleApplyPromo = async () => {
+    const code = promoInput.trim();
+    if (!code || promoLoading) return;
+    setPromoLoading(true);
+    setPromoError('');
+    try {
+      const res = await fetch(`${API}/promos/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, pricingTier: selectedTier }),
+      });
+      const data = await parseJsonOrThrow(res, 'Promo validation');
+      if (!res.ok || !data.valid) throw new Error(data.error || 'This promo code is not valid.');
+      setPromoData(data);
+      setPromoInput(data.code);
+    } catch (promoErr) {
+      setPromoData(null);
+      setPromoError(promoErr.message || 'Could not apply this promo code.');
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const removePromo = () => {
+    setPromoData(null);
+    setPromoInput('');
+    setPromoError('');
+  };
+
   // Step 3: create order + handle payment in one action
   const handleConfirmPayment = async () => {
     if (orderCreationInFlightRef.current || confirming || paypalLoading || paypalOrderData) return;
@@ -1181,6 +1211,7 @@ export default function OrderFlow() {
           templateId: selectedTemplate._id,
           pricingTier: selectedTier,
           weddingDetails: {
+            eventType: form.eventType,
             groomName: form.groomName,
             brideName: form.brideName,
             weddingDate: form.weddingDate || undefined,
@@ -1204,11 +1235,17 @@ export default function OrderFlow() {
           musicEnabled: Boolean(musicIncluded && music.enabled && music.url && !music.uploading && !music.failed),
           storyMilestones: cleanedStoryMilestones,
           storyOrientation,
+          promoCode: promoData?.code || undefined,
         }),
       });
 
       const data = await parseJsonOrThrow(res, 'Order creation');
       if (!res.ok) throw new Error(data.error || 'Order failed');
+
+      if (data.paymentProvider === 'free') {
+        goToSuccessPage(data.orderId);
+        return;
+      }
 
       if (data.paymentProvider === 'paypal' && data.paypal?.clientId && data.paypal?.paypalOrderId) {
         // Trigger inline PayPal Buttons render once the target frame is mounted.
@@ -1272,18 +1309,21 @@ export default function OrderFlow() {
 
         {/* Progress bar */}
         <div className="order-progress" role="list" aria-label="Order progress">
-          {['Choose Plan', 'Choose Design', 'Your Details', 'Payment'].map((label, index) => {
-            const stepNumber = index + 1;
+          {[
+            { label: 'Choose Design', stepNumber: 2 },
+            { label: 'Your Details', stepNumber: 3 },
+            { label: 'Payment', stepNumber: 4 },
+          ].map(({ label, stepNumber }, index) => {
             const state = step > stepNumber ? 'completed' : step === stepNumber ? 'current' : 'upcoming';
             return (
               <Fragment key={label}>
-                {index > 0 && <div className={`progress-line ${step > index ? 'filled' : ''}`} aria-hidden="true" />}
+                {index > 0 && <div className={`progress-line ${step > stepNumber - 1 ? 'filled' : ''}`} aria-hidden="true" />}
                 <div className={`progress-step ${state}`} role="listitem" aria-current={state === 'current' ? 'step' : undefined}>
                   <div className="progress-dot">
                     {state === 'completed' ? (
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                     ) : (
-                      stepNumber
+                      index + 1
                     )}
                   </div>
                   <span>{label}</span>
@@ -1295,65 +1335,11 @@ export default function OrderFlow() {
 
         {error && <div className="order-error">{error}</div>}
 
-        {/* Step 1: Select pricing tier */}
-        {step === 1 && (
-          <div className="step-content">
-            <h1 className="step-title">Choose Your Invitation Plan</h1>
-            <p className="step-subtitle">Your plan controls which sections appear on your invitation.</p>
-
-            <div className="tier-choice-grid">
-              {pricingTiers.map(tier => (
-                <button
-                  key={tier.id}
-                  type="button"
-                  className={`tier-choice-card ${selectedTier === tier.id ? 'selected' : ''} ${tier.featured ? 'featured' : ''}`}
-                  onClick={() => setSelectedTier(tier.id)}
-                  aria-pressed={selectedTier === tier.id}
-                >
-                  <span className="tier-choice-check" aria-hidden>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                  </span>
-                  <span className="tier-choice-badge">{tier.badge}</span>
-                  <span className="tier-choice-name">{tier.name}</span>
-                  <span className="tier-choice-price">
-                    <span>{tier.oldDisplayPrice || tier.oldPrice}</span>
-                    {tier.displayPrice || tier.price}
-                  </span>
-                  <span className="tier-choice-desc">{tier.description}</span>
-                  <span className="tier-choice-sections">
-                    <span>Core details</span>
-                    {tier.sections.countdown && <span>Countdown</span>}
-                    {tier.sections.coupleMessage && <span>Envelope note</span>}
-                    {tier.sections.story && <span>Our Story</span>}
-                    {tier.sections.gallery && <span>Gallery</span>}
-                    {tier.sections.rsvp && <span>RSVP</span>}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            <div className="step-actions">
-              <button
-                type="button"
-                className="btn btn-gold step-next"
-                onClick={() => goToStep(2)}
-              >
-                Continue with {selectedTierConfig.name}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Step 2: Select template */}
         {step === 2 && (
           <div className="step-content">
-            <button type="button" className="step-back-btn" onClick={() => goBack(1)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
-              Change plan
-            </button>
             <h1 className="step-title">Choose Your Invitation Design</h1>
-            <p className="step-subtitle">{selectedTierConfig.name} plan selected. Pick the theme that matches your wedding vision.</p>
+            <p className="step-subtitle">Pick the theme that best matches your celebration.</p>
 
             <div className="template-grid">
               {templates.map(t => (
@@ -1434,7 +1420,7 @@ export default function OrderFlow() {
               </div>
             </div>
 
-            <h1 className="step-title">Your Wedding Details</h1>
+            <h1 className="step-title">Your {eventLabel} Details</h1>
             <p className="step-subtitle">Fill in the details for your invitation. Toggle off any field you don't need.</p>
 
             <form onSubmit={handleSubmit} className="order-form">
@@ -1451,6 +1437,33 @@ export default function OrderFlow() {
                     <input type="email" required value={form.customerEmail} onChange={e => handleInput('customerEmail', e.target.value)} placeholder="you@example.com" autoComplete="email" />
                     <p className="form-hint message-hint">Your invitation link and private code will be sent here.</p>
                   </div>
+                </div>
+              </fieldset>
+
+              <fieldset className="form-section event-type-section">
+                <legend>Invitation Type</legend>
+                <p className="form-hint">Choose the occasion so every invitation heading uses the right wording.</p>
+                <div className="event-type-options" role="radiogroup" aria-label="Invitation type">
+                  {[
+                    { value: 'wedding', label: 'Wedding', hint: 'Celebrate your marriage ceremony' },
+                    { value: 'engagement', label: 'Engagement', hint: 'Celebrate your engagement' },
+                  ].map(option => (
+                    <label key={option.value} className={`event-type-card ${form.eventType === option.value ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="eventType"
+                        value={option.value}
+                        checked={form.eventType === option.value}
+                        onChange={() => handleInput('eventType', option.value)}
+                      />
+                      <span className="event-type-icon" aria-hidden="true">{option.value === 'wedding' ? '✦' : '♡'}</span>
+                      <span className="event-type-copy">
+                        <strong>{option.label}</strong>
+                        <small>{option.hint}</small>
+                      </span>
+                      <span className="event-type-check" aria-hidden="true">✓</span>
+                    </label>
+                  ))}
                 </div>
               </fieldset>
 
@@ -1471,16 +1484,16 @@ export default function OrderFlow() {
 
               {/* Wedding details — required */}
               <fieldset className="form-section">
-                <legend>Wedding Details</legend>
+                <legend>{eventLabel} Details</legend>
                 <div className="form-grid">
                   <div className="form-field">
                     <div className="field-header">
-                      <label>Wedding Date *</label>
+                      <label>{eventLabel} Date *</label>
                     </div>
                     <input type="date" required min={todayISO} value={form.weddingDate} onChange={e => handleInput('weddingDate', e.target.value)} />
                   </div>
                   <div className="form-field">
-                    <label>Wedding Time *</label>
+                    <label>{eventLabel} Time *</label>
                     <input type="time" required value={form.weddingTime} onChange={e => handleInput('weddingTime', e.target.value)} />
                     <div className="time-format-toggle" role="group" aria-label="Time format">
                       <button
@@ -1983,8 +1996,9 @@ export default function OrderFlow() {
               </div>
 
               <div className="review-section">
-                <h3 className="review-section-title">Wedding Details</h3>
+                <h3 className="review-section-title">{eventLabel} Details</h3>
                 <div className="review-grid">
+                  <div className="review-item"><span className="review-label">Invitation Type</span><span>{eventLabel}</span></div>
                   <div className="review-item"><span className="review-label">Partner 1</span><span>{form.groomName}</span></div>
                   <div className="review-item"><span className="review-label">Partner 2</span><span>{form.brideName}</span></div>
                   {form.weddingDate && <div className="review-item"><span className="review-label">Date</span><span>{new Date(form.weddingDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span></div>}
@@ -2042,14 +2056,53 @@ export default function OrderFlow() {
             {!paypalOrderData && (
               <div className="form-submit review-submit">
                 <div className="review-submit-info">
-                  <div className="price-summary">
-                    <span className="price-label">Total</span>
-                    <span className="price-value">{displayPrice}</span>
+                  <div className="promo-code-card">
+                    <label htmlFor="promo-code">Promo code</label>
+                    {promoData ? (
+                      <div className="promo-applied" role="status">
+                        <span><strong>{promoData.code}</strong> applied — {promoData.discountPercent}% off</span>
+                        <button type="button" onClick={removePromo}>Remove</button>
+                      </div>
+                    ) : (
+                      <div className="promo-input-row">
+                        <input
+                          id="promo-code"
+                          type="text"
+                          value={promoInput}
+                          onChange={event => {
+                            setPromoInput(event.target.value);
+                            setPromoError('');
+                          }}
+                          onKeyDown={event => {
+                            if (event.key === 'Enter') {
+                              event.preventDefault();
+                              handleApplyPromo();
+                            }
+                          }}
+                          placeholder="Enter code"
+                          autoComplete="off"
+                        />
+                        <button type="button" onClick={handleApplyPromo} disabled={!promoInput.trim() || promoLoading}>
+                          {promoLoading ? 'Applying…' : 'Apply'}
+                        </button>
+                      </div>
+                    )}
+                    {promoError && <p className="promo-error" role="alert">{promoError}</p>}
                   </div>
-                  <p className="payment-note">A confirmation email with your invitation link will be sent after payment.</p>
+                  <div className="price-summary">
+                    {reviewPricing && <span className="price-subtotal">Subtotal {reviewPricing.subtotalDisplayPrice}</span>}
+                    {reviewPricing && <span className="price-discount">Promo discount −{reviewPricing.discountDisplayPrice}</span>}
+                    <span className="price-label">Total</span>
+                    <span className="price-value">{reviewPricing?.displayPrice || displayPrice}</span>
+                  </div>
+                  <p className="payment-note">A confirmation email with your invitation link will be sent after checkout.</p>
                 </div>
                 <button type="button" className="btn btn-gold form-pay-btn" onClick={handleConfirmPayment} disabled={confirming}>
-                  {confirming ? 'Preparing Payment…' : 'Continue to Payment'}
+                  {confirming
+                    ? 'Preparing your invitation…'
+                    : reviewPricing?.amount === '0.00'
+                      ? 'Create My Invitation — Free'
+                      : 'Continue to Payment'}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
                 </button>
               </div>
@@ -2061,7 +2114,7 @@ export default function OrderFlow() {
                   <div className="payment-summary-header">
                     <span className="payment-summary-eyebrow">Order Summary</span>
                     <h3>{selectedTemplate.name}</h3>
-                    <p className="payment-summary-subtitle">Veloura Digital Wedding Invitation</p>
+                    <p className="payment-summary-subtitle">Veloura Digital {eventLabel} Invitation</p>
                   </div>
                   {selectedTemplate.previewImage && (
                     <div className="payment-summary-image">
@@ -2098,14 +2151,24 @@ export default function OrderFlow() {
                   <div className="payment-summary-totals">
                     <div className="payment-summary-row">
                       <dt>Subtotal</dt>
-                      <dd>{paymentDisplayPrice}</dd>
+                      <dd>{paymentPricing?.subtotalDisplayPrice || displayPrice}</dd>
                     </div>
+                    {paymentPricing?.discountPercent > 0 && (
+                      <div className="payment-summary-row payment-summary-discount">
+                        <dt>Promo ({promoData?.code || 'code'})</dt>
+                        <dd>−{paymentPricing.discountDisplayPrice}</dd>
+                      </div>
+                    )}
                     <div className="payment-summary-row payment-summary-grand">
                       <dt>Total due today</dt>
                       <dd>{paymentDisplayPrice}</dd>
                     </div>
                   </div>
-                  <button type="button" className="payment-summary-edit" onClick={() => {
+                  <button type="button" className="payment-summary-edit" onClick={async () => {
+                    const orderId = paypalOrderData.orderId;
+                    try {
+                      await fetch(`${API}/orders/cancel/${orderId}`, { method: 'POST' });
+                    } catch { /* the server-side reservation also expires automatically */ }
                     setPaypalOrderData(null);
                     setPaypalLoading(false);
                     setCardFieldsReady(false);

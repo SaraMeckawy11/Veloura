@@ -13,6 +13,7 @@ const orderSchema = new mongoose.Schema({
 
   // Wedding details — filled from the form
   weddingDetails: {
+    eventType:    { type: String, enum: ['wedding', 'engagement'], default: 'wedding' },
     groomName:    { type: String },
     brideName:    { type: String },
     weddingDate:  { type: Date },
@@ -73,12 +74,16 @@ const orderSchema = new mongoose.Schema({
   },
 
   // Payment
-  paymentProvider:  { type: String, enum: ['paypal', 'manual'], default: 'paypal' },
+  paymentProvider:  { type: String, enum: ['paypal', 'promo', 'manual'], default: 'paypal' },
   paypalOrderId:    { type: String, index: true },
   paypalCaptureId:  { type: String, index: true },
   amountPaid:       { type: String },                     // e.g. "45.00"
   currency:         { type: String, default: 'USD' },
   paymentStatus:    { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending', index: true },
+  promoCode:        { type: String, uppercase: true, trim: true, index: true },
+  promoDiscountPercent: { type: Number, min: 0, max: 100, default: 0 },
+  subtotalAmount:   { type: String },
+  discountAmount:   { type: String },
 
   // Access tokens (magic link auth)
   editToken:        { type: String, unique: true, index: true },

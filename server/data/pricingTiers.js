@@ -2,28 +2,12 @@ export const DEFAULT_PRICING_TIER = 'signature';
 
 export const PRICING_TIERS = [
   {
-    id: 'essential',
-    name: 'Essential',
-    amount: '49.00',
-    oldAmount: '59.00',
-    egyptAmount: '999',
-    oldEgyptAmount: '1200',
-    sections: {
-      countdown: true,
-      coupleMessage: true,
-      story: false,
-      gallery: false,
-      rsvp: true,
-      music: false,
-    },
-  },
-  {
     id: 'signature',
     name: 'Premium',
-    amount: '59.00',
-    oldAmount: '69.00',
-    egyptAmount: '1200',
-    oldEgyptAmount: '1500',
+    amount: '79.00',
+    oldAmount: '99.00',
+    egyptAmount: '1999',
+    oldEgyptAmount: '2499',
     sections: {
       countdown: true,
       coupleMessage: true,
@@ -36,13 +20,13 @@ export const PRICING_TIERS = [
 ];
 
 export function normalizePricingTier(value) {
-  if (value === 'luxe') return 'signature';
+  if (value === 'luxe' || value === 'essential') return 'signature';
   return PRICING_TIERS.some(tier => tier.id === value) ? value : DEFAULT_PRICING_TIER;
 }
 
 export function getPricingTier(value) {
   const normalized = normalizePricingTier(value);
-  return PRICING_TIERS.find(tier => tier.id === normalized) || PRICING_TIERS[1];
+  return PRICING_TIERS.find(tier => tier.id === normalized) || PRICING_TIERS[0];
 }
 
 export function tierAllows(value, section) {
@@ -69,11 +53,54 @@ function isEgyptRequest({ countryCode } = {}) {
 }
 
 function formatUsd(amount) {
-  return `$${Number(amount).toFixed(0)}`;
+  const value = roundCurrency(amount);
+  return `$${value.toLocaleString('en-US', {
+    minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
+    maximumFractionDigits: 2,
+  })}`;
 }
 
 function formatEgp(amount) {
-  return `${Number(amount).toLocaleString('en-US')} EGP`;
+  const value = roundCurrency(amount);
+  return `${value.toLocaleString('en-US', {
+    minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
+    maximumFractionDigits: 2,
+  })} EGP`;
+}
+
+function roundCurrency(amount) {
+  return Math.round((Number(amount) + Number.EPSILON) * 100) / 100;
+}
+
+function formatDisplayAmount(amount, currency) {
+  return currency === 'EGP' ? formatEgp(amount) : formatUsd(amount);
+}
+
+export function getDiscountedTierPricing(value, discountPercent = 0, region = {}) {
+  const tier = getPricingTier(value);
+  const useEgpDisplay = isEgyptRequest(region);
+  const displayCurrency = useEgpDisplay ? 'EGP' : 'USD';
+  const safePercent = Math.min(100, Math.max(0, Number(discountPercent) || 0));
+  const paymentSubtotal = Number(getTierAmount(tier.id, tier.amount, region));
+  const paymentTotal = roundCurrency(paymentSubtotal * (1 - safePercent / 100));
+  const displaySubtotal = Number(useEgpDisplay ? tier.egyptAmount : tier.amount);
+  const displayTotal = roundCurrency(displaySubtotal * (1 - safePercent / 100));
+  const displayDiscount = roundCurrency(displaySubtotal - displayTotal);
+
+  return {
+    displayCurrency,
+    paymentCurrency: 'USD',
+    pricingRegion: useEgpDisplay ? 'egypt' : 'international',
+    displayIsConverted: false,
+    exchangeRate: useEgpDisplay ? readUsdToEgpRate() : 1,
+    discountPercent: safePercent,
+    subtotalAmount: paymentSubtotal.toFixed(2),
+    discountAmount: roundCurrency(paymentSubtotal - paymentTotal).toFixed(2),
+    amount: paymentTotal.toFixed(2),
+    subtotalDisplayPrice: formatDisplayAmount(displaySubtotal, displayCurrency),
+    discountDisplayPrice: formatDisplayAmount(displayDiscount, displayCurrency),
+    displayPrice: formatDisplayAmount(displayTotal, displayCurrency),
+  };
 }
 
 export function getPricingCatalog(region = {}) {

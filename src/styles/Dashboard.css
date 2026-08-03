@@ -580,6 +580,7 @@
   color: var(--text-secondary);
 }
 .edit-form .form-field input,
+.edit-form .form-field select,
 .edit-form .form-field textarea {
   padding: 12px 14px;
   border: 1px solid var(--border-light);
@@ -608,6 +609,7 @@
   opacity: 1;
 }
 .edit-form .form-field input:focus,
+.edit-form .form-field select:focus,
 .edit-form .form-field textarea:focus {
   border-color: var(--gold);
   background: #fff;

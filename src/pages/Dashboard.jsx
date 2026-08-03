@@ -3,7 +3,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { downloadGuestMessagesPdf, downloadGuestResponsesPdf } from '../lib/guestMessagesPdf';
 import InvitationPhoto from '../invitations/InvitationPhoto';
 import { getUploadPreviewStyle } from '../invitations/uploadPreviewStyles';
-import { formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../invitations/shared';
+import { formatInvitationTime, normalizeStoryOrientation } from '../invitations/shared';
 import { DEFAULT_INVITATION_FONT, INVITATION_FONT_OPTIONS, getInvitationFontOption, normalizeInvitationFont } from '../invitations/fontOptions';
 import { getPricingTier, tierAllows, getTierDisabledFields } from '../lib/pricingTiers';
 import { migrateGuestPolicyFields } from '../lib/guestPolicyFields';
@@ -150,6 +150,7 @@ export default function Dashboard() {
       ? customizations.get('invitationFont')
       : customizations.invitationFont;
     setEditForm({
+      eventType: wd.eventType === 'engagement' ? 'engagement' : 'wedding',
       groomName: wd.groomName || '',
       brideName: wd.brideName || '',
       weddingDate: wd.weddingDate ? wd.weddingDate.slice(0, 10) : '',
@@ -492,6 +493,7 @@ export default function Dashboard() {
     setSaveMsg('');
     try {
       const weddingDetailsPayload = {
+        eventType: editForm.eventType === 'engagement' ? 'engagement' : 'wedding',
         weddingDate: editForm.weddingDate || undefined,
         weddingTime: editForm.weddingTime || undefined,
         timeFormat: editForm.timeFormat || '12h',
@@ -568,7 +570,7 @@ export default function Dashboard() {
     setSaveMsg('');
     try {
       await downloadGuestMessagesPdf({
-        coupleNames: [wd.groomName, wd.brideName].filter(Boolean).join(' & ') || 'Our Wedding',
+        coupleNames: [wd.groomName, wd.brideName].filter(Boolean).join(' & ') || `Our ${eventLabel}`,
         messages,
       });
     } catch (err) {
@@ -585,7 +587,7 @@ export default function Dashboard() {
     setSaveMsg('');
     try {
       await downloadGuestResponsesPdf({
-        coupleNames: [wd.groomName, wd.brideName].filter(Boolean).join(' & ') || 'Our Wedding',
+        coupleNames: [wd.groomName, wd.brideName].filter(Boolean).join(' & ') || `Our ${eventLabel}`,
         responses,
       });
     } catch (err) {
@@ -615,6 +617,8 @@ export default function Dashboard() {
 
   const inviteUrl = `${window.location.origin}/i/${order.publicSlug}`;
   const wd = order.weddingDetails || {};
+  const eventLabel = wd.eventType === 'engagement' ? 'Engagement' : 'Wedding';
+  const eventLabelLower = eventLabel.toLowerCase();
   const orderTier = getPricingTier(order.pricingTier);
   const storyIncluded = tierAllows(order.pricingTier, 'story');
   const galleryIncluded = tierAllows(order.pricingTier, 'gallery');
@@ -645,7 +649,7 @@ export default function Dashboard() {
             <h1 className="dash-title">
               {wd.groomName && wd.brideName
                 ? `${wd.groomName} & ${wd.brideName}`
-                : 'Your Wedding'}
+                : `Your ${eventLabel}`}
             </h1>
             <p className="dash-subtitle">Private dashboard — do not share this link</p>
             {order.invitationCode && (
@@ -672,9 +676,9 @@ export default function Dashboard() {
             {editing ? 'Editing...' : 'Edit Invitation'}
           </button>
           <button className="dash-action-btn" onClick={() => {
-            const intro = `You're invited to ${wd.groomName && wd.brideName ? `${wd.groomName} & ${wd.brideName}'s` : 'our'} wedding! View the invitation here:`;
+            const intro = `You're invited to ${wd.groomName && wd.brideName ? `${wd.groomName} & ${wd.brideName}'s` : 'our'} ${eventLabelLower}! View the invitation here:`;
             if (navigator.share) {
-              navigator.share({ title: 'Wedding Invitation', text: intro, url: inviteUrl });
+              navigator.share({ title: `${eventLabel} Invitation`, text: intro, url: inviteUrl });
             } else {
               copyLink(`${intro} ${inviteUrl}`, 'share');
             }
@@ -689,9 +693,16 @@ export default function Dashboard() {
         {/* Edit form */}
         {editing && (
           <div className="dash-section dash-edit-section">
-            <h2 className="dash-section-title">Edit Wedding Details</h2>
+            <h2 className="dash-section-title">Edit {eventLabel} Details</h2>
             <div className="edit-form">
               <div className="form-grid">
+                <div className="form-field full-width">
+                  <label>Invitation Type</label>
+                  <select value={editForm.eventType || 'wedding'} onChange={e => handleEditInput('eventType', e.target.value)}>
+                    <option value="wedding">Wedding</option>
+                    <option value="engagement">Engagement</option>
+                  </select>
+                </div>
                 {nameEditable ? (
                   <>
                     <div className="form-field">
@@ -742,7 +753,7 @@ export default function Dashboard() {
                     {dateEditable ? '' : (
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
                     )}
-                    Wedding Date {dateEditable && order.dateEditsRemaining !== undefined && (
+                    {eventLabel} Date {dateEditable && order.dateEditsRemaining !== undefined && (
                       <span className="field-edit-count">({order.dateEditsRemaining} change{order.dateEditsRemaining === 1 ? '' : 's'} left)</span>
                     )}
                   </label>
@@ -753,7 +764,7 @@ export default function Dashboard() {
                   )}
                 </div>
                 <div className="form-field">
-                  <label>Wedding Time</label>
+                  <label>{eventLabel} Time</label>
                   <input type="time" value={editForm.weddingTime} onChange={e => handleEditInput('weddingTime', e.target.value)} />
                   <div className="time-format-toggle" role="group" aria-label="Time format">
                     <button
@@ -1103,7 +1114,7 @@ export default function Dashboard() {
 
         {/* Wedding details */}
         <div className="dash-section">
-          <h2 className="dash-section-title">Wedding Details</h2>
+          <h2 className="dash-section-title">{eventLabel} Details</h2>
           <div className="details-grid">
             {wd.weddingDate && (
               <div className="detail-item">

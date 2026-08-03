@@ -6,7 +6,7 @@ import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail, sensitiveFieldChangeEmail } from '../utils/emailTemplates.js';
 import { validateOrderBody, validateEditToken } from '../middleware/validateOrder.js';
 import { getFallbackTemplate } from '../data/templateFallbacks.js';
-import { getPricingCatalog, getPricingTier, getTierAmount, normalizePricingTier, tierAllows } from '../data/pricingTiers.js';
+import { getDiscountedTierPricing, getPricingTier, normalizePricingTier, tierAllows } from '../data/pricingTiers.js';
 import { getRequestPricingRegion } from '../utils/pricingRegion.js';
 import {
   paypalApiConfigured,
@@ -16,10 +16,17 @@ import {
   extractCaptureDetails,
 } from '../config/paypal.js';
 import { getClientUrl } from '../config/urls.js';
+import {
+  findAvailablePromoCode,
+  PromoCodeError,
+  redeemPromoReservation,
+  releasePromoReservation,
+  reservePromoCode,
+} from '../services/promoCodes.js';
 
 const router = Router();
 
-const PRICE_USD = process.env.PRICE_USD || '69.00';
+const PRICE_USD = process.env.PRICE_USD || '79.00';
 // Keep PayPal checkout in USD. EGP is display-only because PayPal REST Checkout
 // does not list EGP as a supported transaction currency.
 const CURRENCY = 'USD';
@@ -31,6 +38,7 @@ const HIDEABLE_WEDDING_FIELDS = new Set([
   'secondLanguage',
 ]);
 const WEDDING_DETAIL_FIELDS = new Set([
+  'eventType',
   'groomName',
   'brideName',
   'weddingDate',
@@ -44,22 +52,8 @@ const WEDDING_DETAIL_FIELDS = new Set([
   'secondLanguage',
 ]);
 
-function getOrderDisplayPricing(req, pricingTier) {
-  const catalog = getPricingCatalog(getRequestPricingRegion(req));
-  const tier = catalog.tiers.find(item => item.id === pricingTier);
-
-  return {
-    displayCurrency: catalog.displayCurrency,
-    paymentCurrency: catalog.paymentCurrency,
-    displayPrice: tier?.displayPrice,
-    oldDisplayPrice: tier?.oldDisplayPrice,
-    displayIsConverted: catalog.displayIsConverted,
-    exchangeRate: catalog.exchangeRate,
-  };
-}
-
-function getOrderPricingRegion(req) {
-  return getRequestPricingRegion(req);
+function getOrderDisplayPricing(req, pricingTier, discountPercent = 0) {
+  return getDiscountedTierPricing(pricingTier, discountPercent, getRequestPricingRegion(req));
 }
 
 function compactPaypalText(value = '', maxLength = 127) {
@@ -74,7 +68,7 @@ function getPaypalOrderMetadata({ order, template, pricingTier }) {
   const description = compactPaypalText(
     couple
       ? `${template.name} invitation for ${couple}`
-      : `${template.name} wedding invitation`
+      : `${template.name} ${order.weddingDetails?.eventType === 'engagement' ? 'engagement' : 'wedding'} invitation`
   );
 
   return {
@@ -155,6 +149,7 @@ export function getDisabledWeddingFieldChanges(currentFields = [], nextFields = 
 
 function applyDisabledFields(weddingDetails = {}, disabledFields = []) {
   const cleaned = { ...weddingDetails };
+  cleaned.eventType = weddingDetails.eventType === 'engagement' ? 'engagement' : 'wedding';
   delete cleaned.venueAddress;
   for (const field of disabledFields) {
     if (HIDEABLE_WEDDING_FIELDS.has(field)) {
@@ -189,6 +184,27 @@ async function ensureTemplateMetadata(order) {
   }
 }
 
+async function sendOrderConfirmation(order, logPrefix = 'order') {
+  if (order.confirmationSent) return;
+  try {
+    const email = orderConfirmationEmail({
+      customerName: order.customerName,
+      publicSlug: order.publicSlug,
+      editToken: order.editToken,
+      weddingDetails: order.weddingDetails,
+      isPending: false,
+      isFree: order.paymentProvider === 'promo',
+      invitationCode: order.invitationCode,
+    });
+    await sendMail({ to: order.customerEmail, ...email });
+    order.confirmationSent = true;
+    await order.save();
+    console.log(`[${logPrefix}] confirmation email sent orderId=${order._id} to=${order.customerEmail}`);
+  } catch (emailErr) {
+    console.error(`[${logPrefix}] confirmation email failed orderId=${order._id} to=${order.customerEmail}:`, emailErr.message);
+  }
+}
+
 // POST /api/orders - create order + PayPal order. Refuses with 503 if PayPal credentials are missing.
 router.post('/', validateOrderBody, async (req, res) => {
   try {
@@ -196,8 +212,18 @@ router.post('/', validateOrderBody, async (req, res) => {
     const pricingTier = normalizePricingTier(req.body.pricingTier);
     const disabledFields = enforceTierDisabledFields(pricingTier, req.body.disabledFields);
     const cleanWeddingDetails = applyDisabledFields(weddingDetails, disabledFields);
-    const orderAmount = getTierAmount(pricingTier, PRICE_USD, getOrderPricingRegion(req));
-    const displayPricing = getOrderDisplayPricing(req, pricingTier);
+    const requestedPromoCode = `${req.body.promoCode || ''}`.trim();
+    let promo = null;
+    if (requestedPromoCode) {
+      try {
+        ({ promo } = await findAvailablePromoCode(requestedPromoCode));
+      } catch (promoErr) {
+        const status = promoErr instanceof PromoCodeError ? promoErr.status : 500;
+        return res.status(status).json({ error: promoErr.message, promoReason: promoErr.reason });
+      }
+    }
+    const displayPricing = getOrderDisplayPricing(req, pricingTier, promo?.discountPercent || 0);
+    const orderAmount = displayPricing.amount;
     const musicAllowed = tierAllows(pricingTier, 'music');
 
     let template = null;
@@ -237,8 +263,22 @@ router.post('/', validateOrderBody, async (req, res) => {
       musicEnabled: musicAllowed ? (musicEnabled !== undefined ? musicEnabled : Boolean(musicUrl)) : false,
       storyMilestones: normalizeTierStoryMilestones(storyMilestones, pricingTier),
       storyOrientation: normalizeStoryOrientation(storyOrientation),
+      promoCode: promo?.code,
+      promoDiscountPercent: promo?.discountPercent || 0,
+      subtotalAmount: displayPricing.subtotalAmount,
+      discountAmount: displayPricing.discountAmount,
     });
     await order.save();
+
+    if (promo) {
+      try {
+        await reservePromoCode(promo.code, order._id);
+      } catch (promoErr) {
+        await order.deleteOne();
+        const status = promoErr instanceof PromoCodeError ? promoErr.status : 500;
+        return res.status(status).json({ error: promoErr.message, promoReason: promoErr.reason });
+      }
+    }
 
     // Find or create the User. A user is identified solely by email (its unique
     // key), so the same person ordering again is never recorded as a new user.
@@ -257,7 +297,27 @@ router.post('/', validateOrderBody, async (req, res) => {
       await user.save();
     }
 
+    if (Number(orderAmount) === 0) {
+      const redeemed = await redeemPromoReservation(order._id);
+      if (!redeemed) {
+        return res.status(409).json({ error: 'The promo code reservation could not be completed. Please try again.' });
+      }
+      order.paymentProvider = 'promo';
+      order.amountPaid = '0.00';
+      order.currency = CURRENCY;
+      await order.activate();
+      await sendOrderConfirmation(order, 'promo');
+      return res.status(201).json({
+        orderId: order._id,
+        paymentProvider: 'free',
+        pricing: displayPricing,
+        invitationUrl: publicInvitationUrl(order.publicSlug),
+        dashboardUrl: dashboardUrl(order.editToken),
+      });
+    }
+
     if (!paypalApiConfigured()) {
+      await releasePromoReservation(order._id);
       console.error(`[paypal] order creation refused — PAYPAL_CLIENT_ID/SECRET not set on server. orderId=${order._id}`);
       return res.status(503).json({
         error: 'Payment system is not configured. Please contact support.',
@@ -291,6 +351,7 @@ router.post('/', validateOrderBody, async (req, res) => {
         },
       });
     } catch (paypalErr) {
+      await releasePromoReservation(order._id);
       console.error(`[paypal] order creation failed orderId=${order._id}:`, paypalErr.message, paypalErr.data);
       return res.status(502).json({ error: paypalErr.message || 'Could not create PayPal order' });
     }
@@ -317,27 +378,11 @@ async function activateFromCapture(order, paypalOrder) {
   order.currency = details.currency || order.currency || CURRENCY;
   if (order.paymentStatus !== 'paid') {
     await order.activate();
+    await redeemPromoReservation(order._id);
     console.log(`[paypal] activated orderId=${order._id} captureId=${details.captureId} amount=${details.amount} ${details.currency}`);
   }
 
-  if (!order.confirmationSent) {
-    try {
-      const email = orderConfirmationEmail({
-        customerName: order.customerName,
-        publicSlug: order.publicSlug,
-        editToken: order.editToken,
-        weddingDetails: order.weddingDetails,
-        isPending: false,
-        invitationCode: order.invitationCode,
-      });
-      await sendMail({ to: order.customerEmail, ...email });
-      order.confirmationSent = true;
-      await order.save();
-      console.log(`[paypal] confirmation email sent orderId=${order._id} to=${order.customerEmail}`);
-    } catch (emailErr) {
-      console.error(`[paypal] confirmation email failed orderId=${order._id} to=${order.customerEmail}:`, emailErr.message);
-    }
-  }
+  await sendOrderConfirmation(order, 'paypal');
   return true;
 }
 
@@ -398,6 +443,7 @@ router.post('/capture/:orderId', async (req, res) => {
             ? 'This payment session expired. Please go back and start again.'
           : description || 'PayPal could not capture the payment. Please try again.'
         );
+        await releasePromoReservation(order._id);
         return res.status(402).json({ error: userMessage, paypalIssue: issue, paypalOrderExpired: issue === 'ORDER_EXPIRED' || issue === 'ORDER_NOT_CAPTURABLE' });
       }
     }
@@ -420,6 +466,22 @@ router.post('/capture/:orderId', async (req, res) => {
     });
   } catch (err) {
     console.error('PayPal capture error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Release a pending promo reservation when a buyer leaves an initialized
+// checkout to edit the order. Paid orders can never be cancelled here.
+router.post('/cancel/:orderId', async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.orderId);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    if (order.paymentStatus === 'paid') return res.status(409).json({ error: 'Paid orders cannot be cancelled.' });
+    order.paymentStatus = 'failed';
+    await order.save();
+    await releasePromoReservation(order._id);
+    res.json({ cancelled: true });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
@@ -461,6 +523,8 @@ router.get('/status/:orderId', async (req, res) => {
       template: order.template,
       templateName: order.templateName || order.template?.name,
       pricingTier: order.pricingTier,
+      paymentProvider: order.paymentProvider,
+      eventType: order.weddingDetails?.eventType || 'wedding',
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

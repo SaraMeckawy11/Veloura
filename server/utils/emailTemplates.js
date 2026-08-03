@@ -2,7 +2,7 @@ import { getClientUrl } from '../config/urls.js';
 
 const CLIENT_URL = getClientUrl();
 
-export function orderConfirmationEmail({ customerName, publicSlug, editToken, weddingDetails, isPending = false, invitationCode }) {
+export function orderConfirmationEmail({ customerName, publicSlug, editToken, weddingDetails, isPending = false, isFree = false, invitationCode }) {
   const dashboardUrl = `${CLIENT_URL}/dashboard/${editToken}`;
   const editUrl = `${CLIENT_URL}/edit/${editToken}`;
   const invitationUrl = `${CLIENT_URL}/i/${publicSlug}`;
@@ -11,7 +11,8 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
   const name2 = weddingDetails.brideName || '';
   const coupleName = [name1, name2].filter(Boolean).join(' & ');
   const venue = weddingDetails.venue || '';
-  const shareText = `You're invited to ${coupleName ? `${coupleName}'s` : 'our'} wedding! View the invitation here: ${invitationUrl}`;
+  const eventLabel = weddingDetails.eventType === 'engagement' ? 'engagement' : 'wedding';
+  const shareText = `You're invited to ${coupleName ? `${coupleName}'s` : 'our'} ${eventLabel}! View the invitation here: ${invitationUrl}`;
   const shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
   const dateStr = weddingDetails.weddingDate
     ? new Date(weddingDetails.weddingDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
@@ -24,7 +25,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
   const title = isPending ? 'Your invitation is ready!' : 'Your invitation is live!';
   const subtitle = isPending
     ? `Thank you, ${customerName}! We've received your details and your invitation is being prepared. Complete payment to share it with your guests.`
-    : `Congratulations, ${customerName}! Your payment is confirmed. Here are your links.`;
+    : `Congratulations, ${customerName}! Your ${isFree ? 'order' : 'payment'} is confirmed. Here are your links.`;
 
   const details = [
     name1 && name2 ? ['Couple', `${name1} &amp; ${name2}`] : null,
@@ -123,7 +124,7 @@ export function orderConfirmationEmail({ customerName, publicSlug, editToken, we
           </tr>
           <tr>
             <td align="center" style="padding: 24px 16px; font-size: 11px; color: #B5B0AA;">
-              &copy; ${new Date().getFullYear()} <a href="${CLIENT_URL}" style="color: #D4AF5A; text-decoration: none;">Veloura</a> &middot; Beautiful wedding invitations
+              &copy; ${new Date().getFullYear()} <a href="${CLIENT_URL}" style="color: #D4AF5A; text-decoration: none;">Veloura</a> &middot; Beautiful digital invitations
             </td>
           </tr>
         </table>

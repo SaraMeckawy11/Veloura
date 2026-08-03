@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import TheaterSplash from './TheaterSplash';
 import './theater-final.css';
-import { calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc } from '../shared';
+import { calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getEventCopy, getInvitationPhotoSrc } from '../shared';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
@@ -57,6 +57,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   const rootRef = useHeroScrollReset(showSplash);
 
   const weddingDetails = order.weddingDetails || {};
+  const eventCopy = getEventCopy(weddingDetails.eventType);
   const disabledFields = order.disabledFields || [];
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const weddingDate = useMemo(
@@ -191,6 +192,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           timeStr={timeStr}
           venue={venue}
           weddingDate={weddingDate}
+          eventCopy={eventCopy}
         />
 
         {weddingDate && <CountdownSection timeLeft={timeLeft} />}
@@ -206,6 +208,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
           venue={venue}
           embedSrc={embedSrc}
           mapHref={openMapHref}
+          eventCopy={eventCopy}
         />
 
         {coupleMessage && <TheaterMessageSection message={coupleMessage} />}
@@ -263,11 +266,12 @@ function HeroSection({
   timeStr,
   venue,
   weddingDate,
+  eventCopy,
 }) {
   const venueLines = splitVenueLines(venue || 'The Royale Grand Theatre');
 
   return (
-    <section className="theater-hero" aria-label="Wedding invitation">
+    <section className="theater-hero" aria-label={`${eventCopy.label} invitation`}>
       <h1>
         <span>{name1}</span>
         <em>&amp;</em>
@@ -366,9 +370,10 @@ function DetailsSection({
   venue,
   embedSrc,
   mapHref,
+  eventCopy,
 }) {
   return (
-    <section className="theater-details" aria-label="Wedding details">
+    <section className="theater-details" aria-label={`${eventCopy.label} details`}>
       <div className="theater-details-plate" aria-hidden="true" />
       <div className="theater-details-venue">
         <h2>{venue || 'The Royale Grand Theatre'}</h2>

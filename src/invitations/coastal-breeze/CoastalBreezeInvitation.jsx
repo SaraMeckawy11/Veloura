@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoastalSplash from './CoastalSplash';
 import './coastal-breeze.css';
-import { buildInvitationImageSources, calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
+import { buildInvitationImageSources, calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getEventCopy, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -88,6 +88,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
   const rootRef = useHeroScrollReset(showSplash);
 
   const wd = order.weddingDetails || {};
+  const eventCopy = getEventCopy(wd.eventType);
   const disabledFields = order.disabledFields || [];
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const mapEnabled = fieldEnabled('venueMapUrl');
@@ -246,7 +247,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         <img className="coastal-art-bg" src={coastalHeroExtended} alt="" />
         <p className="coastal-art-layer coastal-hero-eyebrow">
           <span>Please join us to</span>
-          <span>celebrate the marriage of</span>
+          <span>celebrate the {eventCopy.celebrationPhrase} of</span>
         </p>
         <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-groom">{renderCoastalHeroName(name1)}</h1>
         <div className="coastal-art-layer coastal-hero-amp" aria-hidden="true">
@@ -268,7 +269,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       </section>
 
       {weddingDate && (
-        <section className="coastal-countdown coastal-art-section" aria-label="Countdown to the wedding">
+        <section className="coastal-countdown coastal-art-section" aria-label={`Countdown to the ${eventCopy.labelLower}`}>
           <img className="coastal-art-bg" src={coastalCountdownTrimmedBg} alt="" />
           <div className="coastal-count-titleblock">
             <h2 className="coastal-count-title">Countdown</h2>
@@ -383,7 +384,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
             <p className="coastal-rsvp-lead">
               We can't wait to celebrate with you. Please let us know by replying below.
             </p>
-            <div className="coastal-rsvp-tide-card" aria-label="Wedding details">
+            <div className="coastal-rsvp-tide-card" aria-label={`${eventCopy.label} details`}>
               <span>{fullDateStr || 'Date to be announced'}</span>
               <strong>{venue || 'By the sea'}</strong>
             </div>

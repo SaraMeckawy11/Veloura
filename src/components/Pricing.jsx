@@ -59,7 +59,7 @@ export default function Pricing({ showCta = true }) {
       <div className="container">
         <div className="section-header reveal" ref={headerRef}>
           <span className="section-label">Pricing</span>
-          <h2 className="section-title">Choose the invitation experience</h2>
+          <h2 className="section-title">One complete invitation experience</h2>
         </div>
 
         <div className="pricing-wrapper reveal" ref={cardRef}>
@@ -108,7 +108,7 @@ export default function Pricing({ showCta = true }) {
               {showCta && (
                 <div className="pricing-cta">
                   <Link to={`/order?tier=${tier.id}`} className="btn btn-gold pricing-cta-btn">
-                    Choose {tier.name}
+                    Create Your Invitation
                   </Link>
                 </div>
               )}

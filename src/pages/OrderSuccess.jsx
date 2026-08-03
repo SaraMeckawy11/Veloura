@@ -47,7 +47,10 @@ export default function OrderSuccess() {
   const isPaid = order?.paymentStatus === 'paid';
   const invitationUrl = order?.invitationUrl || (order?.publicSlug ? `${window.location.origin}/i/${order.publicSlug}` : '');
   const coupleName = order?.coupleName || [order?.weddingDetails?.groomName, order?.weddingDetails?.brideName].filter(Boolean).join(' & ');
-  const shareText = `You're invited to ${coupleName ? `${coupleName}'s` : 'our'} wedding! View the invitation here:`;
+  const eventLabel = order?.eventType === 'engagement' ? 'Engagement' : 'Wedding';
+  const eventLabelLower = eventLabel.toLowerCase();
+  const isFree = order?.paymentProvider === 'promo';
+  const shareText = `You're invited to ${coupleName ? `${coupleName}'s` : 'our'} ${eventLabelLower}! View the invitation here:`;
   const copyLink = async (value, key) => {
     if (!value) return;
     await navigator.clipboard.writeText(value);
@@ -58,7 +61,7 @@ export default function OrderSuccess() {
     if (!invitationUrl) return;
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'Wedding Invitation', text: shareText, url: invitationUrl });
+        await navigator.share({ title: `${eventLabel} Invitation`, text: shareText, url: invitationUrl });
         return;
       } catch {
         // user cancelled or share unavailable — fall back to copy
@@ -85,7 +88,7 @@ export default function OrderSuccess() {
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12" /></svg>
           </div>
 
-          <h1>Payment Verified</h1>
+          <h1>{isFree ? 'Invitation Confirmed' : 'Payment Verified'}</h1>
           <p className="success-subtitle">
             Congratulations! Your invitation is live. We've also emailed your links and private code.
           </p>

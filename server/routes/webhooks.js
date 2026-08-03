@@ -3,6 +3,7 @@ import Order from '../models/Order.js';
 import { sendMail } from '../config/email.js';
 import { orderConfirmationEmail } from '../utils/emailTemplates.js';
 import { verifyPaypalWebhook } from '../config/paypal.js';
+import { redeemPromoReservation, releasePromoReservation } from '../services/promoCodes.js';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ async function sendConfirmation(order) {
     publicSlug: order.publicSlug,
     editToken: order.editToken,
     weddingDetails: order.weddingDetails,
+    isFree: order.paymentProvider === 'promo',
     invitationCode: order.invitationCode,
   });
 
@@ -64,10 +66,11 @@ router.post('/paypal', async (req, res) => {
           if (resource.supplementary_data?.related_ids?.order_id) {
             order.paypalOrderId = resource.supplementary_data.related_ids.order_id;
           }
-          order.amountPaid = resource.amount?.value || order.amountPaid || process.env.PRICE_USD || '69.00';
+          order.amountPaid = resource.amount?.value || order.amountPaid || process.env.PRICE_USD || '79.00';
           order.currency = resource.amount?.currency_code || order.currency || 'USD';
           if (order.paymentStatus !== 'paid') {
             await order.activate();
+            await redeemPromoReservation(order._id);
           }
           await sendConfirmation(order);
         }
@@ -84,6 +87,7 @@ router.post('/paypal', async (req, res) => {
           if (resource.id) order.paypalCaptureId = resource.id;
           order.paymentStatus = 'failed';
           await order.save();
+          await releasePromoReservation(order._id);
         }
         break;
       }

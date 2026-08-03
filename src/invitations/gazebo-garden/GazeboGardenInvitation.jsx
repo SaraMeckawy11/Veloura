@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
 import GazeboSplash from './GazeboSplash';
-import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
+import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getEventCopy, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -127,6 +127,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   const rootRef = useHeroScrollReset(showSplash);
 
   const wd = order.weddingDetails || {};
+  const eventCopy = getEventCopy(wd.eventType);
   const disabledFields = order.disabledFields || [];
   const fieldEnabled = (key) => !disabledFields.includes(key);
   const mapEnabled = fieldEnabled('venueMapUrl');
@@ -331,7 +332,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           animate={{ opacity: 1, filter: 'blur(0px)', y: 0, scale: 1 }}
           transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="gazebo-hero-invite">You are invited to the wedding of</p>
+          <p className="gazebo-hero-invite">You are invited to the {eventCopy.labelLower} of</p>
           <h1>{coupleNames}</h1>
           <p className="gazebo-hero-date">{heroDate || fullDateStr}</p>
           {timeStr && <p className="gazebo-hero-time">{timeStr}</p>}
