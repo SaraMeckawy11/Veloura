@@ -8,6 +8,7 @@ import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
+import InvitationSectionTransition from '../InvitationSectionTransition';
 import './gazebo-garden.css';
 import gardenEnvelope from '../../assets/gardenPavilion/garden-pavilion-envelope-transparent.png';
 
@@ -308,6 +309,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
       {contentReady && (<>
       <section id="hero" className="gazebo-hero">
+        <InvitationSectionTransition hero />
         <div className="gazebo-hero-media" aria-hidden>
           <img src="/assets/gazebo-watercolor-poster1.jpg" alt="" />
           {!prefersReducedMotion && !heroVideoFailed && (
@@ -342,6 +344,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
       {weddingDate && (
         <section className="gazebo-section gazebo-countdown">
+          <InvitationSectionTransition />
           <div className="gazebo-section-soft-pattern" aria-hidden="true" />
           <SectionTitle eyebrow="The celebration begins in" title="Counting every heartbeat" />
           <div className="gazebo-count-grid">
@@ -354,6 +357,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
       {storyItems.length > 0 && (
       <section id="story" className="gazebo-section gazebo-story-section">
+        <InvitationSectionTransition />
         <SectionTitle eyebrow="Our story" title="The path that brought us here" />
         <div className="gazebo-story-grid" data-story-orientation={storyOrientation}>
           {storyItems.map((item, index) => (
@@ -382,6 +386,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       )}
 
       <section id="details" className="gazebo-section gazebo-details-section">
+        <InvitationSectionTransition />
         <SectionTitle
           eyebrow="Event details"
           title="Where love gathers"
@@ -423,6 +428,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
       {rsvpEnabled && (
       <section id="rsvp" className="gazebo-section gazebo-rsvp-section">
+        <InvitationSectionTransition />
         <SectionTitle eyebrow="Kindly reply" title="Reserve your place" />
         <AnimatePresence mode="wait">
           {!rsvpSubmitted ? (
@@ -509,6 +515,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 
       {galleryItems.length > 0 && (
         <section id="gallery" className="gazebo-section gazebo-gallery-section">
+          <InvitationSectionTransition />
           <GazeboGallerySection items={galleryItems} />
         </section>
       )}
@@ -529,6 +536,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
 function GazeboMessageSection({ message }) {
   return (
     <section className="gazebo-section gazebo-message-section">
+      <InvitationSectionTransition />
       <SectionTitle title="A Note" />
       <motion.div
         className="gazebo-note-envelope"

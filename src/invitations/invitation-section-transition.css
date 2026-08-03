@@ -1,0 +1,91 @@
+/*
+ * Every invitation section fades into one shared surface at both edges.
+ * Because the overlay lives inside each section, React can omit any optional
+ * sections and the two remaining neighbours still meet on the same colour.
+ */
+:where(
+  .boarding-pass-theme,
+  .coastal-theme,
+  .fountain-theme,
+  .gazebo-theme,
+  .theater-theme
+) {
+  --invitation-section-flow-size: clamp(52px, 8vw, 104px);
+}
+
+.boarding-pass-theme {
+  --invitation-section-flow-surface: #f4f4f0;
+}
+
+.coastal-theme {
+  --invitation-section-flow-surface: #f6f0e7;
+}
+
+.fountain-theme {
+  --invitation-section-flow-surface: #faf5ec;
+}
+
+.gazebo-theme {
+  --invitation-section-flow-surface: #f8fcf4;
+}
+
+.theater-theme {
+  --invitation-section-flow-surface: #f0e1c9;
+}
+
+:where(
+  .boarding-pass-theme,
+  .coastal-theme,
+  .fountain-theme,
+  .gazebo-theme,
+  .theater-theme
+) section {
+  position: relative;
+}
+
+.invitation-section-transition {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: block;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      var(--invitation-section-flow-surface) 0,
+      transparent 100%
+    ) top / 100% var(--invitation-section-flow-size) no-repeat,
+    linear-gradient(
+      to top,
+      var(--invitation-section-flow-surface) 0,
+      transparent 100%
+    ) bottom / 100% var(--invitation-section-flow-size) no-repeat;
+}
+
+/* Preserve full-bleed hero artwork: its top stays untouched and only the
+   final edge eases into the following section. */
+.invitation-section-transition--hero {
+  --invitation-hero-flow-size: clamp(36px, 5vw, 72px);
+  background:
+    linear-gradient(
+      to top,
+      var(--invitation-section-flow-surface) 0,
+      transparent 100%
+    ) bottom / 100% var(--invitation-hero-flow-size) no-repeat;
+}
+
+@media (max-width: 640px) {
+  :where(
+    .boarding-pass-theme,
+    .coastal-theme,
+    .fountain-theme,
+    .gazebo-theme,
+    .theater-theme
+  ) {
+    --invitation-section-flow-size: clamp(40px, 12vw, 72px);
+  }
+
+  .invitation-section-transition--hero {
+    --invitation-hero-flow-size: clamp(28px, 8vw, 44px);
+  }
+}

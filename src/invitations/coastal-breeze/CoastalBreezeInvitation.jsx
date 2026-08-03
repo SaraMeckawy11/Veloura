@@ -9,6 +9,7 @@ import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
+import InvitationSectionTransition from '../InvitationSectionTransition';
 
 import ceremonyArch from '../../assets/coastal/beach-wedding-ceremony-illustration-watercolor-style-depicts-romantic-setup-arch-adorned-orange-roses-white-378559681.webp';
 import coastalHeroExtended from '../../assets/coastal/coastal-hero-extended.webp';
@@ -294,6 +295,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       )}
       {!isReferenceDemo && couplePhotos.length > 0 && (
         <section className="coastal-section coastal-couple-section">
+          <InvitationSectionTransition />
           <SectionTitle eyebrow="The couple" title="A Love" script="In Full Tide" />
           <div className="coastal-couple-grid">
             {couplePhotos.map((photo, index) => (
@@ -319,6 +321,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
       ) : null}
 
       <section className="coastal-section coastal-event-section">
+        <InvitationSectionTransition />
         <SectionTitle title="Event details" subtitle="where love gathers" />
         <div className="coastal-event-layout">
           <motion.div
@@ -372,6 +375,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
 
       {rsvpEnabled && (
       <section className="coastal-rsvp-section">
+        <InvitationSectionTransition />
         <div className="coastal-rsvp-ocean" aria-hidden>
           <span className="coastal-rsvp-foam coastal-rsvp-foam-one" />
           <span className="coastal-rsvp-foam coastal-rsvp-foam-two" />
@@ -535,6 +539,7 @@ function SectionTitle({ eyebrow, title, script, subtitle, light = false }) {
 function CoastalMessageSection({ message }) {
   return (
     <section className="coastal-message-section">
+      <InvitationSectionTransition />
       <SectionTitle title="A Note" />
       <motion.div
         className="coastal-envelope"
@@ -560,6 +565,7 @@ function StorySection({ milestones, images, orientation = 'portrait' }) {
 
   return (
     <section className="coastal-section coastal-story-section">
+      <InvitationSectionTransition />
       <div className="coastal-section-title coastal-story-title">
         <h2>Our Story</h2>
         <p className="coastal-story-title-route">The Route Of Us</p>
@@ -801,6 +807,7 @@ function GallerySection({ images }) {
 
   return (
     <section className="coastal-gallery-section">
+      <InvitationSectionTransition />
       <div className="coastal-gallery-header">
         <h2>Memories</h2>
       </div>

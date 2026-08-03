@@ -9,6 +9,7 @@ import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
+import InvitationSectionTransition from '../InvitationSectionTransition';
 import './boarding-pass.css';
 import boardingPassEnvelope from '../../assets/boardingPass/boarding-pass-envelope-transparent.png';
 import heroEmpty from '../../assets/boardingPass/hero1OccasionTransparent.png';
@@ -194,6 +195,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {contentReady && (<>
       {/* ========== HERO ========== */}
       <section className="inv-hero">
+        <InvitationSectionTransition hero />
         {/* Cloud background with parallax scroll */}
         <div className="inv-hero-bg">
           <div className="inv-clouds-scroll">
@@ -252,6 +254,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {/* ========== COUNTDOWN ========== */}
       {weddingDate && (
         <section className="inv-section-dark">
+          <InvitationSectionTransition />
           <div className="inv-corner-tl" /><div className="inv-corner-tr" />
           <div className="inv-corner-bl" /><div className="inv-corner-br" />
           <motion.div
@@ -277,6 +280,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {/* ========== COUPLE PHOTOS (not in reference template) ========== */}
       {!isReferenceDemo && couplePhotos.length > 0 && (
         <section className="inv-section-light">
+          <InvitationSectionTransition />
           <h2 className="inv-section-label">The Couple</h2>
           <div className="inv-gold-divider" />
           <div className="inv-couple-gallery">
@@ -292,6 +296,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {/* ========== OUR STORY ========== */}
       {isReferenceDemo && storyMilestones.length ? (
         <section className="inv-section-light">
+          <InvitationSectionTransition />
           <p className="inv-section-label-mono">FLIGHT ROUTE</p>
           <motion.h3
             className="inv-story-title"
@@ -330,6 +335,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         </section>
       ) : storyPhotos.length > 0 ? (
         <section className="inv-section-light">
+          <InvitationSectionTransition />
           <p className="inv-section-label-mono">FLIGHT ROUTE</p>
           <motion.h3
             className="inv-story-title"
@@ -373,6 +379,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
       {/* ========== EVENT DETAILS ========== */}
       <section className="inv-section-dark">
+        <InvitationSectionTransition />
         <div className="inv-corner-tl" /><div className="inv-corner-tr" />
         <motion.h2
           className="inv-section-label"
@@ -458,6 +465,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {/* ========== RSVP ========== */}
       {rsvpEnabled && (
       <section className="inv-rsvp-section">
+        <InvitationSectionTransition />
         <div className="inv-rsvp-bg-decor">
           <div className="inv-rsvp-bg-line" />
         </div>
@@ -572,6 +580,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {/* ========== GALLERY ========== */}
       {invitationTierAllows(order, 'gallery') && isReferenceDemo && order.galleryImages?.length ? (
         <section className="inv-section-dark" ref={galleryRef}>
+          <InvitationSectionTransition />
           <motion.h2
             className="inv-section-label"
             initial={{ opacity: 0 }}
@@ -601,6 +610,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
         </section>
       ) : allGallery.length > 0 ? (
         <section className="inv-section-dark" ref={galleryRef}>
+          <InvitationSectionTransition />
           <motion.h2
             className="inv-section-label"
             initial={{ opacity: 0 }}
@@ -632,6 +642,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
       {/* ========== FOOTER — Modern Premium ========== */}
       <section className="inv-footer">
+        <InvitationSectionTransition />
         <div className="perforation-horizontal inv-footer-top-perf" />
         <motion.div
           className="inv-footer-content"
@@ -656,6 +667,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 function BoardingPassMessageSection({ message }) {
   return (
     <section className="inv-message-section">
+      <InvitationSectionTransition />
       <h2 className="inv-message-title">A Note</h2>
       <div className="inv-gold-divider" />
       <motion.div

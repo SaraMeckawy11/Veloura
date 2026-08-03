@@ -7,6 +7,7 @@ import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllo
 import InvitationPhoto from '../InvitationPhoto';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import useHeroScrollReset from '../useHeroScrollReset';
+import InvitationSectionTransition from '../InvitationSectionTransition';
 import memoriesTitle from '../../assets/theater/memories/title(4)_transparent.png';
 import storyFilmSeparator from '../../assets/theater/story/filmSeperator_transparent.png';
 import storyTitle from '../../assets/theater/story/title7_transparent.png';
@@ -244,6 +245,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
 function TheaterMessageSection({ message }) {
   return (
     <section className="theater-message" aria-label="A note from the couple">
+      <InvitationSectionTransition />
       <h2>A Note</h2>
       <div className="theater-envelope">
         <img className="theater-envelope-image" src={theaterEnvelope} alt="" aria-hidden="true" />
@@ -272,6 +274,7 @@ function HeroSection({
 
   return (
     <section className="theater-hero" aria-label={`${eventCopy.label} invitation`}>
+      <InvitationSectionTransition hero />
       <h1>
         <span>{name1}</span>
         <em>&amp;</em>
@@ -316,6 +319,7 @@ function CountdownSection({ timeLeft }) {
 
   return (
     <section className="theater-countdown" aria-label="Countdown">
+      <InvitationSectionTransition />
       <div className="theater-count-grid">
         {countdown.map(item => (
           <div className="theater-count-card" key={item.label}>
@@ -331,6 +335,7 @@ function CountdownSection({ timeLeft }) {
 function StorySection({ items }) {
   return (
     <section className="theater-story" aria-labelledby="theater-story-title">
+      <InvitationSectionTransition />
       <TheaterAssetTitle
         className="theater-story-title"
         titleId="theater-story-title"
@@ -374,6 +379,7 @@ function DetailsSection({
 }) {
   return (
     <section className="theater-details" aria-label={`${eventCopy.label} details`}>
+      <InvitationSectionTransition />
       <div className="theater-details-plate" aria-hidden="true" />
       <div className="theater-details-venue">
         <h2>{venue || 'The Royale Grand Theatre'}</h2>
@@ -423,6 +429,7 @@ function RsvpSection({
 }) {
   return (
     <section className="theater-rsvp" aria-labelledby="theater-rsvp-title">
+      <InvitationSectionTransition />
       <h2 id="theater-rsvp-title" className="visually-hidden">RSVP</h2>
       {!rsvpSubmitted ? (
         <form className="theater-rsvp-form" onSubmit={handleRsvp}>
@@ -686,6 +693,7 @@ function MemoriesSection({ images }) {
 
   return (
     <section className="theater-memories" aria-labelledby="theater-memories-title">
+      <InvitationSectionTransition />
       <TheaterAssetTitle
         className="theater-memories-title"
         titleId="theater-memories-title"

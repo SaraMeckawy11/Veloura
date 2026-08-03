@@ -11,6 +11,7 @@ import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
 import InvitationPhoto from '../InvitationPhoto';
 import useHeroScrollReset from '../useHeroScrollReset';
+import InvitationSectionTransition from '../InvitationSectionTransition';
 import sectionSeparator from '../../assets/Fountain Reverie/decorative_components/elegant_vintage_ornamental_flourish_transparent.png';
 import envelopeMessage from '../../assets/Fountain Reverie/envelope_message.png';
 
@@ -260,6 +261,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       )}
 
       <section className="fountain-hero">
+        <InvitationSectionTransition hero />
         <div className="fountain-hero-art">
           <img className="fountain-hero-image" src={heroImage} alt="" aria-hidden="true" />
           <motion.article
@@ -289,6 +291,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       {weddingDate && (
         <>
           <section className="fountain-countdown">
+            <InvitationSectionTransition />
             <SectionTitle title="Countdown" />
             <div className="fountain-count-grid">
               <CountdownUnit value={pad(timeLeft.months)} label="Months" />
@@ -302,6 +305,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       {!isReferenceDemo && couplePhotos.length > 0 && (
         <>
           <section className="fountain-section fountain-couple-section">
+            <InvitationSectionTransition />
             <SectionTitle title="Couple" />
             <div className="fountain-couple-grid">
               {couplePhotos.map((photo, index) => (
@@ -328,6 +332,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       ) : null}
 
       <section className="fountain-section fountain-event-section">
+        <InvitationSectionTransition />
         <SectionTitle title="Details" />
         <div className="fountain-event-layout">
           <motion.div
@@ -387,6 +392,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       {rsvpEnabled && (
         <>
           <section className="fountain-rsvp-section">
+            <InvitationSectionTransition />
             <div className="fountain-rsvp-panel">
               <div className="fountain-rsvp-panel-header">
                 <img className="fountain-rsvp-panel-ornament" src={sectionSeparator} alt="" aria-hidden="true" />
@@ -520,6 +526,7 @@ function SectionTitle({ title }) {
 function CoupleMessageSection({ message }) {
   return (
     <section className="fountain-section fountain-message-section">
+      <InvitationSectionTransition />
       <SectionTitle title="A Note" />
       <motion.div
         className="fountain-envelope"
@@ -555,6 +562,7 @@ function StorySection({ milestones, images }) {
   return (
     <>
       <section className="fountain-section fountain-story-section">
+        <InvitationSectionTransition />
         <SectionTitle title="Story" />
         <div className="fountain-story-grid">
         {items.map((item, index) => (
@@ -772,6 +780,7 @@ function GallerySection({ images }) {
   return (
     <>
       <section className="fountain-gallery-section">
+        <InvitationSectionTransition />
         <SectionTitle title="Memories" />
         <div className="fountain-gallery-viewport">
         <div
