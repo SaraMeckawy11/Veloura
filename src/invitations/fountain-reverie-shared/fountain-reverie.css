@@ -6880,8 +6880,14 @@
   border-radius: inherit;
 }
 
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 23.5%;
+  width: min(32rem, 82cqw);
+}
+
 .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
-  font-size: clamp(1.8rem, 2.9vw, 2.45rem);
+  width: min(30rem, 100%);
+  font-size: clamp(1.7rem, 2.7vw, 2.25rem);
   line-height: 0.98;
 }
 
@@ -6904,8 +6910,14 @@
 }
 
 @media (max-width: 840px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 26%;
+    width: 84cqw;
+  }
+
   .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
-    font-size: clamp(1.72rem, 5.8vw, 2.15rem);
+    width: min(25rem, 100%);
+    font-size: clamp(1.58rem, 5.2vw, 1.95rem);
   }
 }
 
@@ -6918,8 +6930,14 @@
 }
 
 @media (max-width: 620px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 28%;
+    width: 86cqw;
+  }
+
   .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
-    font-size: clamp(1.48rem, 7.25cqw, 1.72rem);
+    width: min(19rem, 100%);
+    font-size: clamp(1.3rem, 6.2cqw, 1.5rem);
   }
 
   .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i {
@@ -6927,9 +6945,9 @@
   }
 
   .fountain-theme-v1 .fountain-envelope-copy {
-    top: 16%;
-    width: min(15rem, 68%);
-    max-height: 23%;
+    top: 21%;
+    width: min(13.5rem, 60%);
+    max-height: 25%;
     padding: 0 0.15rem 0.25rem;
     overflow-y: auto;
     scrollbar-width: none;
@@ -6940,15 +6958,15 @@
   }
 
   .fountain-theme-v1 .fountain-envelope-copy span {
-    font-size: 0.47rem;
+    font-size: 0.45rem;
     letter-spacing: 0.1em;
     line-height: 1.2;
   }
 
   .fountain-theme-v1 .fountain-envelope-copy p {
-    margin-top: 0.34rem;
-    font-size: clamp(0.58rem, 2.45vw, 0.64rem);
-    line-height: 1.22;
+    margin-top: 0.3rem;
+    font-size: clamp(0.56rem, 2.25vw, 0.62rem);
+    line-height: 1.18;
     overflow-wrap: anywhere;
   }
 
@@ -6964,14 +6982,20 @@
 }
 
 @media (max-width: 420px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 29%;
+    width: 88cqw;
+  }
+
   .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
-    font-size: clamp(1.4rem, 7cqw, 1.62rem);
+    width: min(17rem, 100%);
+    font-size: clamp(1.25rem, 6cqw, 1.42rem);
   }
 
   .fountain-theme-v1 .fountain-envelope-copy {
-    top: 15.5%;
-    width: 68%;
-    max-height: 22.5%;
+    top: 21.5%;
+    width: 58%;
+    max-height: 25%;
   }
 
   .fountain-theme-v1 .fountain-footer {
