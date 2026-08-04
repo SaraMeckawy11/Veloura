@@ -234,28 +234,46 @@ const FONT_PICKER_ORDER = [
   'timeless',       // bouncy Dancing Script
 ];
 
-const ARABIC_SERIF_FONTS = new Set([
-  'classic', 'garden', 'heirloom', 'storybook', 'heritage', 'poetic', 'soft-heirloom',
-]);
-const ARABIC_DISPLAY_FONTS = new Set([
-  'couture', 'regal', 'marquee', 'estate', 'artful-serif', 'monogram',
-]);
-const ARABIC_SCRIPT_FONTS = new Set([
-  'romantic', 'enchanted', 'signature', 'formal-script', 'whimsical', 'timeless',
-  'vow-script', 'royal-note',
-]);
+// Latin fonts do not contain Arabic glyphs, so Arabic names fall through to
+// these families. Each visible picker option deliberately has a distinct name
+// face instead of collapsing into the same Naskh, Kufi, or Ruqaa fallback.
+const ARABIC_NASKH = "'Noto Naskh Arabic Variable'";
+const ARABIC_KUFI = "'Noto Kufi Arabic Variable'";
+
+function arabicFont(display, body = display, script = display) {
+  return { display, body, script };
+}
+
+const ARABIC_FONT_DEFS = {
+  classic: arabicFont("'Amiri'"),
+  garden: arabicFont("'Katibeh'", ARABIC_NASKH),
+  heirloom: arabicFont("'Scheherazade New'"),
+  storybook: arabicFont("'Harmattan'"),
+  heritage: arabicFont(ARABIC_NASKH),
+  couture: arabicFont("'El Messiri'", ARABIC_NASKH),
+  regal: arabicFont("'Reem Kufi'", "'Tajawal'"),
+  poetic: arabicFont("'Lateef'"),
+  romantic: arabicFont("'Aref Ruqaa'", ARABIC_NASKH),
+  enchanted: arabicFont("'Katibeh'", ARABIC_NASKH),
+  signature: arabicFont("'Rakkas'", ARABIC_NASKH),
+  'formal-script': arabicFont("'Lateef'", "'Scheherazade New'"),
+  whimsical: arabicFont("'Lemonada'", "'Tajawal'"),
+  timeless: arabicFont("'Marhey'", ARABIC_NASKH),
+  modern: arabicFont("'Tajawal'"),
+  contemporary: arabicFont("'Cairo'"),
+  'soft-modern': arabicFont("'IBM Plex Sans Arabic'"),
+  marquee: arabicFont("'Changa'", "'Tajawal'"),
+  estate: arabicFont("'Harmattan'"),
+  'vow-script': arabicFont("'Aref Ruqaa'", ARABIC_NASKH),
+  'royal-note': arabicFont("'Katibeh'", ARABIC_NASKH),
+  'soft-heirloom': arabicFont("'Scheherazade New'"),
+  'modern-luxe': arabicFont("'IBM Plex Sans Arabic'"),
+  'artful-serif': arabicFont("'Rakkas'", ARABIC_NASKH),
+  monogram: arabicFont("'Lalezar'", "'Tajawal'"),
+};
 
 function getArabicFontFamily(value, role) {
-  if (ARABIC_SCRIPT_FONTS.has(value)) {
-    return role === 'body' ? "'Noto Naskh Arabic Variable'" : "'Aref Ruqaa'";
-  }
-  if (ARABIC_DISPLAY_FONTS.has(value)) {
-    return role === 'body' ? "'Noto Naskh Arabic Variable'" : "'Noto Kufi Arabic Variable'";
-  }
-  if (ARABIC_SERIF_FONTS.has(value)) {
-    return "'Noto Naskh Arabic Variable'";
-  }
-  return "'Noto Kufi Arabic Variable'";
+  return ARABIC_FONT_DEFS[value]?.[role] || ARABIC_KUFI;
 }
 
 function addArabicFallback(fontStack, arabicFamily) {
