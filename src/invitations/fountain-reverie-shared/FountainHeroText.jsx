@@ -127,8 +127,6 @@ export default function FountainHeroText({
           <span>{formatInvitationName(groom)}</span>
         </h1>
 
-        <div className="fountain-video-hero-flourish" aria-hidden="true"><span /></div>
-
         <div className="fountain-video-hero-meta">
           <span>{date}</span>
           {time && <span>{time.replace(/^AT\s+/i, '')}</span>}

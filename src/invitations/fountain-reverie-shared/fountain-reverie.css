@@ -6834,6 +6834,476 @@
   }
 }
 
+/* Fountain Reverie V1 -- lake-and-limestone reference system ------------
+   This final layer intentionally owns the hero typography and page palette.
+   It mirrors the supplied watercolor art: blue sky and water, warm limestone,
+   deep ivy, and the dark umber lettering used in the reference invitation. */
+.fountain-theme-v1 {
+  --fountain-lake: #b9d4e3;
+  --fountain-lake-soft: #dbe8ed;
+  --fountain-limestone: #eadcc3;
+  --fountain-parchment: #fbf5e8;
+  --fountain-umber: #543721;
+  --fountain-copy: #50453a;
+  --fountain-ivy: #3f5545;
+  --fountain-antique-gold: #987747;
+  --fountain-reference-border: rgba(91, 67, 39, 0.22);
+  --fountain-reference-shadow: 0 20px 52px rgba(61, 73, 68, 0.13);
+
+  color: var(--fountain-copy);
+  background-color: var(--fountain-lake-soft);
+  background-image:
+    radial-gradient(ellipse 58% 18% at 4% 10%, rgba(110, 158, 188, 0.26), transparent 72%),
+    radial-gradient(ellipse 48% 20% at 96% 28%, rgba(210, 190, 151, 0.32), transparent 72%),
+    radial-gradient(ellipse 55% 19% at 2% 52%, rgba(93, 145, 177, 0.2), transparent 72%),
+    radial-gradient(ellipse 52% 18% at 98% 74%, rgba(213, 191, 150, 0.3), transparent 72%),
+    linear-gradient(
+      180deg,
+      #c9dfeb 0%,
+      #e5eceb 13%,
+      #f2e7d2 30%,
+      #d8e6ea 48%,
+      #f5ebd9 67%,
+      #d3e3ea 83%,
+      #eadcc4 100%
+    );
+}
+
+/* Reference hero typography and ornament. */
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 24.5%;
+  width: min(39rem, 80cqw);
+  padding: 0;
+  color: var(--fountain-umber);
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 249, 235, 0.78), 0 3px 14px rgba(255, 250, 238, 0.42);
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-video-hero-eyebrow {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  color: var(--fountain-umber);
+  font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif !important;
+  font-size: clamp(0.92rem, min(2.8cqw, 1.85cqh), 1.72rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.015em;
+  line-height: 1.15;
+  text-transform: none;
+  text-wrap: balance;
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish {
+  display: flex;
+  width: min(9.5rem, 31cqw);
+  margin: clamp(0.5rem, 1.3cqh, 0.85rem) auto;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  color: var(--fountain-antique-gold);
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish::before,
+.fountain-theme-v1 .fountain-video-hero-flourish::after {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, currentColor);
+  content: "";
+  opacity: 0.8;
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish::after {
+  background: linear-gradient(90deg, currentColor, transparent);
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish span {
+  display: grid;
+  width: 0.8rem;
+  height: 0.8rem;
+  place-items: center;
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish span::before {
+  content: "◆";
+  font-size: 0.43rem;
+  line-height: 1;
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish--intro {
+  margin-bottom: clamp(0.6rem, 1.5cqh, 0.95rem);
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish--closing {
+  width: min(7rem, 24cqw);
+  margin-top: clamp(0.62rem, 1.45cqh, 0.92rem);
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-names,
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-names span {
+  color: var(--fountain-umber);
+  font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif !important;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  display: flex;
+  width: min(37rem, 100%);
+  margin: 0 auto;
+  flex-direction: column;
+  gap: 0;
+  font-size: clamp(2.35rem, min(9.6cqw, 5.5cqh), 5.75rem);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 0.88;
+  text-shadow: inherit;
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-names i {
+  display: grid;
+  width: min(10rem, 38%);
+  margin: clamp(0.25rem, 0.72cqh, 0.48rem) auto;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--fountain-umber);
+  font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif !important;
+  font-size: 0.56em;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::before,
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::after {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--fountain-antique-gold));
+  content: "";
+  opacity: 0.88;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::after {
+  background: linear-gradient(90deg, var(--fountain-antique-gold), transparent);
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-video-hero-meta {
+  display: flex;
+  width: auto;
+  margin: 0.1rem auto 0;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.32rem, 0.85cqh, 0.52rem);
+  color: var(--fountain-umber);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: clamp(0.64rem, min(1.85cqw, 1.14cqh), 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  line-height: 1.35;
+  text-shadow: inherit;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta i {
+  position: relative;
+  display: block;
+  width: min(6rem, 21cqw);
+  height: 1px;
+  margin: 0.05rem auto;
+  background: linear-gradient(90deg, transparent, var(--fountain-antique-gold) 25%, var(--fountain-antique-gold) 75%, transparent);
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta i::after {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.28rem;
+  height: 0.28rem;
+  border-radius: 50%;
+  background: var(--fountain-umber);
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta span:last-child {
+  color: var(--fountain-umber);
+  letter-spacing: 0.3em;
+}
+
+/* Let the watercolor palette flow continuously instead of creating unrelated
+   peach and green bands between sections. */
+.fountain-theme-v1 .fountain-countdown,
+.fountain-theme-v1 .fountain-section,
+.fountain-theme-v1 .fountain-story-section,
+.fountain-theme-v1 .fountain-couple-section,
+.fountain-theme-v1 .fountain-event-section,
+.fountain-theme-v1 .fountain-message-section,
+.fountain-theme-v1 .fountain-rsvp-section,
+.fountain-theme-v1 .fountain-gallery-section {
+  color: var(--fountain-copy);
+  background: transparent;
+}
+
+.fountain-theme-v1 .fountain-countdown,
+.fountain-theme-v1 .fountain-event-section,
+.fountain-theme-v1 .fountain-rsvp-section {
+  background: linear-gradient(180deg, rgba(185, 212, 227, 0) 0%, rgba(185, 212, 227, 0.3) 18%, rgba(219, 232, 237, 0.36) 82%, rgba(185, 212, 227, 0) 100%);
+}
+
+.fountain-theme-v1 .fountain-story-section,
+.fountain-theme-v1 .fountain-message-section,
+.fountain-theme-v1 .fountain-gallery-section {
+  background: linear-gradient(180deg, rgba(234, 220, 195, 0) 0%, rgba(251, 245, 232, 0.42) 18%, rgba(234, 220, 195, 0.32) 82%, rgba(234, 220, 195, 0) 100%);
+}
+
+.fountain-theme-v1 .fountain-section-title h2,
+.fountain-theme-v1 .fountain-gallery-header h2,
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  color: var(--fountain-umber);
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-section-title img,
+.fountain-theme-v1 .fountain-rsvp-panel-ornament {
+  filter: sepia(0.22) saturate(0.82) hue-rotate(344deg) drop-shadow(0 4px 9px rgba(70, 52, 31, 0.08));
+  opacity: 0.76;
+}
+
+.fountain-theme-v1 .fountain-count-unit,
+.fountain-theme-v1 .fountain-story-card,
+.fountain-theme-v1 .fountain-event-card,
+.fountain-theme-v1 .fountain-rsvp-panel {
+  border: 1px solid var(--fountain-reference-border);
+  background:
+    radial-gradient(circle at 92% 5%, rgba(185, 212, 227, 0.24), transparent 34%),
+    linear-gradient(150deg, rgba(255, 251, 241, 0.96), rgba(235, 223, 201, 0.91));
+  box-shadow: var(--fountain-reference-shadow);
+}
+
+.fountain-theme-v1 .fountain-story-card {
+  padding: clamp(1rem, 2.6vw, 1.65rem);
+  border-radius: 0.95rem;
+}
+
+.fountain-theme-v1 .fountain-count-unit strong,
+.fountain-theme-v1 .fountain-story-text h3,
+.fountain-theme-v1 .fountain-event-card dd,
+.fountain-theme-v1 .fountain-envelope-copy p,
+.fountain-theme-v1 .fountain-footer h2 {
+  color: var(--fountain-umber);
+}
+
+.fountain-theme-v1 .fountain-count-unit span,
+.fountain-theme-v1 .fountain-story-text span,
+.fountain-theme-v1 .fountain-event-card dt,
+.fountain-theme-v1 .fountain-envelope-copy span,
+.fountain-theme-v1 .fountain-rsvp-panel-header strong,
+.fountain-theme-v1 .fountain-rsvp-panel-field span,
+.fountain-theme-v1 .fountain-rsvp-panel-choice legend,
+.fountain-theme-v1 .fountain-rsvp-panel-form .rsvp-plus-one-label,
+.fountain-theme-v1 .fountain-footer .fountain-reception {
+  color: var(--fountain-ivy);
+}
+
+.fountain-theme-v1 .fountain-story-text p,
+.fountain-theme-v1 .fountain-rsvp-panel-header p,
+.fountain-theme-v1 .fountain-footer p:last-child {
+  color: #554a3e;
+}
+
+.fountain-theme-v1 .fountain-map {
+  border-color: rgba(60, 86, 81, 0.26);
+  background: var(--fountain-lake-soft);
+  box-shadow: 0 16px 38px rgba(50, 71, 70, 0.13);
+}
+
+.fountain-theme-v1 .fountain-map iframe {
+  filter: sepia(0.08) saturate(0.76) hue-rotate(158deg) contrast(0.96);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  border-color: rgba(73, 83, 67, 0.28);
+  background: rgba(255, 252, 244, 0.92);
+  color: #40372f;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input::placeholder,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea::placeholder {
+  color: #786f64;
+  opacity: 1;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input:focus,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea:focus {
+  border-color: #47708a;
+  background: #fffdf8;
+  box-shadow: 0 0 0 3px rgba(71, 112, 138, 0.2);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button {
+  border-color: rgba(63, 85, 69, 0.28);
+  background: rgba(255, 252, 244, 0.82);
+  color: #374c40;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button:hover {
+  border-color: rgba(63, 85, 69, 0.52);
+  background: #fffaf0;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button:focus-visible,
+.fountain-theme-v1 .fountain-rsvp-panel-submit:focus-visible {
+  outline: 3px solid rgba(71, 112, 138, 0.34);
+  outline-offset: 3px;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button.active {
+  border-color: #3f5545;
+  background: #dbe6dc;
+  color: #293d32;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit {
+  border: 1px solid #344b3e;
+  background: linear-gradient(135deg, #496453, #30483b);
+  color: #fffaf0;
+  box-shadow: 0 13px 28px rgba(42, 65, 54, 0.23);
+}
+
+.fountain-theme-v1 .fountain-gallery-card {
+  border: 1px solid rgba(84, 69, 46, 0.2);
+  background: var(--fountain-parchment);
+  box-shadow: 0 17px 40px rgba(55, 73, 70, 0.15);
+}
+
+.fountain-theme-v1 .fountain-footer {
+  background:
+    linear-gradient(180deg, rgba(211, 227, 234, 0) 0%, rgba(198, 218, 228, 0.68) 30%, rgba(225, 214, 191, 0.94) 100%);
+}
+
+.fountain-theme-v1 .fountain-footer-inner::before {
+  background: radial-gradient(ellipse at center, rgba(251, 245, 232, 0.94) 0%, rgba(228, 232, 222, 0.72) 48%, transparent 74%);
+}
+
+@media (max-width: 840px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 24.5%;
+    width: 82cqw;
+  }
+}
+
+@media (max-width: 620px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 24.5%;
+    width: 84cqw;
+  }
+
+  .fountain-theme-v1.invitation-typography.invitation-typography
+    .fountain-video-hero-eyebrow {
+    font-size: clamp(0.88rem, min(3.3cqw, 1.85cqh), 1.05rem);
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    width: 100%;
+    font-size: clamp(2.25rem, min(9.6cqw, 5.5cqh), 3.15rem);
+  }
+
+  .fountain-theme-v1.invitation-typography.invitation-typography
+    .fountain-video-hero-meta {
+    font-size: clamp(0.61rem, 2.2cqw, 0.72rem);
+    letter-spacing: 0.24em;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-meta span:last-child {
+    letter-spacing: 0.24em;
+  }
+
+  .fountain-theme-v1 .fountain-story-card {
+    padding: 0.9rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 25%;
+    width: 86cqw;
+  }
+}
+
+/* Reference correction: keep the hero purely typographic. The supplied art
+   uses a restrained espresso ink treatment; geometric dividers made the
+   composition feel busier and lighter than the source. */
+.fountain-theme-v1 .fountain-video-hero-text,
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-video-hero-eyebrow,
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-names,
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-names span,
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-names i,
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-video-hero-meta,
+.fountain-theme-v1 .fountain-video-hero-meta span {
+  color: #4b2e1d !important;
+  text-shadow: none;
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-video-hero-eyebrow {
+  margin-bottom: clamp(1rem, 2.2cqh, 1.45rem);
+  font-weight: 600;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  gap: clamp(0.08rem, 0.28cqh, 0.2rem);
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-names i {
+  display: block;
+  width: auto;
+  margin: clamp(0.28rem, 0.7cqh, 0.48rem) auto;
+  font-size: 0.64em;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::before,
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::after {
+  content: none;
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-video-hero-meta {
+  margin-top: clamp(1.15rem, 2.4cqh, 1.65rem);
+  gap: clamp(0.42rem, 0.9cqh, 0.58rem);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit,
+.fountain-theme-v1 .fountain-rsvp-panel-submit:hover,
+.fountain-theme-v1 .fountain-rsvp-panel-submit:focus-visible {
+  border-color: #74502d;
+  background: linear-gradient(135deg, #d8bc86, #bd945a);
+  color: #382416;
+  box-shadow: 0 13px 28px rgba(83, 57, 31, 0.2);
+}
+
+@media (min-width: 621px) {
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    font-size: clamp(3.5rem, min(10.8cqw, 8.5cqh), 6rem);
+  }
+
+  .fountain-theme-v1.invitation-typography.invitation-typography
+    .fountain-video-hero-eyebrow {
+    font-size: clamp(1rem, 2.5cqh, 1.45rem);
+  }
+}
+
 @media (max-height: 700px) and (min-width: 621px) {
   .fountain-theme-v1 .fountain-video-hero-text {
     top: 21%;
@@ -7006,5 +7476,55 @@
   .fountain-theme-v1 .fountain-footer::after {
     bottom: 0;
     width: 100vw;
+  }
+}
+
+/* Final hero lock: the focused mobile rules above predate the supplied
+   reference and must not shrink or lower its editorial composition. */
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 24.5%;
+  width: min(39rem, 80cqw);
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  width: min(37rem, 100%);
+  font-size: clamp(2.6rem, min(10.8cqw, 6.4cqh), 6rem);
+  line-height: 0.88;
+}
+
+@media (max-width: 840px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 24.5%;
+    width: 82cqw;
+  }
+}
+
+@media (max-width: 620px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 24.5%;
+    width: 84cqw;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    width: 100%;
+    font-size: clamp(2.45rem, min(10.4cqw, 6cqh), 3.35rem);
+  }
+}
+
+@media (max-width: 420px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 25%;
+    width: 86cqw;
+  }
+}
+
+@media (min-width: 621px) {
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    font-size: clamp(3.5rem, 10.8cqw, 6rem);
+  }
+
+  .fountain-theme-v1.invitation-typography.invitation-typography
+    .fountain-video-hero-eyebrow {
+    font-size: clamp(1rem, 2.5cqh, 1.45rem);
   }
 }
