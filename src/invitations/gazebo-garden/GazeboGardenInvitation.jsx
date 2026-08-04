@@ -334,7 +334,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="gazebo-hero-invite">You are invited to the {eventCopy.labelLower} of</p>
-          <h1>{coupleNames}</h1>
+          <h1 data-invitation-name>{coupleNames}</h1>
           <p className="gazebo-hero-date">{heroDate || fullDateStr}</p>
           {timeStr && <p className="gazebo-hero-time">{timeStr}</p>}
           {venue && <p className="gazebo-hero-venue">{venue}</p>}

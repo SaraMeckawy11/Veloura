@@ -1,15 +1,19 @@
 /* Invitation templates historically carried their own fixed typefaces deep in
-   their component CSS. The chosen typography now owns every text node, while
-   retaining the intended body/display/name hierarchy across all designs. */
-.invitation-typography,
-.invitation-typography :where(*) {
+   their component CSS. Repeating the root class is intentional: these shared
+   rules must outrank legacy template declarations that also use !important.
+   The chosen typography owns every text node while retaining the intended
+   body/display/name hierarchy across all designs. */
+.invitation-typography.invitation-typography.invitation-typography,
+.invitation-typography.invitation-typography.invitation-typography :where(*) {
   font-family: var(--font-body) !important;
 }
 
-.invitation-typography :where(h1, h2, h3, h4, h5, h6, [data-invitation-display]) {
+.invitation-typography.invitation-typography.invitation-typography
+  :is(h1, h2, h3, h4, h5, h6, [data-invitation-display]) {
   font-family: var(--font-display) !important;
 }
 
-.invitation-typography :where([data-invitation-name], [data-invitation-name] *) {
+.invitation-typography.invitation-typography.invitation-typography [data-invitation-name],
+.invitation-typography.invitation-typography.invitation-typography [data-invitation-name] * {
   font-family: var(--font-script) !important;
 }
