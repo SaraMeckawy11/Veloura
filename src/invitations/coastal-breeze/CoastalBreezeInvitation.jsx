@@ -229,7 +229,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div ref={rootRef} className={`coastal-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}${showSplash ? ' coastal-splash-active' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`coastal-theme invitation-typography${showSplash && !splashReady ? ' invitation-splash-gated' : ''}${showSplash ? ' coastal-splash-active' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
@@ -250,11 +250,11 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
           <span>Please join us to</span>
           <span>celebrate the {eventCopy.celebrationPhrase} of</span>
         </p>
-        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-groom">{renderCoastalHeroName(name1)}</h1>
+        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-groom" data-invitation-name>{renderCoastalHeroName(name1)}</h1>
         <div className="coastal-art-layer coastal-hero-amp" aria-hidden="true">
           <span>&amp;</span>
         </div>
-        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-bride">{renderCoastalHeroName(name2)}</h1>
+        <h1 className="coastal-art-layer coastal-hero-name coastal-hero-name-bride" data-invitation-name>{renderCoastalHeroName(name2)}</h1>
 
         {weddingDate && (
           <div className="coastal-art-layer coastal-hero-date">
@@ -508,7 +508,7 @@ export default function CoastalBreezeInvitation({ order, demo = false, publicSlu
         <div className="coastal-footer-inner">
           <BlueShellMark className="coastal-footer-shell" />
           <p className="coastal-footer-script">with love</p>
-          <h2 className="coastal-footer-names">
+          <h2 className="coastal-footer-names" data-invitation-name>
             {name1} <span className="coastal-footer-amp">&amp;</span> {name2}
           </h2>
           <div className="coastal-footer-rule" aria-hidden />

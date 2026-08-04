@@ -1,3 +1,9 @@
+import '@fontsource/aref-ruqaa/400.css';
+import '@fontsource/aref-ruqaa/700.css';
+import '@fontsource-variable/noto-kufi-arabic';
+import '@fontsource-variable/noto-naskh-arabic';
+import './invitation-typography.css';
+
 export const DEFAULT_INVITATION_FONT = 'classic';
 
 // Every font definition ever offered. Kept complete so any value stored on an
@@ -228,8 +234,50 @@ const FONT_PICKER_ORDER = [
   'timeless',       // bouncy Dancing Script
 ];
 
+const ARABIC_SERIF_FONTS = new Set([
+  'classic', 'garden', 'heirloom', 'storybook', 'heritage', 'poetic', 'soft-heirloom',
+]);
+const ARABIC_DISPLAY_FONTS = new Set([
+  'couture', 'regal', 'marquee', 'estate', 'artful-serif', 'monogram',
+]);
+const ARABIC_SCRIPT_FONTS = new Set([
+  'romantic', 'enchanted', 'signature', 'formal-script', 'whimsical', 'timeless',
+  'vow-script', 'royal-note',
+]);
+
+function getArabicFontFamily(value, role) {
+  if (ARABIC_SCRIPT_FONTS.has(value)) {
+    return role === 'body' ? "'Noto Naskh Arabic Variable'" : "'Aref Ruqaa'";
+  }
+  if (ARABIC_DISPLAY_FONTS.has(value)) {
+    return role === 'body' ? "'Noto Naskh Arabic Variable'" : "'Noto Kufi Arabic Variable'";
+  }
+  if (ARABIC_SERIF_FONTS.has(value)) {
+    return "'Noto Naskh Arabic Variable'";
+  }
+  return "'Noto Kufi Arabic Variable'";
+}
+
+function addArabicFallback(fontStack, arabicFamily) {
+  return fontStack.replace(
+    /,\s*(serif|sans-serif|cursive)\s*$/,
+    `, ${arabicFamily}, $1`,
+  );
+}
+
+function enrichFontOption(option) {
+  if (!option) return option;
+  return {
+    ...option,
+    display: addArabicFallback(option.display, getArabicFontFamily(option.value, 'display')),
+    body: addArabicFallback(option.body, getArabicFontFamily(option.value, 'body')),
+    script: addArabicFallback(option.script, getArabicFontFamily(option.value, 'script')),
+  };
+}
+
 export const INVITATION_FONT_OPTIONS = FONT_PICKER_ORDER
   .map(value => ALL_FONT_DEFS.find(option => option.value === value))
+  .map(enrichFontOption)
   .filter(Boolean);
 
 export function normalizeInvitationFont(value) {
@@ -240,7 +288,7 @@ export function normalizeInvitationFont(value) {
 
 export function getInvitationFontOption(value) {
   const normalized = normalizeInvitationFont(value);
-  return ALL_FONT_DEFS.find(option => option.value === normalized) || ALL_FONT_DEFS[0];
+  return enrichFontOption(ALL_FONT_DEFS.find(option => option.value === normalized) || ALL_FONT_DEFS[0]);
 }
 
 export function readInvitationFont(order) {

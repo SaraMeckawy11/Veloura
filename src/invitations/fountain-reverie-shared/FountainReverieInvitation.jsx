@@ -5,7 +5,7 @@ import FountainSplash from './FountainSplash';
 import FountainEnvelopeSplash from './FountainEnvelopeSplash';
 import FountainHeroText from './FountainHeroText';
 import './fountain-reverie.css';
-import { buildInvitationImageSources, calculateCountdownTimeLeft, containInvitationPhoto, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, getEventCopy, getInvitationPhotoSrc } from '../shared';
+import { buildInvitationImageSources, calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, getEventCopy, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
 import { getTieredInvitationPhotos, getTieredStoryMilestones, invitationTierAllows } from '../tierAccess';
@@ -102,7 +102,7 @@ const Crest = ({ initials }) => (
   </div>
 );
 
-export default function FountainReverieInvitation({ order, demo = false, publicSlug, heroImage, variant = 'v1' }) {
+export default function FountainReverieInvitation({ order, demo = false, publicSlug, heroImage, heroVideo, variant = 'v1' }) {
   const [showSplash, setShowSplash] = useState(true);
   const [splashReady, setSplashReady] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ months: 0, days: 0, hours: 0 });
@@ -141,6 +141,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
 
   const allPhotos = getTieredInvitationPhotos(order);
   const storyMilestones = getTieredStoryMilestones(order);
+  const storyOrientation = normalizeStoryOrientation(order.storyOrientation);
   const couplePhotos = allPhotos.filter(p => p.label === 'couple');
   const storyPhotos = allPhotos.filter(p => p.label === 'story');
   const galleryPhotos = allPhotos.filter(p => p.label === 'gallery');
@@ -240,7 +241,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
     : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([venue, venueAddress].filter(Boolean).join(', '))}`;
 
   return (
-    <div ref={rootRef} className={`fountain-theme fountain-theme-${variant}${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`fountain-theme fountain-theme-${variant} invitation-typography${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
@@ -263,37 +264,56 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       <section className="fountain-hero">
         <InvitationSectionTransition hero />
         <div className="fountain-hero-art">
-          <img className="fountain-hero-image" src={heroImage} alt="" aria-hidden="true" />
-          <motion.article
-            className="fountain-hero-copy"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-          >
-            <FountainHeroText
-              firstInitial={initials[0] || 'A'}
-              secondInitial={initials[1] || 'Z'}
-              bride={name1}
-              groom={name2}
-              inviteLine2={`THEIR ${eventCopy.label.toUpperCase()}`}
-              day={dateParts.weekday || 'SATURDAY'}
-              date={dateParts.dayMonthYear || '24 MAY 2025'}
-              time={timeStr ? `AT ${timeStr}` : 'AT 5:30 PM'}
-              timeNote={timeOfDay || 'IN THE EVENING'}
-              venue={(venue || 'THE GARDEN PAVILION').toUpperCase()}
-              address1=""
-              address2=""
+          {heroVideo ? (
+            <video
+              className="fountain-hero-image fountain-hero-video"
+              src={heroVideo}
+              poster={heroImage}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              aria-hidden="true"
             />
-          </motion.article>
+          ) : (
+            <img className="fountain-hero-image" src={heroImage} alt="" aria-hidden="true" />
+          )}
+          <div className="fountain-hero-copy-stage">
+            <motion.article
+              className="fountain-hero-copy"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+            >
+              <FountainHeroText
+                firstInitial={initials[0] || 'A'}
+                secondInitial={initials[1] || 'Z'}
+                bride={name1}
+                groom={name2}
+                inviteLine1="JOYFULLY INVITE YOU TO CELEBRATE"
+                inviteLine2={`THEIR ${eventCopy.label.toUpperCase()}`}
+                day={dateParts.weekday || 'SATURDAY'}
+                date={dateParts.dayMonthYear || '24 MAY 2025'}
+                time={timeStr ? `AT ${timeStr}` : 'AT 5:30 PM'}
+                timeNote={timeOfDay || 'IN THE EVENING'}
+                venue={(venue || 'THE GARDEN PAVILION').toUpperCase()}
+                address1=""
+                address2=""
+                layout={variant === 'v1' && heroVideo ? 'video' : 'classic'}
+                occasion={eventCopy.labelLower}
+              />
+            </motion.article>
+          </div>
         </div>
       </section>
 
       {weddingDate && (
         <>
-          <section className="fountain-countdown">
+          <section className="fountain-countdown" aria-label={`Countdown to the ${eventCopy.labelLower}`}>
             <InvitationSectionTransition />
             <SectionTitle title="Countdown" />
-            <div className="fountain-count-grid">
+            <div className="fountain-count-grid" role="list">
               <CountdownUnit value={pad(timeLeft.months)} label="Months" />
               <CountdownUnit value={pad(timeLeft.days)} label="Days" />
               <CountdownUnit value={pad(timeLeft.hours)} label="Hours" />
@@ -326,9 +346,9 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       )}
 
       {isReferenceDemo && storyMilestones.length ? (
-        <StorySection milestones={storyMilestones} images={order.storyImages || []} />
+        <StorySection milestones={storyMilestones} images={order.storyImages || []} orientation={storyOrientation} />
       ) : storyPhotos.length > 0 ? (
-        <StorySection milestones={storyMilestones} images={storyPhotos} />
+        <StorySection milestones={storyMilestones} images={storyPhotos} orientation={storyOrientation} />
       ) : null}
 
       <section className="fountain-section fountain-event-section">
@@ -398,7 +418,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
                 <img className="fountain-rsvp-panel-ornament" src={sectionSeparator} alt="" aria-hidden="true" />
                 <h2>RSVP</h2>
                 <strong>Kindly Respond</strong>
-                <p>We cannot wait to celebrate with you.<br />Please let us know by replying below.</p>
+                <p>We cannot wait to celebrate with you.</p>
               </div>
               <AnimatePresence mode="wait">
                 {!rsvpSubmitted ? (
@@ -505,8 +525,8 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
 
       <footer className="fountain-footer">
         <div className="fountain-footer-inner">
-          <p className="fountain-reception">with love</p>
-          <h2>{name1} <span>&amp;</span> {name2}</h2>
+          <p className="fountain-reception">With love</p>
+          <h2 data-invitation-name>{name1} <span>&amp;</span> {name2}</h2>
           <p>Thank you for being part of our beginning</p>
         </div>
       </footer>
@@ -547,14 +567,14 @@ function CoupleMessageSection({ message }) {
 
 function CountdownUnit({ value, label }) {
   return (
-    <div className="fountain-count-unit">
-      <strong>{value}</strong>
+    <div className="fountain-count-unit" role="listitem" aria-label={`${Number(value)} ${label.toLowerCase()}`}>
+      <strong data-invitation-display>{value}</strong>
       <span>{label}</span>
     </div>
   );
 }
 
-function StorySection({ milestones, images }) {
+function StorySection({ milestones, images, orientation }) {
   const items = images.length
     ? images.map((src, index) => ({ src, ...(milestones[index] || {}) }))
     : milestones.map((milestone) => ({ ...milestone, src: '' }));
@@ -563,8 +583,8 @@ function StorySection({ milestones, images }) {
     <>
       <section className="fountain-section fountain-story-section">
         <InvitationSectionTransition />
-        <SectionTitle title="Story" />
-        <div className="fountain-story-grid">
+        <SectionTitle title="Our Story" />
+        <div className="fountain-story-grid" data-story-orientation={orientation}>
         {items.map((item, index) => (
           <motion.article
             key={index}
@@ -574,17 +594,17 @@ function StorySection({ milestones, images }) {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
           >
-            {item.src && (
-              <figure className="fountain-photo-frame fountain-story-photo">
-                <InvitationPhoto src={containInvitationPhoto(item.src)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 768px) 90vw, 380px" />
-              </figure>
-            )}
             {(item.date || item.title || item.description) && (
               <div className="fountain-story-text">
                 {item.date && <span>{item.date}</span>}
                 {item.title && <h3>{item.title}</h3>}
                 {item.description && <p>{item.description}</p>}
               </div>
+            )}
+            {item.src && (
+              <figure className="fountain-photo-frame fountain-story-photo">
+                <InvitationPhoto src={getInvitationPhotoSrc(item.src)} alt={item.title || `Story ${index + 1}`} sizes="(max-width: 640px) 86vw, 320px" />
+              </figure>
             )}
           </motion.article>
         ))}
@@ -602,6 +622,7 @@ function GallerySection({ images }) {
   const galleryImageKey = uniqueImages.map(getInvitationPhotoSrc).join('|');
   const galleryRowRef = useRef(null);
   const galleryUnitRef = useRef(null);
+  const [loopGroupCount, setLoopGroupCount] = useState(6);
   const unitRepeatCount = uniqueImages.length ? Math.max(3, Math.ceil(12 / uniqueImages.length)) : 0;
   const unitImages = uniqueImages.length
     ? Array.from({ length: unitRepeatCount }, () => uniqueImages).flat()
@@ -632,7 +653,11 @@ function GallerySection({ images }) {
     };
 
     const updateDistance = () => {
-      distance = unit.scrollWidth;
+      distance = unit.getBoundingClientRect().width;
+      const viewportWidth = viewport?.getBoundingClientRect().width || window.innerWidth;
+      if (distance > 0) {
+        setLoopGroupCount(Math.max(6, Math.ceil((viewportWidth * 3) / distance) + 2));
+      }
       applyOffset(offset);
     };
 
@@ -787,7 +812,7 @@ function GallerySection({ images }) {
           className={`fountain-gallery-row${unitImages.length ? ' fountain-gallery-row-loop' : ''}`}
           ref={galleryRowRef}
         >
-          {[0, 1, 2, 3].map((groupIndex) => (
+          {Array.from({ length: loopGroupCount }, (_, groupIndex) => (
             <div
               key={groupIndex}
               ref={groupIndex === 0 ? galleryUnitRef : null}

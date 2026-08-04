@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import coastalSplashPreview from '../assets/coastal/thumbnail.png';
-// Temporarily hidden designs — Fountain Reverie I/II and Theater (see commented cards below).
-// import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
+import fountainHero1Preview from '../assets/Fountain Reverie/thumbnail3.png';
+// Temporarily hidden designs — Fountain Reverie II and Theater (see commented cards below).
 // import fountainHero2Preview from '../assets/Fountain Reverie/thumbnail4.png';
 import boardingPassPreview from '../assets/boardingPass/thumbnail.png';
 import GardenPavilionPreview from '../assets/gardenPavilion/thumbnail.png';
@@ -50,18 +50,18 @@ const designs = [
     badgeClass: 'badge-launch',
     demoPath: '/demo/coastal-breeze',
   },
-  // Temporarily hidden — Fountain Reverie I, Fountain Reverie II, and Theater.
-  // {
-  //   name: 'Fountain Reverie I',
-  //   category: 'launch',
-  //   description: 'A sunlit garden fountain design with ornate gold typography and an elegant door reveal.',
-  //   image: fountainHero1Preview,
-  //   overlay: 'linear-gradient(135deg, rgba(148,116,47,0.12), rgba(245,223,207,0.18))',
-  //   hidePreviewText: true,
-  //   badge: 'Available',
-  //   badgeClass: 'badge-launch',
-  //   demoPath: '/demo/fountain-reverie-v1',
-  // },
+  {
+    name: 'Fountain Reverie',
+    category: 'launch',
+    description: 'A sunlit garden fountain design with ornate gold typography and an elegant envelope reveal.',
+    image: fountainHero1Preview,
+    overlay: 'linear-gradient(135deg, rgba(148,116,47,0.12), rgba(245,223,207,0.18))',
+    hidePreviewText: true,
+    badge: 'Available',
+    badgeClass: 'badge-launch',
+    demoPath: '/demo/fountain-reverie-v1',
+  },
+  // Temporarily hidden — Fountain Reverie II and Theater.
   // {
   //   name: 'Fountain Reverie II',
   //   category: 'launch',

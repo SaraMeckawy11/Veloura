@@ -174,7 +174,7 @@ const REVIEW_SECTION_OPTIONS = [
 // Designs temporarily hidden from the order flow's design picker. The server's
 // /api/templates response still includes these, so we filter them out of the
 // merged list as well — not just the local fallback definitions above.
-const HIDDEN_TEMPLATE_SLUGS = new Set(['fountain-reverie-v1', 'fountain-reverie-v2', 'theater']);
+const HIDDEN_TEMPLATE_SLUGS = new Set(['fountain-reverie-v2', 'theater']);
 
 // Slugs that render with the home Designs.jsx overlay+text treatment instead of
 // a plain preview image, so the card matches the home collection exactly.
@@ -355,8 +355,8 @@ export default function OrderFlow() {
     { _id: 'boarding-pass', name: 'Boarding Pass', slug: 'boarding-pass', category: 'launch', envelope: 'Airmail envelope with vintage stamps slides open', colorScheme: { primary: '#42a5f5', secondary: '#0d47a1', background: '#e3f2fd' } },
     { _id: 'gazebo-garden', name: 'Garden Pavilion', slug: 'gazebo-garden', category: 'launch', envelope: 'Animated envelope opens into a watercolor garden gazebo with a bird in flight', colorScheme: { primary: '#86ad61', secondary: '#fff8ea', background: '#eff8dc' } },
     { _id: 'coastal-breeze', name: 'Coastal Breeze', slug: 'coastal-breeze', category: 'launch', envelope: 'Blue envelope opens to a bride and groom walking toward the sea', colorScheme: { primary: '#1f5f8f', secondary: '#ec866f', background: '#fffaf1' } },
+    { _id: 'fountain-reverie-v1', name: 'Fountain Reverie', slug: 'fountain-reverie-v1', category: 'launch', envelope: 'Sage envelope opens to a sunlit fountain invitation', colorScheme: { primary: '#94742f', secondary: '#f5dfcf', background: '#fff6e8' } },
     // Temporarily hidden designs (also filtered out of the merged API list via HIDDEN_TEMPLATE_SLUGS):
-    // { _id: 'fountain-reverie-v1', name: 'Fountain Reverie I', slug: 'fountain-reverie-v1', category: 'launch', envelope: 'Ornate garden doors open to a sunlit fountain invitation', colorScheme: { primary: '#94742f', secondary: '#f5dfcf', background: '#fff6e8' } },
     // { _id: 'fountain-reverie-v2', name: 'Fountain Reverie II', slug: 'fountain-reverie-v2', category: 'launch', envelope: 'Ornate garden doors open to a wide floral fountain invitation', colorScheme: { primary: '#94742f', secondary: '#87916c', background: '#fff6e8' } },
     // { _id: 'theater', name: 'Theater', slug: 'theater', category: 'launch', envelope: 'Velvet curtain parts to reveal a softly lit stage', colorScheme: { primary: '#6e0f1f', secondary: '#c9a45a', background: '#fff5e1' } },
   ];
@@ -508,6 +508,7 @@ export default function OrderFlow() {
           .filter(t => t.category === 'launch' && !HIDDEN_TEMPLATE_SLUGS.has(t.slug))
           .map(t => ({
             ...t,
+            name: t.slug === 'fountain-reverie-v1' ? 'Fountain Reverie' : t.name,
             previewImage: TEMPLATE_PREVIEW_IMAGES[t.slug] || t.previewImage || '',
           }));
         setTemplates(merged);
@@ -778,6 +779,7 @@ export default function OrderFlow() {
   const previewRegistryEntry = selectedTemplate ? registry[selectedTemplate.slug] : null;
   const PreviewInvitationComponent = previewRegistryEntry?.component;
   const selectedFontOption = getInvitationFontOption(form.invitationFont);
+  const fontPreviewNames = [form.groomName?.trim() || 'Amira', form.brideName?.trim() || 'Zayn'].join(' & ');
   // Tracks how many forward steps we've pushed onto history since mount so the
   // in-page back buttons can pop (history.back) instead of pushing — keeping
   // the device/browser back button perfectly in sync with the visual steps.
@@ -2435,7 +2437,7 @@ export default function OrderFlow() {
                   }}
                 >
                   <span className="font-option-sample" style={{ fontFamily: option.script }}>
-                    Amira &amp; Zayn
+                    {fontPreviewNames}
                   </span>
                   <span className="font-option-body" style={{ fontFamily: option.body }}>
                     Saturday, 20 June 2026

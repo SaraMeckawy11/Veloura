@@ -16,7 +16,7 @@ const API = import.meta.env.VITE_API_URL || '/api';
 // PRICING_TIERS.demoCards, so each plan can show the real design preview.
 const DEMO_PREVIEW_IMAGES = {
   'Coastal Breeze': coastalSplashPreview,
-  'Fountain Reverie I': fountainHero1Preview,
+  'Fountain Reverie': fountainHero1Preview,
   'Fountain Reverie II': fountainHero2Preview,
   'Garden Pavilion': GardenPavilionPreview,
   'Theater': theaterPreview,
@@ -27,7 +27,7 @@ const DEMO_PREVIEW_IMAGES = {
 // live demo (carrying the tier so the demo shows only that plan's sections).
 const DEMO_SLUGS = {
   'Coastal Breeze': 'coastal-breeze',
-  'Fountain Reverie I': 'fountain-reverie-v1',
+  'Fountain Reverie': 'fountain-reverie-v1',
   'Fountain Reverie II': 'fountain-reverie-v2',
   'Garden Pavilion': 'gazebo-garden',
   'Theater': 'theater',

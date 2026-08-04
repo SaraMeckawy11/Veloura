@@ -625,6 +625,7 @@ export default function Dashboard() {
   const rsvpIncluded = tierAllows(order.pricingTier, 'rsvp');
   const coupleMessageIncluded = tierAllows(order.pricingTier, 'coupleMessage');
   const selectedFontOption = getInvitationFontOption(editForm.invitationFont);
+  const fontPreviewNames = [editForm.groomName?.trim() || 'Amira', editForm.brideName?.trim() || 'Zayn'].join(' & ');
   const storyPhotoPreviewStyle = getUploadPreviewStyle(order.template?.slug, 'story');
   const storyPhotoTileStyle = {
     ...storyPhotoPreviewStyle,
@@ -1298,7 +1299,7 @@ export default function Dashboard() {
                   }}
                 >
                   <span className="font-option-sample" style={{ fontFamily: option.script }}>
-                    Amira &amp; Zayn
+                    {fontPreviewNames}
                   </span>
                   <span className="font-option-body" style={{ fontFamily: option.body }}>
                     Saturday, 20 June 2026

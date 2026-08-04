@@ -29,8 +29,8 @@ export const PRICING_TIERS = [
       { invitation: 'Boarding Pass', fields: ['Story route', 'Gallery', 'RSVP'] },
       { invitation: 'Garden Pavilion', fields: ['Story', 'Guest policy', 'RSVP'] },
       { invitation: 'Coastal Breeze', fields: ['Envelope note', 'Story', 'RSVP'] },
+      { invitation: 'Fountain Reverie', fields: ['Envelope note', 'Gallery', 'RSVP'] },
       // Temporarily hidden designs:
-      // { invitation: 'Fountain Reverie I', fields: ['Envelope note', 'Gallery', 'RSVP'] },
       // { invitation: 'Fountain Reverie II', fields: ['Story', 'Gallery', 'RSVP'] },
       // { invitation: 'Theater', fields: ['Memories', 'Details', 'RSVP'] },
     ],

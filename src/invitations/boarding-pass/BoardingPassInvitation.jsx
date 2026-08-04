@@ -181,7 +181,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
   // ===================== MAIN PAGE =====================
   return (
-    <div ref={rootRef} className={`inv-page boarding-pass-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`inv-page boarding-pass-theme invitation-typography${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
@@ -219,7 +219,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
             </p>
 
             {/* Couple names */}
-            <div className="bp-hero-names">
+            <div className="bp-hero-names" data-invitation-name>
               <span className="bp-hero-name">{name1}</span>
               <span className="bp-hero-name">{name2}</span>
             </div>
@@ -650,7 +650,7 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
           <div className="inv-footer-decor-ring" />
           <p className="inv-footer-thanks">With love</p>
           <div className="inv-footer-divider" />
-          <p className="inv-footer-couple">{name1} &amp; {name2}</p>
+          <p className="inv-footer-couple" data-invitation-name>{name1} &amp; {name2}</p>
         </motion.div>
         <div className="inv-footer-bar">
           <span className="inv-footer-bar-text">Thank you for being part of our beginning</span>

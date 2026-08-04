@@ -1,86 +1,104 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-// eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
+// eslint-disable-next-line no-unused-vars -- motion.div uses `motion` via JSX members
 import { motion, AnimatePresence } from 'framer-motion';
-import EnvelopeSpriteAnimation from '../shared/EnvelopeSpriteAnimation';
+import splashUrl from '../../assets/Fountain Reverie/sage-envelope-splash-no-diamond.html?url';
+import './fountain-envelope-splash.css';
 
-// Envelope-opening splash (the same animation the Garden Pavilion uses), shown
-// for the first Fountain Reverie design instead of the door splash.
-const END_PADDING_MS = 320;
-const FALLBACK_DISMISS_MS = 8200;
+const FADE_DURATION = 0.7;
+const AUTO_DISMISS_FALLBACK_MS = 8000;
+// The supplied splash uses the same message contract as the Coastal envelope.
+const DONE_MESSAGE_TYPE = 'coastal-splash:done';
+const BOOST_MESSAGE_TYPE = 'coastal-splash:boost';
 
 export default function FountainEnvelopeSplash({ onReady, onDismiss }) {
-  const dismissTimerRef = useRef(null);
-  const hasOpenedRef = useRef(false);
+  const [dismissing, setDismissing] = useState(false);
+  const rootRef = useRef(null);
+  const iframeRef = useRef(null);
+  const fallbackTimerRef = useRef(null);
+  const dismissingRef = useRef(false);
   const readyRef = useRef(false);
   const onReadyRef = useRef(onReady);
   const onDismissRef = useRef(onDismiss);
-  const [fading, setFading] = useState(false);
 
   useEffect(() => {
     onReadyRef.current = onReady;
     onDismissRef.current = onDismiss;
   }, [onReady, onDismiss]);
 
+  const beginDismiss = useCallback(() => {
+    if (dismissingRef.current) return;
+    dismissingRef.current = true;
+    if (fallbackTimerRef.current) window.clearTimeout(fallbackTimerRef.current);
+    setDismissing(true);
+  }, []);
+
   const markReady = useCallback(() => {
     if (readyRef.current) return;
     readyRef.current = true;
     onReadyRef.current?.();
-  }, []);
-
-  const finishOpening = useCallback(() => {
-    if (hasOpenedRef.current) return;
-    hasOpenedRef.current = true;
-
-    if (dismissTimerRef.current) {
-      window.clearTimeout(dismissTimerRef.current);
-      dismissTimerRef.current = null;
-    }
-
-    // Let the opened envelope settle, then dissolve to reveal the hero.
-    setFading(true);
-    window.setTimeout(() => onDismissRef.current(), 700);
-  }, []);
-
-  const scheduleDismiss = useCallback((delay) => {
-    if (dismissTimerRef.current) {
-      window.clearTimeout(dismissTimerRef.current);
-    }
-    dismissTimerRef.current = window.setTimeout(finishOpening, delay);
-  }, [finishOpening]);
-
-  // Sprite decoded + first frame painted — reveal the hero underneath.
-  const handleReady = useCallback(() => {
-    markReady();
-  }, [markReady]);
-
-  // Last frame drawn — let the open envelope settle, then dissolve.
-  const handleComplete = useCallback(() => {
-    scheduleDismiss(END_PADDING_MS);
-  }, [scheduleDismiss]);
+    fallbackTimerRef.current = window.setTimeout(beginDismiss, AUTO_DISMISS_FALLBACK_MS);
+  }, [beginDismiss]);
 
   useEffect(() => {
-    scheduleDismiss(FALLBACK_DISMISS_MS);
+    // The embedded video starts at DOMContentLoaded, which happens before the
+    // iframe's load event. Reveal this sage layer immediately so the generic
+    // invitation boot screen cannot cover the beginning of the envelope reveal.
+    markReady();
     return () => {
-      if (dismissTimerRef.current) {
-        window.clearTimeout(dismissTimerRef.current);
+      if (fallbackTimerRef.current) window.clearTimeout(fallbackTimerRef.current);
+    };
+  }, [markReady]);
+
+  const handleBoost = useCallback(() => {
+    iframeRef.current?.contentWindow?.postMessage({ type: BOOST_MESSAGE_TYPE }, '*');
+  }, []);
+
+  useEffect(() => {
+    // Invitations can render inside the order-flow preview iframe, so listen on
+    // the window that owns this splash instead of assuming the top-level window.
+    const targetWindow = rootRef.current?.ownerDocument?.defaultView || window;
+    const handleMessage = (event) => {
+      if (event.source === iframeRef.current?.contentWindow && event.data?.type === DONE_MESSAGE_TYPE) {
+        beginDismiss();
       }
     };
-  }, [scheduleDismiss]);
+
+    targetWindow.addEventListener('message', handleMessage);
+    return () => targetWindow.removeEventListener('message', handleMessage);
+  }, [beginDismiss]);
 
   return (
     <AnimatePresence>
       <motion.div
+        ref={rootRef}
         key="fountain-envelope-splash"
-        className="fountain-envelope-splash"
-        aria-hidden="true"
-        animate={fading ? { opacity: 0 } : { opacity: 1 }}
-        transition={fading ? { duration: 0.6, ease: 'easeInOut' } : { duration: 0.2 }}
-        exit={{ opacity: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }}
+        className="fountain-envelope-splash fountain-envelope-splash--html"
+        role="button"
+        tabIndex={0}
+        aria-label="Open invitation"
+        onClick={handleBoost}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleBoost();
+          }
+        }}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: dismissing ? 0 : 1 }}
+        transition={{ duration: dismissing ? FADE_DURATION : 0, ease: 'easeInOut' }}
+        onAnimationComplete={() => {
+          if (dismissingRef.current) onDismissRef.current?.();
+        }}
       >
-        <EnvelopeSpriteAnimation
+        <iframe
+          ref={iframeRef}
           className="fountain-envelope-splash-frame"
-          onReady={handleReady}
-          onComplete={handleComplete}
+          title="Sage envelope splash animation"
+          src={splashUrl}
+          sandbox="allow-scripts allow-same-origin"
+          allow="autoplay"
+          onLoad={markReady}
+          aria-hidden="true"
         />
       </motion.div>
     </AnimatePresence>

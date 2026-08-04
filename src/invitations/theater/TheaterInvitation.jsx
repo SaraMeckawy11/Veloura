@@ -172,7 +172,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
   };
 
   return (
-    <div ref={rootRef} className={`theater-theme${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`theater-theme invitation-typography${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />}
       {showSplash && !splashReady && (
         <div className="invitation-boot" role="status" aria-live="polite">
@@ -230,7 +230,7 @@ export default function TheaterInvitation({ order, demo = false, publicSlug }) {
         <footer className="theater-finale">
           <div className="theater-finale-inner">
             <p className="theater-finale-script">with love</p>
-            <h2 className="theater-finale-names">
+            <h2 className="theater-finale-names" data-invitation-name>
               {heroName1} <span className="theater-finale-amp">&amp;</span> {heroName2}
             </h2>
             <div className="theater-finale-rule" aria-hidden="true" />
@@ -275,7 +275,7 @@ function HeroSection({
   return (
     <section className="theater-hero" aria-label={`${eventCopy.label} invitation`}>
       <InvitationSectionTransition hero />
-      <h1>
+      <h1 data-invitation-name>
         <span>{name1}</span>
         <em>&amp;</em>
         <span>{name2}</span>

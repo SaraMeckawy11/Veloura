@@ -39,7 +39,7 @@ function Rule({ variant = 'middle' }) {
 
 function CoupleNames({ bride = 'Aaliyah', groom = 'Zayn' }) {
   return (
-    <div className="fountain-couple">
+    <div className="fountain-couple" data-invitation-name>
       <h1>{formatInvitationName(bride)}</h1>
       <img className="fountain-couple__amp" src={leafAmpersand} alt="and" />
       <h1>{formatInvitationName(groom)}</h1>
@@ -113,7 +113,30 @@ export default function FountainHeroText({
   venue = 'THE GARDEN PAVILION',
   address1 = '',
   address2 = '',
+  layout = 'classic',
+  occasion = 'wedding',
 }) {
+  if (layout === 'video') {
+    return (
+      <div className="fountain-video-hero-text">
+        <p className="fountain-video-hero-eyebrow">The {occasion} of</p>
+
+        <h1 className="fountain-video-hero-names" data-invitation-name>
+          <span>{formatInvitationName(bride)}</span>
+          <i>&amp;</i>
+          <span>{formatInvitationName(groom)}</span>
+        </h1>
+
+        <div className="fountain-video-hero-flourish" aria-hidden="true"><span /></div>
+
+        <div className="fountain-video-hero-meta">
+          <span>{date}</span>
+          {time && <span>{time.replace(/^AT\s+/i, '')}</span>}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fountain-hero-text">
       <Monogram firstInitial={firstInitial} secondInitial={secondInitial} />

@@ -65,6 +65,11 @@
   z-index: 0;
 }
 
+.fountain-hero-video {
+  display: block;
+  background: #748363;
+}
+
 .fountain-hero-art::after {
   content: '';
   position: absolute;
@@ -1333,7 +1338,8 @@
   inset: 0;
   z-index: 9999;
   overflow: hidden;
-  background: transparent;
+  background: #5e6f50;
+  cursor: pointer;
   touch-action: manipulation;
 }
 
@@ -1342,8 +1348,10 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  display: block;
   border: 0;
-  background: transparent;
+  background: #5e6f50;
+  user-select: none;
   pointer-events: none;
 }
 
@@ -1698,6 +1706,45 @@
   .fountain-splash-copy {
     bottom: 36px;
   }
+}
+
+/* Fountain Reverie V1 now follows Garden Pavilion's full-viewport hero video.
+   The copy stage uses the same cover geometry as the portrait video so its
+   text stays registered to the artwork even on wide desktop screens. */
+.fountain-hero-copy-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  container-type: size;
+  pointer-events: none;
+}
+
+.fountain-theme-v1 .fountain-hero {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  height: 100svh;
+}
+
+.fountain-theme-v1 .fountain-hero-art {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+}
+
+.fountain-theme-v1 .fountain-hero-image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.fountain-theme-v1 .fountain-hero-copy-stage {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: max(100vw, calc(100svh * var(--fountain-hero-ratio)));
+  height: max(100svh, calc(100vw / var(--fountain-hero-ratio)));
+  transform: translate(-50%, -50%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3670,5 +3717,2259 @@
   .fountain-details-policy .gp-item {
     max-width: none;
     border-radius: 16px;
+  }
+}
+
+/* Match Garden Pavilion's Our Story treatment: centered milestone copy above
+   a clean, consistently sized full-bleed photo using the chosen orientation. */
+.fountain-story-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rem;
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.fountain-story-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.95rem;
+  width: 100%;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: none;
+}
+
+.fountain-story-text {
+  width: 100%;
+  max-width: 19rem;
+  padding: 0;
+  text-align: center;
+}
+
+.fountain-story-text span {
+  display: block;
+  margin: 0 0 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.fountain-story-text h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: 0.01em;
+}
+
+.fountain-story-text p {
+  max-width: none;
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.fountain-story-photo {
+  position: relative;
+  width: min(78%, 16rem);
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0.9rem;
+  clip-path: inset(0 round 0.9rem);
+  background: transparent;
+  box-shadow:
+    0 16px 36px -14px rgba(54, 70, 44, 0.4),
+    0 4px 12px -6px rgba(54, 70, 44, 0.18);
+}
+
+.fountain-story-grid[data-story-orientation='portrait'] .fountain-story-photo {
+  width: min(60%, 12.5rem);
+  aspect-ratio: 3 / 4;
+}
+
+.fountain-story-grid[data-story-orientation='landscape'] .fountain-story-photo {
+  width: min(78%, 16rem);
+  aspect-ratio: 4 / 3;
+}
+
+.fountain-story-photo::after {
+  inset: 0;
+  z-index: 2;
+  border: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+}
+
+.fountain-story-photo > .invitation-photo {
+  --invitation-photo-pad: 0;
+  --invitation-photo-scale: 1;
+  --invitation-photo-hover-scale: 1;
+  --invitation-photo-surface: transparent;
+  --invitation-photo-shadow: transparent;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+@media (max-width: 920px) {
+  .fountain-story-grid {
+    max-width: 34rem;
+  }
+}
+
+/* Fountain Reverie V1 — final video-led art direction ------------------
+   Keep the invitation's own ivory, fountain-blue, sage and antique-gold
+   language. The hero copy stays anchored to the viewport (rather than the
+   cover-cropped portrait video), so it remains legible on wide screens too. */
+.fountain-theme-v1 {
+  --fountain-hero-ink: #66572f;
+  background:
+    radial-gradient(ellipse 62% 34% at 8% 8%, rgba(210, 225, 211, 0.52), transparent 72%),
+    radial-gradient(ellipse 58% 38% at 94% 30%, rgba(205, 222, 226, 0.4), transparent 70%),
+    radial-gradient(ellipse 62% 38% at 4% 68%, rgba(226, 215, 180, 0.42), transparent 72%),
+    linear-gradient(180deg, #fbf8e9 0%, #f2f3df 34%, #eef2df 62%, #f8efdd 100%);
+}
+
+.fountain-theme-v1 .fountain-hero-copy-stage {
+  inset: 0;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+}
+
+.fountain-theme-v1 .fountain-hero-copy {
+  isolation: isolate;
+  text-wrap: balance;
+}
+
+.fountain-theme-v1 .fountain-hero-copy::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 10.5%;
+  width: min(82cqw, 34rem);
+  height: min(58cqh, 31rem);
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 252, 234, 0.78) 0%,
+    rgba(255, 252, 234, 0.55) 44%,
+    rgba(246, 244, 220, 0.22) 66%,
+    transparent 78%
+  );
+  filter: blur(2px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.fountain-theme-v1 .fountain-hero-text {
+  padding-top: clamp(7.4rem, 16.5cqh, 9rem);
+}
+
+.fountain-theme-v1 .fountain-mono,
+.fountain-theme-v1 .fountain-rule,
+.fountain-theme-v1 .fountain-couple__amp,
+.fountain-theme-v1 .fountain-info__icon,
+.fountain-theme-v1 .fountain-info__sep {
+  filter: sepia(0.08) saturate(0.88) drop-shadow(0 2px 4px rgba(255, 251, 226, 0.62));
+}
+
+.fountain-theme-v1 .fountain-fam,
+.fountain-theme-v1 .fountain-invite p {
+  color: #61552f;
+  font-weight: 600;
+  text-shadow: 0 1px 7px rgba(255, 253, 236, 0.96);
+}
+
+.fountain-theme-v1 .fountain-couple h1 {
+  color: #786139;
+  text-shadow:
+    0 1px 0 rgba(255, 253, 238, 0.9),
+    0 5px 18px rgba(255, 251, 226, 0.72);
+}
+
+.fountain-theme-v1 .fountain-info__item {
+  color: #5d5535;
+  text-shadow: 0 1px 6px rgba(255, 253, 236, 0.9);
+}
+
+.fountain-theme-v1 .fountain-countdown,
+.fountain-theme-v1 .fountain-event-section,
+.fountain-theme-v1 .fountain-rsvp-section {
+  background: linear-gradient(
+    180deg,
+    rgba(248, 245, 224, 0) 0%,
+    rgba(241, 241, 217, 0.62) 18%,
+    rgba(235, 239, 216, 0.68) 82%,
+    rgba(248, 245, 224, 0) 100%
+  );
+}
+
+.fountain-theme-v1 .fountain-story-section,
+.fountain-theme-v1 .fountain-message-section,
+.fountain-theme-v1 .fountain-gallery-section {
+  background: linear-gradient(
+    180deg,
+    rgba(239, 244, 229, 0) 0%,
+    rgba(227, 237, 225, 0.5) 18%,
+    rgba(232, 238, 220, 0.58) 82%,
+    rgba(239, 244, 229, 0) 100%
+  );
+}
+
+.fountain-theme-v1 .fountain-section-title h2,
+.fountain-theme-v1 .fountain-gallery-header h2,
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  color: #687349;
+  font-weight: 500;
+  line-height: 1;
+  text-shadow: 0 2px 12px rgba(255, 252, 232, 0.74);
+}
+
+.fountain-theme-v1 .fountain-count-unit {
+  color: #6e5e33;
+  background-color: rgba(255, 252, 237, 0.5);
+  filter: drop-shadow(0 12px 20px rgba(84, 96, 62, 0.11));
+}
+
+.fountain-theme-v1 .fountain-footer {
+  background: linear-gradient(
+    180deg,
+    rgba(238, 242, 221, 0) 0%,
+    rgba(235, 235, 211, 0.72) 28%,
+    rgba(232, 225, 198, 0.94) 100%
+  );
+}
+
+@media (max-width: 520px) {
+  .fountain-theme-v1 .fountain-hero-text {
+    padding-top: clamp(7.2rem, 16cqh, 8.4rem);
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy::before {
+    top: 9.5%;
+    width: 94cqw;
+    height: 59cqh;
+  }
+
+  .fountain-theme-v1 .fountain-fam {
+    max-width: 82cqw;
+    margin-inline: auto;
+    letter-spacing: 0.2em;
+  }
+
+  .fountain-theme-v1 .fountain-invite p:first-child {
+    max-width: 76cqw;
+    margin-inline: auto;
+  }
+}
+
+/* Fountain Reverie V1 — restrained editorial system -------------------
+   The video is already richly illustrated, so the interface uses quiet
+   typography, fine rules and translucent paper rather than stacking more
+   ornate artwork over it. */
+.fountain-theme-v1 .fountain-hero-copy::before {
+  content: none;
+}
+
+.fountain-video-hero-text {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  display: flex;
+  width: min(46rem, 84cqw);
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: center;
+  color: #5c5030;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 254, 242, 0.82);
+}
+
+.fountain-video-hero-eyebrow {
+  margin: 0 0 clamp(1.2rem, 3cqh, 1.8rem);
+  color: #5f6549;
+  font-size: clamp(0.66rem, 1.15cqw, 0.82rem);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  width: 100%;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.7rem, 2.2cqw, 1.6rem);
+  color: #745d37;
+  font-size: clamp(3rem, 7cqw, 5.6rem);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i {
+  color: #9a7c45;
+  font-family: var(--font-display);
+  font-size: 0.42em;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names span:first-child {
+  text-align: right;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names span:last-child {
+  text-align: left;
+}
+
+.fountain-video-hero-flourish {
+  display: flex;
+  width: min(10rem, 32cqw);
+  margin: clamp(1rem, 2.4cqh, 1.4rem) auto;
+  align-items: center;
+  gap: 0.7rem;
+  color: #aa8b4d;
+}
+
+.fountain-video-hero-flourish::before,
+.fountain-video-hero-flourish::after {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, currentColor);
+  content: "";
+}
+
+.fountain-video-hero-flourish::after {
+  background: linear-gradient(90deg, currentColor, transparent);
+}
+
+.fountain-video-hero-flourish span {
+  width: 0.38rem;
+  height: 0.38rem;
+  flex: 0 0 auto;
+  border: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.fountain-video-hero-invitation {
+  margin: 0;
+  color: #535a43;
+  font-family: var(--font-display) !important;
+  font-size: clamp(0.98rem, 1.65cqw, 1.2rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.55;
+}
+
+.fountain-video-hero-meta {
+  display: flex;
+  margin-top: clamp(1.1rem, 2.8cqh, 1.7rem);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.65rem, 1.6cqw, 1.1rem);
+  color: #625638;
+  font-size: clamp(0.68rem, 1.08cqw, 0.82rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.fountain-video-hero-meta i {
+  width: 0.24rem;
+  height: 0.24rem;
+  border-radius: 50%;
+  background: #a5884e;
+}
+
+.fountain-video-hero-venue {
+  margin: 0.65rem 0 0;
+  color: #596147;
+  font-size: clamp(0.66rem, 1cqw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* Shared section rhythm and typography. */
+.fountain-theme-v1 .fountain-section,
+.fountain-theme-v1 .fountain-countdown,
+.fountain-theme-v1 .fountain-rsvp-section,
+.fountain-theme-v1 .fountain-gallery-section {
+  padding-top: clamp(4rem, 8vw, 6.5rem);
+  padding-bottom: clamp(4rem, 8vw, 6.5rem);
+}
+
+.fountain-theme-v1 .fountain-section-title {
+  width: min(36rem, calc(100% - 2rem));
+  margin-bottom: clamp(2.4rem, 5vw, 3.7rem);
+}
+
+.fountain-theme-v1 .fountain-section-title img {
+  width: min(9rem, 32vw);
+  margin-bottom: 0.8rem;
+  opacity: 0.7;
+  filter: sepia(0.12) saturate(0.78) drop-shadow(0 4px 8px rgba(91, 83, 54, 0.08));
+}
+
+.fountain-theme-v1 .fountain-section-title h2,
+.fountain-theme-v1 .fountain-gallery-header h2,
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  color: #596448;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: 0.035em;
+  line-height: 1.08;
+}
+
+/* Countdown: light, compact cards that echo the pavilion arches in the film. */
+.fountain-theme-v1 .fountain-countdown {
+  min-height: 0;
+}
+
+.fountain-theme-v1 .fountain-count-grid {
+  width: min(39rem, 100%);
+  margin-top: 0;
+  gap: clamp(0.55rem, 1.8vw, 1rem);
+}
+
+.fountain-theme-v1 .fountain-count-unit {
+  min-height: clamp(6.2rem, 13vw, 8rem);
+  border: 1px solid rgba(144, 119, 67, 0.28);
+  border-radius: 999px 999px 1rem 1rem / 3rem 3rem 1rem 1rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 248, 0.88), rgba(244, 245, 222, 0.74));
+  box-shadow:
+    0 18px 45px rgba(75, 88, 60, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  filter: none;
+}
+
+.fountain-theme-v1 .fountain-count-unit strong {
+  color: #6a5a34;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.fountain-theme-v1 .fountain-count-unit span {
+  margin-top: 0.7rem;
+  color: #657050;
+  font-size: clamp(0.54rem, 1.4vw, 0.7rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* Story: retain Garden Pavilion's clean dimensions, with Fountain colours. */
+.fountain-theme-v1 .fountain-story-grid {
+  gap: clamp(3.5rem, 8vw, 5rem);
+}
+
+.fountain-theme-v1 .fountain-story-text span {
+  color: #9a7c45;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+}
+
+.fountain-theme-v1 .fountain-story-text h3 {
+  color: #4f5c43;
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
+  font-weight: 600;
+}
+
+.fountain-theme-v1 .fountain-story-text p {
+  color: rgba(64, 74, 58, 0.78);
+  font-size: 0.94rem;
+  line-height: 1.7;
+}
+
+.fountain-theme-v1 .fountain-story-photo {
+  border-radius: 0.9rem;
+  box-shadow:
+    0 16px 36px -14px rgba(54, 70, 44, 0.4),
+    0 4px 12px -6px rgba(54, 70, 44, 0.18);
+}
+
+/* Details: one quiet paper panel, without the oversized decorative header. */
+.fountain-theme-v1 .fountain-event-layout {
+  width: min(36rem, 100%);
+}
+
+.fountain-theme-v1 .fountain-event-card {
+  padding: clamp(1.5rem, 4vw, 2.4rem);
+  border: 1px solid rgba(139, 115, 64, 0.2);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 90% 4%, rgba(204, 224, 211, 0.32), transparent 34%),
+    linear-gradient(150deg, rgba(255, 255, 249, 0.94), rgba(244, 241, 219, 0.84));
+  box-shadow: 0 24px 64px rgba(74, 86, 60, 0.11);
+}
+
+.fountain-theme-v1 .fountain-event-card::after {
+  content: none;
+}
+
+.fountain-theme-v1 .fountain-event-card dl {
+  gap: clamp(1.2rem, 3vw, 2rem);
+}
+
+.fountain-theme-v1 .fountain-event-card dt {
+  color: #8f7540;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.fountain-theme-v1 .fountain-event-card dd {
+  color: #4b5840;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.fountain-theme-v1 .fountain-map {
+  margin-top: clamp(1.5rem, 4vw, 2.4rem);
+  border: 1px solid rgba(139, 115, 64, 0.18);
+  border-radius: 0.85rem;
+  box-shadow: none;
+}
+
+/* Note: let the illustrated envelope remain the single decorative statement. */
+.fountain-theme-v1 .fountain-message-section {
+  padding-bottom: clamp(4.5rem, 9vw, 7rem);
+}
+
+.fountain-theme-v1 .fountain-envelope {
+  width: min(40rem, 100%);
+  filter: drop-shadow(0 22px 36px rgba(83, 88, 61, 0.12));
+}
+
+.fountain-theme-v1 .fountain-envelope-copy span {
+  color: #687052;
+  font-size: clamp(0.66rem, 1.4vw, 0.78rem);
+  letter-spacing: 0.2em;
+}
+
+.fountain-theme-v1 .fountain-envelope-copy p {
+  color: #4d5842;
+  font-size: clamp(0.92rem, 2vw, 1.12rem);
+  line-height: 1.55;
+}
+
+/* RSVP: keep Fountain's framed identity, but remove the crowded poster layout. */
+.fountain-theme-v1 .fountain-rsvp-panel {
+  width: min(42rem, 100%);
+  padding: clamp(1.7rem, 5vw, 3rem);
+  border: 1px solid rgba(139, 115, 64, 0.2);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 92% 4%, rgba(205, 225, 212, 0.32), transparent 32%),
+    linear-gradient(150deg, rgba(255, 255, 249, 0.96), rgba(245, 241, 219, 0.9));
+  box-shadow: 0 26px 70px rgba(74, 86, 60, 0.12);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel::after {
+  inset: 0.55rem;
+  opacity: 0.14;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  position: relative;
+  margin: 0 0 clamp(2rem, 5vw, 3rem);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-ornament {
+  width: min(8rem, 36%);
+  margin-bottom: 0.6rem;
+  opacity: 0.72;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header strong {
+  margin-top: 0.75rem;
+  color: #95783f;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header p {
+  margin-top: 0.85rem;
+  color: rgba(70, 82, 60, 0.74);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-form {
+  gap: 1.5rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field,
+.fountain-theme-v1 .fountain-rsvp-panel-choice {
+  gap: 0.65rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field:not(:first-child)::before,
+.fountain-theme-v1 .fountain-rsvp-panel-choice::before,
+.fountain-theme-v1 .fountain-rsvp-panel-submit::before {
+  content: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  border: 1px solid rgba(139, 115, 64, 0.22);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 252, 0.82);
+  padding: 0.9rem 1rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice > div {
+  margin-top: 0.65rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button {
+  min-height: 3rem;
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 252, 0.72);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button.active {
+  border-color: rgba(113, 125, 78, 0.62);
+  background: rgba(137, 151, 98, 0.16);
+  color: #4f5c42;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit {
+  width: 100%;
+  min-height: 3.25rem;
+  margin-top: 0.5rem;
+  border: 1px solid rgba(255, 255, 244, 0.28);
+  border-radius: 0.6rem;
+  background: linear-gradient(135deg, #68724b, #8b7a47);
+  box-shadow: 0 14px 30px rgba(72, 82, 53, 0.18);
+  color: #fffdf2;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit:hover,
+.fountain-theme-v1 .fountain-rsvp-panel-submit:focus-visible {
+  background: linear-gradient(135deg, #5c6740, #97834d);
+  filter: none;
+}
+
+/* Memories: exact Garden Pavilion card proportions, spacing and soft motion. */
+.fountain-theme-v1 .fountain-gallery-section {
+  background:
+    radial-gradient(circle at 16% 8%, rgba(205, 229, 235, 0.2), transparent 30%),
+    radial-gradient(circle at 86% 12%, rgba(230, 216, 180, 0.2), transparent 32%);
+}
+
+.fountain-theme-v1 .fountain-gallery-viewport {
+  padding: 0.5rem 0;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.fountain-theme-v1 .fountain-gallery-row {
+  --fountain-gallery-gap: clamp(0.9rem, 1.8vw, 1.4rem);
+}
+
+.fountain-theme-v1 .fountain-gallery-card {
+  flex: 0 0 clamp(11.5rem, 18vw, 15.5rem);
+  height: clamp(14.5rem, 25vw, 20.5rem);
+  border: 1px solid rgba(117, 142, 72, 0.3);
+  border-bottom-color: rgba(139, 115, 50, 0.4);
+  border-radius: 0.58rem;
+  background: linear-gradient(180deg, rgba(255, 255, 251, 0.96), rgba(240, 248, 235, 0.92));
+  box-shadow:
+    0 20px 42px rgba(69, 88, 59, 0.16),
+    0 8px 20px rgba(139, 115, 50, 0.08),
+    0 1px 0 rgba(255, 255, 251, 0.74) inset;
+}
+
+.fountain-theme-v1 .fountain-gallery-card::before {
+  background: linear-gradient(180deg, transparent 74%, rgba(69, 88, 59, 0.1));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.fountain-theme-v1 .fountain-gallery-card > .invitation-photo {
+  --invitation-photo-pad: 0;
+  --invitation-photo-scale: 1.12;
+  --invitation-photo-hover-scale: 1.16;
+  --invitation-photo-surface: transparent;
+  --invitation-photo-overlay-top: rgba(255, 255, 255, 0.08);
+  --invitation-photo-overlay-bottom: rgba(244, 249, 238, 0.24);
+  --invitation-photo-shadow: rgba(69, 88, 59, 0.2);
+  border-radius: 0.58rem;
+}
+
+.fountain-theme-v1 .fountain-gallery-card .invitation-photo__img {
+  filter: saturate(1.04) contrast(1.02) brightness(1.02);
+  transform: scale(1.008);
+}
+
+.fountain-theme-v1 .fountain-gallery-card:hover {
+  border-color: rgba(117, 142, 72, 0.38);
+  border-bottom-color: rgba(139, 115, 50, 0.44);
+  box-shadow:
+    0 28px 58px rgba(69, 88, 59, 0.21),
+    0 10px 24px rgba(139, 115, 50, 0.12);
+  transform: translateY(-6px);
+}
+
+/* Footer keeps the Fountain artwork but follows the quieter type scale. */
+.fountain-theme-v1 .fountain-footer {
+  min-height: clamp(20rem, 45vw, 30rem);
+  padding-top: clamp(4rem, 8vw, 6rem);
+}
+
+.fountain-theme-v1 .fountain-footer .fountain-reception {
+  color: #687250;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.fountain-theme-v1 .fountain-footer h2 {
+  margin-top: 0.85rem;
+  color: #665737;
+  font-size: clamp(1.8rem, 4.2vw, 2.8rem);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.fountain-theme-v1 .fountain-footer p:last-child {
+  max-width: 24rem;
+  margin-top: 1rem;
+  color: rgba(73, 83, 60, 0.72);
+  font-size: 0.86rem;
+  letter-spacing: 0.12em;
+  line-height: 1.7;
+}
+
+@media (max-width: 620px) {
+  .fountain-video-hero-text {
+    top: 28%;
+    width: 92cqw;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    gap: 0.5rem;
+    font-size: clamp(2.2rem, 10.5cqw, 2.9rem);
+    line-height: 1;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i {
+    margin: 0;
+    font-size: 0.38em;
+  }
+
+  .fountain-video-hero-invitation {
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+  }
+
+  .fountain-video-hero-meta {
+    margin-top: 1rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+  }
+
+  .fountain-video-hero-venue {
+    font-size: 0.59rem;
+    letter-spacing: 0.16em;
+  }
+
+  .fountain-theme-v1 .fountain-section-title img {
+    width: 7.5rem;
+  }
+
+  .fountain-theme-v1 .fountain-section-title h2,
+  .fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+    font-size: clamp(2rem, 10vw, 2.65rem);
+  }
+
+  .fountain-theme-v1 .fountain-count-unit {
+    min-height: 6rem;
+    padding: 1rem 0.25rem 0.8rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel {
+    padding: 1.5rem 1.1rem 1.8rem;
+  }
+
+  .fountain-theme-v1 .fountain-gallery-card {
+    flex-basis: 11.5rem;
+    height: 14.5rem;
+  }
+}
+
+/* Fountain Reverie V1 — final card-led hero and closing sections -------- */
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 14%;
+  width: min(35rem, calc(100% - 2rem));
+  padding: clamp(1.8rem, 4vw, 2.7rem) clamp(1.6rem, 4vw, 3.2rem);
+  border: 1px solid rgba(154, 126, 67, 0.38);
+  border-radius: 0.25rem;
+  background: rgba(252, 250, 235, 0.88);
+  box-shadow:
+    0 24px 70px rgba(47, 62, 44, 0.16),
+    inset 0 0 0 6px rgba(255, 255, 250, 0.46);
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-text::after {
+  position: absolute;
+  inset: 0.48rem;
+  border: 1px solid rgba(154, 126, 67, 0.18);
+  content: "";
+  pointer-events: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow {
+  margin-bottom: clamp(1rem, 2.4vw, 1.35rem);
+  color: #6b7454;
+  font-size: clamp(0.62rem, 1vw, 0.74rem);
+  letter-spacing: 0.22em;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  gap: clamp(0.45rem, 1.5vw, 0.9rem);
+  color: #705a35;
+  font-size: clamp(2.55rem, 5.4vw, 4.5rem);
+  line-height: 1;
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish {
+  width: min(8rem, 30%);
+  margin: clamp(0.85rem, 2vw, 1.15rem) auto;
+}
+
+.fountain-theme-v1 .fountain-video-hero-invitation {
+  color: #4e5945;
+  font-size: clamp(0.82rem, 1.3vw, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta {
+  margin-top: clamp(1rem, 2.2vw, 1.35rem);
+  color: #765f37;
+}
+
+.fountain-theme-v1 .fountain-video-hero-venue {
+  margin-top: 0.65rem;
+  color: #63704f;
+}
+
+/* Details: individual stationery tiles and a separate map, not one bulky box. */
+.fountain-theme-v1 .fountain-event-layout {
+  width: min(58rem, 100%);
+}
+
+.fountain-theme-v1 .fountain-event-card {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-hero-art::after {
+  background:
+    linear-gradient(
+      180deg,
+      transparent 16%,
+      rgba(248, 248, 229, 0.22) 22%,
+      rgba(248, 248, 229, 0.58) 31%,
+      rgba(248, 248, 229, 0.62) 46%,
+      rgba(248, 248, 229, 0.18) 56%,
+      transparent 64%
+    ),
+    linear-gradient(180deg, transparent 82%, rgba(82, 59, 20, 0.08));
+}
+
+.fountain-theme-v1 .fountain-event-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.75rem, 2vw, 1.2rem);
+}
+
+.fountain-theme-v1 .fountain-event-card dl > div {
+  display: flex;
+  min-height: 8.5rem;
+  padding: 1.35rem 1rem;
+  border: 1px solid rgba(139, 115, 64, 0.2);
+  border-radius: 0.8rem;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 249, 0.96), rgba(241, 244, 221, 0.86));
+  box-shadow:
+    0 16px 36px rgba(70, 84, 58, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.fountain-theme-v1 .fountain-event-card dt {
+  color: #957b45;
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+}
+
+.fountain-theme-v1 .fountain-event-card dd {
+  margin-top: 0.7rem;
+  color: #465440;
+  font-family: var(--font-display) !important;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.fountain-theme-v1 .fountain-map {
+  width: min(38rem, 100%);
+  min-height: clamp(17rem, 38vw, 23rem);
+  margin: clamp(1rem, 3vw, 1.7rem) auto 0;
+  overflow: hidden;
+  border: 1px solid rgba(139, 115, 64, 0.22);
+  border-radius: 10rem 10rem 0.9rem 0.9rem;
+  background: #f5f2df;
+  box-shadow: 0 20px 52px rgba(70, 84, 58, 0.1);
+}
+
+.fountain-theme-v1 .fountain-map iframe {
+  min-height: clamp(17rem, 38vw, 23rem);
+}
+
+/* RSVP: a distinct sage introduction beside a bright, highly legible form. */
+.fountain-theme-v1 .fountain-rsvp-section::before,
+.fountain-theme-v1 .fountain-rsvp-section::after {
+  content: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.82fr) minmax(22rem, 1.18fr);
+  width: min(58rem, 100%);
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(91, 111, 79, 0.22);
+  border-radius: 1rem;
+  background: #fffdf4;
+  box-shadow: 0 28px 76px rgba(58, 72, 51, 0.14);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel::after {
+  content: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  display: flex;
+  margin: 0;
+  padding: clamp(2.4rem, 5vw, 4rem) clamp(1.5rem, 3.5vw, 2.7rem);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 4%, rgba(214, 202, 151, 0.18), transparent 42%),
+    linear-gradient(155deg, #63745d, #4f6250);
+  color: #fffdf1;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-ornament {
+  width: min(8rem, 62%);
+  margin-bottom: 1rem;
+  opacity: 0.84;
+  filter: brightness(0) invert(1) sepia(0.18) opacity(0.74);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  color: #fffdf1;
+  font-size: clamp(2.2rem, 4.5vw, 3.3rem);
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header strong {
+  color: #e8d8a9;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header p {
+  max-width: 17rem;
+  color: rgba(255, 255, 243, 0.8);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-form,
+.fountain-theme-v1 .fountain-rsvp-panel-success {
+  width: 100%;
+  padding: clamp(2rem, 4vw, 3.2rem);
+  background: linear-gradient(155deg, #fffef8, #f7f5e7);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field span,
+.fountain-theme-v1 .fountain-rsvp-panel-choice legend,
+.fountain-theme-v1 .fountain-rsvp-panel-form .rsvp-plus-one-label {
+  color: #4f5b48;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  border-color: rgba(89, 106, 76, 0.24);
+  background: #fffef9;
+  color: #3f493b;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit {
+  background: linear-gradient(135deg, #9b8049, #6e7852);
+}
+
+/* Footer: a calm closing line above the original Fountain artwork. */
+.fountain-theme-v1 .fountain-footer {
+  min-height: clamp(22rem, 46vw, 31rem);
+  padding-top: clamp(4.5rem, 9vw, 6.5rem);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(201, 219, 222, 0.3), transparent 48%),
+    linear-gradient(180deg, rgba(241, 245, 226, 0.88), rgba(235, 230, 204, 0.98));
+}
+
+.fountain-theme-v1 .fountain-footer::before {
+  width: min(9rem, 34vw);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(154, 126, 67, 0.6), transparent);
+}
+
+.fountain-theme-v1 .fountain-footer-inner {
+  width: min(38rem, 100%);
+}
+
+.fountain-theme-v1 .fountain-footer .fountain-reception {
+  color: #71805f;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+}
+
+.fountain-theme-v1 .fountain-footer h2 {
+  margin-top: 1rem;
+  color: #655334;
+  font-size: clamp(2.2rem, 5.4vw, 3.8rem);
+}
+
+.fountain-theme-v1 .fountain-footer p:last-child {
+  max-width: 30rem;
+  color: rgba(65, 78, 58, 0.74);
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 720px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 17%;
+    width: min(21.5rem, calc(100% - 2rem));
+    padding: 1.65rem 1.2rem 1.75rem;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    gap: 0.4rem;
+    font-size: clamp(2.05rem, 9.8cqw, 2.5rem);
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-invitation {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl {
+    grid-template-columns: 1fr;
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl > div {
+    min-height: 6.4rem;
+  }
+
+  .fountain-theme-v1 .fountain-map,
+  .fountain-theme-v1 .fountain-map iframe {
+    min-height: 18rem;
+    border-radius: 7rem 7rem 0.8rem 0.8rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+    padding: 2.3rem 1.4rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-form,
+  .fountain-theme-v1 .fountain-rsvp-panel-success {
+    padding: 1.65rem 1.1rem 2rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer h2 {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+  }
+}
+
+/* Fountain Reverie V1 — open wedding stationery -----------------------
+   No UI cards: typography and fine rules sit directly on the watercolor
+   canvas, like a traditional printed invitation. */
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 22%;
+  width: min(42rem, 86cqw);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-text::after {
+  content: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow {
+  margin-bottom: clamp(1.1rem, 2.6cqh, 1.5rem);
+  color: #5d664c;
+  font-size: clamp(0.68rem, 1vw, 0.82rem);
+  letter-spacing: 0.28em;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  gap: clamp(0.5rem, 1.6vw, 1rem);
+  color: #6c5432;
+  font-size: clamp(3.2rem, 7.2vw, 5.8rem);
+  text-shadow:
+    0 1px 0 rgba(255, 255, 244, 0.95),
+    0 2px 0 rgba(255, 255, 244, 0.55);
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish {
+  width: min(9rem, 28cqw);
+  margin: clamp(1.1rem, 2.6cqh, 1.5rem) auto;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta {
+  margin-top: 0;
+  color: #655231;
+  font-size: clamp(0.7rem, 1.1vw, 0.84rem);
+  letter-spacing: 0.18em;
+}
+
+.fountain-theme-v1 .fountain-video-hero-venue {
+  margin-top: 0.8rem;
+  color: #596349;
+  font-size: clamp(0.66rem, 1vw, 0.78rem);
+  letter-spacing: 0.22em;
+}
+
+/* Details become an open typographic composition with delicate dividers. */
+.fountain-theme-v1 .fountain-event-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  width: min(52rem, 100%);
+  margin: 0 auto;
+}
+
+.fountain-theme-v1 .fountain-event-card dl > div {
+  position: relative;
+  display: flex;
+  min-height: 7.5rem;
+  padding: 1rem clamp(1rem, 3vw, 2.4rem);
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.fountain-theme-v1 .fountain-event-card dl > div + div::before {
+  position: absolute;
+  left: 0;
+  top: 18%;
+  width: 1px;
+  height: 64%;
+  background: linear-gradient(180deg, transparent, rgba(151, 125, 68, 0.48), transparent);
+  content: "";
+}
+
+.fountain-theme-v1 .fountain-event-card dt {
+  color: #90743f;
+}
+
+.fountain-theme-v1 .fountain-event-card dd {
+  color: #45523e;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+}
+
+.fountain-theme-v1 .fountain-map {
+  width: min(38rem, 92%);
+  margin-top: clamp(2rem, 5vw, 3.2rem);
+  border-width: 1px;
+  border-radius: 999px 999px 0.8rem 0.8rem;
+  background: transparent;
+  box-shadow: 0 20px 50px rgba(65, 79, 54, 0.1);
+}
+
+/* RSVP is an open form: no panel, no filled header, no form card. */
+.fountain-theme-v1 .fountain-rsvp-panel {
+  display: block;
+  width: min(42rem, 100%);
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  display: flex;
+  margin: 0 auto clamp(2.6rem, 6vw, 4rem);
+  padding: 0;
+  background: none;
+  color: #4f5c46;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-ornament {
+  width: min(8rem, 34vw);
+  margin-bottom: 0.8rem;
+  opacity: 0.66;
+  filter: sepia(0.12) saturate(0.78);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  color: #566348;
+  font-size: clamp(2.4rem, 5vw, 3.4rem);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header strong {
+  color: #92763f;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header p {
+  color: rgba(63, 76, 57, 0.74);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-form,
+.fountain-theme-v1 .fountain-rsvp-panel-success {
+  width: min(36rem, 100%);
+  margin: 0 auto;
+  padding: 0;
+  background: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  border: 0;
+  border-bottom: 1px solid rgba(94, 109, 79, 0.42);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0.9rem 0.15rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input:focus,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea:focus {
+  border-bottom-color: #8f7541;
+  background: transparent;
+  box-shadow: 0 1px 0 #8f7541;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice > div {
+  gap: 0;
+  border-top: 1px solid rgba(94, 109, 79, 0.24);
+  border-bottom: 1px solid rgba(94, 109, 79, 0.24);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button {
+  min-height: 3.2rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button + button {
+  border-left: 1px solid rgba(94, 109, 79, 0.24);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button.active {
+  border-color: rgba(94, 109, 79, 0.24);
+  background: rgba(126, 143, 102, 0.14);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit {
+  width: min(18rem, 100%);
+  margin: 1.2rem auto 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #66734e, #92783f);
+}
+
+/* Footer stays open and lets the original fountain illustration close the page. */
+.fountain-theme-v1 .fountain-footer {
+  background:
+    linear-gradient(180deg, rgba(238, 243, 222, 0), rgba(236, 232, 207, 0.94));
+}
+
+@media (max-width: 720px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 31%;
+    width: 92cqw;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    gap: 0.4rem;
+    font-size: clamp(2.35rem, 10.8cqw, 2.8rem);
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl {
+    grid-template-columns: 1fr;
+    width: min(23rem, 100%);
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl > div {
+    min-height: 5.5rem;
+    padding: 1rem;
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl > div + div::before {
+    left: 12%;
+    top: 0;
+    width: 76%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(151, 125, 68, 0.45), transparent);
+  }
+
+  .fountain-theme-v1 .fountain-map,
+  .fountain-theme-v1 .fountain-map iframe {
+    border-radius: 8rem 8rem 0.8rem 0.8rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-form,
+  .fountain-theme-v1 .fountain-rsvp-panel-success {
+    width: min(32rem, calc(100% - 1rem));
+  }
+}
+
+/* Fountain Reverie V1 — requested final hierarchy ---------------------- */
+.fountain-theme-v1 .fountain-hero-art::after {
+  background: linear-gradient(180deg, transparent 84%, rgba(59, 73, 52, 0.08));
+}
+
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 24%;
+  color: #45523e;
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow {
+  margin-bottom: clamp(1rem, 2.4cqh, 1.35rem);
+  color: #59664c;
+  font-size: clamp(0.66rem, 0.95vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.26em;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  color: #695335;
+  font-size: clamp(3rem, 6.6vw, 5.25rem);
+  font-weight: 400;
+  line-height: 1;
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish {
+  color: #9b7c42;
+  margin: clamp(0.95rem, 2.2cqh, 1.3rem) auto;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta {
+  display: flex;
+  margin-top: 0;
+  flex-direction: column;
+  gap: 0.48rem;
+  color: #4e5b45;
+  font-size: clamp(0.7rem, 1.05vw, 0.82rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta i,
+.fountain-theme-v1 .fountain-video-hero-venue {
+  display: none;
+}
+
+/* One formal stationery card for all event details. */
+.fountain-theme-v1 .fountain-event-layout {
+  width: min(48rem, 100%);
+}
+
+.fountain-theme-v1 .fountain-event-card {
+  width: 100%;
+  max-width: none;
+  padding: clamp(1.8rem, 4vw, 3rem);
+  overflow: hidden;
+  border: 1px solid rgba(143, 117, 63, 0.26);
+  border-radius: 0.7rem;
+  background:
+    radial-gradient(circle at 88% 4%, rgba(203, 221, 206, 0.25), transparent 34%),
+    linear-gradient(155deg, rgba(255, 254, 245, 0.98), rgba(246, 244, 226, 0.96));
+  box-shadow:
+    0 24px 64px rgba(65, 78, 55, 0.12),
+    inset 0 0 0 0.42rem rgba(255, 255, 251, 0.52);
+}
+
+.fountain-theme-v1 .fountain-event-card dl {
+  width: 100%;
+}
+
+.fountain-theme-v1 .fountain-map {
+  width: min(38rem, 100%);
+  margin-top: clamp(1.6rem, 4vw, 2.5rem);
+}
+
+/* RSVP returns to one refined invitation card, without the old oversized gap. */
+.fountain-theme-v1 .fountain-rsvp-panel {
+  display: block;
+  width: min(42rem, 100%);
+  padding: clamp(1.8rem, 5vw, 3.4rem);
+  overflow: hidden;
+  border: 1px solid rgba(143, 117, 63, 0.26);
+  border-radius: 0.7rem;
+  background:
+    radial-gradient(circle at 90% 3%, rgba(203, 221, 206, 0.28), transparent 32%),
+    linear-gradient(155deg, rgba(255, 254, 245, 0.99), rgba(246, 244, 226, 0.97));
+  box-shadow:
+    0 26px 70px rgba(65, 78, 55, 0.13),
+    inset 0 0 0 0.42rem rgba(255, 255, 251, 0.54);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  margin-bottom: clamp(2.2rem, 5vw, 3.4rem);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-form,
+.fountain-theme-v1 .fountain-rsvp-panel-success {
+  width: min(34rem, 100%);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit {
+  box-shadow: 0 14px 32px rgba(80, 78, 45, 0.2);
+}
+
+/* A compact, legible closing above the original fountain illustration. */
+.fountain-theme-v1 .fountain-footer {
+  min-height: clamp(21rem, 43vw, 29rem);
+  padding-top: clamp(4rem, 8vw, 5.8rem);
+  padding-bottom: clamp(10rem, 22vw, 16rem);
+}
+
+.fountain-theme-v1 .fountain-footer .fountain-reception {
+  margin-bottom: 0;
+  color: #637051;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+}
+
+.fountain-theme-v1 .fountain-footer h2 {
+  margin-top: 0.85rem;
+  color: #665235;
+  font-size: clamp(2rem, 4.8vw, 3.25rem);
+  line-height: 1;
+}
+
+.fountain-theme-v1 .fountain-footer p:last-child {
+  margin-top: 1rem;
+  color: rgba(65, 77, 58, 0.72);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    left: 54%;
+    top: 36%;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    font-size: clamp(2.25rem, 10.4cqw, 2.7rem);
+  }
+
+  .fountain-theme-v1 .fountain-event-card {
+    width: calc(100% - 0.5rem);
+    margin-inline: auto;
+    padding: 1.5rem 1.15rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel {
+    width: calc(100% - 0.5rem);
+    margin-inline: auto;
+    padding: 1.7rem 1.15rem 2.1rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer {
+    padding-bottom: 9.5rem;
+  }
+}
+
+/* Fountain Reverie V1 — warm watercolor palette ------------------------
+   Pull every section from the film's sky, limestone and antique-gold tones;
+   remove the garden-green cast that belonged to another invitation. */
+.fountain-theme-v1 {
+  --fountain-ink: #644f33;
+  --fountain-ink-dark: #4e3e2d;
+  --fountain-gold: #9a7640;
+  --fountain-gold-soft: #c2a66f;
+  --fountain-bronze: #806039;
+  --fountain-olive: #8d7248;
+  --fountain-sage: #b8aa8d;
+  --fountain-paper: #fbf3e4;
+  --fountain-ivory: #fffaf0;
+  color: #55442f;
+  background:
+    radial-gradient(ellipse 62% 34% at 8% 7%, rgba(201, 222, 231, 0.34), transparent 72%),
+    radial-gradient(ellipse 58% 38% at 94% 32%, rgba(235, 215, 183, 0.42), transparent 70%),
+    radial-gradient(ellipse 60% 38% at 5% 72%, rgba(224, 203, 174, 0.3), transparent 72%),
+    linear-gradient(180deg, #fbf6e9 0%, #f7edde 38%, #f4e9d9 68%, #fbf4e7 100%);
+}
+
+.fountain-theme-v1 .fountain-countdown,
+.fountain-theme-v1 .fountain-event-section,
+.fountain-theme-v1 .fountain-rsvp-section {
+  background: linear-gradient(
+    180deg,
+    rgba(250, 244, 231, 0) 0%,
+    rgba(243, 232, 215, 0.56) 18%,
+    rgba(240, 227, 208, 0.62) 82%,
+    rgba(250, 244, 231, 0) 100%
+  );
+}
+
+.fountain-theme-v1 .fountain-story-section,
+.fountain-theme-v1 .fountain-message-section,
+.fountain-theme-v1 .fountain-gallery-section {
+  background: linear-gradient(
+    180deg,
+    rgba(244, 239, 226, 0) 0%,
+    rgba(232, 236, 232, 0.34) 18%,
+    rgba(239, 229, 213, 0.5) 82%,
+    rgba(244, 239, 226, 0) 100%
+  );
+}
+
+/* Hero: centered below the bird's main flight line, with crisp warm ink. */
+.fountain-theme-v1 .fountain-video-hero-text {
+  left: 50%;
+  top: 31%;
+  width: min(40rem, 84cqw);
+  color: #5f482d;
+  transform: translateX(-50%);
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow {
+  color: #7f6035;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  color: #73512d;
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish {
+  color: #a47b3e;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta {
+  color: #62482d;
+}
+
+/* All section headings now use the same antique-bronze editorial ink. */
+.fountain-theme-v1 .fountain-section-title h2,
+.fountain-theme-v1 .fountain-gallery-header h2,
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  color: #765936;
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-section-title img,
+.fountain-theme-v1 .fountain-rsvp-panel-ornament {
+  filter: sepia(0.2) saturate(0.9) hue-rotate(352deg) drop-shadow(0 4px 8px rgba(103, 74, 38, 0.08));
+}
+
+.fountain-theme-v1 .fountain-count-unit {
+  border-color: rgba(151, 112, 59, 0.3);
+  background: linear-gradient(160deg, rgba(255, 252, 242, 0.96), rgba(242, 227, 205, 0.86));
+  box-shadow: 0 16px 38px rgba(105, 76, 40, 0.1);
+  color: #73562f;
+}
+
+.fountain-theme-v1 .fountain-count-unit strong {
+  color: #775730;
+}
+
+.fountain-theme-v1 .fountain-count-unit span,
+.fountain-theme-v1 .fountain-story-text span {
+  color: #9b7640;
+}
+
+.fountain-theme-v1 .fountain-story-text h3,
+.fountain-theme-v1 .fountain-story-text p,
+.fountain-theme-v1 .fountain-envelope-copy p {
+  color: #584631;
+}
+
+.fountain-theme-v1 .fountain-envelope-copy span {
+  color: #8a683d;
+}
+
+.fountain-theme-v1 .fountain-event-card,
+.fountain-theme-v1 .fountain-rsvp-panel {
+  border-color: rgba(151, 112, 59, 0.3);
+  background:
+    radial-gradient(circle at 88% 4%, rgba(200, 221, 232, 0.2), transparent 34%),
+    linear-gradient(155deg, rgba(255, 252, 242, 0.99), rgba(244, 229, 208, 0.96));
+  box-shadow:
+    0 24px 64px rgba(103, 74, 38, 0.13),
+    inset 0 0 0 0.42rem rgba(255, 255, 251, 0.58);
+}
+
+.fountain-theme-v1 .fountain-event-card dt,
+.fountain-theme-v1 .fountain-rsvp-panel-header strong {
+  color: #9a7340;
+}
+
+.fountain-theme-v1 .fountain-event-card dd,
+.fountain-theme-v1 .fountain-rsvp-panel-header p,
+.fountain-theme-v1 .fountain-rsvp-panel-field span,
+.fountain-theme-v1 .fountain-rsvp-panel-choice legend,
+.fountain-theme-v1 .fountain-rsvp-panel-form .rsvp-plus-one-label {
+  color: #59462f;
+}
+
+/* RSVP regains its original centered, ornamental invitation composition. */
+.fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  display: flex;
+  width: min(30rem, 100%);
+  margin: 0 auto clamp(2.5rem, 5vw, 3.5rem);
+  padding: 0;
+  align-items: center;
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  font-size: clamp(2.6rem, 5.5vw, 3.8rem);
+  letter-spacing: 0.05em;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header strong {
+  margin-top: 0.7rem;
+  letter-spacing: 0.24em;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header p {
+  max-width: 24rem;
+  margin: 0.9rem auto 0;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  border-bottom-color: rgba(139, 101, 53, 0.38);
+  color: #4e3e2d;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input:focus,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea:focus {
+  border-bottom-color: #9a7340;
+  box-shadow: 0 1px 0 #9a7340;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice > div {
+  border-color: rgba(139, 101, 53, 0.26);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button {
+  color: #624b31;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button.active {
+  border-color: rgba(139, 101, 53, 0.26);
+  background: rgba(190, 155, 93, 0.18);
+  color: #5b4228;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit {
+  background: linear-gradient(135deg, #76552e, #b08a49);
+  box-shadow: 0 14px 32px rgba(103, 74, 38, 0.22);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit:hover,
+.fountain-theme-v1 .fountain-rsvp-panel-submit:focus-visible {
+  background: linear-gradient(135deg, #654625, #bc9551);
+}
+
+.fountain-theme-v1 .fountain-gallery-section {
+  background:
+    radial-gradient(circle at 14% 8%, rgba(200, 221, 232, 0.18), transparent 30%),
+    radial-gradient(circle at 88% 14%, rgba(231, 205, 169, 0.24), transparent 32%);
+}
+
+.fountain-theme-v1 .fountain-footer {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(203, 221, 229, 0.24), transparent 48%),
+    linear-gradient(180deg, rgba(247, 237, 220, 0), rgba(237, 220, 195, 0.96));
+}
+
+.fountain-theme-v1 .fountain-footer .fountain-reception {
+  color: #8a673a;
+}
+
+.fountain-theme-v1 .fountain-footer h2 {
+  color: #6b4d2e;
+}
+
+.fountain-theme-v1 .fountain-footer p:last-child {
+  color: rgba(84, 62, 41, 0.76);
+}
+
+@media (max-width: 720px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    left: 54%;
+    top: 36%;
+    width: 90cqw;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+    font-size: 2.75rem;
+  }
+}
+
+/* Fountain Reverie V1 — typography and RSVP corrections ---------------- */
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 20%;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  display: flex;
+  width: min(34rem, 100%);
+  flex-direction: column;
+  gap: 0;
+  font-size: clamp(3.2rem, 6.8vw, 5.35rem);
+  line-height: 0.92;
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names span {
+  width: 100%;
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names span:first-child,
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names span:last-child {
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i {
+  display: flex;
+  width: min(10rem, 42%);
+  margin: clamp(0.5rem, 1.4cqh, 0.8rem) auto;
+  align-items: center;
+  gap: 0.7rem;
+  color: #9c7842;
+  font-family: var(--font-display) !important;
+  font-size: clamp(0.62rem, 0.18em, 0.82rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::before,
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::after {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(157, 118, 62, 0.72));
+  content: "";
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::after {
+  background: linear-gradient(90deg, rgba(157, 118, 62, 0.72), transparent);
+}
+
+.fountain-theme-v1 .fountain-video-hero-flourish {
+  display: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta {
+  margin-top: clamp(1.1rem, 2.6cqh, 1.55rem);
+}
+
+/* Details card ends cleanly after the map; no rule beneath Time. */
+.fountain-theme-v1 .fountain-event-card dl {
+  border-bottom: 0;
+}
+
+/* Story copy: restrained editorial hierarchy, never italic or compressed. */
+.fountain-theme-v1 .fountain-story-card {
+  gap: 1.2rem;
+}
+
+.fountain-theme-v1 .fountain-story-text {
+  width: min(22rem, 100%);
+  max-width: 22rem;
+  padding: 0;
+}
+
+.fountain-theme-v1 .fountain-story-text span {
+  margin-bottom: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.fountain-theme-v1 .fountain-story-text h3 {
+  color: #674d30;
+  font-size: clamp(1.3rem, 3vw, 1.62rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.18;
+}
+
+.fountain-theme-v1 .fountain-story-text p {
+  max-width: 21rem;
+  margin: 0.65rem auto 0;
+  color: rgba(83, 63, 43, 0.82);
+  font-size: 0.94rem;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.68;
+}
+
+/* RSVP: restore the original ornate, framed card with a centered header. */
+.fountain-theme-v1 .fountain-rsvp-panel {
+  position: relative;
+  isolation: isolate;
+  width: min(42rem, 100%);
+  padding: clamp(2.2rem, 5vw, 3.6rem) clamp(1.7rem, 5vw, 3.4rem) clamp(2rem, 5vw, 3.2rem);
+  border: 1px solid rgba(151, 112, 59, 0.34);
+  border-radius: 0.8rem;
+  background: linear-gradient(155deg, #fffaf0, #f3e4ce);
+  box-shadow:
+    0 28px 72px rgba(103, 74, 38, 0.14),
+    inset 0 0 0 0.5rem rgba(255, 253, 246, 0.64);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel::after {
+  position: absolute;
+  inset: 0.55rem;
+  z-index: 0;
+  display: block;
+  background: url("../../assets/Fountain Reverie/decorative_components/elegant_vintage_decorative_frame_transparent.png") center / 100% 100% no-repeat;
+  content: "";
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  position: relative;
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+  display: flex;
+  width: 100%;
+  margin: 0 auto clamp(2.4rem, 5vw, 3.4rem);
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transform: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-ornament {
+  display: block;
+  width: min(10rem, 42%);
+  margin: 0 auto 0.7rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  display: block;
+  width: 100%;
+  margin: 0;
+  color: #76532d;
+  font-size: clamp(2.7rem, 6vw, 3.9rem);
+  line-height: 1;
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header strong,
+.fountain-theme-v1 .fountain-rsvp-panel-header p {
+  width: 100%;
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-form {
+  width: min(34rem, 100%);
+  gap: 1.35rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  border: 1px solid rgba(139, 101, 53, 0.26);
+  border-radius: 0.55rem;
+  background: rgba(255, 253, 247, 0.88);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  padding: 0.9rem 0.95rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input:focus,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea:focus {
+  border-color: #a47c42;
+  background: #fffdf8;
+  box-shadow: 0 0 0 3px rgba(191, 155, 92, 0.15);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice > div {
+  gap: 0.55rem;
+  border: 0;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button {
+  min-height: 3.1rem;
+  border: 1px solid rgba(139, 101, 53, 0.24);
+  border-radius: 0.5rem;
+  background: rgba(255, 253, 247, 0.76);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button + button {
+  border-left: 1px solid rgba(139, 101, 53, 0.24);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button.active {
+  border-color: rgba(151, 112, 59, 0.55);
+  background: rgba(197, 161, 99, 0.2);
+}
+
+@media (max-width: 720px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    left: 50%;
+    top: 29%;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    font-size: clamp(2.8rem, 12.2cqw, 3.25rem);
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel {
+    width: calc(100% - 0.5rem);
+    padding: 1.9rem 1.15rem 2.1rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+    font-size: 2.8rem;
+  }
+}
+
+/* Fountain Reverie V1 — final hero, Details and RSVP refinement -------- */
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 32%;
+  width: min(32rem, 78cqw);
+  padding: 0.35rem 0;
+  color: #263f4e;
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow {
+  display: flex;
+  width: min(17rem, 72%);
+  margin: 0 auto clamp(0.8rem, 1.8cqh, 1.05rem);
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  color: #315062;
+  font-family: var(--font-body) !important;
+  font-size: clamp(0.6rem, 0.9vw, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  line-height: 1.35;
+  text-shadow: 0 1px 0 rgba(255, 253, 242, 0.9);
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow::before,
+.fountain-theme-v1 .fountain-video-hero-eyebrow::after {
+  width: 2.5rem;
+  height: 1px;
+  flex: 1 1 auto;
+  background: linear-gradient(90deg, transparent, rgba(160, 124, 67, 0.78));
+  content: "";
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow::after {
+  background: linear-gradient(90deg, rgba(160, 124, 67, 0.78), transparent);
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  width: min(28rem, 100%);
+  color: #253f50;
+  font-family: var(--font-display) !important;
+  font-size: clamp(2.8rem, 5.9vw, 4.65rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.82;
+  text-shadow: 0 1px 0 rgba(255, 253, 244, 0.94);
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i {
+  display: block;
+  width: auto;
+  margin: clamp(0.5rem, 1.2cqh, 0.72rem) auto;
+  color: #9c7338;
+  font-family: var(--font-display) !important;
+  font-size: clamp(1.15rem, 0.3em, 1.45rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  text-transform: none;
+  text-shadow: 0 1px 0 rgba(255, 253, 244, 0.92);
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::before,
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::after {
+  content: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta {
+  display: flex;
+  width: min(14rem, 64%);
+  margin: clamp(0.9rem, 2cqh, 1.2rem) auto 0;
+  padding-top: clamp(0.72rem, 1.5cqh, 0.95rem);
+  border-top: 1px solid rgba(157, 119, 59, 0.6);
+  flex-direction: column;
+  gap: 0.34rem;
+  color: #304b5b;
+  font-family: var(--font-body) !important;
+  font-size: clamp(0.64rem, 0.94vw, 0.76rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.35;
+  text-shadow: 0 1px 0 rgba(255, 253, 244, 0.94);
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta span:last-child {
+  color: #6f5837;
+  font-size: 0.92em;
+  letter-spacing: 0.22em;
+}
+
+/* Details: formal double-line stationery, clear hierarchy, cleaner map. */
+.fountain-theme-v1 .fountain-event-card {
+  padding: clamp(2rem, 4.5vw, 3.2rem);
+  border: 1px solid rgba(145, 104, 52, 0.34);
+  border-radius: 0.85rem;
+  background:
+    radial-gradient(circle at 92% 3%, rgba(199, 220, 232, 0.26), transparent 34%),
+    linear-gradient(150deg, #fffaf0, #f3e3cd);
+  box-shadow:
+    0 26px 68px rgba(91, 62, 31, 0.14),
+    inset 0 0 0 0.5rem rgba(255, 253, 247, 0.62),
+    inset 0 0 0 0.56rem rgba(166, 125, 66, 0.12);
+}
+
+.fountain-theme-v1 .fountain-event-card dl {
+  padding: clamp(0.5rem, 2vw, 1rem) 0 clamp(1.2rem, 3vw, 1.8rem);
+  border-bottom: 0;
+}
+
+.fountain-theme-v1 .fountain-event-card dl > div {
+  min-height: 7rem;
+}
+
+.fountain-theme-v1 .fountain-event-card dt {
+  color: #936b38;
+  font-size: 0.66rem;
+  letter-spacing: 0.23em;
+}
+
+.fountain-theme-v1 .fountain-event-card dd {
+  color: #4f3e2c;
+  font-size: clamp(1.08rem, 2.2vw, 1.28rem);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.fountain-theme-v1 .fountain-map {
+  margin-top: clamp(1.1rem, 3vw, 1.8rem);
+  overflow: hidden;
+  border: 1px solid rgba(145, 104, 52, 0.3);
+  border-radius: 9rem 9rem 0.75rem 0.75rem;
+  background: #f8eedf;
+  box-shadow:
+    0 16px 40px rgba(91, 62, 31, 0.1),
+    inset 0 0 0 0.3rem rgba(255, 253, 247, 0.48);
+}
+
+/* RSVP: return to the cleaner card design while preserving exact centering. */
+.fountain-theme-v1 .fountain-rsvp-panel {
+  width: min(42rem, 100%);
+  padding: clamp(2.2rem, 5vw, 3.6rem) clamp(1.7rem, 5vw, 3.4rem) clamp(2.2rem, 5vw, 3.2rem);
+  border: 1px solid rgba(145, 104, 52, 0.34);
+  border-radius: 0.85rem;
+  background:
+    radial-gradient(circle at 92% 3%, rgba(199, 220, 232, 0.24), transparent 34%),
+    linear-gradient(150deg, #fffaf0, #f3e3cd);
+  box-shadow:
+    0 28px 72px rgba(91, 62, 31, 0.15),
+    inset 0 0 0 0.5rem rgba(255, 253, 247, 0.64),
+    inset 0 0 0 0.56rem rgba(166, 125, 66, 0.12);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel::after {
+  content: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+  width: 100%;
+  margin: 0 auto clamp(2.4rem, 5vw, 3.3rem);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transform: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-ornament {
+  width: min(9rem, 38%);
+  margin: 0 auto 0.75rem;
+  opacity: 0.7;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  width: 100%;
+  margin: 0;
+  color: #6f4d2b;
+  font-size: clamp(2.65rem, 5.8vw, 3.65rem);
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header strong {
+  margin-top: 0.75rem;
+  color: #9a713c;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header p {
+  margin-top: 0.85rem;
+  color: rgba(79, 61, 42, 0.76);
+  text-align: center;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-form {
+  gap: 1.4rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  border: 1px solid rgba(139, 99, 50, 0.26);
+  border-radius: 0.58rem;
+  background: rgba(255, 253, 247, 0.9);
+  color: #49392a;
+  padding: 0.92rem 0.95rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice > div {
+  gap: 0.55rem;
+  border: 0;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button {
+  border: 1px solid rgba(139, 99, 50, 0.24);
+  border-radius: 0.52rem;
+  background: rgba(255, 253, 247, 0.76);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button.active {
+  border-color: rgba(151, 108, 53, 0.58);
+  background: rgba(200, 161, 98, 0.2);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit {
+  width: 100%;
+  max-width: none;
+  min-height: 3.35rem;
+  border-radius: 0.58rem;
+  background: linear-gradient(135deg, #76522d, #b48847);
+  box-shadow: 0 15px 34px rgba(91, 62, 31, 0.22);
+}
+
+@media (max-width: 720px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    left: 50%;
+    top: 32%;
+    width: 82cqw;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    font-size: clamp(2.48rem, 10.8cqw, 2.92rem);
+  }
+
+  .fountain-theme-v1 .fountain-event-card,
+  .fountain-theme-v1 .fountain-rsvp-panel {
+    width: calc(100% - 0.5rem);
+    padding: 1.85rem 1.15rem 2.1rem;
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl > div {
+    min-height: 5.4rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+    font-size: 2.75rem;
   }
 }

@@ -290,7 +290,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   };
 
   return (
-    <div ref={rootRef} className={`gazebo-theme theme-watercolor${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`gazebo-theme theme-watercolor invitation-typography${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}
@@ -335,7 +335,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
           transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="gazebo-hero-invite">You are invited to the {eventCopy.labelLower} of</p>
-          <h1>{coupleNames}</h1>
+          <h1 data-invitation-name>{coupleNames}</h1>
           <p className="gazebo-hero-date">{heroDate || fullDateStr}</p>
           {timeStr && <p className="gazebo-hero-time">{timeStr}</p>}
           {venue && <p className="gazebo-hero-venue">{venue}</p>}
@@ -523,7 +523,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       <footer className="gazebo-footer">
         <div className="gazebo-footer-inner">
           <p className="gazebo-footer-made">With love</p>
-          <h2>{coupleNames}</h2>
+          <h2 data-invitation-name>{coupleNames}</h2>
           <div className="gazebo-footer-rule" aria-hidden />
           <p className="gazebo-footer-thanks">Thank you for being part of our beginning</p>
         </div>
