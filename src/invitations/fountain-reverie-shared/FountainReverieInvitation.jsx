@@ -388,19 +388,8 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
             </dl>
             {embedSrc && (
               <div className="fountain-map">
-                <div className="fountain-map-viewport">
-                  <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-                </div>
-                <div className="fountain-map-actions">
-                  <div className="fountain-map-caption">
-                    <span>Venue location</span>
-                    <strong>{venue || 'Wedding venue'}</strong>
-                  </div>
-                  <a className="fountain-map-link" href={openMapHref} target="_blank" rel="noopener noreferrer">
-                    <span>Open in Maps</span>
-                    <span aria-hidden="true">↗</span>
-                  </a>
-                </div>
+                <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
               </div>
             )}
           </motion.div>
@@ -537,7 +526,7 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
       <footer className="fountain-footer">
         <div className="fountain-footer-inner">
           <p className="fountain-reception">With love</p>
-          <h2 data-invitation-name>{name1} <span>&amp;</span> {name2}</h2>
+          <h2 data-invitation-name>{name1} <span className="fountain-footer-amp">&amp;</span> {name2}</h2>
           <p>Thank you for being part of our beginning</p>
         </div>
       </footer>

@@ -522,7 +522,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
       <footer className="gazebo-footer">
         <div className="gazebo-footer-inner">
           <p className="gazebo-footer-made">With love</p>
-          <h2 data-invitation-name>{coupleNames}</h2>
+          <h2 data-invitation-name>{name1} <span className="gazebo-footer-amp">&amp;</span> {name2}</h2>
           <div className="gazebo-footer-rule" aria-hidden />
           <p className="gazebo-footer-thanks">Thank you for being part of our beginning</p>
         </div>

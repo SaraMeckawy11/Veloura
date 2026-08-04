@@ -1586,3 +1586,17 @@
     overflow-wrap: anywhere;
   }
 }
+
+/* Keep the footer ampersand identical to the hero names. */
+.gazebo-footer h2 .gazebo-footer-amp {
+  display: inline;
+  margin: 0;
+  color: #314234;
+  font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif !important;
+  font-size: 1em;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: inherit;
+  text-transform: none;
+}
