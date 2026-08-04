@@ -5714,67 +5714,57 @@
 
 /* Fountain Reverie V1 — final hero, Details and RSVP refinement -------- */
 .fountain-theme-v1 .fountain-video-hero-text {
-  top: 32%;
-  width: min(32rem, 78cqw);
-  padding: 0.35rem 0;
-  color: #263f4e;
+  top: 23%;
+  width: min(36rem, 82cqw);
+  padding: 0;
+  color: #4f3824;
   text-shadow: none;
 }
 
 .fountain-theme-v1 .fountain-video-hero-eyebrow {
-  display: flex;
-  width: min(17rem, 72%);
-  margin: 0 auto clamp(0.8rem, 1.8cqh, 1.05rem);
-  align-items: center;
-  justify-content: center;
-  gap: 0.8rem;
-  color: #315062;
+  display: block;
+  width: auto;
+  margin: 0 0 clamp(1.2rem, 3cqh, 1.8rem);
+  color: #6b4a28;
   font-family: var(--font-body) !important;
-  font-size: clamp(0.6rem, 0.9vw, 0.72rem);
+  font-size: clamp(0.68rem, 1vw, 0.8rem);
   font-weight: 700;
-  letter-spacing: 0.28em;
-  line-height: 1.35;
-  text-shadow: 0 1px 0 rgba(255, 253, 242, 0.9);
+  letter-spacing: 0.3em;
+  line-height: 1.4;
+  text-shadow: none;
 }
 
 .fountain-theme-v1 .fountain-video-hero-eyebrow::before,
 .fountain-theme-v1 .fountain-video-hero-eyebrow::after {
-  width: 2.5rem;
-  height: 1px;
-  flex: 1 1 auto;
-  background: linear-gradient(90deg, transparent, rgba(160, 124, 67, 0.78));
-  content: "";
-}
-
-.fountain-theme-v1 .fountain-video-hero-eyebrow::after {
-  background: linear-gradient(90deg, rgba(160, 124, 67, 0.78), transparent);
+  content: none;
 }
 
 .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
-  width: min(28rem, 100%);
-  color: #253f50;
+  width: min(34rem, 100%);
+  color: #4f3824;
   font-family: var(--font-display) !important;
-  font-size: clamp(2.8rem, 5.9vw, 4.65rem);
-  font-style: italic;
+  font-size: clamp(3.25rem, 6.8vw, 5.35rem);
+  font-style: normal;
   font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 0.82;
-  text-shadow: 0 1px 0 rgba(255, 253, 244, 0.94);
+  letter-spacing: -0.025em;
+  line-height: 0.9;
+  text-shadow: none;
 }
 
 .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i {
   display: block;
-  width: auto;
-  margin: clamp(0.5rem, 1.2cqh, 0.72rem) auto;
-  color: #9c7338;
-  font-family: var(--font-display) !important;
-  font-size: clamp(1.15rem, 0.3em, 1.45rem);
-  font-style: italic;
-  font-weight: 500;
-  letter-spacing: -0.04em;
+  width: min(8rem, 36%);
+  margin: clamp(0.55rem, 1.4cqh, 0.8rem) auto;
+  color: #9c7138;
+  font-family: var(--font-script) !important;
+  font-size: clamp(1.15rem, 0.28em, 1.55rem);
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
   line-height: 1;
+  text-align: center;
   text-transform: none;
-  text-shadow: 0 1px 0 rgba(255, 253, 244, 0.92);
+  text-shadow: none;
 }
 
 .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i::before,
@@ -5784,25 +5774,25 @@
 
 .fountain-theme-v1 .fountain-video-hero-meta {
   display: flex;
-  width: min(14rem, 64%);
-  margin: clamp(0.9rem, 2cqh, 1.2rem) auto 0;
-  padding-top: clamp(0.72rem, 1.5cqh, 0.95rem);
-  border-top: 1px solid rgba(157, 119, 59, 0.6);
+  width: auto;
+  margin: clamp(1rem, 2.3cqh, 1.4rem) auto 0;
+  padding-top: 0;
+  border-top: 0;
   flex-direction: column;
-  gap: 0.34rem;
-  color: #304b5b;
+  gap: 0.38rem;
+  color: #493a2a;
   font-family: var(--font-body) !important;
-  font-size: clamp(0.64rem, 0.94vw, 0.76rem);
+  font-size: clamp(0.72rem, 1.08vw, 0.84rem);
   font-weight: 700;
-  letter-spacing: 0.18em;
-  line-height: 1.35;
-  text-shadow: 0 1px 0 rgba(255, 253, 244, 0.94);
+  letter-spacing: 0.2em;
+  line-height: 1.4;
+  text-shadow: none;
 }
 
 .fountain-theme-v1 .fountain-video-hero-meta span:last-child {
-  color: #6f5837;
-  font-size: 0.92em;
-  letter-spacing: 0.22em;
+  color: #6b4a28;
+  font-size: 1em;
+  letter-spacing: 0.2em;
 }
 
 /* Details: formal double-line stationery, clear hierarchy, cleaner map. */
@@ -5951,12 +5941,12 @@
 @media (max-width: 720px) {
   .fountain-theme-v1 .fountain-video-hero-text {
     left: 50%;
-    top: 32%;
-    width: 82cqw;
+    top: 29%;
+    width: 88cqw;
   }
 
   .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
-    font-size: clamp(2.48rem, 10.8cqw, 2.92rem);
+    font-size: clamp(2.7rem, 11.8cqw, 3.15rem);
   }
 
   .fountain-theme-v1 .fountain-event-card,
