@@ -403,7 +403,7 @@
 }
 
 .gazebo-hero-copy h1 {
-  margin: clamp(1.15rem, 2.8vh, 1.8rem) 0 0;
+  margin: clamp(1.35rem, 3.3vh, 2.05rem) 0 0;
   color: #314234;
   font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif !important;
   font-size: clamp(2.05rem, 3.45vw, 3.25rem);

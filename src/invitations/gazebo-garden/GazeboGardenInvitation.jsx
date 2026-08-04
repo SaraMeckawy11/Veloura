@@ -290,7 +290,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
   };
 
   return (
-    <div ref={rootRef} className={`gazebo-theme theme-watercolor invitation-typography${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order)}>
+    <div ref={rootRef} className={`gazebo-theme theme-watercolor invitation-typography${showSplash && !splashReady ? ' invitation-splash-gated' : ''}`} style={getInvitationFontStyle(order, 'garden')}>
       {shouldPlayMusic && (
         <audio ref={audioRef} src={order.musicUrl} loop preload="auto" aria-hidden="true" />
       )}

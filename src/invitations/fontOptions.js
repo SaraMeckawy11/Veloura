@@ -347,16 +347,22 @@ export function getInvitationFontOption(value) {
   return enrichFontOption(ALL_FONT_DEFS.find(option => option.value === normalized) || ALL_FONT_DEFS[0]);
 }
 
-export function readInvitationFont(order) {
+export function readInvitationFont(order, fallback = DEFAULT_INVITATION_FONT) {
   const customizations = order?.customizations;
   const raw = typeof customizations?.get === 'function'
     ? customizations.get('invitationFont')
     : customizations?.invitationFont;
-  return normalizeInvitationFont(raw);
+  const normalized = normalizeInvitationFont(raw);
+
+  // Individual designs may retain their original type system as the default,
+  // while every explicitly selected non-default font still takes precedence.
+  return normalized === DEFAULT_INVITATION_FONT
+    ? normalizeInvitationFont(fallback)
+    : normalized;
 }
 
-export function getInvitationFontStyle(order) {
-  const option = getInvitationFontOption(readInvitationFont(order));
+export function getInvitationFontStyle(order, fallback = DEFAULT_INVITATION_FONT) {
+  const option = getInvitationFontOption(readInvitationFont(order, fallback));
   return {
     '--font-display': option.display,
     '--font-body': option.body,
