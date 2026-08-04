@@ -6196,25 +6196,30 @@
 
 /* Couple note. */
 .fountain-theme-v1 .fountain-envelope {
-  width: min(45rem, 100%);
+  width: min(42rem, calc(100% - 1rem));
 }
 
 .fountain-theme-v1 .fountain-envelope-copy {
-  width: min(34rem, 78%);
+  top: 23%;
+  box-sizing: border-box;
+  width: min(30rem, 70%);
+  padding-inline: clamp(0.35rem, 1.4vw, 0.75rem);
 }
 
 .fountain-theme-v1 .fountain-envelope-copy span {
-  font-size: 0.64rem;
+  font-size: clamp(0.68rem, 1.35vw, 0.78rem);
   font-weight: 700;
   letter-spacing: 0.18em;
   line-height: 1.5;
 }
 
 .fountain-theme-v1 .fountain-envelope-copy p {
-  margin-top: 0.75rem;
-  font-size: clamp(0.88rem, 1.45vw, 0.95rem);
+  max-width: 27rem;
+  margin-top: 0.68rem;
+  font-size: clamp(0.94rem, 1.55vw, 1.04rem);
   font-weight: 500;
-  line-height: 1.65;
+  line-height: 1.52;
+  text-wrap: balance;
 }
 
 /* RSVP -- smaller typography with accessible control sizes and clear states. */
@@ -6945,28 +6950,23 @@
   }
 
   .fountain-theme-v1 .fountain-envelope-copy {
-    top: 21%;
-    width: min(13.5rem, 60%);
-    max-height: 25%;
-    padding: 0 0.15rem 0.25rem;
-    overflow-y: auto;
-    scrollbar-width: none;
-  }
-
-  .fountain-theme-v1 .fountain-envelope-copy::-webkit-scrollbar {
-    display: none;
+    top: 22.5%;
+    width: 64%;
+    max-height: none;
+    padding: 0 0.25rem;
+    overflow: visible;
   }
 
   .fountain-theme-v1 .fountain-envelope-copy span {
-    font-size: 0.45rem;
-    letter-spacing: 0.1em;
-    line-height: 1.2;
+    font-size: 0.53rem;
+    letter-spacing: 0.12em;
+    line-height: 1.25;
   }
 
   .fountain-theme-v1 .fountain-envelope-copy p {
-    margin-top: 0.3rem;
-    font-size: clamp(0.56rem, 2.25vw, 0.62rem);
-    line-height: 1.18;
+    margin-top: 0.5rem;
+    font-size: clamp(0.68rem, 2.8vw, 0.76rem);
+    line-height: 1.32;
     overflow-wrap: anywhere;
   }
 
@@ -6993,9 +6993,9 @@
   }
 
   .fountain-theme-v1 .fountain-envelope-copy {
-    top: 21.5%;
-    width: 58%;
-    max-height: 25%;
+    top: 22.5%;
+    width: 64%;
+    max-height: none;
   }
 
   .fountain-theme-v1 .fountain-footer {
