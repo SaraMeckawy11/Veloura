@@ -5963,3 +5963,527 @@
     font-size: 2.75rem;
   }
 }
+
+/* Fountain Reverie V1 -- unified type scale and component polish ----------
+   Keep this final layer intentionally compact: it normalizes the legacy
+   overrides above into one responsive hierarchy and mirrors Garden
+   Pavilion's restrained hero typography. */
+.fountain-theme-v1 {
+  --fountain-section-space: clamp(3.75rem, 7vw, 5.5rem);
+  --fountain-content-width: 68rem;
+  --fountain-card-border: rgba(145, 104, 52, 0.24);
+  --fountain-card-shadow: 0 18px 48px rgba(91, 62, 31, 0.1);
+}
+
+/* Hero -- match Garden Pavilion's Cormorant scale and editorial weight. */
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 25%;
+  width: min(36rem, 84cqw);
+  padding: 0;
+  color: #4f3824;
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow {
+  margin: 0 0 clamp(0.65rem, 1.7cqh, 0.95rem);
+  color: #5d7046;
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-size: clamp(1.05rem, 3vw, 1.5rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  text-transform: none;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+  width: min(34rem, 100%);
+  gap: 0.08em;
+  color: #4f3824;
+  font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif !important;
+  font-size: clamp(2.05rem, 3.45vw, 3.25rem);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 0.94;
+  text-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names i {
+  width: auto;
+  margin: clamp(0.28rem, 0.8cqh, 0.45rem) auto;
+  color: #9c7138;
+  font-family: "Cormorant Garamond", Georgia, serif !important;
+  font-size: 0.55em;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 0.8;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta {
+  gap: 0.32rem;
+  margin: clamp(0.85rem, 2cqh, 1.15rem) auto 0;
+  color: #6b4a28;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: clamp(0.56rem, 1.35vw, 0.66rem);
+  font-weight: 800;
+  letter-spacing: 0.26em;
+  line-height: 1.7;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta span:last-child {
+  color: #6b4a28;
+  letter-spacing: 0.24em;
+}
+
+/* Shared section rhythm and titles. */
+.fountain-theme-v1 .fountain-section,
+.fountain-theme-v1 .fountain-countdown,
+.fountain-theme-v1 .fountain-rsvp-section,
+.fountain-theme-v1 .fountain-gallery-section {
+  padding: var(--fountain-section-space) clamp(1rem, 4vw, 2.5rem);
+}
+
+.fountain-theme-v1 .fountain-section-title {
+  max-width: var(--fountain-content-width);
+  margin: 0 auto clamp(1.8rem, 4vw, 2.5rem);
+}
+
+.fountain-theme-v1 .fountain-section-title img,
+.fountain-theme-v1 .fountain-rsvp-panel-ornament {
+  width: min(8rem, 34vw);
+  margin-bottom: 0.55rem;
+  opacity: 0.68;
+}
+
+.fountain-theme-v1 .fountain-section-title h2,
+.fountain-theme-v1 .fountain-gallery-header h2,
+.fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+  color: #765936;
+  font-size: clamp(1.5rem, 4vw, 2.3rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  text-shadow: none;
+}
+
+/* Countdown. */
+.fountain-theme-v1 .fountain-count-grid {
+  width: min(50rem, 100%);
+  gap: clamp(0.6rem, 1.8vw, 1rem);
+}
+
+.fountain-theme-v1 .fountain-count-unit {
+  min-height: clamp(6rem, 12vw, 7.25rem);
+  padding: clamp(1rem, 2.5vw, 1.35rem) 0.5rem;
+  border: 1px solid var(--fountain-card-border);
+  border-radius: 0.75rem;
+  background: linear-gradient(155deg, rgba(255, 252, 242, 0.96), rgba(244, 232, 214, 0.88));
+  box-shadow: var(--fountain-card-shadow);
+}
+
+.fountain-theme-v1 .fountain-count-unit strong {
+  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-weight: 600;
+}
+
+.fountain-theme-v1 .fountain-count-unit span {
+  margin-top: 0.55rem;
+  font-size: clamp(0.58rem, 1.4vw, 0.68rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+/* Story and couple content. */
+.fountain-theme-v1 .fountain-story-grid,
+.fountain-theme-v1 .fountain-couple-grid,
+.fountain-theme-v1 .fountain-venue-grid {
+  max-width: var(--fountain-content-width);
+}
+
+.fountain-theme-v1 .fountain-story-card {
+  gap: 1rem;
+  margin-bottom: clamp(2.75rem, 6vw, 4.5rem);
+}
+
+.fountain-theme-v1 .fountain-story-text {
+  width: min(21rem, 100%);
+  max-width: 21rem;
+}
+
+.fountain-theme-v1 .fountain-story-text span {
+  margin-bottom: 0.45rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
+}
+
+.fountain-theme-v1 .fountain-story-text h3 {
+  font-size: clamp(1.2rem, 2.5vw, 1.48rem);
+  font-weight: 600;
+  line-height: 1.22;
+}
+
+.fountain-theme-v1 .fountain-story-text p {
+  max-width: 20rem;
+  margin-top: 0.55rem;
+  font-size: clamp(0.86rem, 1.4vw, 0.93rem);
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+.fountain-theme-v1 .fountain-story-photo,
+.fountain-theme-v1 .fountain-photo-frame {
+  border-radius: 0.85rem;
+  box-shadow: 0 18px 46px rgba(91, 62, 31, 0.12);
+}
+
+/* Event details. */
+.fountain-theme-v1 .fountain-event-layout {
+  width: min(48rem, 100%);
+}
+
+.fountain-theme-v1 .fountain-event-card {
+  width: 100%;
+  padding: clamp(1.5rem, 4vw, 2.35rem);
+  border: 1px solid var(--fountain-card-border);
+  border-radius: 0.85rem;
+  background:
+    radial-gradient(circle at 92% 3%, rgba(199, 220, 232, 0.22), transparent 34%),
+    linear-gradient(150deg, rgba(255, 250, 240, 0.99), rgba(243, 227, 205, 0.96));
+  box-shadow:
+    var(--fountain-card-shadow),
+    inset 0 0 0 0.38rem rgba(255, 253, 247, 0.55);
+}
+
+.fountain-theme-v1 .fountain-event-card dl {
+  gap: clamp(0.5rem, 1.8vw, 1rem);
+  padding: 0 0 clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.fountain-theme-v1 .fountain-event-card dl > div {
+  min-height: 5.75rem;
+  padding: 0.8rem clamp(0.65rem, 2vw, 1.2rem);
+}
+
+.fountain-theme-v1 .fountain-event-card dt {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1.5;
+}
+
+.fountain-theme-v1 .fountain-event-card dd {
+  margin-top: 0.55rem;
+  font-size: clamp(0.95rem, 1.8vw, 1.12rem);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.fountain-theme-v1 .fountain-map,
+.fountain-theme-v1 .fountain-map iframe {
+  min-height: clamp(16rem, 34vw, 20rem);
+}
+
+.fountain-theme-v1 .fountain-map {
+  margin-top: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid rgba(145, 104, 52, 0.25);
+  border-radius: 7rem 7rem 0.7rem 0.7rem;
+  box-shadow: 0 14px 34px rgba(91, 62, 31, 0.09);
+}
+
+/* Couple note. */
+.fountain-theme-v1 .fountain-envelope {
+  width: min(45rem, 100%);
+}
+
+.fountain-theme-v1 .fountain-envelope-copy {
+  width: min(34rem, 78%);
+}
+
+.fountain-theme-v1 .fountain-envelope-copy span {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+}
+
+.fountain-theme-v1 .fountain-envelope-copy p {
+  margin-top: 0.75rem;
+  font-size: clamp(0.88rem, 1.45vw, 0.95rem);
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+/* RSVP -- smaller typography with accessible control sizes and clear states. */
+.fountain-theme-v1 .fountain-rsvp-panel {
+  width: min(40rem, 100%);
+  padding: clamp(1.7rem, 4.5vw, 2.65rem);
+  border: 1px solid var(--fountain-card-border);
+  border-radius: 0.85rem;
+  background:
+    radial-gradient(circle at 92% 3%, rgba(199, 220, 232, 0.2), transparent 34%),
+    linear-gradient(150deg, rgba(255, 250, 240, 0.99), rgba(243, 227, 205, 0.96));
+  box-shadow:
+    var(--fountain-card-shadow),
+    inset 0 0 0 0.38rem rgba(255, 253, 247, 0.56);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+  width: min(27rem, 100%);
+  margin: 0 auto clamp(1.8rem, 4vw, 2.4rem);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header strong {
+  margin-top: 0.6rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1.5;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-header p {
+  max-width: 22rem;
+  margin-top: 0.65rem;
+  font-size: clamp(0.84rem, 1.35vw, 0.9rem);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-form {
+  width: min(32rem, 100%);
+  gap: 1.15rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field,
+.fountain-theme-v1 .fountain-rsvp-panel-choice {
+  gap: 0.48rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field span,
+.fountain-theme-v1 .fountain-rsvp-panel-choice legend,
+.fountain-theme-v1 .fountain-rsvp-panel-form .rsvp-plus-one-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  line-height: 1.4;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  border: 1px solid rgba(139, 99, 50, 0.25);
+  border-radius: 0.52rem;
+  background: rgba(255, 253, 247, 0.92);
+  color: #49392a;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  padding: 0.78rem 0.85rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input {
+  min-height: 3rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea {
+  min-height: 6.5rem;
+  resize: vertical;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-field input:focus,
+.fountain-theme-v1 .fountain-rsvp-panel-field textarea:focus {
+  border-color: #9a7340;
+  background: #fffdf8;
+  box-shadow: 0 0 0 3px rgba(154, 115, 64, 0.14);
+  outline: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice > div {
+  gap: 0.45rem;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button {
+  min-height: 2.9rem;
+  border: 1px solid rgba(139, 99, 50, 0.23);
+  border-radius: 0.5rem;
+  background: rgba(255, 253, 247, 0.78);
+  color: #624b31;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button:hover {
+  border-color: rgba(151, 108, 53, 0.45);
+  background: rgba(255, 253, 247, 0.98);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(154, 115, 64, 0.16);
+  outline: none;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-choice button.active {
+  border-color: rgba(151, 108, 53, 0.56);
+  background: rgba(200, 161, 98, 0.2);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit {
+  width: 100%;
+  min-height: 3.1rem;
+  margin-top: 0.35rem;
+  border-radius: 0.54rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  box-shadow: 0 12px 26px rgba(91, 62, 31, 0.18);
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel-submit:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 253, 247, 0.9), 0 0 0 6px rgba(154, 115, 64, 0.22);
+  outline: none;
+}
+
+/* Gallery and closing. */
+.fountain-theme-v1 .fountain-gallery-card {
+  border-radius: 0.85rem;
+  box-shadow: 0 16px 38px rgba(91, 62, 31, 0.12);
+}
+
+.fountain-theme-v1 .fountain-footer {
+  min-height: clamp(19rem, 40vw, 26rem);
+  padding: clamp(3.5rem, 7vw, 5rem) 1.25rem clamp(8.5rem, 18vw, 13rem);
+}
+
+.fountain-theme-v1 .fountain-footer .fountain-reception {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.fountain-theme-v1 .fountain-footer h2 {
+  margin-top: 0.7rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.fountain-theme-v1 .fountain-footer p:last-child {
+  max-width: 27rem;
+  margin-top: 0.8rem;
+  font-size: clamp(0.72rem, 1.2vw, 0.78rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .fountain-theme-v1 {
+    --fountain-section-space: 3.25rem;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-text {
+    left: 50%;
+    top: 30%;
+    width: 88cqw;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-eyebrow {
+    margin-bottom: 0.6rem;
+    font-size: clamp(1rem, 5.4cqw, 1.2rem);
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    gap: 0.04em;
+    font-size: clamp(2.05rem, 9.4cqw, 2.45rem);
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-meta {
+    margin-top: 0.75rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+  }
+
+  .fountain-theme-v1 .fountain-section-title {
+    margin-bottom: 1.65rem;
+  }
+
+  .fountain-theme-v1 .fountain-section-title h2,
+  .fountain-theme-v1 .fountain-rsvp-panel-header h2 {
+    font-size: clamp(1.5rem, 7.6vw, 1.9rem);
+  }
+
+  .fountain-theme-v1 .fountain-count-unit {
+    min-height: 5.5rem;
+    padding: 0.85rem 0.25rem;
+  }
+
+  .fountain-theme-v1 .fountain-count-unit strong {
+    font-size: 1.75rem;
+  }
+
+  .fountain-theme-v1 .fountain-count-unit span {
+    font-size: 0.54rem;
+    letter-spacing: 0.12em;
+  }
+
+  .fountain-theme-v1 .fountain-story-card {
+    margin-bottom: 2.75rem;
+  }
+
+  .fountain-theme-v1 .fountain-event-card,
+  .fountain-theme-v1 .fountain-rsvp-panel {
+    width: 100%;
+    padding: 1.35rem 1rem 1.55rem;
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl > div {
+    min-height: 4.75rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .fountain-theme-v1 .fountain-event-card dl > div + div::before {
+    left: 12%;
+    top: 0;
+    width: 76%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(151, 125, 68, 0.4), transparent);
+  }
+
+  .fountain-theme-v1 .fountain-map,
+  .fountain-theme-v1 .fountain-map iframe {
+    min-height: 15rem;
+  }
+
+  .fountain-theme-v1 .fountain-map {
+    border-radius: 5rem 5rem 0.65rem 0.65rem;
+  }
+
+  .fountain-theme-v1 .fountain-envelope-copy {
+    width: min(19rem, 82%);
+  }
+
+  .fountain-theme-v1 .fountain-envelope-copy p {
+    font-size: 0.86rem;
+    line-height: 1.58;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel > .fountain-rsvp-panel-header {
+    margin-bottom: 1.65rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-choice button {
+    min-height: 2.8rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer {
+    padding-top: 3.25rem;
+    padding-bottom: 8.5rem;
+  }
+}
