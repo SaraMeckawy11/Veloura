@@ -388,8 +388,19 @@ export default function FountainReverieInvitation({ order, demo = false, publicS
             </dl>
             {embedSrc && (
               <div className="fountain-map">
-                <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
-                <a href={openMapHref} target="_blank" rel="noopener noreferrer" aria-label="Open location in Google Maps" />
+                <div className="fountain-map-viewport">
+                  <iframe src={embedSrc} title="Venue location" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                </div>
+                <div className="fountain-map-actions">
+                  <div className="fountain-map-caption">
+                    <span>Venue location</span>
+                    <strong>{venue || 'Wedding venue'}</strong>
+                  </div>
+                  <a className="fountain-map-link" href={openMapHref} target="_blank" rel="noopener noreferrer">
+                    <span>Open in Maps</span>
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
               </div>
             )}
           </motion.div>
