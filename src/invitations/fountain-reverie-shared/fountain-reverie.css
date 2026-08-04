@@ -7528,3 +7528,63 @@
     font-size: clamp(1rem, 2.5cqh, 1.45rem);
   }
 }
+
+/* Keep the opaque transition overlays disabled without changing the section
+   colors defined by the committed theme. */
+.fountain-theme-v1 .invitation-section-transition {
+  display: none;
+}
+
+.fountain-theme-v1 .fountain-footer-inner::before {
+  content: none;
+}
+
+/* Our Story: retain the editorial image-and-copy rhythm without wrapping
+   every entry in another card or photo frame. */
+.fountain-theme-v1 .fountain-story-card {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.fountain-theme-v1 .fountain-story-photo {
+  border: 0;
+  border-radius: 0.85rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.fountain-theme-v1 .fountain-story-photo::after {
+  content: none;
+}
+
+.fountain-theme-v1 .fountain-story-text {
+  padding-inline: clamp(0.25rem, 1.5vw, 0.75rem);
+}
+
+@media (min-width: 841px) {
+  .fountain-theme-v1 .fountain-story-card {
+    display: grid;
+    width: min(56rem, 100%);
+    margin-inline: auto;
+    grid-template-columns: minmax(16rem, 0.9fr) minmax(18rem, 1.1fr);
+    align-items: center;
+    gap: clamp(2.5rem, 5vw, 5rem);
+  }
+
+  .fountain-theme-v1 .fountain-story-card:nth-child(even) .fountain-story-text {
+    order: 2;
+  }
+
+  .fountain-theme-v1 .fountain-story-card:nth-child(even) .fountain-story-photo {
+    order: 1;
+  }
+
+  .fountain-theme-v1 .fountain-story-photo {
+    width: 100%;
+    max-width: 25rem;
+  }
+}
