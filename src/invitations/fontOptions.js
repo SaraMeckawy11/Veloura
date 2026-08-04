@@ -209,29 +209,64 @@ const ALL_FONT_DEFS = [
     body: "'Inter', Arial, sans-serif",
     script: "'DM Serif Display', Georgia, serif",
   },
+  {
+    value: 'ruqaa-classic',
+    label: 'Classic Ruqaa · رقعة كلاسيكية',
+    description: 'Traditional Ruqaa names with calm, readable invitation text.',
+    display: "'Cormorant Garamond', Georgia, serif",
+    body: "'Cormorant Garamond', Georgia, serif",
+    script: "'Alex Brush', 'Great Vibes', cursive",
+  },
+  {
+    value: 'ruqaa-ink',
+    label: 'Ink Ruqaa · رقعة حبرية',
+    description: 'An expressive inked Ruqaa style with natural handwritten texture.',
+    display: "'Cormorant Garamond', Georgia, serif",
+    body: "'Inter', Arial, sans-serif",
+    script: "'Allura', 'Great Vibes', cursive",
+  },
+  {
+    value: 'ruqaa-bold',
+    label: 'Bold Ruqaa · رقعة بارزة',
+    description: 'A strong, celebratory Ruqaa-inspired display for prominent names.',
+    display: "'DM Serif Display', 'Playfair Display', Georgia, serif",
+    body: "'Inter', Arial, sans-serif",
+    script: "'Great Vibes', 'Cormorant Garamond', cursive",
+  },
 ];
 
-// Curated picker list — a deliberately varied set (distinct serifs, sans, and
-// several visually different scripts) so the choices don't all look alike. The
-// demo's original font ('classic') is first so it appears as the default pick.
-// Resolution still falls back to ALL_FONT_DEFS, so removed styles keep working.
+// Keep the original demo font first, then offer the full serif, sans, script,
+// and Arabic Ruqaa range. Existing saved values continue to resolve through
+// ALL_FONT_DEFS even if this display order changes later.
 const FONT_PICKER_ORDER = [
-  'classic',        // demo original — refined Playfair serif
-  'heirloom',       // classic Garamond book serif
-  'couture',        // high-contrast Bodoni fashion serif
-  'regal',          // Cinzel Roman capitals
-  'estate',         // thin elegant Prata serif
-  'monogram',       // bold DM Serif Display
-  'artful-serif',   // expressive Fraunces serif
-  'marquee',        // Marcellus cinematic serif
-  'modern',         // clean Inter sans
-  'contemporary',   // geometric Montserrat sans
-  'modern-luxe',    // tall Josefin Sans
-  'romantic',       // flowing Great Vibes script
-  'enchanted',      // delicate Parisienne script
-  'formal-script',  // formal Pinyon calligraphy
-  'whimsical',      // casual Sacramento hand
-  'timeless',       // bouncy Dancing Script
+  'classic',
+  'garden',
+  'heirloom',
+  'storybook',
+  'heritage',
+  'couture',
+  'regal',
+  'poetic',
+  'estate',
+  'soft-heirloom',
+  'artful-serif',
+  'monogram',
+  'marquee',
+  'modern',
+  'contemporary',
+  'soft-modern',
+  'modern-luxe',
+  'romantic',
+  'enchanted',
+  'signature',
+  'formal-script',
+  'vow-script',
+  'royal-note',
+  'whimsical',
+  'timeless',
+  'ruqaa-classic',
+  'ruqaa-ink',
+  'ruqaa-bold',
 ];
 
 // Latin fonts do not contain Arabic glyphs, so Arabic names fall through to
@@ -270,6 +305,9 @@ const ARABIC_FONT_DEFS = {
   'modern-luxe': arabicFont("'IBM Plex Sans Arabic'"),
   'artful-serif': arabicFont("'Rakkas'", ARABIC_NASKH),
   monogram: arabicFont("'Lalezar'", "'Tajawal'"),
+  'ruqaa-classic': arabicFont("'Aref Ruqaa'", ARABIC_NASKH),
+  'ruqaa-ink': arabicFont("'Aref Ruqaa Ink'", ARABIC_NASKH),
+  'ruqaa-bold': arabicFont("'Rakkas'", "'Tajawal'"),
 };
 
 function getArabicFontFamily(value, role) {
