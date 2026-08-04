@@ -640,7 +640,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
 
       {/* ========== FOOTER — Modern Premium ========== */}
       <section className="inv-footer">
-        <InvitationSectionTransition />
         <div className="perforation-horizontal inv-footer-top-perf" />
         <motion.div
           className="inv-footer-content"
