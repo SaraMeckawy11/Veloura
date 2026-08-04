@@ -195,7 +195,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {contentReady && (<>
       {/* ========== HERO ========== */}
       <section className="inv-hero">
-        <InvitationSectionTransition hero />
         {/* Cloud background with parallax scroll */}
         <div className="inv-hero-bg">
           <div className="inv-clouds-scroll">
@@ -254,7 +253,6 @@ export default function BoardingPassInvitation({ order, demo = false, publicSlug
       {/* ========== COUNTDOWN ========== */}
       {weddingDate && (
         <section className="inv-section-dark">
-          <InvitationSectionTransition />
           <div className="inv-corner-tl" /><div className="inv-corner-tr" />
           <div className="inv-corner-bl" /><div className="inv-corner-br" />
           <motion.div
