@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 // eslint-disable-next-line no-unused-vars -- motion.* and AnimatePresence are used through JSX member expressions
 import { motion, AnimatePresence } from 'framer-motion';
-import GazeboSplash from './GazeboSplash';
+import FountainEnvelopeSplash from '../fountain-reverie-shared/FountainEnvelopeSplash';
 import { calculateCountdownTimeLeft, createRsvpSubmissionId, DEFAULT_COUPLE_MESSAGE, formatInvitationName, formatInvitationTime, getEventCopy, getInvitationPhotoSrc, normalizeStoryOrientation } from '../shared';
 import RsvpPlusOneField from '../RsvpPlusOneField';
 import { getInvitationFontStyle } from '../fontOptions';
@@ -301,7 +301,7 @@ export default function GazeboGardenInvitation({ order, demo = false, publicSlug
         </div>
       )}
       {showSplash && (
-        <GazeboSplash
+        <FountainEnvelopeSplash
           onReady={() => setSplashReady(true)}
           onDismiss={handleSplashDismiss}
         />
