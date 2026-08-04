@@ -6487,3 +6487,362 @@
     padding-bottom: 8.5rem;
   }
 }
+
+/* Fountain Reverie V1 -- responsive layout refinement -------------------
+   This final layer keeps copy readable around the painted scenery, gives
+   each section a consistent fluid gutter, and reserves a dedicated visual
+   zone for the fountain in the closing section. */
+.fountain-theme-v1 {
+  --fountain-section-space: clamp(3.5rem, 6vw, 5rem);
+  --fountain-page-gutter: clamp(1rem, 4vw, 2.25rem);
+}
+
+.fountain-theme-v1 .fountain-video-hero-text {
+  top: 24%;
+  width: min(34rem, 86cqw);
+}
+
+.fountain-theme-v1 .fountain-video-hero-eyebrow {
+  max-width: 30rem;
+  margin-inline: auto;
+  margin-bottom: clamp(0.6rem, 1.6cqh, 0.9rem);
+  color: #59422e;
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  line-height: 1.22;
+  text-wrap: balance;
+  text-shadow: 0 1px 12px rgba(255, 253, 238, 0.82);
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names,
+.fountain-theme-v1 .fountain-video-hero-meta {
+  text-shadow: 0 1px 12px rgba(255, 253, 238, 0.62);
+}
+
+.fountain-theme-v1 .fountain-section,
+.fountain-theme-v1 .fountain-countdown,
+.fountain-theme-v1 .fountain-rsvp-section,
+.fountain-theme-v1 .fountain-gallery-section {
+  padding-right: var(--fountain-page-gutter);
+  padding-left: var(--fountain-page-gutter);
+}
+
+.fountain-theme-v1 .fountain-story-grid,
+.fountain-theme-v1 .fountain-couple-grid,
+.fountain-theme-v1 .fountain-venue-grid {
+  width: min(100%, var(--fountain-content-width));
+  margin-inline: auto;
+}
+
+.fountain-theme-v1 .fountain-event-layout {
+  width: min(48rem, 100%);
+  margin-inline: auto;
+}
+
+.fountain-theme-v1 .fountain-rsvp-panel {
+  width: min(40rem, 100%);
+  margin-inline: auto;
+}
+
+.fountain-theme-v1 .fountain-story-card,
+.fountain-theme-v1 .fountain-couple-grid,
+.fountain-theme-v1 .fountain-venue-grid {
+  column-gap: clamp(1.25rem, 4vw, 3rem);
+}
+
+.fountain-theme-v1 .fountain-message-section {
+  padding-right: var(--fountain-page-gutter);
+  padding-left: var(--fountain-page-gutter);
+}
+
+.fountain-theme-v1 .fountain-envelope {
+  width: min(42rem, 100%);
+}
+
+.fountain-theme-v1 .fountain-gallery-card {
+  width: clamp(11rem, 20vw, 14.5rem);
+  height: clamp(14rem, 26vw, 19rem);
+}
+
+.fountain-theme-v1 .fountain-footer {
+  isolation: isolate;
+  min-height: clamp(24rem, 48vw, 32rem);
+  padding: clamp(3.75rem, 7vw, 5rem) 1rem clamp(14rem, 26vw, 20rem);
+}
+
+.fountain-theme-v1 .fountain-footer-inner {
+  z-index: 2;
+  width: min(34rem, calc(100% - 2rem));
+  padding: 0.4rem 1rem 1rem;
+}
+
+.fountain-theme-v1 .fountain-footer-inner::before {
+  position: absolute;
+  z-index: -1;
+  inset: -1.4rem -2rem -1.2rem;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(248, 244, 225, 0.92) 0%, rgba(248, 244, 225, 0.68) 48%, transparent 74%);
+  content: "";
+  pointer-events: none;
+}
+
+.fountain-theme-v1 .fountain-footer::after {
+  z-index: 0;
+  bottom: -0.75rem;
+  width: min(47.5rem, 92vw);
+  opacity: 0.84;
+}
+
+.fountain-theme-v1 .fountain-footer h2 {
+  max-width: 100%;
+  font-size: clamp(1.75rem, 3.6vw, 2.4rem);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.fountain-theme-v1 .fountain-footer p:last-child {
+  width: min(27rem, 100%);
+  text-wrap: balance;
+}
+
+@media (max-width: 1100px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 25%;
+    width: min(32rem, 86cqw);
+  }
+
+  .fountain-theme-v1 .fountain-story-card {
+    column-gap: 1.5rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer {
+    min-height: clamp(25rem, 54vw, 30rem);
+    padding-bottom: clamp(14.5rem, 29vw, 18rem);
+  }
+}
+
+@media (max-width: 840px) {
+  .fountain-theme-v1 {
+    --fountain-section-space: 3.5rem;
+    --fountain-page-gutter: clamp(0.95rem, 4.5vw, 1.75rem);
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 27%;
+    width: 88cqw;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-eyebrow {
+    max-width: 24rem;
+    font-size: clamp(0.98rem, 3.5vw, 1.18rem);
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    width: min(29rem, 100%);
+    font-size: clamp(2.05rem, 7vw, 2.8rem);
+  }
+
+  .fountain-theme-v1 .fountain-count-grid {
+    gap: clamp(0.45rem, 1.8vw, 0.75rem);
+  }
+
+  .fountain-theme-v1 .fountain-envelope {
+    width: min(35rem, 100%);
+  }
+
+  .fountain-theme-v1 .fountain-footer {
+    min-height: 28rem;
+    padding: 3.75rem 1rem 17rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer::after {
+    bottom: -1rem;
+    width: min(42.5rem, 115vw);
+  }
+}
+
+@media (max-width: 620px) {
+  .fountain-theme-v1 {
+    --fountain-section-space: 3rem;
+    --fountain-page-gutter: clamp(0.85rem, 4vw, 1.15rem);
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 29%;
+    width: 90cqw;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-eyebrow {
+    max-width: 19rem;
+    margin-bottom: 0.58rem;
+    font-size: clamp(0.94rem, 4.7cqw, 1.08rem);
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    width: min(22rem, 100%);
+    font-size: clamp(1.9rem, 9.1cqw, 2.35rem);
+    line-height: 0.96;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-meta {
+    max-width: 18rem;
+    font-size: 0.55rem;
+    letter-spacing: 0.17em;
+    line-height: 1.55;
+  }
+
+  .fountain-theme-v1 .fountain-section-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .fountain-theme-v1 .fountain-story-card {
+    gap: 0.9rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .fountain-theme-v1 .fountain-story-text,
+  .fountain-theme-v1 .fountain-story-text p {
+    max-width: 100%;
+  }
+
+  .fountain-theme-v1 .fountain-count-unit {
+    min-width: 0;
+    min-height: 5.25rem;
+  }
+
+  .fountain-theme-v1 .fountain-count-unit strong {
+    font-size: clamp(1.45rem, 7vw, 1.75rem);
+  }
+
+  .fountain-theme-v1 .fountain-count-unit span {
+    font-size: clamp(0.48rem, 2.4vw, 0.54rem);
+    letter-spacing: 0.09em;
+  }
+
+  .fountain-theme-v1 .fountain-message-section {
+    padding-top: 3.5rem;
+    padding-bottom: 4rem;
+  }
+
+  .fountain-theme-v1 .fountain-envelope {
+    width: min(30rem, 100%);
+  }
+
+  .fountain-theme-v1 .fountain-envelope-copy {
+    width: min(18rem, 80%);
+  }
+
+  .fountain-theme-v1 .fountain-envelope-copy span {
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+  }
+
+  .fountain-theme-v1 .fountain-envelope-copy p {
+    margin-top: 0.55rem;
+    font-size: clamp(0.74rem, 3.2vw, 0.84rem);
+    line-height: 1.5;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-choice > div {
+    gap: 0.35rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-choice button {
+    padding-inline: 0.35rem;
+    font-size: 0.72rem;
+  }
+
+  .fountain-theme-v1 .fountain-gallery-card {
+    width: clamp(10.25rem, 48vw, 12rem);
+    height: clamp(13rem, 62vw, 15.5rem);
+  }
+
+  .fountain-theme-v1 .fountain-footer {
+    min-height: 26rem;
+    padding: 3.25rem 0.75rem 15rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer-inner {
+    width: min(31rem, calc(100% - 0.5rem));
+    padding-inline: 0.55rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer::after {
+    bottom: -2.25rem;
+    width: min(38.75rem, 150vw);
+  }
+
+  .fountain-theme-v1 .fountain-footer .fountain-reception {
+    font-size: 0.57rem;
+    letter-spacing: 0.17em;
+  }
+
+  .fountain-theme-v1 .fountain-footer h2 {
+    font-size: clamp(1.55rem, 7.5vw, 2rem);
+  }
+
+  .fountain-theme-v1 .fountain-footer p:last-child {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+}
+
+@media (max-width: 420px) {
+  .fountain-theme-v1 {
+    --fountain-section-space: 2.65rem;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 30%;
+    width: 92cqw;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-eyebrow {
+    max-width: 17rem;
+    font-size: clamp(0.9rem, 4.6cqw, 1rem);
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    font-size: clamp(1.75rem, 8.9cqw, 2.08rem);
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel {
+    padding-inline: 0.8rem;
+  }
+
+  .fountain-theme-v1 .fountain-rsvp-panel-choice button {
+    font-size: 0.67rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer {
+    min-height: 24rem;
+    padding: 2.8rem 0.55rem 13rem;
+  }
+
+  .fountain-theme-v1 .fountain-footer::after {
+    bottom: -2rem;
+    width: min(36rem, 160vw);
+  }
+
+  .fountain-theme-v1 .fountain-footer-inner::before {
+    inset: -1rem -0.75rem -0.85rem;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 621px) {
+  .fountain-theme-v1 .fountain-video-hero-text {
+    top: 21%;
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-eyebrow {
+    margin-bottom: 0.5rem;
+  }
+
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-names {
+    font-size: clamp(1.95rem, 4.5cqh, 2.7rem);
+  }
+
+  .fountain-theme-v1 .fountain-video-hero-meta {
+    margin-top: 0.65rem;
+  }
+}

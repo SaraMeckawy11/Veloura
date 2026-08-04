@@ -119,7 +119,7 @@ export default function FountainHeroText({
   if (layout === 'video') {
     return (
       <div className="fountain-video-hero-text">
-        <p className="fountain-video-hero-eyebrow">The {occasion} of</p>
+        <p className="fountain-video-hero-eyebrow">You are invited to the {occasion} of</p>
 
         <h1 className="fountain-video-hero-names" data-invitation-name>
           <span>{formatInvitationName(bride)}</span>
