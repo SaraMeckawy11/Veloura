@@ -1897,6 +1897,19 @@
   margin: min(1.35cqh, 12px) auto 0;
 }
 
+.fountain-info__stack {
+  min-width: 0;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: min(0.45cqh, 4px);
+}
+
+.fountain-info__stack .fountain-info__item {
+  flex: 0 0 auto;
+}
+
 .fountain-info__item {
   flex: 1 1 0;
   min-width: 0;
@@ -4577,6 +4590,15 @@
 .fountain-theme-v1 .fountain-video-hero-meta {
   margin-top: clamp(1rem, 2.2vw, 1.35rem);
   color: #765f37;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta i {
+  display: none;
 }
 
 .fountain-theme-v1 .fountain-video-hero-venue {
@@ -5114,16 +5136,35 @@
 }
 
 .fountain-theme-v1 .fountain-video-hero-meta {
-  display: flex;
+  display: inline-flex;
   margin-top: 0;
+  padding: 0.85rem 1.2rem 0.92rem;
   flex-direction: column;
-  gap: 0.48rem;
+  align-items: center;
+  gap: 0.34rem;
   color: #4e5b45;
   font-size: clamp(0.7rem, 1.05vw, 0.82rem);
   font-weight: 700;
   letter-spacing: 0.18em;
-  line-height: 1.45;
+  line-height: 1.35;
   text-transform: uppercase;
+  border: 1px solid rgba(128, 105, 54, 0.2);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 251, 239, 0.9), rgba(243, 234, 209, 0.72));
+  box-shadow: 0 12px 28px rgba(85, 70, 31, 0.08);
+  backdrop-filter: blur(4px);
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta__date {
+  color: #586748;
+  font-size: clamp(0.68rem, 0.98vw, 0.8rem);
+  letter-spacing: 0.26em;
+}
+
+.fountain-theme-v1 .fountain-video-hero-meta__time {
+  color: #6f5730;
+  font-size: clamp(0.86rem, 1.25vw, 1rem);
+  letter-spacing: 0.16em;
 }
 
 .fountain-theme-v1 .fountain-video-hero-meta i,

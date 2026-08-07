@@ -78,6 +78,15 @@ function Separator() {
   return <img className="fountain-info__sep" src={verticalSeparator} alt="" aria-hidden="true" />;
 }
 
+function ScheduleStack({ day, date, time, timeNote }) {
+  return (
+    <div className="fountain-info__stack fountain-info__stack--schedule">
+      <DetailItem icon={calendarIcon} title={day} lines={[date].filter(Boolean)} />
+      <DetailItem icon={clockIcon} title={time} lines={[timeNote].filter(Boolean)} />
+    </div>
+  );
+}
+
 function WeddingDetails({
   date = '24 MAY 2025',
   day = 'SATURDAY',
@@ -89,9 +98,7 @@ function WeddingDetails({
 }) {
   return (
     <div className="fountain-info">
-      <DetailItem icon={calendarIcon} title={day} lines={[date].filter(Boolean)} />
-      <Separator />
-      <DetailItem icon={clockIcon} title={time} lines={[timeNote].filter(Boolean)} />
+      <ScheduleStack day={day} date={date} time={time} timeNote={timeNote} />
       <Separator />
       <DetailItem icon={locationIcon} title={venue} lines={[address1, address2].filter(Boolean)} />
     </div>
@@ -116,6 +123,24 @@ export default function FountainHeroText({
   layout = 'classic',
   occasion = 'wedding',
 }) {
+  const videoHeroMetaStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 'fit-content',
+    margin: '0.95rem auto 0',
+    gap: '0.34rem',
+    textTransform: 'uppercase',
+    lineHeight: '1.35',
+    background: 'none',
+    border: 'none',
+    boxShadow: 'none',
+    padding: 0,
+    borderRadius: 0,
+    backdropFilter: 'none',
+  };
+
   if (layout === 'video') {
     return (
       <div className="fountain-video-hero-text">
@@ -127,9 +152,9 @@ export default function FountainHeroText({
           <span>{formatInvitationName(groom)}</span>
         </h1>
 
-        <div className="fountain-video-hero-meta">
-          <span>{date}</span>
-          {time && <span>{time.replace(/^AT\s+/i, '')}</span>}
+        <div className="fountain-video-hero-meta" style={videoHeroMetaStyle}>
+          <span className="fountain-video-hero-meta__date">{date}</span>
+          {time && <span className="fountain-video-hero-meta__time">{time.replace(/^AT\s+/i, '')}</span>}
         </div>
       </div>
     );
