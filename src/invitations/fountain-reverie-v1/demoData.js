@@ -12,6 +12,12 @@ import story4 from '../../assets/story-4.png';
 
 export const FOUNTAIN_REVERIE_V1_DEMO_ORDER = {
   referenceLayout: true,
+  // Pinyon Script names, matching the Fountain Reverie reference artwork. Without
+  // this the demo falls back to DEFAULT_INVITATION_FONT ('classic'), whose script
+  // face is Playfair Display, so the couple names render as a serif.
+  customizations: {
+    invitationFont: 'formal-script',
+  },
   weddingDetails: {
     groomName: 'Aaliyah',
     brideName: 'Zayn',

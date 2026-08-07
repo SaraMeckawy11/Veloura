@@ -123,24 +123,6 @@ export default function FountainHeroText({
   layout = 'classic',
   occasion = 'wedding',
 }) {
-  const videoHeroMetaStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 'fit-content',
-    margin: '0.95rem auto 0',
-    gap: '0.34rem',
-    textTransform: 'uppercase',
-    lineHeight: '1.35',
-    background: 'none',
-    border: 'none',
-    boxShadow: 'none',
-    padding: 0,
-    borderRadius: 0,
-    backdropFilter: 'none',
-  };
-
   if (layout === 'video') {
     return (
       <div className="fountain-video-hero-text">
@@ -148,11 +130,11 @@ export default function FountainHeroText({
 
         <h1 className="fountain-video-hero-names" data-invitation-name>
           <span>{formatInvitationName(bride)}</span>
-          <i>&amp;</i>
+          <img className="fountain-video-hero-amp" src={leafAmpersand} alt="and" />
           <span>{formatInvitationName(groom)}</span>
         </h1>
 
-        <div className="fountain-video-hero-meta" style={videoHeroMetaStyle}>
+        <div className="fountain-video-hero-meta">
           <span className="fountain-video-hero-meta__date">{date}</span>
           {time && <span className="fountain-video-hero-meta__time">{time.replace(/^AT\s+/i, '')}</span>}
         </div>
