@@ -215,3 +215,42 @@
 @media (max-width: 768px) {
   .designs-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Cards were already clickable, but the only cue was a small pill over busy
+   artwork -- and hover cues do not exist on touch. A persistent button-shaped
+   CTA in the card body is the affordance people actually recognise. */
+.design-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  /* Keeps the control at the 44px minimum touch target. */
+  padding: 11px 18px;
+  border: 1px solid var(--gold, #b8924a);
+  border-radius: 50px;
+  background: transparent;
+  color: var(--gold, #b8924a);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: background 0.25s ease, color 0.25s ease, gap 0.25s ease;
+}
+
+.design-card-cta svg {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+}
+
+.design-card--demo:hover .design-card-cta,
+.design-card--demo:focus-visible .design-card-cta {
+  gap: 12px;
+  background: var(--gold, #b8924a);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .design-card-cta {
+    transition: none;
+  }
+}

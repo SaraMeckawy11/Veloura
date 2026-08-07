@@ -203,6 +203,9 @@ export default function Designs() {
         <div className="section-header reveal" ref={revealRef}>
           <span className="section-label">Our Collection</span>
           <h2 className="section-title">Stunning Invitation Designs</h2>
+          <p className="section-subtitle">
+            Tap any design below to open its live demo — no sign-up needed.
+          </p>
         </div>
 
         {/* {availableFilters.length > 1 && (
@@ -251,13 +254,27 @@ export default function Designs() {
                 {/* Availability badge hidden for now.
                 <span className={`design-badge ${design.badgeClass}`}>{design.badge}</span>
                 */}
-                {design.demoPath && (
-                  <span className="design-demo-hint" aria-hidden>View live demo</span>
-                )}
               </div>
               <div className="design-card-body">
                 <h3>{design.name}</h3>
                 <p>{design.description}</p>
+                {design.demoPath && (
+                  <span className="design-card-cta">
+                    View live demo
+                    <svg
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M2 6h8" />
+                      <path d="M6.5 2.5 10 6 6.5 9.5" />
+                    </svg>
+                  </span>
+                )}
               </div>
             </div>
           ))}

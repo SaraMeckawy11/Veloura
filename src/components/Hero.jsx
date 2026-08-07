@@ -65,8 +65,18 @@ export default function Hero() {
             <span className="float-text">Now playing...</span>
           </div> */}
 
-          {/* Phone Mockup */}
-          <div className="phone-mockup">
+          {/* Phone mockup. This is a real link: the RSVP pill below reads as a
+              button, so people tap it -- it now opens the live demo instead of
+              doing nothing. */}
+          <Link
+            to="/demo/fountain-reverie-v1"
+            className="phone-mockup"
+            aria-label="Open a live invitation demo"
+          >
+            <span className="phone-demo-tag">
+              <span className="phone-demo-tag__dot" aria-hidden="true" />
+              Live demo
+            </span>
             <div className="phone-screen">
               <div className="phone-notch" />
               <div className="phone-bg-image" />
@@ -84,7 +94,7 @@ export default function Hero() {
                 <div className="phone-rsvp-btn">Open RSVP</div>
               </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </section>
