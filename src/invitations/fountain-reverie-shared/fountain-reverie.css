@@ -7541,7 +7541,7 @@
   .fountain-video-hero-meta .fountain-video-hero-meta__date,
 .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-text
   .fountain-video-hero-meta .fountain-video-hero-meta__time {
-  font-size: clamp(0.48rem, 0.72vw, 0.58rem);
+  font-size: clamp(0.38rem, 0.58vw, 0.46rem);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-shadow: 0 1px 6px rgba(255, 253, 236, 0.92);
