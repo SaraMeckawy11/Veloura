@@ -74,8 +74,19 @@ export default function Hero() {
             aria-label="Open a live invitation demo"
           >
             <span className="phone-demo-tag">
-              <span className="phone-demo-tag__dot" aria-hidden="true" />
-              Live demo
+              View live demo
+              <svg
+                viewBox="0 0 12 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M2 6h8" />
+                <path d="M6.5 2.5 10 6 6.5 9.5" />
+              </svg>
             </span>
             <div className="phone-screen">
               <div className="phone-notch" />

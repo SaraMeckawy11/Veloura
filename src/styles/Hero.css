@@ -482,38 +482,38 @@
   transform: translateY(-2px);
 }
 
+/* Sits just under the device. Inside the bezel it collides with the RSVP pill
+   once the phone shrinks on mobile -- the invitation content already overflows
+   there. Same minimal cue as the design cards. */
 .phone-demo-tag {
   position: absolute;
   z-index: 4;
-  top: -14px;
+  bottom: -28px;
   left: 50%;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 16px;
+  gap: 5px;
+  padding: 0;
   transform: translateX(-50%);
-  border-radius: 50px;
-  background: var(--gold, #b8924a);
-  box-shadow: 0 8px 20px rgba(184, 146, 74, 0.34);
-  color: #fff;
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  border: 0;
+  background: none;
+  color: var(--gold, #b8924a);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   white-space: nowrap;
+  transition: gap 0.25s ease;
 }
 
-.phone-demo-tag__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #fff;
-  animation: phoneDemoPulse 1.9s ease-in-out infinite;
+.phone-demo-tag svg {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
 }
 
-@keyframes phoneDemoPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.72); }
+.phone-mockup:hover .phone-demo-tag,
+.phone-mockup:focus-visible .phone-demo-tag {
+  gap: 9px;
 }
 
 /* The pill is decoration inside the mockup -- the link is the real target. */
@@ -523,7 +523,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .phone-mockup,
-  .phone-demo-tag__dot {
+  .phone-demo-tag {
     transition: none;
     animation: none;
   }

@@ -220,33 +220,32 @@
    artwork -- and hover cues do not exist on touch. A persistent button-shaped
    CTA in the card body is the affordance people actually recognise. */
 .design-card-cta {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 14px;
-  /* Keeps the control at the 44px minimum touch target. */
-  padding: 11px 18px;
-  border: 1px solid var(--gold, #b8924a);
-  border-radius: 50px;
-  background: transparent;
+  gap: 5px;
+  /* Sits to the trailing edge of the body, under the description. The card
+     itself is the click target, so this only has to read as a cue. */
+  width: fit-content;
+  margin: 10px 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: none;
   color: var(--gold, #b8924a);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  transition: background 0.25s ease, color 0.25s ease, gap 0.25s ease;
+  letter-spacing: 0.02em;
+  transition: gap 0.25s ease;
 }
 
 .design-card-cta svg {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   flex: 0 0 auto;
 }
 
 .design-card--demo:hover .design-card-cta,
 .design-card--demo:focus-visible .design-card-cta {
-  gap: 12px;
-  background: var(--gold, #b8924a);
-  color: #fff;
+  gap: 9px;
 }
 
 @media (prefers-reduced-motion: reduce) {
