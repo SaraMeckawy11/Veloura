@@ -7491,3 +7491,66 @@
   margin: clamp(0.5rem, 1.4cqh, 0.8rem) auto;
   filter: sepia(0.08) saturate(0.88) drop-shadow(0 2px 4px rgba(255, 251, 226, 0.62));
 }
+
+/* Fountain Reverie V1 -- video hero legibility and type scale.
+   The copy sits on a painted video with a bird that flies through it, and
+   nothing protected it: every rule in the cascade set `text-shadow: none`.
+   A soft warm scrim plus a light halo holds contrast through the animation
+   without reading as a box, and the schedule steps back so the names lead. */
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-text {
+  isolation: isolate;
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-text::before {
+  position: absolute;
+  z-index: -1;
+  inset: -11% -14% -9%;
+  background: radial-gradient(
+    ellipse 76% 60% at 50% 46%,
+    rgba(255, 252, 242, 0.66) 0%,
+    rgba(255, 252, 242, 0.46) 40%,
+    rgba(255, 252, 242, 0.18) 66%,
+    rgba(255, 252, 242, 0) 82%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-text .fountain-video-hero-eyebrow {
+  font-size: clamp(0.7rem, 1.15vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 6px rgba(255, 253, 236, 0.92);
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-text .fountain-video-hero-names,
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-hero-copy .fountain-video-hero-text .fountain-video-hero-names span {
+  text-shadow:
+    0 1px 0 rgba(255, 253, 238, 0.9),
+    0 4px 16px rgba(255, 251, 226, 0.78);
+}
+
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-text
+  .fountain-video-hero-meta .fountain-video-hero-meta__date,
+.fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-text
+  .fountain-video-hero-meta .fountain-video-hero-meta__time {
+  font-size: clamp(0.6rem, 0.9vw, 0.72rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-shadow: 0 1px 6px rgba(255, 253, 236, 0.92);
+}
+
+/* Phone: lift the block clear of the bird's path and ease the name scale. */
+@media (max-width: 620px) {
+  .fountain-theme-v1 .fountain-hero-copy .fountain-video-hero-text {
+    top: 21.5%;
+  }
+
+  .fountain-theme-v1.invitation-typography.invitation-typography
+    .fountain-hero-copy .fountain-video-hero-text .fountain-video-hero-names {
+    font-size: clamp(2.05rem, 8.4vw, 2.9rem);
+  }
+}
