@@ -488,17 +488,19 @@
 .phone-demo-tag {
   position: absolute;
   z-index: 4;
-  bottom: -28px;
+  bottom: -32px;
   left: 50%;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 0;
   transform: translateX(-50%);
   border: 0;
   background: none;
-  color: var(--gold, #b8924a);
-  font-size: 0.72rem;
+  /* Brand gold is 2.83:1 on the hero background -- under the 3:1 floor. This
+     deeper tone reads the same but clears 4.5:1 at this size. */
+  color: #8a6b2f;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -526,5 +528,15 @@
   .phone-demo-tag {
     transition: none;
     animation: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* The device shrinks here and the cue ended up 7.4px under the phone but
+     only 9px above the next section -- near-equal gaps, so it read as
+     floating between the two rather than labelling the phone. This gives the
+     hero room below so the cue sits clearly with the device. */
+  .hero-visual {
+    margin-bottom: 40px;
   }
 }

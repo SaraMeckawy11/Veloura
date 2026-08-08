@@ -230,7 +230,8 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--gold, #b8924a);
+  /* Matches the hero cue: brand gold falls under 3:1 on a white card. */
+  color: #8a6b2f;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.02em;
