@@ -66,7 +66,7 @@ router.post('/paypal', async (req, res) => {
           if (resource.supplementary_data?.related_ids?.order_id) {
             order.paypalOrderId = resource.supplementary_data.related_ids.order_id;
           }
-          order.amountPaid = resource.amount?.value || order.amountPaid || process.env.PRICE_USD || '79.00';
+          order.amountPaid = resource.amount?.value || order.amountPaid || process.env.PRICE_USD || '49.00';
           order.currency = resource.amount?.currency_code || order.currency || 'USD';
           if (order.paymentStatus !== 'paid') {
             await order.activate();

@@ -26,7 +26,7 @@ import {
 
 const router = Router();
 
-const PRICE_USD = process.env.PRICE_USD || '79.00';
+const PRICE_USD = process.env.PRICE_USD || '49.00';
 // Keep PayPal checkout in USD. EGP is display-only because PayPal REST Checkout
 // does not list EGP as a supported transaction currency.
 const CURRENCY = 'USD';

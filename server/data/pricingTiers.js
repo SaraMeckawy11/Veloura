@@ -4,8 +4,8 @@ export const PRICING_TIERS = [
   {
     id: 'signature',
     name: 'Premium',
-    amount: '79.00',
-    oldAmount: '99.00',
+    amount: '49.00',
+    oldAmount: '59.00',
     egyptAmount: '1200',
     oldEgyptAmount: '1800',
     sections: {
