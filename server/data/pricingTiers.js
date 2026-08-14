@@ -6,8 +6,8 @@ export const PRICING_TIERS = [
     name: 'Premium',
     amount: '79.00',
     oldAmount: '99.00',
-    egyptAmount: '1999',
-    oldEgyptAmount: '2499',
+    egyptAmount: '1200',
+    oldEgyptAmount: '1800',
     sections: {
       countdown: true,
       coupleMessage: true,
