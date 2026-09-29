@@ -7566,3 +7566,38 @@
     font-size: clamp(2.05rem, 8.4vw, 2.9rem);
   }
 }
+
+/* Fountain Reverie V1 -- final footer proportions.
+   Keep the closing compact, let the artwork meet the message, and preserve a
+   clean neutral ivory field behind the transparent watercolor. */
+.fountain-theme-v1 .fountain-footer {
+  min-height: clamp(20rem, 57vw, 24.5rem);
+  padding: clamp(2.75rem, 7vw, 3.75rem) 0.75rem clamp(4rem, 12vw, 8rem);
+  background: #f7f3ea;
+}
+
+.fountain-theme-v1 .fountain-footer::after {
+  bottom: 0;
+  width: min(47.5rem, 100vw);
+  aspect-ratio: 2172 / 724;
+  opacity: 1;
+}
+
+.fountain-theme-v1.invitation-typography.invitation-typography
+  .fountain-footer h2 .fountain-footer-amp {
+  margin: 0 0.14em;
+  color: #8f6737;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: 0.9em;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  vertical-align: -0.05em;
+}
+
+@media (max-width: 620px) {
+  .fountain-theme-v1 .fountain-footer::after {
+    width: 118vw;
+  }
+}
